@@ -98,7 +98,8 @@ def feuilles(chemin):
         return out
     if bas.endswith(".xls"):
         import xlrd
-        return [(ws.name, [tuple(ws.cell_value(i, j) or None for j in range(ws.ncols))
+        return [(ws.name, [tuple(ws.cell_value(i, j) if ws.cell_value(i, j) != "" else None
+                                 for j in range(ws.ncols))
                            for i in range(ws.nrows)])
                 for ws in xlrd.open_workbook(chemin).sheets()]
     if bas.endswith(".csv"):
