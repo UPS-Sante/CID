@@ -2954,6 +2954,10 @@ function hash(...args) {
 
 // Generate value for a metric × province
 function genValue(metric, provId, monthOffset = 0) {
+  if (DR.actif) {
+    const reel = valeurReelle(metric, provId, monthOffset);
+    if (reel !== null) return reel;
+  }
   const seed = hash(metric, provId, monthOffset);
   const r = seedRandom(seed);
 
@@ -2995,6 +2999,132 @@ function genValue(metric, provId, monthOffset = 0) {
   return Math.max(0, Math.min(100, val));
 }
 
+/* ==============================================================
+   COUCHE DONNEES REELLES
+============================================================== */
+/*DR-DEBUT*/
+/* Charge data/consolide.json (produit par la synchronisation Drive)
+   et intercepte genValue : toute valeur presente dans la base reelle
+   remplace la valeur de demonstration ; le reste garde le mode demo.
+   La table correspondance_indicateurs.json relie les metriques du
+   tableau de bord aux libelles reels, sans modification de code.   */
+
+const DR = { actif:false, index:new Map(), metriques:{}, provinces:{}, periodes:[], genere:null };
+
+function drSimplifier(t) {
+  return String(t == null ? "" : t)
+    .normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9]+/g, " ").trim().toLowerCase();
+}
+
+/* periode AAAA-MM decalee de n mois en arriere */
+function drMoisPrecedent(periode, n) {
+  const [a, m] = periode.split("-").map(Number);
+  const total = a * 12 + (m - 1) - n;
+  return `${Math.floor(total / 12)}-${String(total % 12 + 1).padStart(2, "0")}`;
+}
+
+/* liste des mois couverts par l'etat courant (mois, trimestre ou annee) */
+function drMoisCibles(monthOffset) {
+  const v = String(state.periodValue);
+  if (state.periodMode === "quarter" && v.includes("-Q")) {
+    const [a, q] = v.split("-Q").map(Number);
+    return [1, 2, 3].map(i => `${a}-${String((q - 1) * 3 + i).padStart(2, "0")}`);
+  }
+  if (state.periodMode === "year" && /^\d{4}$/.test(v)) {
+    return Array.from({length:12}, (_, i) => `${v}-${String(i + 1).padStart(2, "0")}`);
+  }
+  return [drMoisPrecedent(/^\d{4}-\d{2}$/.test(v) ? v : (DR.periodes[DR.periodes.length-1] || "2026-01"), monthOffset)];
+}
+
+/* valeur reelle pour (metrique, province, decalage) ; null si absente */
+function valeurReelle(metric, provId, monthOffset) {
+  const indicateur = DR.metriques[metric];
+  if (!indicateur) return null;
+  const province = provId === null ? "National" : DR.provinces[provId];
+  if (!province) return null;
+  const mois = drMoisCibles(monthOffset || 0);
+  const valeurs = mois
+    .map(p => DR.index.get(indicateur + "|" + province + "|" + p))
+    .filter(x => x !== undefined);
+  if (!valeurs.length) return null;
+  return Math.round(valeurs.reduce((s, x) => s + x, 0) / valeurs.length * 10) / 10;
+}
+
+/* construction des tables a partir des trois fichiers publies */
+function drConstruire(consolide, catalogue, correspondance, referentiel) {
+  DR.index.clear(); DR.metriques = {}; DR.provinces = {};
+
+  /* provinces du tableau de bord -> noms canoniques du referentiel */
+  const canon = {};
+  (referentiel.provinces || []).forEach(p => { canon[drSimplifier(p)] = p; });
+  Object.entries(referentiel.variantes || {}).forEach(([k, v]) => { canon[drSimplifier(k)] = v; });
+  PROVINCES.forEach(p => {
+    const c = canon[drSimplifier(p.name)] || canon[drSimplifier(p.short)];
+    if (c) DR.provinces[p.id] = c;
+  });
+
+  /* metriques -> libelle reel le plus frequent qui satisfait la regle */
+  const libelles = {};
+  consolide.enregistrements.forEach(e => {
+    const cle = e.indicateur + "\u0000" + e.source;
+    libelles[cle] = (libelles[cle] || 0) + 1;
+  });
+  Object.entries(correspondance).forEach(([metric, regle]) => {
+    if (metric.startsWith("_") || !regle.contient) return;
+    const mots = regle.contient.map(drSimplifier);
+    let meilleur = null, poids = -1;
+    Object.entries(libelles).forEach(([cle, n]) => {
+      const [libelle, source] = cle.split("\u0000");
+      if (regle.source && source !== regle.source) return;
+      const s = drSimplifier(libelle);
+      if (mots.every(m => s.includes(m)) && n > poids) { meilleur = libelle; poids = n; }
+    });
+    if (meilleur) DR.metriques[metric] = meilleur;
+  });
+
+  /* index (indicateur|province|periode) -> valeur */
+  consolide.enregistrements.forEach(e => {
+    DR.index.set(e.indicateur + "|" + e.province + "|" + e.periode, e.valeur);
+  });
+  DR.periodes = (catalogue.periodes || []).slice().sort();
+  DR.genere = consolide.genere || null;
+  DR.actif = DR.index.size > 0 && Object.keys(DR.metriques).length > 0;
+  return DR.actif;
+}
+
+/* selecteur de mois aligne sur les periodes reellement disponibles */
+function drActualiserPeriodes() {
+  if (!DR.periodes.length) return;
+  const noms = ["Janvier","Février","Mars","Avril","Mai","Juin",
+                "Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+  MONTH_OPTIONS.length = 0;
+  DR.periodes.slice().reverse().forEach(p => {
+    const [a, m] = p.split("-").map(Number);
+    MONTH_OPTIONS.push({ v: p, l: `${noms[m - 1]} ${a}` });
+  });
+  if (state.periodMode === "month") state.periodValue = MONTH_OPTIONS[0].v;
+}
+
+async function chargerDonneesReelles() {
+  try {
+    const [consolide, catalogue, correspondance, referentiel] = await Promise.all(
+      ["data/consolide.json", "data/catalogue.json",
+       "correspondance_indicateurs.json", "referentiel.json"]
+      .map(u => fetch(u).then(r => { if (!r.ok) throw new Error(u); return r.json(); })));
+    if (!drConstruire(consolide, catalogue, correspondance, referentiel)) throw new Error("base vide");
+    drActualiserPeriodes();
+    const badge = document.getElementById("h-data-status");
+    if (badge) badge.textContent =
+      `Données réelles · ${DR.periodes[DR.periodes.length - 1]}`;
+    renderMain();
+  } catch (e) {
+    const badge = document.getElementById("h-data-status");
+    if (badge) badge.textContent = "Mode démonstration";
+  }
+}
+/*DR-FIN*/
+
 // Map of values for a metric across all 23 provinces
 function provincesValueMap(metric) {
   const m = {};
@@ -3027,6 +3157,11 @@ function nationalAggregate(metric, scope = "national") {
   // Individual province filter takes priority
   if (state.provinceFilter) {
     return genValue(metric, state.provinceFilter);
+  }
+  // Ligne National de la base reelle, prioritaire sur la moyenne des provinces
+  if (DR.actif && scope === "national") {
+    const reel = valeurReelle(metric, null, 0);
+    if (reel !== null) return reel;
   }
   const provs = scope === "pda" ? PDA_PROVINCES : PROVINCES.map(p => p.id);
   let sum = 0;
@@ -6379,6 +6514,7 @@ function init() {
   document.documentElement.setAttribute("lang", state.lang);
   document.documentElement.setAttribute("dir", state.lang === "ar" ? "rtl" : "ltr");
   renderSidebar();
+  chargerDonneesReelles();   // bascule sur data/consolide.json des qu'il existe
   // Open vaccination program by default and select PDA
   setTimeout(() => {
     document.querySelector('.prog[data-prog="vacc"]').classList.add("open", "active");

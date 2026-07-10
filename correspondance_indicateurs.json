@@ -1,0 +1,19 @@
+{
+  "_aide": "Relie chaque metrique du tableau de bord aux libelles d'indicateurs de data/consolide.json. 'contient' : liste de mots devant tous figurer dans le libelle reel (comparaison sans accents ni majuscules). 'source' : restreint a un dossier Drive donne, facultatif. Une metrique absente d'ici reste en mode demonstration. Fichier modifiable sans toucher au code.",
+
+  "couv-cpn1":   { "contient": ["cpn", "1"] },
+  "couv-cpn4":   { "contient": ["cpn", "4"] },
+  "couv-acc":    { "contient": ["couverture", "accouchement"] },
+  "accouch":     { "contient": ["accouchement", "assiste"] },
+  "abandon":     { "contient": ["abandon"] },
+  "mortmat":     { "contient": ["deces", "maternel"] },
+  "mcpr":        { "contient": ["acceptation", "contraceptif"] },
+
+  "couv-penta1": { "contient": ["penta", "1"], "source": "PEV" },
+  "couv-penta3": { "contient": ["penta", "3"], "source": "PEV" },
+  "couv-bcg":    { "contient": ["bcg"], "source": "PEV" },
+  "couv-var1":   { "contient": ["var", "1"], "source": "PEV" },
+  "couv-var2":   { "contient": ["var", "2"], "source": "PEV" },
+  "couv-vpi2":   { "contient": ["vpi", "2"], "source": "PEV" },
+  "zd-volume":   { "contient": ["zero", "dose"], "source": "PEV" }
+}

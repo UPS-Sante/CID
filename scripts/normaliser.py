@@ -235,7 +235,12 @@ def principal():
     }
     for nom, contenu in sorties.items():
         with open(os.path.join(DATA_DIR, nom), "w", encoding="utf-8") as f:
-            json.dump(contenu, f, ensure_ascii=False, indent=1)
+            # consolide.json est lu par le navigateur : compact pour le reseau ;
+            # catalogue et rapport restent indentes pour la lecture humaine
+            if nom == "consolide.json":
+                json.dump(contenu, f, ensure_ascii=False, separators=(",", ":"))
+            else:
+                json.dump(contenu, f, ensure_ascii=False, indent=1)
     print(f"{len(base)} enregistrements, {len(anomalies)} anomalie(s).")
 
 

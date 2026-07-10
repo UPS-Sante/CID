@@ -1,0 +1,43 @@
+name: Synchronisation des donnees Drive
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  synchroniser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Dependances
+        run: pip install --quiet google-auth requests openpyxl
+
+      - name: Telechargement depuis Drive
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          DRIVE_FOLDER_ID: ${{ secrets.DRIVE_FOLDER_ID }}
+        run: python scripts/drive_sync.py
+
+      - name: Normalisation
+        run: python scripts/normaliser.py
+
+      - name: Publication si changement
+        run: |
+          git config user.name "cid-sync"
+          git config user.email "cid-sync@users.noreply.github.com"
+          git add data/
+          if git diff --cached --quiet; then
+            echo "Aucun changement de donnees."
+          else
+            git commit -m "Mise a jour des donnees consolidees ($(date -u +%Y-%m-%d))"
+            git push
+          fi
