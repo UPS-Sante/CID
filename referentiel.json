@@ -1,0 +1,29 @@
+{
+  "provinces": [
+    "Batha", "Barh El Gazal", "Borkou", "Chari Baguirmi", "Ennedi Est",
+    "Ennedi Ouest", "Guera", "Hadjer Lamis", "Kanem", "Lac",
+    "Logone Occidental", "Logone Oriental", "Mandoul", "Mayo Kebbi Est",
+    "Mayo Kebbi Ouest", "Moyen Chari", "N'Djamena", "Ouaddai", "Salamat",
+    "Sila", "Tandjile", "Tibesti", "Wadi Fira"
+  ],
+
+  "variantes": {
+    "barh el gazel": "Barh El Gazal",
+    "bahr el gazal": "Barh El Gazal",
+    "bahr el gazel": "Barh El Gazal",
+    "n djamena": "N'Djamena",
+    "ndjamena": "N'Djamena",
+    "ville de n djamena": "N'Djamena",
+    "guerra": "Guera"
+  },
+
+  "libelles_total": ["total", "national", "ensemble", "tchad", "pays"],
+
+  "mois": {
+    "janvier": 1, "fevrier": 2, "mars": 3, "avril": 4, "mai": 5, "juin": 6,
+    "juillet": 7, "aout": 8, "septembre": 9, "octobre": 10,
+    "novembre": 11, "decembre": 12,
+    "jan": 1, "fev": 2, "avr": 4, "juil": 7, "sept": 9, "sep": 9,
+    "oct": 10, "nov": 11, "dec": 12
+  }
+}
