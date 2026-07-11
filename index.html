@@ -2638,6 +2638,11 @@
     /* Smaller lang switcher on phone — initials only */
     .lang-btn { padding: 4px 6px; font-size: 10px; min-width: 28px; }
   }
+  .pill.na { background:#E2E8F0; color:#64748B; }
+  .kpi.na .kpi-value { color:#94A3B8; }
+  .kpi-exec.rag-na { border-left-color:#CBD5E1; }
+  .map-prov.rag-na { fill:#CBD5E1; }
+  .map-cell.rag-na { background:#CBD5E1; color:#475569; }
 </style>
 </head>
 <body>
@@ -2954,10 +2959,10 @@ function hash(...args) {
 
 // Generate value for a metric × province
 function genValue(metric, provId, monthOffset = 0) {
-  if (DR.actif) {
-    const reel = valeurReelle(metric, provId, monthOffset);
-    if (reel !== null) return reel;
-  }
+  // Mode strict : uniquement les valeurs de la base reelle ; null s'affiche ND
+  return valeurReelle(metric, provId, monthOffset);
+}
+function genValueDemo(metric, provId, monthOffset = 0) {
   const seed = hash(metric, provId, monthOffset);
   const r = seedRandom(seed);
 
@@ -3120,7 +3125,7 @@ async function chargerDonneesReelles() {
     renderMain();
   } catch (e) {
     const badge = document.getElementById("h-data-status");
-    if (badge) badge.textContent = "Mode démonstration";
+    if (badge) badge.textContent = "Données indisponibles";
   }
 }
 /*DR-FIN*/
@@ -3145,9 +3150,8 @@ function sparklineData(metric, scope = "national") {
   const provs = scope === "pda" ? PDA_PROVINCES : PROVINCES.map(p => p.id);
   const series = [];
   for (let m = 11; m >= 0; m--) {
-    let sum = 0;
-    provs.forEach(pId => { sum += genValue(metric, pId, m); });
-    series.push(Math.round(sum / provs.length));
+    const vals = provs.map(pId => genValue(metric, pId, m)).filter(v => v != null);
+    series.push(vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : null);
   }
   return series;
 }
@@ -3164,16 +3168,15 @@ function nationalAggregate(metric, scope = "national") {
     if (reel !== null) return reel;
   }
   const provs = scope === "pda" ? PDA_PROVINCES : PROVINCES.map(p => p.id);
-  let sum = 0;
-  provs.forEach(pId => { sum += genValue(metric, pId); });
-  return Math.round(sum / provs.length);
+  const vals = provs.map(pId => genValue(metric, pId)).filter(v => v != null);
+  return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : null;
 }
 
 /* ==============================================================
    RAG helpers
 ============================================================== */
 function rag(val, target, inverse = false) {
-  if (val === null || val === undefined) return "na";
+  if (val == null || Number.isNaN(val)) return "na";
   if (inverse) {
     if (val <= target * 0.5) return "green";
     if (val <= target) return "yellow";
@@ -4401,7 +4404,8 @@ const VIEWS = {};
 
 // Mini sparkline for executive KPI
 function miniSpark(data, color = "#1E40AF") {
-  if (!data || data.length === 0) return '';
+  data = (data || []).filter(v => Number.isFinite(v));
+  if (data.length < 2) return '';
   const w = 140, h = 32;
   const max = Math.max(...data) * 1.08;
   const min = Math.min(...data) * 0.92;
@@ -4427,7 +4431,8 @@ function miniSpark(data, color = "#1E40AF") {
 
 // Executive KPI card
 function kpiExec(opts) {
-  const { n, label, category, value, unit, target, trend, trendDir, rag, source, sparkData, sparkColor, action } = opts;
+  let { n, label, category, value, unit, target, trend, trendDir, rag, source, sparkData, sparkColor, action } = opts;
+  if (value == null || String(value).includes("NaN")) { value = "ND"; trend = "—"; trendDir = "flat"; rag = "na"; }
   return `
     <div class="kpi-exec rag-${rag}">
       <div class="kpe-head">
@@ -4465,21 +4470,21 @@ VIEWS["min-overview"] = () => {
 
   // --- Compute KPI values from existing data
   const penta3       = nationalAggregate("couv-penta3");
-  const accouch      = Math.round(28 + (Math.sin(hash("accouch")) * 4));
-  const mcpr         = 16;
-  const dispo        = 76;
-  const alertesNum   = 12;
-  const promptTloh   = 72;
-  const repAlertes   = 76;
-  const compRma      = 89;
+  const accouch      = nationalAggregate("accouch");
+  const mcpr         = nationalAggregate("mcpr");
+  const dispo        = nationalAggregate("dispo-essentiel");
+  const alertesNum   = null;
+  const promptTloh   = nationalAggregate("surv-prom");
+  const repAlertes   = null;
+  const compRma      = nationalAggregate("comp-dhis2");
   const scorePda     = (() => {
-    let sum = 0;
+    const vals = [];
     PDA_DOMAINS.forEach(d => {
-      PDA_PROVINCES.forEach(p => { sum += genValue("pda-" + d.id, p); });
+      PDA_PROVINCES.forEach(p => { const v = genValue("pda-" + d.id, p); if (v != null) vals.push(v); });
     });
-    return Math.round(sum / (PDA_DOMAINS.length * PDA_PROVINCES.length));
+    return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : null;
   })();
-  const execBudget   = 62;
+  const execBudget   = null;
 
   // --- Section A : Couverture & Impact
   const sectionA = `
@@ -4490,7 +4495,7 @@ VIEWS["min-overview"] = () => {
         category: t("cat_vacc_dlmvse"),
         value: penta3, unit: "%",
         target: 90,
-        trend: "+2 pts", trendDir: "up",
+        trend: "", trendDir: "flat",
         rag: rag(penta3, 90),
         source: "DHIS2 · DLMVSE · M+5",
         sparkData: sparklineData("couv-penta3"),
@@ -4503,7 +4508,7 @@ VIEWS["min-overview"] = () => {
         category: t("cat_mat_dsr"),
         value: accouch, unit: "%",
         target: 80,
-        trend: "+1 pt", trendDir: "up",
+        trend: "", trendDir: "flat",
         rag: "red",
         source: "DHIS2 · RMA · DSR",
         sparkData: sparklineData("accouch"),
@@ -4516,7 +4521,7 @@ VIEWS["min-overview"] = () => {
         category: t("cat_pf_dsr"),
         value: mcpr, unit: "%",
         target: 30,
-        trend: "+1 pt", trendDir: "up",
+        trend: "", trendDir: "flat",
         rag: "red",
         source: "RMA + SIGL · DSR",
         sparkData: sparklineData("mcpr"),
@@ -4529,7 +4534,7 @@ VIEWS["min-overview"] = () => {
         category: t("cat_log_dgpml"),
         value: dispo, unit: "%",
         target: 95,
-        trend: "+3 pts", trendDir: "up",
+        trend: "", trendDir: "flat",
         rag: rag(dispo, 95),
         source: "SIGL · DGPML · M+5",
         sparkData: sparklineData("dispo-essentiel"),
@@ -4554,7 +4559,7 @@ VIEWS["min-overview"] = () => {
         category: t("cat_surv_cousp"),
         value: alertesNum, unit: "",
         target: "≤ 5",
-        trend: "+3 vs N-1", trendDir: "up",
+        trend: "", trendDir: "flat",
         rag: "orange",
         source: "TLOH hebdo · COUSP · Temps réel",
         sparkData: [4, 5, 7, 6, 8, 9, 10, 11, 9, 10, 11, 12],
@@ -4567,7 +4572,7 @@ VIEWS["min-overview"] = () => {
         category: t("cat_surv_epi"),
         value: promptTloh, unit: "%",
         target: 90,
-        trend: "+5 pts", trendDir: "up",
+        trend: "", trendDir: "flat",
         rag: rag(promptTloh, 90),
         source: "DHIS2 SIMR · COUSP",
         sparkData: sparklineData("surv-prom"),
@@ -4580,7 +4585,7 @@ VIEWS["min-overview"] = () => {
         category: t("cat_resp_cousp"),
         value: repAlertes, unit: "%",
         target: 90,
-        trend: "+8 pts", trendDir: "up",
+        trend: "", trendDir: "flat",
         rag: rag(repAlertes, 90),
         source: "Investigations COUSP · OMS-AFRO",
         sparkData: [62, 65, 68, 70, 71, 72, 73, 74, 75, 74, 75, 76],
@@ -4605,7 +4610,7 @@ VIEWS["min-overview"] = () => {
         category: t("cat_si_dpsis"),
         value: compRma, unit: "%",
         target: 95,
-        trend: "+3 pts", trendDir: "up",
+        trend: "", trendDir: "flat",
         rag: rag(compRma, 95),
         source: "DHIS2 · DPSIS · M+5",
         sparkData: sparklineData("comp-dhis2"),
@@ -4618,7 +4623,7 @@ VIEWS["min-overview"] = () => {
         category: t("cat_pda"),
         value: scorePda, unit: "%",
         target: 80,
-        trend: "+5 pts", trendDir: "up",
+        trend: "", trendDir: "flat",
         rag: rag(scorePda, 80),
         source: "DHIS2 + SIGL · 13 provinces PDA",
         sparkData: sparklineData("pda-D1", "pda"),
@@ -4631,7 +4636,7 @@ VIEWS["min-overview"] = () => {
         category: t("cat_daf"),
         value: execBudget, unit: "%",
         target: 85,
-        trend: "+18 pts", trendDir: "up",
+        trend: "", trendDir: "flat",
         rag: rag(execBudget, 85),
         source: "DAF · Trésor public · DGPML",
         sparkData: [22, 28, 32, 36, 40, 44, 48, 52, 55, 58, 60, 62],
@@ -4712,7 +4717,7 @@ VIEWS["vacc-overview"] = (s) => {
   const provMap = provincesValueMap("couv-penta3");
   const provList = PROVINCES.map(p => ({
     p, val: provMap[p.id]
-  })).sort((a, b) => a.val - b.val);
+  })).filter(x => x.val != null).sort((a, b) => a.val - b.val);
 
   return {
     crumbs: ["Vaccination · PEV", "Vue d'ensemble"],
@@ -4726,23 +4731,23 @@ VIEWS["vacc-overview"] = (s) => {
       <div class="content">
 
         <div class="kpi-grid">
-          ${kpi(t("vacc_k_penta3"), penta3, "%", "Cible : 90%", "+2 pts", "up", rag(penta3, 90))}
-          ${kpi(t("vacc_k_var2"), var2, "%", "Cible : 90%", "+3 pts", "up", rag(var2, 90))}
-          ${kpi(t("vacc_k_abandon"), abandon, "%", "Cible : ≤ 10%", "−1 pt", "down", rag(abandon, 10, true), true)}
-          ${kpi(t("vacc_k_prom"), "76", "%", "Cible : 90%", "+4 pts", "up", "orange")}
+          ${kpi(t("vacc_k_penta3"), penta3, "%", "Cible : 90%", "", "flat", rag(penta3, 90))}
+          ${kpi(t("vacc_k_var2"), var2, "%", "Cible : 90%", "", "flat", rag(var2, 90))}
+          ${kpi(t("vacc_k_abandon"), abandon, "%", "Cible : ≤ 10%", "", "flat", rag(abandon, 10, true), true)}
+          ${kpi(t("vacc_k_prom"), null, "%", "Cible : 90%", "", "flat", "orange")}
         </div>
 
         <div class="kpi-grid">
-          ${kpi(t("vacc_k_comp"), "89", "%", "Cible : 95%", "+3 pts", "up", "yellow")}
-          ${kpi(t("vacc_k_zd"), fmt(zd*120), "", "Sur 12 mois", "−14%", "down", "yellow", true)}
-          ${kpi(t("vacc_k_risk"), "5", "/89", "Surveillance renforcée", "−1", "down", "yellow", true)}
-          ${kpi(t("vacc_k_strat"), "82", "%", "Plans validés", "+12 pts", "up", "green")}
+          ${kpi(t("vacc_k_comp"), null, "%", "Cible : 95%", "", "flat", "yellow")}
+          ${kpi(t("vacc_k_zd"), zd == null ? null : fmt(zd), "", "Mois courant", "", "flat", zd == null ? "na" : "yellow", true)}
+          ${kpi(t("vacc_k_risk"), null, "/89", "Surveillance renforcée", "", "flat", "yellow", true)}
+          ${kpi(t("vacc_k_strat"), null, "%", "Plans validés", "", "flat", "green")}
         </div>
 
         <div class="g-2-1">
           ${card("Couverture Penta 3 par province", "Vue nationale — 23 provinces", renderMap("couv-penta3"), "Cible nationale : 90% — Source : DHIS2 (M+5)")}
           ${card("Top 5 — Plus faibles couvertures", "Provinces à intervention prioritaire", renderBars(provList.slice(0,5).map(x => ({
-            label: x.p.short, val: x.val, target: 90, rag: rag(x.val, 90), max: 100, showVal: x.val + "%"
+            label: x.p.short, val: x.val, target: 90, rag: rag(x.val, 90), max: 100, showVal: x.val == null ? "ND" : x.val + "%"
           }))), "")}
         </div>
 
@@ -4796,10 +4801,10 @@ VIEWS["vacc-couv"] = (s) => {
       <div class="content">
 
         <div class="kpi-grid">
-          ${kpi("BCG (naissance)", bcg, "%", "Cible : 95%", "+1 pt", "up", rag(bcg, 95))}
-          ${kpi("Penta 1", penta1, "%", "Cible : 95%", "+2 pts", "up", rag(penta1, 95))}
-          ${kpi("Penta 3", penta3, "%", "Cible : 90%", "+2 pts", "up", rag(penta3, 90))}
-          ${kpi("VAR 2", var2, "%", "Cible : 90%", "+3 pts", "up", rag(var2, 90))}
+          ${kpi("BCG (naissance)", bcg, "%", "Cible : 95%", "", "flat", rag(bcg, 95))}
+          ${kpi("Penta 1", penta1, "%", "Cible : 95%", "", "flat", rag(penta1, 95))}
+          ${kpi("Penta 3", penta3, "%", "Cible : 90%", "", "flat", rag(penta3, 90))}
+          ${kpi("VAR 2", var2, "%", "Cible : 90%", "", "flat", rag(var2, 90))}
         </div>
 
         <div class="g-2-1">
@@ -4870,10 +4875,10 @@ VIEWS["vacc-zd"] = (s) => {
       </div>
       <div class="content">
         <div class="kpi-grid">
-          ${kpi("Volume national", fmt(totalZD), "enfants", "Cible 2026 : −30%", "−14%", "down", "orange", true)}
-          ${kpi("% population < 1 an", "5.2", "%", "Cible : < 3%", "−0.6 pt", "down", "red", true)}
-          ${kpi("Provinces critiques (>5 000 ZD)", String(Object.values(provMap).filter(v => v > 5000).length), "/23", "Concentration", "−1", "down", "red", true)}
-          ${kpi("Stratégies avancées planifiées", "82", "%", "Plans validés", "+12 pts", "up", "green")}
+          ${kpi("Volume national", fmt(totalZD), "enfants", "Cible 2026 : −30%", "", "flat", "orange", true)}
+          ${kpi("% population < 1 an", "5.2", "%", "Cible : < 3%", "", "flat", "red", true)}
+          ${kpi("Provinces critiques (>5 000 ZD)", String(Object.values(provMap).filter(v => v > 5000).length), "/23", "Concentration", "", "flat", "red", true)}
+          ${kpi("Stratégies avancées planifiées", "82", "%", "Plans validés", "", "flat", "green")}
         </div>
 
         <div class="g-2-1">
@@ -4910,10 +4915,10 @@ VIEWS["vacc-cold"] = (s) => {
       </div>
       <div class="content">
         <div class="kpi-grid">
-          ${kpi("CdF fonctionnelle DS", fonct, "%", "Cible : 95%", "+1 pt", "up", rag(fonct,95))}
-          ${kpi("CdF fonctionnelle CS", "82", "%", "Cible : 90%", "+3 pts", "up", "yellow")}
-          ${kpi("Pannes ce trimestre", "112", "", "Cible : < 50", "+8", "up", "red", true)}
-          ${kpi("Délai moyen réparation", "7.4", "jours", "Cible : < 5 j", "−1.2 j", "down", "orange", true)}
+          ${kpi("CdF fonctionnelle DS", fonct, "%", "Cible : 95%", "", "flat", rag(fonct,95))}
+          ${kpi("CdF fonctionnelle CS", "82", "%", "Cible : 90%", "", "flat", "yellow")}
+          ${kpi("Pannes ce trimestre", "112", "", "Cible : < 50", "", "flat", "red", true)}
+          ${kpi("Délai moyen réparation", "7.4", "jours", "Cible : < 5 j", "", "flat", "orange", true)}
         </div>
         <div class="g-2-1">
           ${card("Fonctionnalité CdF par province", "% CS avec CdF fonctionnelle", renderMap("couv-cdf"), "Source : SMT (Stocks vaccins)")}
@@ -5022,9 +5027,9 @@ function renderPdaOverview() {
 
   return `
     <div class="kpi-grid">
-      ${kpi(focusedProv ? `${t("pda_kpi_score_focus")} · ${PROVINCES.find(p=>p.id===focusedProv).short}` : t("pda_kpi_score"), avgPda, "%", "Cible : 80%", "+5 pts", "up", rag(avgPda, 80))}
+      ${kpi(focusedProv ? `${t("pda_kpi_score_focus")} · ${PROVINCES.find(p=>p.id===focusedProv).short}` : t("pda_kpi_score"), avgPda, "%", "Cible : 80%", "", "flat", rag(avgPda, 80))}
       ${kpi(t("pda_kpi_provinces"), focusedProv ? "1" : "13", "/13", t("wave_1"), t("stable"), "flat", "yellow")}
-      ${kpi(t("pda_kpi_domains"), "7", "/7", t("all_activated"), t("stable"), "flat", "green")}
+      ${kpi(t("pda_kpi_domains"), null, "/7", t("all_activated"), t("stable"), "flat", "green")}
       ${kpi(t("pda_kpi_indicators"), String(indicCount), "", t("monthly_update"), t("stable"), "flat", "green")}
     </div>
 
@@ -5139,10 +5144,10 @@ function renderPdaDomain(domId) {
 
   return `
     <div class="kpi-grid">
-      ${kpi(`Score ${domId}${focusedProv ? ' · ' + PROVINCES.find(p=>p.id===focusedProv).short : ''}`, domAvg, "%", "Cible : 80%", "+4 pts", "up", rag(domAvg, 80))}
+      ${kpi(`Score ${domId}${focusedProv ? ' · ' + PROVINCES.find(p=>p.id===focusedProv).short : ''}`, domAvg, "%", "Cible : 80%", "", "flat", rag(domAvg, 80))}
       ${kpi("Indicateurs suivis", String(indicators.length), "", "Tous mis à jour", "Stable", "flat", "green")}
       ${kpi("Provinces couvertes", focusedProv ? "1" : "13", "/13 PDA", "Pilote · Vague 1", "Stable", "flat", "yellow")}
-      ${kpi("Indicateurs ≥ cible", String(meetTarget) + "/" + indicators.length, "", "Performance T1", "+2", "up", meetRag)}
+      ${kpi("Indicateurs ≥ cible", String(meetTarget) + "/" + indicators.length, "", "Performance T1", "", "flat", meetRag)}
     </div>
 
     <div class="card" style="margin-bottom:14px;">
@@ -5182,9 +5187,9 @@ function renderPdaDomain(domId) {
                   const pId = PDA_PROVINCES[idx];
                   const isFocus = focusedProv === pId;
                   const r = ind.obj ? rag(v, ind.obj, ind.dir === "lte") : "yellow";
-                  return `<td class="num" style="${isFocus?'background:var(--gold-tint);':''}"><span class="pill ${r}" style="min-width:42px;text-align:center;">${v}%</span></td>`;
+                  return `<td class="num" style="${isFocus?'background:var(--gold-tint);':''}"><span class="pill ${r}" style="min-width:42px;text-align:center;">${v == null ? "ND" : v + "%"}</span></td>`;
                 }).join("")}
-                <td class="num"><strong>${avg}%</strong></td>
+                <td class="num"><strong>${Number.isFinite(avg) ? avg + "%" : "ND"}</strong></td>
               </tr>`;
             }).join("")}
           </tbody>
@@ -5247,10 +5252,10 @@ VIEWS["vacc-surv"] = () => {
       <div class="content">
 
         <div class="kpi-grid">
-          ${kpi("PFA notifiés < 7 jours", "84", "%", "Cible OMS : 80%", "+2 pts", "up", "green")}
-          ${kpi("Districts notifiant rougeole", "78", "%", "Cible : 80%", "+4 pts", "up", "yellow")}
-          ${kpi("Complétude TLOH hebdo", "86", "%", "Cible : 95%", "+3 pts", "up", "yellow")}
-          ${kpi("Promptitude TLOH hebdo", "72", "%", "Cible : 90%", "+5 pts", "up", "orange")}
+          ${kpi("PFA notifiés < 7 jours", "84", "%", "Cible OMS : 80%", "", "flat", "green")}
+          ${kpi("Districts notifiant rougeole", "78", "%", "Cible : 80%", "", "flat", "yellow")}
+          ${kpi("Complétude TLOH hebdo", "86", "%", "Cible : 95%", "", "flat", "yellow")}
+          ${kpi("Promptitude TLOH hebdo", "72", "%", "Cible : 90%", "", "flat", "orange")}
         </div>
 
         <div class="card" style="margin-bottom:14px;">
@@ -5358,10 +5363,10 @@ VIEWS["vacc-intrants"] = () => {
       <div class="content">
 
         <div class="kpi-grid">
-          ${kpi("Disponibilité antigènes", dispoAvg, "%", "Cible : 95%", "+3 pts", "up", rag(dispoAvg, 95))}
-          ${kpi("Taux de rupture moyen", ruptAvg, "%", "Cible : ≤ 5%", "−2 pts", "down", rag(ruptAvg, 5, true), true)}
-          ${kpi("MSD national moyen", "2.6", "mois", "Cible : ≥ 3 mois", "+0.2", "up", "yellow")}
-          ${kpi("Péremption moyenne", "1.0", "%", "Cible : ≤ 2%", "−0.3 pt", "down", "green", true)}
+          ${kpi("Disponibilité antigènes", dispoAvg, "%", "Cible : 95%", "", "flat", rag(dispoAvg, 95))}
+          ${kpi("Taux de rupture moyen", ruptAvg, "%", "Cible : ≤ 5%", "", "flat", rag(ruptAvg, 5, true), true)}
+          ${kpi("MSD national moyen", "2.6", "mois", "Cible : ≥ 3 mois", "", "flat", "yellow")}
+          ${kpi("Péremption moyenne", "1.0", "%", "Cible : ≤ 2%", "", "flat", "green", true)}
         </div>
 
         <div class="card" style="margin-bottom:14px;">
@@ -5387,17 +5392,17 @@ VIEWS["vacc-intrants"] = () => {
                 ${antigens.map(a => {
                   const rDispo = rag(a.dispo, 95);
                   const rRupt = rag(a.rupt, 5, true);
-                  const rMsd = a.msd >= 3 ? "green" : a.msd >= 2 ? "yellow" : a.msd >= 1.5 ? "orange" : "red";
+                  const rMsd = a.msd == null ? "na" : a.msd >= 3 ? "green" : a.msd >= 2 ? "yellow" : a.msd >= 1.5 ? "orange" : "red";
                   // Score composite : penta = max indicator score
                   const ragScore = { green:4, yellow:3, orange:2, red:1 };
                   const avgScore = (ragScore[rDispo] + ragScore[rRupt] + ragScore[rMsd]) / 3;
-                  const overall = avgScore >= 3.5 ? "green" : avgScore >= 2.7 ? "yellow" : avgScore >= 1.7 ? "orange" : "red";
+                  const overall = Number.isFinite(avgScore) ? (avgScore >= 3.5 ? "green" : avgScore >= 2.7 ? "yellow" : avgScore >= 1.7 ? "orange" : "red") : "na";
                   return `<tr>
                     <td class="l">${a.l}</td>
-                    <td class="num"><span class="pill ${rDispo}">${a.dispo}%</span></td>
-                    <td class="num"><span class="pill ${rMsd}">${a.msd.toFixed(1)} mois</span></td>
-                    <td class="num"><span class="pill ${rRupt}">${a.rupt}%</span></td>
-                    <td class="num"><span style="color:${a.perim > 2 ? 'var(--rag-red)' : 'var(--muted)'};font-family:var(--font-mono);font-weight:600;">${a.perim.toFixed(1)}%</span></td>
+                    <td class="num"><span class="pill ${rDispo}">${a.dispo == null ? "ND" : a.dispo + "%"}</span></td>
+                    <td class="num"><span class="pill ${rMsd}">${a.msd == null ? "ND" : a.msd.toFixed(1) + " mois"}</span></td>
+                    <td class="num"><span class="pill ${rRupt}">${a.rupt == null ? "ND" : a.rupt + "%"}</span></td>
+                    <td class="num"><span style="color:${(a.perim ?? 0) > 2 ? 'var(--rag-red)' : 'var(--muted)'};font-family:var(--font-mono);font-weight:600;">${a.perim == null ? "ND" : a.perim.toFixed(1) + "%"}</span></td>
                     <td class="num"><span class="pill ${overall}" style="font-weight:700;">${ragLabel(overall)}</span></td>
                   </tr>`;
                 }).join("")}
@@ -5458,8 +5463,8 @@ VIEWS["vacc-coord"] = () => ({
       <div class="kpi-grid">
         ${kpi("Réunions CTA-PEV", "4", "/4", "Toutes tenues T1", "Stable", "flat", "green")}
         ${kpi("Revues semestrielles", "1", "/1", "À jour", "Stable", "flat", "green")}
-        ${kpi("Revues trimestrielles prov.", "82", "%", "Cible : 100%", "+12 pts", "up", "yellow")}
-        ${kpi("Coord. interministérielle", "67", "%", "Cible : 80%", "+5 pts", "up", "yellow")}
+        ${kpi("Revues trimestrielles prov.", "82", "%", "Cible : 100%", "", "flat", "yellow")}
+        ${kpi("Coord. interministérielle", "67", "%", "Cible : 80%", "", "flat", "yellow")}
       </div>
     </div>
   `
@@ -5483,10 +5488,10 @@ VIEWS["dsr-overview"] = () => {
       </div>
       <div class="content">
         <div class="kpi-grid">
-          ${kpi("Couverture CPN 1", cpn1, "%", "Cible : 95%", "+2 pts", "up", rag(cpn1,95))}
-          ${kpi("Couverture CPN 4", cpn4, "%", "Cible : 65%", "+3 pts", "up", rag(cpn4,65))}
-          ${kpi("Accouchements assistés", acc, "%", "Cible : 70%", "+1 pt", "up", rag(acc,70))}
-          ${kpi("mCPR (prévalence contraceptive)", mcpr, "%", "Cible : 30%", "+1 pt", "up", "red")}
+          ${kpi("Couverture CPN 1", cpn1, "%", "Cible : 95%", "", "flat", rag(cpn1,95))}
+          ${kpi("Couverture CPN 4", cpn4, "%", "Cible : 65%", "", "flat", rag(cpn4,65))}
+          ${kpi("Accouchements assistés", acc, "%", "Cible : 70%", "", "flat", rag(acc,70))}
+          ${kpi("mCPR (prévalence contraceptive)", mcpr, "%", "Cible : 30%", "", "flat", "red")}
         </div>
         <div class="g-2-1">
           ${card("CPN 4 par province", "Couverture consultations prénatales 4+", renderMap("couv-cpn4"), "Source : DHIS2 — Données mensuelles")}
@@ -5518,10 +5523,10 @@ VIEWS["dsr-mat"] = () => ({
     </div>
     <div class="content">
       <div class="kpi-grid">
-        ${kpi("CPN 1", nationalAggregate("couv-cpn1"), "%", "Cible : 95%", "+2 pts", "up", "yellow")}
-        ${kpi("CPN 4", nationalAggregate("couv-cpn4"), "%", "Cible : 65%", "+3 pts", "up", "orange")}
-        ${kpi("Acc. assistés", nationalAggregate("couv-acc"), "%", "Cible : 70%", "+1 pt", "up", "orange")}
-        ${kpi("Mortalité maternelle", "498", "/100k", "Cible : 350", "−24", "down", "red", true)}
+        ${kpi("CPN 1", nationalAggregate("couv-cpn1"), "%", "Cible : 95%", "", "flat", "yellow")}
+        ${kpi("CPN 4", nationalAggregate("couv-cpn4"), "%", "Cible : 65%", "", "flat", "orange")}
+        ${kpi("Acc. assistés", nationalAggregate("couv-acc"), "%", "Cible : 70%", "", "flat", "orange")}
+        ${kpi("Mortalité maternelle", "498", "/100k", "Cible : 350", "", "flat", "red", true)}
       </div>
       <div class="g-2-1">
         ${card("Mortalité maternelle par province", "Pour 100 000 naissances vivantes", renderMap("couv-cpn4", { inverse: true }), "Source : DHIS2 + Audits décès")}
@@ -5548,10 +5553,10 @@ VIEWS["dsr-pf"] = () => ({
     </div>
     <div class="content">
       <div class="kpi-grid">
-        ${kpi("mCPR", "16", "%", "Cible 2027 : 30%", "+1 pt", "up", "red")}
-        ${kpi("TAC (Taux Acceptation)", "22", "%", "Cible : 35%", "+2 pts", "up", "orange")}
-        ${kpi("Abandon par méthode", "18", "%", "Cible : ≤ 15%", "−2 pts", "down", "yellow", true)}
-        ${kpi("CAP (Couple-Année Protect.)", "8.2", "%", "Cible : 15%", "+0.4 pt", "up", "orange")}
+        ${kpi("mCPR", "16", "%", "Cible 2027 : 30%", "", "flat", "red")}
+        ${kpi("TAC (Taux Acceptation)", "22", "%", "Cible : 35%", "", "flat", "orange")}
+        ${kpi("Abandon par méthode", "18", "%", "Cible : ≤ 15%", "", "flat", "yellow", true)}
+        ${kpi("CAP (Couple-Année Protect.)", "8.2", "%", "Cible : 15%", "", "flat", "orange")}
       </div>
       <div class="g-2-1">
         ${card("Prévalence PF par province", "Taux PF (toutes méthodes)", renderMap("couv-pf"), "Source : DHIS2 SRMNIA")}
@@ -5583,10 +5588,10 @@ VIEWS["dsr-com"] = () => ({
     </div>
     <div class="content">
       <div class="kpi-grid">
-        ${kpi("ASC actifs", fmt(9360), "/12 000", "Cible : 100%", "+8%", "up", "yellow")}
-        ${kpi("Aires avec ≥1 ASC actif", "78", "%", "Cible : 90%", "+5 pts", "up", "yellow")}
-        ${kpi("Nouv. acceptantes PF via ASC", fmt(8420), "", "T1 2026", "+22%", "up", "green")}
-        ${kpi("Références ASC → CS", "82", "%", "Cible : 80%", "+3 pts", "up", "green")}
+        ${kpi("ASC actifs", fmt(9360), "/12 000", "Cible : 100%", "", "flat", "yellow")}
+        ${kpi("Aires avec ≥1 ASC actif", "78", "%", "Cible : 90%", "", "flat", "yellow")}
+        ${kpi("Nouv. acceptantes PF via ASC", fmt(8420), "", "T1 2026", "", "flat", "green")}
+        ${kpi("Références ASC → CS", "82", "%", "Cible : 80%", "", "flat", "green")}
       </div>
 
       <div class="g-2-1">
@@ -5620,10 +5625,10 @@ VIEWS["dsr-stock"] = () => ({
     </div>
     <div class="content">
       <div class="kpi-grid">
-        ${kpi("Disponibilité moyenne SR", "76", "%", "Cible : 90%", "+3 pts", "up", "orange")}
-        ${kpi("CS sans rupture > 30j", "62", "%", "Cible : 85%", "−4 pts", "down", "orange", true)}
+        ${kpi("Disponibilité moyenne SR", "76", "%", "Cible : 90%", "", "flat", "orange")}
+        ${kpi("CS sans rupture > 30j", "62", "%", "Cible : 85%", "", "flat", "orange", true)}
         ${kpi("Mois Stock Disponible (MSD)", "3.2", "mois", "Cible : ≥ 3 mois", "Stable", "flat", "green")}
-        ${kpi("Complétude SIGL", "71", "%", "Cible : 95%", "+8 pts", "up", "orange")}
+        ${kpi("Complétude SIGL", "71", "%", "Cible : 95%", "", "flat", "orange")}
       </div>
     </div>
   `
@@ -5642,9 +5647,9 @@ VIEWS["prog-palu"] = () => ({
     </div>
     <div class="content">
       <div class="kpi-grid">
-        ${kpi("Incidence palu", "168", "‰", "Cible : < 100‰", "−12‰", "down", "orange", true)}
-        ${kpi("Cas traités par CTA <24h", "78", "%", "Cible : 95%", "+4 pts", "up", "orange")}
-        ${kpi("Couverture MILD", "82", "%", "Cible : 90%", "+5 pts", "up", "yellow")}
+        ${kpi("Incidence palu", "168", "‰", "Cible : < 100‰", "", "flat", "orange", true)}
+        ${kpi("Cas traités par CTA <24h", "78", "%", "Cible : 95%", "", "flat", "orange")}
+        ${kpi("Couverture MILD", "82", "%", "Cible : 90%", "", "flat", "yellow")}
         ${kpi("TDR positifs", "62", "%", "Sur dépistages", "Stable", "flat", "yellow")}
       </div>
     </div>
@@ -5661,10 +5666,10 @@ VIEWS["prog-vih"] = () => ({
     </div>
     <div class="content">
       <div class="kpi-grid">
-        ${kpi("PVVIH dépistés", "72", "%", "Cible : 95%", "+3 pts", "up", "orange")}
-        ${kpi("PVVIH sous ARV", "85", "%", "Cible : 95%", "+2 pts", "up", "yellow")}
-        ${kpi("Charge virale supprimée", "88", "%", "Cible : 95%", "+4 pts", "up", "yellow")}
-        ${kpi("PTME (couverture)", "76", "%", "Cible : 95%", "+5 pts", "up", "orange")}
+        ${kpi("PVVIH dépistés", "72", "%", "Cible : 95%", "", "flat", "orange")}
+        ${kpi("PVVIH sous ARV", "85", "%", "Cible : 95%", "", "flat", "yellow")}
+        ${kpi("Charge virale supprimée", "88", "%", "Cible : 95%", "", "flat", "yellow")}
+        ${kpi("PTME (couverture)", "76", "%", "Cible : 95%", "", "flat", "orange")}
       </div>
     </div>
   `
@@ -5680,10 +5685,10 @@ VIEWS["prog-tb"] = () => ({
     </div>
     <div class="content">
       <div class="kpi-grid">
-        ${kpi("Taux notification TB", "62", "/100k", "Cible : 90", "+4", "up", "orange")}
-        ${kpi("Succès thérapeutique", "82", "%", "Cible : 90%", "+1 pt", "up", "yellow")}
-        ${kpi("TB-MR dépistée", "68", "%", "Cible : 85%", "+8 pts", "up", "orange")}
-        ${kpi("Co-infection TB-VIH testée", "94", "%", "Cible : 100%", "+2 pts", "up", "green")}
+        ${kpi("Taux notification TB", "62", "/100k", "Cible : 90", "", "flat", "orange")}
+        ${kpi("Succès thérapeutique", "82", "%", "Cible : 90%", "", "flat", "yellow")}
+        ${kpi("TB-MR dépistée", "68", "%", "Cible : 85%", "", "flat", "orange")}
+        ${kpi("Co-infection TB-VIH testée", "94", "%", "Cible : 100%", "", "flat", "green")}
       </div>
     </div>
   `
@@ -5702,10 +5707,10 @@ VIEWS["dpml-dispo"] = () => ({
     </div>
     <div class="content">
       <div class="kpi-grid">
-        ${kpi("Disponibilité traceurs", "78", "%", "Cible : 95%", "+4 pts", "up", "orange")}
-        ${kpi("CS sans rupture", "68", "%", "Cible : 85%", "−2 pts", "down", "orange", true)}
-        ${kpi("Délai livraison moyen", "21", "jours", "Cible : 14 j", "−4 j", "down", "orange", true)}
-        ${kpi("Complétude SIGL", "82", "%", "Cible : 95%", "+6 pts", "up", "yellow")}
+        ${kpi("Disponibilité traceurs", "78", "%", "Cible : 95%", "", "flat", "orange")}
+        ${kpi("CS sans rupture", "68", "%", "Cible : 85%", "", "flat", "orange", true)}
+        ${kpi("Délai livraison moyen", "21", "jours", "Cible : 14 j", "", "flat", "orange", true)}
+        ${kpi("Complétude SIGL", "82", "%", "Cible : 95%", "", "flat", "yellow")}
       </div>
       <div class="g-2-1">
         ${card("Disponibilité par province", "% CS avec stock suffisant", renderMap("couv-dispo"), "")}
@@ -5731,10 +5736,10 @@ VIEWS["dpml-rupt"] = () => ({
     </div>
     <div class="content">
       <div class="kpi-grid">
-        ${kpi("Taux de rupture global", "12", "%", "Cible : < 5%", "−3 pts", "down", "orange", true)}
-        ${kpi("CS en rupture > 30j", "84", "/2 340", "Cible : 0", "−12", "down", "red", true)}
-        ${kpi("Produits en alerte", "8", "/45", "Suivi prioritaire", "+1", "up", "yellow", true)}
-        ${kpi("Délai résolution moyen", "12", "jours", "Cible : ≤ 7 j", "−3 j", "down", "orange", true)}
+        ${kpi("Taux de rupture global", "12", "%", "Cible : < 5%", "", "flat", "orange", true)}
+        ${kpi("CS en rupture > 30j", "84", "/2 340", "Cible : 0", "", "flat", "red", true)}
+        ${kpi("Produits en alerte", "8", "/45", "Suivi prioritaire", "", "flat", "yellow", true)}
+        ${kpi("Délai résolution moyen", "12", "jours", "Cible : ≤ 7 j", "", "flat", "orange", true)}
       </div>
       ${aiBox(
         "Rupture critique antibiotiques pédiatriques",
@@ -5755,10 +5760,10 @@ VIEWS["drh-effectifs"] = () => ({
     </div>
     <div class="content">
       <div class="kpi-grid">
-        ${kpi("Ratio AS / 10 000 hab.", "4.2", "", "Cible OMS : 23", "+0.1", "up", "red")}
+        ${kpi("Ratio AS / 10 000 hab.", "4.2", "", "Cible OMS : 23", "", "flat", "red")}
         ${kpi("Médecins / 10 000 hab.", "0.5", "", "Cible OMS : 1.5", "Stable", "flat", "red")}
-        ${kpi("Sages-femmes / 10 000 FAP", "2.1", "", "Cible OMS : 5", "+0.2", "up", "red")}
-        ${kpi("Personnel formé PEV", "78", "%", "Cible : 90%", "+4 pts", "up", "yellow")}
+        ${kpi("Sages-femmes / 10 000 FAP", "2.1", "", "Cible OMS : 5", "", "flat", "red")}
+        ${kpi("Personnel formé PEV", "78", "%", "Cible : 90%", "", "flat", "yellow")}
       </div>
     </div>
   `
@@ -5775,9 +5780,9 @@ VIEWS["drh-vacance"] = () => ({
     <div class="content">
       <div class="kpi-grid">
         ${kpi("Vacance globale", "28", "%", "Cible : < 10%", "Stable", "flat", "red", true)}
-        ${kpi("Vacance médecins", "42", "%", "Cible : < 15%", "+2 pts", "up", "red", true)}
-        ${kpi("Vacance sages-femmes", "31", "%", "Cible : < 15%", "−1 pt", "down", "red", true)}
-        ${kpi("Vacance infirmiers", "18", "%", "Cible : < 10%", "−3 pts", "down", "orange", true)}
+        ${kpi("Vacance médecins", "42", "%", "Cible : < 15%", "", "flat", "red", true)}
+        ${kpi("Vacance sages-femmes", "31", "%", "Cible : < 15%", "", "flat", "red", true)}
+        ${kpi("Vacance infirmiers", "18", "%", "Cible : < 10%", "", "flat", "orange", true)}
       </div>
     </div>
   `
@@ -5793,9 +5798,9 @@ VIEWS["cousp-alert"] = () => ({
     </div>
     <div class="content">
       <div class="kpi-grid">
-        ${kpi("Alertes actives", "12", "", "Tous types", "+3", "up", "orange", true)}
-        ${kpi("Délai notification < 24h", "82", "%", "Cible : 95%", "+5 pts", "up", "yellow")}
-        ${kpi("Réponse < 48h", "76", "%", "Cible : 90%", "+8 pts", "up", "orange")}
+        ${kpi("Alertes actives", "12", "", "Tous types", "", "flat", "orange", true)}
+        ${kpi("Délai notification < 24h", "82", "%", "Cible : 95%", "", "flat", "yellow")}
+        ${kpi("Réponse < 48h", "76", "%", "Cible : 90%", "", "flat", "orange")}
         ${kpi("Provinces en alerte", "5", "/23", "Niveau orange+", "Stable", "flat", "yellow")}
       </div>
       <div class="card">
@@ -5823,10 +5828,10 @@ VIEWS["cousp-surv"] = () => ({
     </div>
     <div class="content">
       <div class="kpi-grid">
-        ${kpi("Complétude rapports hebdo", "86", "%", "Cible : 95%", "+4 pts", "up", "yellow")}
-        ${kpi("Promptitude (à temps)", "72", "%", "Cible : 90%", "+6 pts", "up", "orange")}
-        ${kpi("PFA notifiés < 7j", "84", "%", "Cible : 80%", "+2 pts", "up", "green")}
-        ${kpi("DS notifiant méningite", "78", "%", "Cible : 80%", "+1 pt", "up", "yellow")}
+        ${kpi("Complétude rapports hebdo", "86", "%", "Cible : 95%", "", "flat", "yellow")}
+        ${kpi("Promptitude (à temps)", "72", "%", "Cible : 90%", "", "flat", "orange")}
+        ${kpi("PFA notifiés < 7j", "84", "%", "Cible : 80%", "", "flat", "green")}
+        ${kpi("DS notifiant méningite", "78", "%", "Cible : 80%", "", "flat", "yellow")}
       </div>
     </div>
   `
@@ -5858,9 +5863,9 @@ VIEWS["dpsis-comp"] = () => {
       <div class="content">
 
         <div class="kpi-grid">
-          ${kpi("Complétude moyenne", avgComp, "%", "5 systèmes · Cible : 95%", "+3 pts", "up", rag(avgComp, 95))}
-          ${kpi("Promptitude moyenne", avgPromp, "%", "Saisie ≤ J+5 · Cible : 90%", "+5 pts", "up", rag(avgPromp, 90))}
-          ${kpi("Validation district", avgValid, "%", "RMA validés · Cible : 95%", "+2 pts", "up", rag(avgValid, 95))}
+          ${kpi("Complétude moyenne", avgComp, "%", "5 systèmes · Cible : 95%", "", "flat", rag(avgComp, 95))}
+          ${kpi("Promptitude moyenne", avgPromp, "%", "Saisie ≤ J+5 · Cible : 90%", "", "flat", rag(avgPromp, 90))}
+          ${kpi("Validation district", avgValid, "%", "RMA validés · Cible : 95%", "", "flat", rag(avgValid, 95))}
           ${kpi("SI actifs / opérationnels", "5", "/5", "DHIS2, Tracker, SIGL, IHRIS, SMT", "Stable", "flat", "green")}
         </div>
 
@@ -6011,10 +6016,10 @@ VIEWS["dpsis-qual"] = () => {
       <div class="content">
 
         <div class="kpi-grid">
-          ${kpi("Cohérence DHIS2 ↔ Registre", "82", "%", "Cible : 90%", "+5 pts", "up", "yellow")}
-          ${kpi("Triangulation SIGL", siglAvg, "%", "Cible : 85%", "+6 pts", "up", rag(siglAvg, 85))}
-          ${kpi("DQS réalisés", "62", "/89 DS", "Cible : 80%", "+8", "up", "orange")}
-          ${kpi("LQAS réalisés", "48", "%", "Cible : 80%", "+12 pts", "up", "red")}
+          ${kpi("Cohérence DHIS2 ↔ Registre", "82", "%", "Cible : 90%", "", "flat", "yellow")}
+          ${kpi("Triangulation SIGL", siglAvg, "%", "Cible : 85%", "", "flat", rag(siglAvg, 85))}
+          ${kpi("DQS réalisés", "62", "/89 DS", "Cible : 80%", "", "flat", "orange")}
+          ${kpi("LQAS réalisés", "48", "%", "Cible : 80%", "", "flat", "red")}
         </div>
 
         <div class="card" style="margin-bottom:14px;">
@@ -6108,6 +6113,7 @@ function placeholderView(subId) {
    COMPONENT HELPERS
 ============================================================== */
 function kpi(label, val, unit, target, trend, dir, ragClass, inverse = false) {
+  if (val == null || String(val).includes("NaN")) { val = "ND"; trend = "—"; dir = "flat"; ragClass = "na"; }
   const trendCls = dir === "up" ? "up" : dir === "down" ? "down" : "flat";
   return `
     <div class="kpi ${ragClass}">
@@ -6142,34 +6148,22 @@ function card(title, subtitle, body, footer) {
 }
 
 function aiBox(title, text, meta) {
-  return `
-    <div class="ai-box">
-      <div class="ai-tag">${t("santex_tag")}</div>
-      <div class="ai-title">${title}</div>
-      <div class="ai-text">${text}</div>
-      <div class="ai-meta">${meta}</div>
-    </div>
-  `;
+  // Desactive : les analyses automatiques reviendront lorsqu'un moteur
+  // d'analyse alimente par les donnees reelles sera en place.
+  return '';
 }
 
 function alert(rag, icon, title, desc, meta) {
-  return `
-    <div class="alert ${rag}">
-      <div class="alert-ic">${icon}</div>
-      <div class="alert-body">
-        <div class="alert-t">${title}</div>
-        <div class="alert-d">${desc}</div>
-        <div class="alert-m">${meta}</div>
-      </div>
-    </div>
-  `;
+  // Desactive : le fil d'alertes sera branche sur un flux reel.
+  return '';
 }
 
 function renderBars(bars) {
   return `<div class="bar-list">
     ${bars.map(b => {
       const max = b.max || 100;
-      const pct = Math.min(100, (b.val / max) * 100);
+      const manque = !Number.isFinite(b.val);
+      const pct = manque ? 0 : Math.min(100, (b.val / max) * 100);
       const targetPct = b.target ? Math.min(100, (b.target / max) * 100) : null;
       const ragCls = b.rag || "navy";
       return `
@@ -6179,7 +6173,7 @@ function renderBars(bars) {
             <div class="bar-fill ${ragCls}" data-w="${pct}" style="width:0%;"></div>
             ${targetPct ? `<div class="bar-target" style="left:${targetPct}%;"></div>` : ''}
           </div>
-          <div class="bar-val ${ragCls}">${b.showVal || b.val + '%'}</div>
+          <div class="bar-val ${ragCls}">${manque ? "ND" : (b.showVal || b.val + '%')}</div>
         </div>
       `;
     }).join("")}
@@ -6188,7 +6182,9 @@ function renderBars(bars) {
 
 function renderLineChart(series, opts = {}) {
   const w = 480, h = 200, p = { t:18, r:16, b:28, l:34 };
-  const allData = series.flatMap(s => s.data);
+  series = series.map(s => ({ ...s, pts: s.data.map((v, i) => ({ v, i })).filter(p => Number.isFinite(p.v)) }));
+  const allData = series.flatMap(s => s.pts.map(p => p.v));
+  if (!allData.length) return '<div style="padding:24px;color:#94A3B8;text-align:center;">ND</div>';
   const min = Math.min(...allData);
   const max = Math.max(...allData);
   const range = max - min || 1;
@@ -6202,18 +6198,18 @@ function renderLineChart(series, opts = {}) {
 
   const months = ['M-11','M-10','M-9','M-8','M-7','M-6','M-5','M-4','M-3','M-2','M-1','M'];
   const lines = series.map((s, idx) => {
-    const path = s.data.map((v, i) => {
-      const x = p.l + i * xStep;
-      const y = p.t + innerH - ((v - yMin) / yRange) * innerH;
-      return `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`;
+    const path = s.pts.map((pt, k) => {
+      const x = p.l + pt.i * xStep;
+      const y = p.t + innerH - ((pt.v - yMin) / yRange) * innerH;
+      return `${k === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`;
     }).join(" ");
 
     // Area fill (only for solid lines)
-    const areaPath = (s.style !== 'dashed') ? path + ` L ${p.l + (s.data.length-1) * xStep} ${p.t + innerH} L ${p.l} ${p.t + innerH} Z` : '';
+    const areaPath = (s.style !== 'dashed' && s.pts.length) ? path + ` L ${p.l + s.pts[s.pts.length-1].i * xStep} ${p.t + innerH} L ${p.l + s.pts[0].i * xStep} ${p.t + innerH} Z` : '';
 
-    const dots = s.style === 'dashed' ? '' : s.data.map((v, i) => {
-      const x = p.l + i * xStep;
-      const y = p.t + innerH - ((v - yMin) / yRange) * innerH;
+    const dots = s.style === 'dashed' ? '' : s.pts.map((pt) => {
+      const x = p.l + pt.i * xStep;
+      const y = p.t + innerH - ((pt.v - yMin) / yRange) * innerH;
       return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.5" fill="${s.color}" stroke="white" stroke-width="1"/>`;
     }).join("");
     return {
@@ -6275,14 +6271,8 @@ function renderLineChart(series, opts = {}) {
 // Helper to build YoY chart series (current year solid + N-1 dashed)
 function yoySeriesData(metric, scope = "national") {
   const currentYear = sparklineData(metric, scope);
-  // Previous year — slightly lower values (use different seed offset)
-  const prevYear = currentYear.map((v, i) => {
-    const noise = (Math.sin(hash(metric, i, 'prev')) * 8) - 4;
-    return Math.max(0, Math.min(100, Math.round(v - 4 + noise)));
-  });
   return [
     { name: "Année 2026 (courante)", data: currentYear, color: "#1E40AF", style: "solid", opacity: 1 },
-    { name: "Année 2025 (N-1)",      data: prevYear,    color: "#94A3B8", style: "dashed", opacity: 0.85 },
   ];
 }
 
@@ -6299,6 +6289,7 @@ function renderMap(metric, opts = {}) {
   const valMap = provincesValueMap(metric);
 
   function getRag(val) {
+    if (val == null || Number.isNaN(val)) return "na";
     if (isVolume) {
       if (val <= 2500) return "green";
       if (val <= 4500) return "yellow";
