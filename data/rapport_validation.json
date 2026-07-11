@@ -1,93 +1,13 @@
 {
- "genere": "2026-07-10T11:49:05Z",
+ "genere": "2026-07-11T05:40:54Z",
  "anomalies": [
   {
    "fichier": "brut/ID_FOSA_DS_DPSP.csv",
    "type": "periode_indetectable"
   },
   {
-   "fichier": "brut/PEV/Supervision/202607_PEV_Supervision.xlsx",
-   "feuille": "F",
-   "source": "PEV",
-   "periode": "2026-07",
-   "type": "province_inconnue",
-   "libelle": "BAHR EL GHAZAL"
-  },
-  {
-   "fichier": "brut/PEV/Supervision/202607_PEV_Supervision.xlsx",
-   "feuille": "F",
-   "source": "PEV",
-   "periode": "2026-07",
-   "type": "province_inconnue",
-   "libelle": "WADIFIRA"
-  },
-  {
-   "fichier": "brut/PEV/Supervision/202608_PEV_Supervision.xlsx",
-   "feuille": "F",
-   "source": "PEV",
-   "periode": "2026-08",
-   "type": "province_inconnue",
-   "libelle": "BAHR EL GHAZAL"
-  },
-  {
-   "fichier": "brut/PEV/Supervision/202608_PEV_Supervision.xlsx",
-   "feuille": "F",
-   "source": "PEV",
-   "periode": "2026-08",
-   "type": "province_inconnue",
-   "libelle": "WADIFIRA"
-  },
-  {
    "fichier": "brut/PEV/RMA/20260710_PEV_Resultats_Simulation.csv",
    "type": "periode_indetectable"
-  },
-  {
-   "fichier": "brut/PEV/RMA/202607_PEV_RMA.xlsx",
-   "feuille": "RMA",
-   "source": "PEV",
-   "periode": "2026-07",
-   "type": "province_inconnue",
-   "libelle": "BAHR EL GHAZAL"
-  },
-  {
-   "fichier": "brut/PEV/RMA/202607_PEV_RMA.xlsx",
-   "feuille": "RMA",
-   "source": "PEV",
-   "periode": "2026-07",
-   "type": "province_inconnue",
-   "libelle": "WADIFIRA"
-  },
-  {
-   "fichier": "brut/DSR/Indicateurs SRMNIA_Avril 2026.xls",
-   "feuille": "Avril 2026",
-   "source": "DSR",
-   "periode": "2026-04",
-   "type": "province_inconnue",
-   "libelle": "BAHR EL GHAZAL"
-  },
-  {
-   "fichier": "brut/DSR/Indicateurs SRMNIA_Avril 2026.xls",
-   "feuille": "Avril 2026",
-   "source": "DSR",
-   "periode": "2026-04",
-   "type": "province_inconnue",
-   "libelle": "WADIFIRA"
-  },
-  {
-   "fichier": "brut/DSR/Indicateurs_SRMNIA_MAI 2026.xls",
-   "feuille": "Mai 2026",
-   "source": "DSR",
-   "periode": "2026-05",
-   "type": "province_inconnue",
-   "libelle": "BAHR EL GHAZAL"
-  },
-  {
-   "fichier": "brut/DSR/Indicateurs_SRMNIA_MAI 2026.xls",
-   "feuille": "Mai 2026",
-   "source": "DSR",
-   "periode": "2026-05",
-   "type": "province_inconnue",
-   "libelle": "WADIFIRA"
   }
  ]
 }
