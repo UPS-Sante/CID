@@ -1,4 +1,4 @@
-# Centre d'Intelligence des Données — MSPP, République du Tchad
+# Centre d'Intelligence des Données - MSPP, République du Tchad
 
 Tableau de bord de suivi des priorités sanitaires nationales et pipeline de
 consolidation des données de routine, adossés au dossier Drive du CID.
