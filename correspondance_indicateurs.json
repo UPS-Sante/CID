@@ -1,19 +1,547 @@
 {
   "_aide": "Relie chaque metrique du tableau de bord aux libelles d'indicateurs de data/consolide.json. 'contient' : liste de fragments devant tous figurer dans le libelle reel (comparaison sans accents ni majuscules). 'source' : restreint a un dossier Drive donne, facultatif. Une metrique absente d'ici reste en mode demonstration. Fichier modifiable sans toucher au code.",
-
-  "couv-cpn1":   { "contient": ["couverture", "cpn 1"], "source": "DSR" },
-  "couv-cpn4":   { "contient": ["couverture", "cpn 4"], "source": "DSR" },
-  "couv-acc":    { "contient": ["couverture", "accouchement"], "source": "DSR" },
-  "accouch":     { "contient": ["accouchements", "assistes"], "source": "DSR" },
-  "mortmat":     { "contient": ["mortalite", "maternelle"], "source": "DSR" },
-  "mcpr":        { "contient": ["prevalence", "contraceptive"], "source": "DSR" },
-
-  "couv-penta1": { "contient": ["premiere", "penta"], "source": "PEV" },
-  "couv-penta3": { "contient": ["troisieme", "penta"], "source": "PEV" },
-  "couv-var2":   { "contient": ["deuxieme", "var"], "source": "PEV" },
-  "couv-vpi2":   { "contient": ["deuxieme", "vpi"], "source": "PEV" },
-  "abandon":     { "contient": ["abandon", "specifique"], "source": "PEV" },
-  "zd-volume":   { "contient": ["zero", "dose"], "source": "PEV" },
-  "couv-cdf":    { "contient": ["centres", "chaine", "froid"], "source": "PEV" },
-  "surv-prom":   { "contient": ["pfa", "7"], "source": "PEV" }
+  "couv-cpn1": {
+    "contient": [
+      "couverture",
+      "cpn 1"
+    ],
+    "source": "DSR"
+  },
+  "couv-cpn4": {
+    "contient": [
+      "couverture",
+      "cpn 4"
+    ],
+    "source": "DSR"
+  },
+  "couv-acc": {
+    "contient": [
+      "couverture",
+      "accouchement"
+    ],
+    "source": "DSR"
+  },
+  "accouch": {
+    "contient": [
+      "accouchements",
+      "assistes"
+    ],
+    "source": "DSR"
+  },
+  "mortmat": {
+    "contient": [
+      "mortalite",
+      "maternelle"
+    ],
+    "source": "DSR"
+  },
+  "mcpr": {
+    "contient": [
+      "prevalence",
+      "contraceptive"
+    ],
+    "source": "DSR"
+  },
+  "couv-penta1": {
+    "contient": [
+      "premiere",
+      "penta"
+    ],
+    "source": "PEV"
+  },
+  "couv-penta3": {
+    "contient": [
+      "troisieme",
+      "penta"
+    ],
+    "source": "PEV"
+  },
+  "couv-var2": {
+    "contient": [
+      "deuxieme",
+      "var"
+    ],
+    "source": "PEV"
+  },
+  "couv-vpi2": {
+    "contient": [
+      "deuxieme",
+      "vpi"
+    ],
+    "source": "PEV"
+  },
+  "abandon": {
+    "contient": [
+      "abandon",
+      "specifique"
+    ],
+    "source": "PEV"
+  },
+  "zd-volume": {
+    "contient": [
+      "zero",
+      "dose"
+    ],
+    "source": "PEV"
+  },
+  "couv-cdf": {
+    "contient": [
+      "centres",
+      "chaine",
+      "froid"
+    ],
+    "source": "PEV"
+  },
+  "surv-prom": {
+    "contient": [
+      "pfa",
+      "7"
+    ],
+    "source": "PEV"
+  },
+  "palu-incidence": {
+    "contient": [
+      "incidence",
+      "paludisme"
+    ],
+    "source": "PNLP"
+  },
+  "palu-cta": {
+    "contient": [
+      "cta",
+      "24"
+    ],
+    "source": "PNLP"
+  },
+  "palu-mild": {
+    "contient": [
+      "mild"
+    ],
+    "source": "PNLP"
+  },
+  "palu-tdr": {
+    "contient": [
+      "tdr"
+    ],
+    "source": "PNLP"
+  },
+  "vih-depistage": {
+    "contient": [
+      "pvvih",
+      "depist"
+    ],
+    "source": "PSLS"
+  },
+  "vih-arv": {
+    "contient": [
+      "pvvih",
+      "arv"
+    ],
+    "source": "PSLS"
+  },
+  "vih-cv": {
+    "contient": [
+      "charge",
+      "virale"
+    ],
+    "source": "PSLS"
+  },
+  "vih-ptme": {
+    "contient": [
+      "ptme"
+    ],
+    "source": "PSLS"
+  },
+  "tb-notif": {
+    "contient": [
+      "notification",
+      "tb"
+    ],
+    "source": "PNLT"
+  },
+  "tb-succes": {
+    "contient": [
+      "succes",
+      "therapeutique"
+    ],
+    "source": "PNLT"
+  },
+  "tb-mr": {
+    "contient": [
+      "tb",
+      "mr"
+    ],
+    "source": "PNLT"
+  },
+  "tb-vih": {
+    "contient": [
+      "tb",
+      "vih",
+      "test"
+    ],
+    "source": "PNLT"
+  },
+  "dispo-essentiel": {
+    "contient": [
+      "disponibilite",
+      "traceurs"
+    ],
+    "source": "DGPML"
+  },
+  "log-sansrupture": {
+    "contient": [
+      "cs",
+      "sans",
+      "rupture"
+    ],
+    "source": "DGPML"
+  },
+  "log-delai": {
+    "contient": [
+      "delai",
+      "livraison"
+    ],
+    "source": "DGPML"
+  },
+  "log-sigl": {
+    "contient": [
+      "completude",
+      "sigl"
+    ],
+    "source": "DGPML"
+  },
+  "log-rupture": {
+    "contient": [
+      "taux",
+      "rupture",
+      "global"
+    ],
+    "source": "DGPML"
+  },
+  "log-rupture30": {
+    "contient": [
+      "rupture",
+      "30",
+      "jours"
+    ],
+    "source": "DGPML"
+  },
+  "log-alerte": {
+    "contient": [
+      "produits",
+      "alerte"
+    ],
+    "source": "DGPML"
+  },
+  "log-resolution": {
+    "contient": [
+      "resolution",
+      "ruptures"
+    ],
+    "source": "DGPML"
+  },
+  "log-perim": {
+    "contient": [
+      "peremption"
+    ],
+    "source": "DGPML"
+  },
+  "rh-as": {
+    "contient": [
+      "agents",
+      "sante",
+      "10 000"
+    ],
+    "source": "DRH"
+  },
+  "rh-medecins": {
+    "contient": [
+      "medecins",
+      "10 000"
+    ],
+    "source": "DRH"
+  },
+  "rh-sf": {
+    "contient": [
+      "sages",
+      "femmes",
+      "fap"
+    ],
+    "source": "DRH"
+  },
+  "rh-formepev": {
+    "contient": [
+      "personnel",
+      "forme",
+      "pev"
+    ],
+    "source": "DRH"
+  },
+  "rh-vacance": {
+    "contient": [
+      "vacance",
+      "globale"
+    ],
+    "source": "DRH"
+  },
+  "rh-vacmed": {
+    "contient": [
+      "vacance",
+      "medecins"
+    ],
+    "source": "DRH"
+  },
+  "rh-vacsf": {
+    "contient": [
+      "vacance",
+      "sages"
+    ],
+    "source": "DRH"
+  },
+  "rh-vacinf": {
+    "contient": [
+      "vacance",
+      "infirmiers"
+    ],
+    "source": "DRH"
+  },
+  "cousp-alertes": {
+    "contient": [
+      "alertes",
+      "actives"
+    ],
+    "source": "COUSP"
+  },
+  "cousp-notif24": {
+    "contient": [
+      "notifiees",
+      "24"
+    ],
+    "source": "COUSP"
+  },
+  "cousp-rep48": {
+    "contient": [
+      "reponses",
+      "48"
+    ],
+    "source": "COUSP"
+  },
+  "cousp-provalerte": {
+    "contient": [
+      "provinces",
+      "alerte"
+    ],
+    "source": "COUSP"
+  },
+  "cousp-comphebdo": {
+    "contient": [
+      "completude",
+      "rapports",
+      "hebdomadaires"
+    ],
+    "source": "COUSP"
+  },
+  "cousp-prompt": {
+    "contient": [
+      "promptitude",
+      "rapports"
+    ],
+    "source": "COUSP"
+  },
+  "si-actifs": {
+    "contient": [
+      "systemes",
+      "information",
+      "operationnels"
+    ],
+    "source": "DPSIS"
+  },
+  "si-coherence": {
+    "contient": [
+      "coherence",
+      "dhis2"
+    ],
+    "source": "DPSIS"
+  },
+  "si-dqs": {
+    "contient": [
+      "dqs",
+      "realises"
+    ],
+    "source": "DPSIS"
+  },
+  "si-lqas": {
+    "contient": [
+      "lqas"
+    ],
+    "source": "DPSIS"
+  },
+  "zd-strat": {
+    "contient": [
+      "realisation",
+      "strategies",
+      "avancees"
+    ],
+    "source": "PEV"
+  },
+  "surv-rougeole": {
+    "contient": [
+      "prelevement",
+      "rougeole"
+    ],
+    "source": "PEV"
+  },
+  "surv-meningite": {
+    "contient": [
+      "meningite",
+      "temps"
+    ],
+    "source": "PEV"
+  },
+  "dsr-tac": {
+    "contient": [
+      "acceptation",
+      "contraceptifs",
+      "tac"
+    ],
+    "source": "DSR"
+  },
+  "zd-pop": {
+    "contient": [
+      "population",
+      "moins",
+      "un an"
+    ],
+    "source": "PEV"
+  },
+  "cdf-pannes": {
+    "contient": [
+      "pannes",
+      "chaine",
+      "froid"
+    ],
+    "source": "PEV"
+  },
+  "cdf-delai": {
+    "contient": [
+      "delai",
+      "reparation"
+    ],
+    "source": "PEV"
+  },
+  "surv-tlohcomp": {
+    "contient": [
+      "completude",
+      "tloh"
+    ],
+    "source": "PEV"
+  },
+  "surv-tlohprompt": {
+    "contient": [
+      "promptitude",
+      "tloh"
+    ],
+    "source": "PEV"
+  },
+  "pev-msd": {
+    "contient": [
+      "msd",
+      "vaccins"
+    ],
+    "source": "PEV"
+  },
+  "pev-perim": {
+    "contient": [
+      "peremption",
+      "vaccins"
+    ],
+    "source": "PEV"
+  },
+  "coord-cta": {
+    "contient": [
+      "reunions",
+      "cta"
+    ],
+    "source": "PEV"
+  },
+  "coord-revsem": {
+    "contient": [
+      "revues",
+      "semestrielles"
+    ],
+    "source": "PEV"
+  },
+  "coord-revtrim": {
+    "contient": [
+      "revues",
+      "trimestrielles"
+    ],
+    "source": "PEV"
+  },
+  "coord-inter": {
+    "contient": [
+      "coordination",
+      "interministerielle"
+    ],
+    "source": "PEV"
+  },
+  "dsr-abandon": {
+    "contient": [
+      "abandon",
+      "methode"
+    ],
+    "source": "DSR"
+  },
+  "dsr-cap": {
+    "contient": [
+      "couple",
+      "annee",
+      "protection"
+    ],
+    "source": "DSR"
+  },
+  "com-asc": {
+    "contient": [
+      "asc",
+      "actif"
+    ],
+    "source": "DSR"
+  },
+  "com-ref": {
+    "contient": [
+      "references",
+      "asc"
+    ],
+    "source": "DSR"
+  },
+  "sr-dispo": {
+    "contient": [
+      "disponibilite",
+      "produits",
+      "sr"
+    ],
+    "source": "DSR"
+  },
+  "sr-sansrupt": {
+    "contient": [
+      "sans",
+      "rupture",
+      "30"
+    ],
+    "source": "DSR"
+  },
+  "sr-msd": {
+    "contient": [
+      "msd",
+      "sr"
+    ],
+    "source": "DSR"
+  },
+  "sr-sigl": {
+    "contient": [
+      "completude",
+      "sigl"
+    ],
+    "source": "DSR"
+  }
 }

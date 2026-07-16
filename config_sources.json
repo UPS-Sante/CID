@@ -2,5 +2,12 @@
   "_aide": "Chaque dossier de premier niveau du Drive est une source. Lecteurs disponibles : matrice_provinces (provinces en lignes, indicateurs en colonnes, c'est le defaut) et format_long (colonnes province, indicateur, valeur, periode facultative). Une source absente d'ici utilise matrice_provinces.",
   "DSR": "matrice_provinces",
   "PEV": "matrice_provinces",
-  "TCD_SHP_LV2": "matrice_provinces"
+  "TCD_SHP_LV2": "matrice_provinces",
+  "PNLP": "matrice_provinces",
+  "PSLS": "matrice_provinces",
+  "PNLT": "matrice_provinces",
+  "DGPML": "matrice_provinces",
+  "DRH": "matrice_provinces",
+  "COUSP": "matrice_provinces",
+  "DPSIS": "matrice_provinces"
 }
