@@ -4562,7 +4562,7 @@ VIEWS["min-overview"] = () => {
         trend: "", trendDir: "flat",
         rag: "orange",
         source: "TLOH hebdo · COUSP · Temps réel",
-        sparkData: [4, 5, 7, 6, 8, 9, 10, 11, 9, 10, 11, 12],
+        sparkData: [],
         sparkColor: "#C2410C",
         action: t("act_alertes")
       })}
@@ -4588,7 +4588,7 @@ VIEWS["min-overview"] = () => {
         trend: "", trendDir: "flat",
         rag: rag(repAlertes, 90),
         source: "Investigations COUSP · OMS-AFRO",
-        sparkData: [62, 65, 68, 70, 71, 72, 73, 74, 75, 74, 75, 76],
+        sparkData: [],
         sparkColor: "#C2410C",
         action: t("act_rep_alertes")
       })}
@@ -4639,7 +4639,7 @@ VIEWS["min-overview"] = () => {
         trend: "", trendDir: "flat",
         rag: rag(execBudget, 85),
         source: "DAF · Trésor public · DGPML",
-        sparkData: [22, 28, 32, 36, 40, 44, 48, 52, 55, 58, 60, 62],
+        sparkData: [],
         sparkColor: "#1E40AF",
         action: t("act_exec_budget")
       })}
@@ -4923,10 +4923,10 @@ VIEWS["vacc-cold"] = (s) => {
         <div class="g-2-1">
           ${card("Fonctionnalité CdF par province", "% CS avec CdF fonctionnelle", renderMap("couv-cdf"), "Source : SMT (Stocks vaccins)")}
           ${card("Composition du parc CdF", "Équipements frigorifiques", renderBars([
-            { label:"Solaires",   val:48, target:60, rag:"yellow" },
-            { label:"Électriques",val:35, target:30, rag:"green" },
-            { label:"Gaz",        val:12, target:5,  rag:"orange" },
-            { label:"Mixtes",     val:5,  target:5,  rag:"green" },
+            { label:"Solaires",   val:null, target:60 },
+            { label:"Électriques",val:null, target:30 },
+            { label:"Gaz",        val:null, target:5 },
+            { label:"Mixtes",     val:null, target:5 },
           ]), "Évolution : transition solaire en cours")}
         </div>
         ${aiBox(
@@ -5223,22 +5223,22 @@ function domainNarrative(domId, avg, inds) {
 VIEWS["vacc-surv"] = () => {
   // Surveillance indicators (MAPI + PFA + Rougeole + Méningite + Fièvre Jaune)
   const survIndicators = [
-    { id:"pfa-notif",     l:"PFA notifiés sous 7 jours",                 val:84, target:80, dir:"gte" },
-    { id:"pfa-rate",      l:"Taux PFA non polio / 100k < 15 ans",        val:92, target:200, dir:"gte", abs:true, unit:"" },
-    { id:"rougeole",      l:"Districts notifiant rougeole",              val:78, target:80, dir:"gte" },
-    { id:"meningite",     l:"Districts notifiant méningite à temps",      val:71, target:80, dir:"gte" },
-    { id:"fj",            l:"Prélèvements fièvre jaune (≥1/DS)",         val:68, target:80, dir:"gte" },
-    { id:"prom-pfa",      l:"Promptitude notification PFA (≤ 48h)",       val:82, target:90, dir:"gte" },
-    { id:"prom-rougeole", l:"Promptitude notification rougeole (≤ 48h)",  val:74, target:90, dir:"gte" },
-    { id:"comp-hebdo",    l:"Complétude rapports hebdo TLOH",              val:86, target:95, dir:"gte" },
-    { id:"prom-hebdo",    l:"Promptitude rapports hebdo TLOH",             val:72, target:90, dir:"gte" },
+    { id:"pfa-notif",     l:"PFA notifiés sous 7 jours",                 val:nationalAggregate("surv-prom"), target:80, dir:"gte" },
+    { id:"pfa-rate",      l:"Taux PFA non polio / 100k < 15 ans",        val:null, target:200, dir:"gte", abs:true, unit:"" },
+    { id:"rougeole",      l:"Cas suspects de rougeole notifiés",         val:nationalAggregate("surv-rougeole"), target:null, unit:"" },
+    { id:"meningite",     l:"Cas suspects de méningite notifiés",        val:nationalAggregate("surv-meningite"), target:null, unit:"" },
+    { id:"fj",            l:"Prélèvements fièvre jaune (≥1/DS)",         val:null, target:80, dir:"gte" },
+    { id:"prom-pfa",      l:"Promptitude notification PFA (≤ 48h)",       val:null, target:90, dir:"gte" },
+    { id:"prom-rougeole", l:"Promptitude notification rougeole (≤ 48h)",  val:null, target:90, dir:"gte" },
+    { id:"comp-hebdo",    l:"Complétude rapports hebdo TLOH",              val:nationalAggregate("surv-tlohcomp"), target:95, dir:"gte" },
+    { id:"prom-hebdo",    l:"Promptitude rapports hebdo TLOH",             val:nationalAggregate("surv-tlohprompt"), target:90, dir:"gte" },
   ];
 
   const mapiIndicators = [
-    { l:"MAPI graves notifiées (T1 2026)", val:18, raw:true },
-    { l:"Délai notification moyen (j)",     val:4.2, target:7, dir:"lte", inverse:true },
-    { l:"MAPI investiguées (≤ 30j)",        val:94, target:100, dir:"gte" },
-    { l:"Causalité confirmée",              val:61, raw:true, suffix:"% (11/18)" },
+    { l:"MAPI graves notifiées", val:null, raw:true },
+    { l:"Délai notification moyen (j)",     val:null, target:7, dir:"lte", inverse:true },
+    { l:"MAPI investiguées (≤ 30j)",        val:null, target:100, dir:"gte" },
+    { l:"Causalité confirmée",              val:null, raw:true },
   ];
 
   return {
@@ -5271,7 +5271,7 @@ VIEWS["vacc-surv"] = () => {
               val: ind.val,
               target: ind.target,
               rag: rag(ind.val, ind.target, ind.dir === "lte"),
-              showVal: ind.val + (ind.unit !== undefined ? ind.unit : "%"),
+              showVal: ind.val == null ? "ND" : ind.val + (ind.unit !== undefined ? ind.unit : "%"),
               max: 100
             })))}
           </div>
@@ -5287,15 +5287,15 @@ VIEWS["vacc-surv"] = () => {
                 <div class="bar-row">
                   <div class="bar-label">${m.l}</div>
                   <div class="bar-track">
-                    ${m.raw ? '' : `<div class="bar-fill ${m.target ? rag(m.val, m.target, m.inverse) : 'yellow'}" data-w="${Math.min(100, m.val)}" style="width:0%;"></div>`}
+                    ${m.raw || m.val == null ? '' : `<div class="bar-fill ${m.target ? rag(m.val, m.target, m.inverse) : 'yellow'}" data-w="${Math.min(100, m.val)}" style="width:0%;"></div>`}
                     ${m.target ? `<div class="bar-target" style="left:${Math.min(100, m.target)}%;"></div>` : ''}
                   </div>
-                  <div class="bar-val ${m.target ? rag(m.val, m.target, m.inverse) : ''}">${m.suffix || (m.val + (m.target && m.target > 10 ? '%' : ''))}</div>
+                  <div class="bar-val ${m.target ? rag(m.val, m.target, m.inverse) : ''}">${m.suffix || (m.val == null ? "ND" : m.val + (m.target && m.target > 10 ? '%' : ''))}</div>
                 </div>
               `).join("")}
             </div>
             <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:11.5px;color:var(--muted);">
-              <strong style="color:var(--ink);">Types de MAPI graves :</strong> Anaphylaxie (6), Convulsions fébriles (5), Abcès local (4), Fièvre élevée (2), Autres (1).
+              <strong style="color:var(--ink);">Types de MAPI graves :</strong> ND — en attente des données du Comité National de Pharmacovigilance.
             </div>
           `, "Source : Comité National de Pharmacovigilance")}
         </div>
@@ -5327,30 +5327,32 @@ VIEWS["vacc-surv"] = () => {
 VIEWS["vacc-intrants"] = () => {
   // Vaccines & inputs (antigens + injection devices + safety boxes + cold chain consumables)
   const antigens = [
-    { id:"bcg",       l:"BCG",                 dispo:88, msd:3.2, rupt:6,  perim:1.2 },
-    { id:"penta",     l:"Pentavalent (DTC-HepB-Hib)", dispo:74, msd:2.4, rupt:14, perim:0.8 },
-    { id:"vpo",       l:"VPO (oral polio)",    dispo:82, msd:2.8, rupt:9,  perim:1.5 },
-    { id:"vpi",       l:"VPI (poliomyélite inactivé)", dispo:78, msd:2.6, rupt:11, perim:0.6 },
-    { id:"var",       l:"VAR (rougeole)",      dispo:71, msd:2.2, rupt:17, perim:1.8 },
-    { id:"pcv",       l:"PCV-13 (pneumocoque)",dispo:69, msd:2.0, rupt:18, perim:0.4 },
-    { id:"rota",      l:"Rotavirus",           dispo:73, msd:2.3, rupt:15, perim:0.9 },
-    { id:"fj",        l:"Fièvre jaune",        dispo:84, msd:3.5, rupt:8,  perim:1.1 },
-    { id:"r21",       l:"R21/Matrix-M (paludisme)",dispo:58, msd:1.6, rupt:22, perim:0.2 },
-    { id:"vat",       l:"VAT (Tétanos)",       dispo:81, msd:3.1, rupt:10, perim:1.4 },
+    { id:"bcg",       l:"BCG",                 dispo:null, msd:null, rupt:null, perim:null },
+    { id:"penta",     l:"Pentavalent (DTC-HepB-Hib)", dispo:null, msd:null, rupt:null, perim:null },
+    { id:"vpo",       l:"VPO (oral polio)",    dispo:null, msd:null, rupt:null, perim:null },
+    { id:"vpi",       l:"VPI (poliomyélite inactivé)", dispo:null, msd:null, rupt:null, perim:null },
+    { id:"var",       l:"VAR (rougeole)",      dispo:null, msd:null, rupt:null, perim:null },
+    { id:"pcv",       l:"PCV-13 (pneumocoque)",dispo:null, msd:null, rupt:null, perim:null },
+    { id:"rota",      l:"Rotavirus",           dispo:null, msd:null, rupt:null, perim:null },
+    { id:"fj",        l:"Fièvre jaune",        dispo:null, msd:null, rupt:null, perim:null },
+    { id:"r21",       l:"R21/Matrix-M (paludisme)",dispo:null, msd:null, rupt:null, perim:null },
+    { id:"vat",       l:"VAT (Tétanos)",       dispo:null, msd:null, rupt:null, perim:null },
   ];
 
   const consumables = [
-    { l:"Seringues 0.05 ml (BCG)",        val:78, target:95 },
-    { l:"Seringues 0.5 ml AD",            val:84, target:95 },
-    { l:"Boîtes de sécurité (5L)",        val:91, target:95 },
-    { l:"Coton, alcool, compresses",      val:88, target:95 },
-    { l:"Sachets de glace (CdF mobile)",  val:72, target:90 },
-    { l:"Thermomètres mini-max",          val:65, target:95 },
-    { l:"Cartes 30DTR / freeze-tag",      val:58, target:90 },
+    { l:"Seringues 0.05 ml (BCG)",        val:null, target:95 },
+    { l:"Seringues 0.5 ml AD",            val:null, target:95 },
+    { l:"Boîtes de sécurité (5L)",        val:null, target:95 },
+    { l:"Coton, alcool, compresses",      val:null, target:95 },
+    { l:"Sachets de glace (CdF mobile)",  val:null, target:90 },
+    { l:"Thermomètres mini-max",          val:null, target:95 },
+    { l:"Cartes 30DTR / freeze-tag",      val:null, target:90 },
   ];
 
-  const dispoAvg = Math.round(antigens.reduce((a, x) => a + x.dispo, 0) / antigens.length);
-  const ruptAvg = Math.round(antigens.reduce((a, x) => a + x.rupt, 0) / antigens.length);
+  const dispoVals = antigens.map(x => x.dispo).filter(Number.isFinite);
+  const ruptVals = antigens.map(x => x.rupt).filter(Number.isFinite);
+  const dispoAvg = dispoVals.length ? Math.round(dispoVals.reduce((a, b) => a + b, 0) / dispoVals.length) : null;
+  const ruptAvg = ruptVals.length ? Math.round(ruptVals.reduce((a, b) => a + b, 0) / ruptVals.length) : null;
 
   return {
     crumbs:["Vaccination · PEV", "Vaccins & intrants"],
@@ -5499,7 +5501,7 @@ VIEWS["dsr-overview"] = () => {
             { label:"CPN 1",   val:cpn1, target:95, rag:rag(cpn1,95) },
             { label:"CPN 4",   val:cpn4, target:65, rag:rag(cpn4,65) },
             { label:"Acc. assistés", val:acc, target:70, rag:rag(acc,70) },
-            { label:"CPoN",    val:42,   target:60, rag:"orange" },
+            { label:"CPoN",    val:null, target:60 },
             { label:"mCPR",    val:mcpr, target:30, rag:"red" },
           ]), "")}
         </div>
@@ -5531,12 +5533,12 @@ VIEWS["dsr-mat"] = () => ({
       <div class="g-2-1">
         ${card("Mortalité maternelle par province", "Pour 100 000 naissances vivantes", renderMap("couv-cpn4", { inverse: true }), "Source : DHIS2 + Audits décès")}
         ${card("Continuum CPN → Post-natal", "Taux de complétion en cascade", renderBars([
-          { label:"CPN 1",       val:78, target:95, rag:"yellow" },
-          { label:"CPN 2",       val:65, target:80, rag:"yellow" },
-          { label:"CPN 3",       val:52, target:70, rag:"orange" },
-          { label:"CPN 4",       val:42, target:65, rag:"red" },
-          { label:"Acc. assisté",val:44, target:70, rag:"red" },
-          { label:"CPoN",        val:35, target:60, rag:"red" },
+          { label:"CPN 1",       val:nationalAggregate("couv-cpn1"), target:95 },
+          { label:"CPN 2",       val:null, target:80 },
+          { label:"CPN 3",       val:null, target:70 },
+          { label:"CPN 4",       val:nationalAggregate("couv-cpn4"), target:65 },
+          { label:"Acc. assisté",val:nationalAggregate("accouch"), target:70 },
+          { label:"CPoN",        val:null, target:60 },
         ]), "")}
       </div>
     </div>
@@ -5561,12 +5563,12 @@ VIEWS["dsr-pf"] = () => ({
       <div class="g-2-1">
         ${card("Prévalence PF par province", "Taux PF (toutes méthodes)", renderMap("couv-pf"), "Source : DHIS2 SRMNIA")}
         ${card("Disponibilité méthodes contraceptives", "% CS offrant la méthode", renderBars([
-          { label:"Implants",   val:71, target:95, rag:"orange" },
-          { label:"DIU",        val:64, target:95, rag:"orange" },
-          { label:"Injectables",val:82, target:95, rag:"yellow" },
-          { label:"Pilule",     val:88, target:95, rag:"yellow" },
-          { label:"Préservatifs",val:91, target:95, rag:"yellow" },
-          { label:"Sayana-Press",val:54, target:80, rag:"red" },
+          { label:"Implants",   val:null, target:95 },
+          { label:"DIU",        val:null, target:95 },
+          { label:"Injectables",val:null, target:95 },
+          { label:"Pilule",     val:null, target:95 },
+          { label:"Préservatifs",val:null, target:95 },
+          { label:"Sayana-Press",val:null, target:80 },
         ]), "Source : RMA + SIGL")}
       </div>
       ${aiBox(
@@ -5597,12 +5599,12 @@ VIEWS["dsr-com"] = () => ({
       <div class="g-2-1">
         ${card("ASC actifs par province", "Réseau de 12 000 ASC déployé sur 23 provinces", renderMap("asc-actifs"), "Source : Registres ASC + RMA communautaire")}
         ${card("Activité ASC — Production", "Indicateurs traceurs T1 2026", renderBars([
-          { label:"Causeries éducatives", val:78, target:90, rag:"yellow", showVal:"78%" },
-          { label:"Visites à domicile",   val:65, target:80, rag:"yellow", showVal:"65%" },
-          { label:"Acceptantes PF",        val:72, target:80, rag:"yellow", showVal:"72%" },
-          { label:"Référencements CS",     val:82, target:80, rag:"green",  showVal:"82%" },
-          { label:"Rapports mensuels",     val:71, target:90, rag:"orange", showVal:"71%" },
-          { label:"Supervision reçue",     val:68, target:80, rag:"orange", showVal:"68%" },
+          { label:"Causeries éducatives", val:null, target:90 },
+          { label:"Visites à domicile",   val:null, target:80 },
+          { label:"Acceptantes PF",        val:null, target:80 },
+          { label:"Référencements CS",     val:null, target:80 },
+          { label:"Rapports mensuels",     val:null, target:90 },
+          { label:"Supervision reçue",     val:null, target:80 },
         ]), "")}
       </div>
 
@@ -5715,11 +5717,11 @@ VIEWS["dpml-dispo"] = () => ({
       <div class="g-2-1">
         ${card("Disponibilité par province", "% CS avec stock suffisant", renderMap("couv-dispo"), "")}
         ${card("Causes de rupture", "Analyse racine — 90 j", renderBars([
-          { label:"Supply centrale",val:38, target:null, rag:"orange", max:50 },
-          { label:"Transport",      val:26, target:null, rag:"yellow", max:50 },
-          { label:"Quantification", val:19, target:null, rag:"yellow", max:50 },
-          { label:"Cold chain",     val:11, target:null, rag:"green", max:50 },
-          { label:"Autres",         val:6,  target:null, rag:"green", max:50 },
+          { label:"Supply centrale",val:null, target:null, max:50 },
+          { label:"Transport",      val:null, target:null, max:50 },
+          { label:"Quantification", val:null, target:null, max:50 },
+          { label:"Cold chain",     val:null, target:null, max:50 },
+          { label:"Autres",         val:null, target:null, max:50 },
         ]), "Source : SIGL + audits")}
       </div>
     </div>
@@ -5951,10 +5953,10 @@ VIEWS["dpsis-comp"] = () => {
 VIEWS["dpsis-qual"] = () => {
   // Internal quality indicators (per system)
   const qualSystems = [
-    { id:"coherence", l:"Cohérence DHIS2 ↔ Registre CS",      val:82, target:90, freq:"DQS · Semestriel" },
-    { id:"dqs",       l:"DQS réalisés (Self-assessment)",       val:62, target:80, freq:"Trimestriel" },
-    { id:"lqas",      l:"LQAS réalisés (Lot Quality)",           val:48, target:80, freq:"Annuel" },
-    { id:"backup",    l:"Sauvegardes serveurs J+0",              val:96, target:95, freq:"Quotidien" },
+    { id:"coherence", l:"Cohérence DHIS2 ↔ Registre CS",      val:nationalAggregate("si-coherence"), target:90, freq:"DQS · Semestriel" },
+    { id:"dqs",       l:"DQS réalisés (Self-assessment)",       val:nationalAggregate("si-dqs"), target:80, freq:"Trimestriel" },
+    { id:"lqas",      l:"LQAS réalisés (Lot Quality)",           val:nationalAggregate("si-lqas"), target:80, freq:"Annuel" },
+    { id:"backup",    l:"Sauvegardes serveurs J+0",              val:null, target:95, freq:"Quotidien" },
   ];
 
   // SIGL cross-checks — triangulation between systems
@@ -5962,48 +5964,49 @@ VIEWS["dpsis-qual"] = () => {
     {
       pair: "DHIS2 ↔ SIGL",
       label: "Consommation déclarée DHIS2 vs stocks sortis SIGL",
-      val: 74, target: 85,
-      gap: "Écart > 15% sur 6 provinces",
-      cause: "Saisie tardive RMA / stocks fin de mois non clôturés",
+      val: null, target: 85,
+      gap: "",
+      cause: "",
     },
     {
       pair: "DHIS2 ↔ SIGL",
       label: "Disponibilité produits PF DHIS2 vs stocks SIGL",
-      val: 69, target: 85,
-      gap: "Sayana-Press : variable manquante DHIS2",
-      cause: "Configuration DHIS2 en cours · variable créée avril 2026",
+      val: null, target: 85,
+      gap: "",
+      cause: "",
     },
     {
       pair: "SMT ↔ DHIS2",
       label: "Couverture vaccinale DHIS2 vs stocks vaccins SMT",
-      val: 81, target: 90,
-      gap: "Cohérence acceptable",
-      cause: "Réconciliation mensuelle CTA-PEV",
+      val: null, target: 90,
+      gap: "",
+      cause: "",
     },
     {
       pair: "SIGL ↔ Tracker",
       label: "Distribution antigènes SIGL vs supervision Tracker",
-      val: 65, target: 85,
-      gap: "Tracker pilote · 7 districts seulement",
-      cause: "Extension Tracker prévue T3-T4 sur 13 provinces PDA",
+      val: null, target: 85,
+      gap: "",
+      cause: "",
     },
     {
       pair: "SIGL ↔ IHRIS",
       label: "Personnel formé logistique IHRIS vs gestionnaires SIGL",
-      val: 88, target: 90,
-      gap: "Bonne cohérence",
-      cause: "Mise à jour IHRIS trimestrielle",
+      val: null, target: 90,
+      gap: "",
+      cause: "",
     },
     {
       pair: "SIGL ↔ SIGL",
       label: "Complétude SIGL pyramidale (CPA→PPA→HD→CS)",
-      val: 71, target: 95,
-      gap: "Niveau CS faible · zone sahélienne",
-      cause: "Couverture mobile + supervision insuffisantes",
+      val: null, target: 95,
+      gap: "",
+      cause: "",
     },
   ];
 
-  const siglAvg = Math.round(siglCross.reduce((a,c) => a+c.val, 0) / siglCross.length);
+  const siglVals = siglCross.map(c => c.val).filter(Number.isFinite);
+  const siglAvg = siglVals.length ? Math.round(siglVals.reduce((a, b) => a + b, 0) / siglVals.length) : null;
 
   return {
     crumbs:["Système d'Information","Qualité des données"],
@@ -6050,7 +6053,7 @@ VIEWS["dpsis-qual"] = () => {
                       ${c.label}
                       <div style="font-size:10.5px;color:var(--muted);margin-top:2px;font-weight:400;">${c.cause}</div>
                     </td>
-                    <td class="num" style="font-size:13px;">${c.val}%</td>
+                    <td class="num" style="font-size:13px;">${c.val == null ? "ND" : c.val + "%"}</td>
                     <td class="num" style="color:var(--muted);">${c.target}%</td>
                     <td class="num"><span class="pill ${r}">${ragLabel(r)}</span></td>
                     <td style="font-size:11px;color:var(--body);">${c.gap}</td>
