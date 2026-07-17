@@ -108,8 +108,7 @@
   },
   "palu-cta": {
     "contient": [
-      "cta",
-      "24"
+      "cta"
     ],
     "source": "PNLP"
   },
@@ -127,14 +126,12 @@
   },
   "vih-depistage": {
     "contient": [
-      "pvvih",
-      "depist"
+      "depistees"
     ],
     "source": "PSLS"
   },
   "vih-arv": {
     "contient": [
-      "pvvih",
       "arv"
     ],
     "source": "PSLS"
@@ -154,32 +151,30 @@
   },
   "tb-notif": {
     "contient": [
-      "notification",
-      "tb"
+      "tuberculose",
+      "notifies"
     ],
-    "source": "PNLT"
+    "source": "PNT"
   },
   "tb-succes": {
     "contient": [
       "succes",
       "therapeutique"
     ],
-    "source": "PNLT"
+    "source": "PNT"
   },
   "tb-mr": {
     "contient": [
-      "tb",
-      "mr"
+      "multiresistante"
     ],
-    "source": "PNLT"
+    "source": "PNT"
   },
   "tb-vih": {
     "contient": [
-      "tb",
-      "vih",
-      "test"
+      "testes",
+      "vih"
     ],
-    "source": "PNLT"
+    "source": "PNT"
   },
   "dispo-essentiel": {
     "contient": [
@@ -190,9 +185,7 @@
   },
   "log-sansrupture": {
     "contient": [
-      "cs",
-      "sans",
-      "rupture"
+      "sans rupture"
     ],
     "source": "DGPML"
   },
@@ -214,29 +207,26 @@
     "contient": [
       "taux",
       "rupture",
-      "global"
+      "traceurs"
     ],
     "source": "DGPML"
   },
   "log-rupture30": {
     "contient": [
-      "rupture",
-      "30",
-      "jours"
+      "30 jours"
     ],
     "source": "DGPML"
   },
   "log-alerte": {
     "contient": [
-      "produits",
-      "alerte"
+      "alertes",
+      "logistiques"
     ],
     "source": "DGPML"
   },
   "log-resolution": {
     "contient": [
-      "resolution",
-      "ruptures"
+      "resolues"
     ],
     "source": "DGPML"
   },
@@ -249,7 +239,6 @@
   "rh-as": {
     "contient": [
       "agents",
-      "sante",
       "10 000"
     ],
     "source": "DRH"
@@ -264,15 +253,13 @@
   "rh-sf": {
     "contient": [
       "sages",
-      "femmes",
-      "fap"
+      "10 000"
     ],
     "source": "DRH"
   },
   "rh-formepev": {
     "contient": [
-      "personnel",
-      "forme",
+      "formes",
       "pev"
     ],
     "source": "DRH"
@@ -280,7 +267,7 @@
   "rh-vacance": {
     "contient": [
       "vacance",
-      "globale"
+      "postes"
     ],
     "source": "DRH"
   },
@@ -308,21 +295,20 @@
   "cousp-alertes": {
     "contient": [
       "alertes",
-      "actives"
+      "notifiees",
+      "nombre"
     ],
     "source": "COUSP"
   },
   "cousp-notif24": {
     "contient": [
-      "notifiees",
-      "24"
+      "24 heures"
     ],
     "source": "COUSP"
   },
   "cousp-rep48": {
     "contient": [
-      "reponses",
-      "48"
+      "48 heures"
     ],
     "source": "COUSP"
   },
@@ -336,37 +322,33 @@
   "cousp-comphebdo": {
     "contient": [
       "completude",
-      "rapports",
-      "hebdomadaires"
+      "hebdomadaire"
     ],
     "source": "COUSP"
   },
   "cousp-prompt": {
     "contient": [
       "promptitude",
-      "rapports"
+      "hebdomadaire"
     ],
     "source": "COUSP"
   },
   "si-actifs": {
     "contient": [
-      "systemes",
-      "information",
-      "operationnels"
+      "utilisateurs",
+      "actifs"
     ],
     "source": "DPSIS"
   },
   "si-coherence": {
     "contient": [
-      "coherence",
-      "dhis2"
+      "coherence"
     ],
     "source": "DPSIS"
   },
   "si-dqs": {
     "contient": [
-      "dqs",
-      "realises"
+      "dqs"
     ],
     "source": "DPSIS"
   },
@@ -386,23 +368,20 @@
   },
   "surv-rougeole": {
     "contient": [
-      "prelevement",
       "rougeole"
     ],
-    "source": "PEV"
+    "source": "COUSP"
   },
   "surv-meningite": {
     "contient": [
-      "meningite",
-      "temps"
+      "meningite"
     ],
-    "source": "PEV"
+    "source": "COUSP"
   },
   "dsr-tac": {
     "contient": [
       "acceptation",
-      "contraceptifs",
-      "tac"
+      "contraceptif"
     ],
     "source": "DSR"
   },
@@ -434,14 +413,14 @@
       "completude",
       "tloh"
     ],
-    "source": "PEV"
+    "source": "COUSP"
   },
   "surv-tlohprompt": {
     "contient": [
       "promptitude",
       "tloh"
     ],
-    "source": "PEV"
+    "source": "COUSP"
   },
   "pev-msd": {
     "contient": [
@@ -488,7 +467,7 @@
   "dsr-abandon": {
     "contient": [
       "abandon",
-      "methode"
+      "cpn"
     ],
     "source": "DSR"
   },
@@ -543,5 +522,37 @@
       "sigl"
     ],
     "source": "DSR"
+  },
+  "comp-dhis2": {
+    "contient": [
+      "dhis2",
+      "routine"
+    ],
+    "source": "DPSIS"
+  },
+  "comp-tracker": {
+    "contient": [
+      "tracker"
+    ],
+    "source": "DPSIS"
+  },
+  "comp-sigl": {
+    "contient": [
+      "completude",
+      "sigl"
+    ],
+    "source": "DPSIS"
+  },
+  "comp-smt": {
+    "contient": [
+      "esmt"
+    ],
+    "source": "DPSIS"
+  },
+  "comp-ihris": {
+    "contient": [
+      "ihris"
+    ],
+    "source": "DPSIS"
   }
 }

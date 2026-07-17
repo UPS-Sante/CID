@@ -9,5 +9,6 @@
   "DGPML": "matrice_provinces",
   "DRH": "matrice_provinces",
   "COUSP": "matrice_provinces",
-  "DPSIS": "matrice_provinces"
+  "DPSIS": "matrice_provinces",
+  "PNT": "matrice_provinces"
 }
