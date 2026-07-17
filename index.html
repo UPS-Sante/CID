@@ -3101,14 +3101,14 @@ function drConstruire(consolide, catalogue, correspondance, referentiel) {
 /* selecteur de mois aligne sur les periodes reellement disponibles */
 function drActualiserPeriodes() {
   if (!DR.periodes.length) return;
-  const noms = ["Janvier","Février","Mars","Avril","Mai","Juin",
-                "Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
-  MONTH_OPTIONS.length = 0;
-  DR.periodes.slice().reverse().forEach(p => {
-    const [a, m] = p.split("-").map(Number);
-    MONTH_OPTIONS.push({ v: p, l: `${noms[m - 1]} ${a}` });
-  });
-  if (state.periodMode === "month") state.periodValue = MONTH_OPTIONS[0].v;
+  const [a, m] = DR.periodes[DR.periodes.length - 1].split("-").map(Number);
+  while (a > ANNEES[0]) ANNEES.unshift(ANNEES[0] + 1);
+  state.periodYear = a;
+  state.periodMonth = m;
+  state.periodQuarter = Math.ceil(m / 3);
+  majPeriodValue();
+  const lbl = document.getElementById("h-period");
+  if (lbl) lbl.textContent = periodLabel();
 }
 
 async function chargerDonneesReelles() {
@@ -3206,6 +3206,9 @@ const state = {
   scope: "national",
   pdaDomain: "overview",
   periodMode: "month",
+  periodYear: 2026,
+  periodMonth: 4,
+  periodQuarter: 2,
   periodValue: "2026-04",
   provinceFilter: null,
   mapMode: "performance",
@@ -3823,32 +3826,22 @@ function applyStaticTranslations() {
 }
 
 const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-const MONTH_OPTIONS = [
-  {v:"2026-04", l:"Avril 2026"},
-  {v:"2026-03", l:"Mars 2026"},
-  {v:"2026-02", l:"Février 2026"},
-  {v:"2026-01", l:"Janvier 2026"},
-  {v:"2025-12", l:"Décembre 2025"},
-  {v:"2025-11", l:"Novembre 2025"},
+const ANNEES = (() => { const a = []; for (let x = 2026; x >= 2020; x--) a.push(x); return a; })();
+const MOIS_NOMS = ["Janvier","Février","Mars","Avril","Mai","Juin",
+                   "Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+const TRIMESTRES = [
+  {v:1, l:"T1 (Jan–Mar)"}, {v:2, l:"T2 (Avr–Jun)"},
+  {v:3, l:"T3 (Jul–Sep)"}, {v:4, l:"T4 (Oct–Déc)"},
 ];
-const QUARTER_OPTIONS = [
-  {v:"2026-Q1", l:"T1 2026 (Jan–Mar)"},
-  {v:"2025-Q4", l:"T4 2025 (Oct–Déc)"},
-  {v:"2025-Q3", l:"T3 2025 (Jul–Sep)"},
-  {v:"2025-Q2", l:"T2 2025 (Avr–Jun)"},
-  {v:"2025-Q1", l:"T1 2025 (Jan–Mar)"},
-];
-const YEAR_OPTIONS = [
-  {v:"2026", l:"Année 2026"},
-  {v:"2025", l:"Année 2025"},
-  {v:"2024", l:"Année 2024"},
-  {v:"2023", l:"Année 2023"},
-];
+function majPeriodValue() {
+  state.periodValue = state.periodMode === "quarter"
+    ? `${state.periodYear}-Q${state.periodQuarter}`
+    : `${state.periodYear}-${String(state.periodMonth).padStart(2, "0")}`;
+}
 
 function periodLabel() {
-  if (state.periodMode === "month")   return (MONTH_OPTIONS.find(m=>m.v===state.periodValue)||{}).l || state.periodValue;
-  if (state.periodMode === "quarter") return (QUARTER_OPTIONS.find(m=>m.v===state.periodValue)||{}).l || state.periodValue;
-  return (YEAR_OPTIONS.find(m=>m.v===state.periodValue)||{}).l || state.periodValue;
+  if (state.periodMode === "quarter") return `${TRIMESTRES[state.periodQuarter - 1].l} ${state.periodYear}`;
+  return `${MOIS_NOMS[state.periodMonth - 1]} ${state.periodYear}`;
 }
 
 /* ==============================================================
@@ -3985,11 +3978,7 @@ function renderTopbar(v) {
   const modes = [
     {v:"month",   l:t("mode_month")},
     {v:"quarter", l:t("mode_quarter")},
-    {v:"year",    l:t("mode_year")},
   ];
-  const periodOpts = state.periodMode === "month" ? MONTH_OPTIONS
-                   : state.periodMode === "quarter" ? QUARTER_OPTIONS
-                   : YEAR_OPTIONS;
 
   const inPdaMode = (state.sub === "vacc-pda");
 
@@ -4086,8 +4075,13 @@ function renderTopbar(v) {
             <button class="pp ${state.periodMode === m.v ? 'on' : ''}" onclick="setPeriodMode('${m.v}')">${m.l}</button>
           `).join("")}
         </div>
-        <select class="period-sel" onchange="setPeriodValue(this.value)">
-          ${periodOpts.map(o => `<option value="${o.v}" ${state.periodValue === o.v ? 'selected' : ''}>${o.l}</option>`).join("")}
+        <select class="period-sel" onchange="setPeriodYear(this.value)">
+          ${ANNEES.map(a => `<option value="${a}" ${state.periodYear === a ? 'selected' : ''}>${a}</option>`).join("")}
+        </select>
+        <select class="period-sel" onchange="setPeriodPart(this.value)">
+          ${state.periodMode === "quarter"
+            ? TRIMESTRES.map(o => `<option value="${o.v}" ${state.periodQuarter === o.v ? 'selected' : ''}>${o.l}</option>`).join("")
+            : MOIS_NOMS.map((l, i) => `<option value="${i + 1}" ${state.periodMonth === i + 1 ? 'selected' : ''}>${l}</option>`).join("")}
         </select>
       </div>
 
@@ -4111,16 +4105,23 @@ function renderTopbar(v) {
 
 function setPeriodMode(mode) {
   state.periodMode = mode;
-  // Reset to first option of new mode
-  if (mode === "month") state.periodValue = MONTH_OPTIONS[0].v;
-  if (mode === "quarter") state.periodValue = QUARTER_OPTIONS[0].v;
-  if (mode === "year") state.periodValue = YEAR_OPTIONS[0].v;
+  majPeriodValue();
   document.getElementById("h-period").textContent = periodLabel();
   renderMain();
 }
 
-function setPeriodValue(v) {
-  state.periodValue = v;
+function setPeriodYear(a) {
+  state.periodYear = parseInt(a, 10);
+  majPeriodValue();
+  document.getElementById("h-period").textContent = periodLabel();
+  renderMain();
+}
+
+function setPeriodPart(p) {
+  const n = parseInt(p, 10);
+  if (state.periodMode === "quarter") state.periodQuarter = n;
+  else state.periodMonth = n;
+  majPeriodValue();
   document.getElementById("h-period").textContent = periodLabel();
   renderMain();
 }
