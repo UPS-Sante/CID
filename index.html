@@ -2701,6 +2701,10 @@
   .bloc-outils button:hover { background:#2A4A80; }
   body.atelier-actif .card, body.atelier-actif .kpi, body.atelier-actif .kpi-exec { position:relative; }
   body.atelier-actif .card:hover > .bloc-outils, body.atelier-actif .kpi:hover > .bloc-outils, body.atelier-actif .kpi-exec:hover > .bloc-outils { display:flex; }
+  body.atelier-actif #zone-impression .map-toolbar,
+  body.atelier-actif #zone-impression .map-mode-toggle,
+  body.atelier-actif #zone-impression .chart-values-toggle { display:none !important; }
+  .map-info-note { font-size:10.5px; color:#94A3B8; margin-top:6px; font-style:italic; }
   .bloc-cache { display:none !important; }
   .bloc-large { grid-column:1 / -1 !important; }
   .export-orientation input { margin-right:5px; }
@@ -6617,6 +6621,7 @@ function renderMap(metric, opts = {}) {
   }
 
   function dispVal(v) {
+    if (v == null || Number.isNaN(v)) return "ND";
     if (isVolume) return fmt(v);
     return v + "%";
   }
@@ -6700,11 +6705,23 @@ function renderMap(metric, opts = {}) {
     </g>`);
   });
 
-  const defaultProv = state.provinceFilter || (pdaFocus ? "LAC" : "NDJ");
-  const infoProv = PROVINCES.find(p => p.id === defaultProv);
-  const infoVal = valMap[defaultProv];
-  const infoRag = getRag(infoVal);
-  const infoZone = ZONES[PROV_ZONE[defaultProv]];
+  const filtreProv = state.provinceFilter;
+  const perimetre = pdaFocus ? PDA_PROVINCES : PROVINCES.map(p => p.id);
+  const renseignees = perimetre.filter(id => valMap[id] != null);
+  const natDirect = valeurReelle(metric, null, 0);
+  const natVal = natDirect != null ? natDirect
+    : (renseignees.length ? Math.round(renseignees.reduce((s, id) => s + valMap[id], 0) / renseignees.length * 10) / 10 : null);
+  const natPrev = valeurReelle(metric, null, 1);
+  const natTendance = (natVal != null && natPrev != null)
+    ? ((natVal - natPrev >= 0 ? "+" : "") + (Math.round((natVal - natPrev) * 10) / 10) + " pts") : "—";
+  const tri = renseignees.slice().sort((a, b) => valMap[a] - valMap[b]);
+  const nomDe = id => (PROVINCES.find(p => p.id === id) || {}).name || id;
+  const extremes = tri.length
+    ? { basse: tri[0], haute: tri[tri.length - 1] } : null;
+  const infoProv = filtreProv ? PROVINCES.find(p => p.id === filtreProv) : null;
+  const infoVal = filtreProv ? valMap[filtreProv] : null;
+  const infoRag = filtreProv ? getRag(infoVal) : getRag(natVal);
+  const infoZone = filtreProv ? ZONES[PROV_ZONE[filtreProv]] : null;
 
   // Toggle
   const modeToggle = `
@@ -6765,12 +6782,25 @@ function renderMap(metric, opts = {}) {
       </div>
       <div class="map-legend">${legendHtml}</div>
       <div class="map-info" id="map-info">
-        <div class="map-info-tag">${PDA_PROVINCES.includes(defaultProv) ? "Province PDA" : "Province"}</div>
-        <div class="map-info-name">${infoProv.name}${PDA_PROVINCES.includes(defaultProv) ? '<span class="map-info-pda">PDA</span>' : ''}</div>
+        ${filtreProv ? `
+        <div class="map-info-tag">${PDA_PROVINCES.includes(filtreProv) ? "Province PDA" : "Province"}</div>
+        <div class="map-info-name">${infoProv.name}${PDA_PROVINCES.includes(filtreProv) ? '<span class="map-info-pda">PDA</span>' : ''}</div>
         <div class="map-info-row"><span>Zone</span><span class="map-info-val" style="color:${infoZone.textDark ? '#5A3F1A' : infoZone.color};font-weight:700;">${infoZone.name}</span></div>
         <div class="map-info-row"><span>Valeur</span><span class="map-info-val">${dispVal(infoVal)}</span></div>
         <div class="map-info-row"><span>Statut</span><span class="map-info-val"><span class="pill ${infoRag}">${ragLabel(infoRag)}</span></span></div>
-        <div class="map-info-row"><span>Tendance vs mois précédent</span><span class="map-info-val">${(() => { const pv = genValue(metric, defaultProv, 1); return (infoVal != null && pv != null) ? ((infoVal - pv >= 0 ? "+" : "") + (Math.round((infoVal - pv) * 10) / 10) + " pts") : "—"; })()}</span></div>
+        <div class="map-info-row"><span>Tendance vs mois précédent</span><span class="map-info-val">${(() => { const pv = genValue(metric, filtreProv, 1); return (infoVal != null && pv != null) ? ((infoVal - pv >= 0 ? "+" : "") + (Math.round((infoVal - pv) * 10) / 10) + " pts") : "—"; })()}</span></div>
+        ` : `
+        <div class="map-info-tag">${pdaFocus ? "Agrégat PDA" : "Vue nationale"}</div>
+        <div class="map-info-name">${pdaFocus ? "Provinces PDA" : "National · 23 provinces"}</div>
+        <div class="map-info-row"><span>Valeur</span><span class="map-info-val">${dispVal(natVal)}</span></div>
+        <div class="map-info-row"><span>Statut</span><span class="map-info-val"><span class="pill ${infoRag}">${ragLabel(infoRag)}</span></span></div>
+        <div class="map-info-row"><span>Provinces ayant rapporté</span><span class="map-info-val">${renseignees.length} / ${perimetre.length}</span></div>
+        ${extremes ? `
+        <div class="map-info-row"><span>Valeur la plus élevée</span><span class="map-info-val">${nomDe(extremes.haute)} · ${dispVal(valMap[extremes.haute])}</span></div>
+        <div class="map-info-row"><span>Valeur la plus faible</span><span class="map-info-val">${nomDe(extremes.basse)} · ${dispVal(valMap[extremes.basse])}</span></div>` : ""}
+        <div class="map-info-row"><span>Tendance vs mois précédent</span><span class="map-info-val">${natTendance}</span></div>
+        <div class="map-info-note">Cliquez une province sur la carte pour sa fiche détaillée.</div>
+        `}
       </div>
     </div>
   `;
