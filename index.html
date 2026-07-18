@@ -2718,7 +2718,6 @@
   </div>
   <div class="h-context" id="h-country">MSPP · République du Tchad</div>
   <div class="h-right">
-    <div class="h-pill live"><span id="h-data-status">Chargement des données…</span></div>
     <div class="h-pill"><span id="h-period">Avril 2026</span></div>
     <div class="h-pill"><span id="h-scope">National</span></div>
   </div>
@@ -3039,9 +3038,6 @@ function drMoisCibles(monthOffset) {
     const [a, q] = v.split("-Q").map(Number);
     return [1, 2, 3].map(i => `${a}-${String((q - 1) * 3 + i).padStart(2, "0")}`);
   }
-  if (state.periodMode === "year" && /^\d{4}$/.test(v)) {
-    return Array.from({length:12}, (_, i) => `${v}-${String(i + 1).padStart(2, "0")}`);
-  }
   return [drMoisPrecedent(/^\d{4}-\d{2}$/.test(v) ? v : (DR.periodes[DR.periodes.length-1] || "2026-01"), monthOffset)];
 }
 
@@ -3114,29 +3110,28 @@ function drActualiserPeriodes() {
   if (lbl) lbl.textContent = periodLabel();
 }
 
-async function chargerDonneesReelles() {
+async function chargerDonneesReelles(essai) {
   try {
     const [consolide, catalogue, correspondance, referentiel] = await Promise.all(
       ["data/consolide.json", "data/catalogue.json",
        "correspondance_indicateurs.json", "referentiel.json"]
-      .map(u => fetch(u).then(r => { if (!r.ok) throw new Error(u); return r.json(); })));
+      .map(u => fetch(u, { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(u); return r.json(); })));
     if (!drConstruire(consolide, catalogue, correspondance, referentiel)) throw new Error("base vide");
     drActualiserPeriodes();
     try {
-      const sj = await fetch("seuils_rag.json").then(r => r.ok ? r.json() : null);
+      const sj = await fetch("seuils_rag.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (sj) { SEUILS.normal = sj.normal || SEUILS.normal; SEUILS.inverse = sj.inverse || SEUILS.inverse; SEUILS.par_metrique = sj.par_metrique || {}; }
     } catch (e) {}
     SEUILS_DEPOT = JSON.parse(JSON.stringify(SEUILS));
     chargerSeuilsLocaux();
-    const badge = document.getElementById("h-data-status");
-    if (badge) {
-      const [ba, bm] = DR.periodes[DR.periodes.length - 1].split("-").map(Number);
-      badge.textContent = `Données réelles · ${MOIS_NOMS[bm - 1]} ${ba}`;
-    }
     renderMain();
+    // rafraichissement des donnees toutes les six heures pour les onglets laisses ouverts
+    if (!window._cidRafraichissement) {
+      window._cidRafraichissement = setInterval(() => chargerDonneesReelles(1), 6 * 3600 * 1000);
+    }
   } catch (e) {
-    const badge = document.getElementById("h-data-status");
-    if (badge) badge.textContent = "Données indisponibles";
+    // panne reseau transitoire : un nouvel essai unique apres cinq secondes
+    if (!essai) setTimeout(() => chargerDonneesReelles(1), 5000);
   }
 }
 /* valeur pour une periode explicite AAAA-MM, sans dependre du selecteur */
@@ -3873,7 +3868,6 @@ function applyStaticTranslations() {
     "h-app-title": "app_title",
     "h-app-subtitle": "app_subtitle",
     "h-country": "app_country",
-    "h-data-status": "data_status",
     "lbl-programs": "programs",
     "lbl-cycle-title": "cycle",
     "lbl-cycle-desc": "cycle_desc",
@@ -3986,10 +3980,21 @@ function setPdaDomain(d) {
   renderMain();
 }
 
+function renderMain() {
+  try { renderMainNoyau(); }
+  catch (e) {
+    console.error("Erreur de rendu :", e);
+    const zone = document.getElementById("main") || document.querySelector(".main");
+    if (zone) zone.innerHTML = `<div style="padding:32px;color:#64748B;font-size:13px;">
+      Une erreur d'affichage est survenue sur cette vue.
+      <button class="tb-btn" onclick="location.reload()" style="margin-left:10px;">Recharger la page</button></div>`;
+  }
+}
+
 /* ==============================================================
    RENDER — Main content
 ============================================================== */
-function renderMain() {
+function renderMainNoyau() {
   const view = VIEWS[state.sub] || (() => placeholderView(state.sub));
   const v = view(state);
   // If province filter is set, append province name to the breadcrumb
@@ -4044,29 +4049,18 @@ function renderTopbar(v) {
 
   const inPdaMode = (state.sub === "vacc-pda");
 
+  const optionProvince = (p) =>
+    `<option value="${p.id}" ${state.provinceFilter === p.id ? 'selected' : ''}>${PDA_PROVINCES.includes(p.id) ? "* " : ""}${p.name}</option>`;
   let provinceOptions;
   if (inPdaMode) {
     provinceOptions = `
       <option value="" ${!state.provinceFilter ? 'selected' : ''}>${t("pda_aggregate")}</option>
-      ${PDA_PROVINCES.map(pId => {
-        const p = PROVINCES.find(x => x.id === pId);
-        return `<option value="${p.id}" ${state.provinceFilter === p.id ? 'selected' : ''}>${p.name} · PDA</option>`;
-      }).join("")}
+      ${PDA_PROVINCES.map(pId => optionProvince(PROVINCES.find(x => x.id === pId))).join("")}
     `;
   } else {
     provinceOptions = `
       <option value="" ${!state.provinceFilter ? 'selected' : ''}>${t("national_view")}</option>
-      <optgroup label="${t("pda_group")}">
-        ${PDA_PROVINCES.map(pId => {
-          const p = PROVINCES.find(x => x.id === pId);
-          return `<option value="${p.id}" ${state.provinceFilter === p.id ? 'selected' : ''}>${p.name} · PDA</option>`;
-        }).join("")}
-      </optgroup>
-      <optgroup label="${t("other_provinces")}">
-        ${PROVINCES.filter(p => !PDA_PROVINCES.includes(p.id)).map(p =>
-          `<option value="${p.id}" ${state.provinceFilter === p.id ? 'selected' : ''}>${p.name}</option>`
-        ).join("")}
-      </optgroup>
+      ${PROVINCES.slice().sort((a, b) => a.name.localeCompare(b.name, "fr")).map(optionProvince).join("")}
     `;
   }
 
