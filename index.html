@@ -2643,6 +2643,7 @@
   .kpi-exec.rag-na { border-left-color:#CBD5E1; }
   .map-prov.rag-na { fill:#CBD5E1; }
   .map-cell.rag-na { background:#CBD5E1; color:#475569; }
+  .period-sel + .period-sel { margin-left: 6px; }
 </style>
 </head>
 <body>
@@ -2661,7 +2662,7 @@
   </div>
   <div class="h-context" id="h-country">MSPP · République du Tchad</div>
   <div class="h-right">
-    <div class="h-pill live"><span id="h-data-status">Données à jour</span></div>
+    <div class="h-pill live"><span id="h-data-status">Chargement des données…</span></div>
     <div class="h-pill"><span id="h-period">Avril 2026</span></div>
     <div class="h-pill"><span id="h-scope">National</span></div>
   </div>
@@ -2943,65 +2944,11 @@ const PROGRAMS = [
    DUMMY DATA GENERATOR — Seeded, coherent
 ============================================================== */
 // Seeded random per (province, indicator, month) — gives stable but realistic numbers
-function seedRandom(seed) {
-  let x = Math.sin(seed) * 10000;
-  return x - Math.floor(x);
-}
-function hash(...args) {
-  let h = 0;
-  const str = args.join('|');
-  for (let i = 0; i < str.length; i++) {
-    h = ((h << 5) - h) + str.charCodeAt(i);
-    h |= 0;
-  }
-  return Math.abs(h);
-}
 
 // Generate value for a metric × province
 function genValue(metric, provId, monthOffset = 0) {
   // Mode strict : uniquement les valeurs de la base reelle ; null s'affiche ND
   return valeurReelle(metric, provId, monthOffset);
-}
-function genValueDemo(metric, provId, monthOffset = 0) {
-  const seed = hash(metric, provId, monthOffset);
-  const r = seedRandom(seed);
-
-  // Base profiles by province (some provinces consistently weaker — Sahelian band)
-  const profiles = {
-    // North/Sahel — weaker performance generally
-    TIB:0.25, BRK:0.30, EOU:0.32, EES:0.35, KAN:0.40, BAR:0.45, BAT:0.55, WAD:0.50,
-    LAC:0.42, HDL:0.55, OUA:0.50, SIL:0.60,
-    // Center
-    NDJ:0.88, CBG:0.72, GUE:0.65, SAL:0.62,
-    // South — better performance
-    MKO:0.72, MKE:0.75, TAN:0.80, LOO:0.82, LOE:0.85, MAN:0.78, MCH:0.80
-  };
-  const base = profiles[provId] || 0.5;
-
-  // Metric-specific scaling
-  let val;
-  if (metric.startsWith("couv") || metric.startsWith("compl") || metric === "var2" || metric === "penta3") {
-    val = Math.round((base * 70 + r * 25) * 1.2);  // coverage 30-90%
-  } else if (metric === "rupture" || metric === "abandon" || metric === "perim") {
-    val = Math.round((1 - base) * 35 + r * 10);  // 5-35%, inverse
-  } else if (metric === "mortmat") {
-    val = Math.round((1 - base) * 600 + 200 + r * 80);  // mortality /100k
-  } else if (metric === "zd-volume") {
-    // Don't apply final 0-100 cap (return raw count)
-    return Math.round((1 - base) * 8000 + r * 1500);
-  } else if (metric.startsWith("pda-D")) {
-    // PDA domain composite score per province
-    const domainSeed = hash(metric, provId);
-    const profileBoost = PDA_PROVINCES.includes(provId) ? 0.15 : -0.10;
-    val = Math.round((base + profileBoost) * 60 + seedRandom(domainSeed) * 25 + 10);
-  } else if (metric.startsWith("pda-d")) {
-    // Individual PDA indicator
-    val = Math.round(base * 70 + r * 25 + 5);
-  } else {
-    val = Math.round(base * 70 + r * 20);
-  }
-
-  return Math.max(0, Math.min(100, val));
 }
 
 /* ==============================================================
@@ -3120,8 +3067,10 @@ async function chargerDonneesReelles() {
     if (!drConstruire(consolide, catalogue, correspondance, referentiel)) throw new Error("base vide");
     drActualiserPeriodes();
     const badge = document.getElementById("h-data-status");
-    if (badge) badge.textContent =
-      `Données réelles · ${DR.periodes[DR.periodes.length - 1]}`;
+    if (badge) {
+      const [ba, bm] = DR.periodes[DR.periodes.length - 1].split("-").map(Number);
+      badge.textContent = `Données réelles · ${MOIS_NOMS[bm - 1]} ${ba}`;
+    }
     renderMain();
   } catch (e) {
     const badge = document.getElementById("h-data-status");
@@ -6118,9 +6067,10 @@ function placeholderView(subId) {
 ============================================================== */
 function kpi(label, val, unit, target, trend, dir, ragClass, inverse = false) {
   if (val == null || String(val).includes("NaN")) { val = "ND"; trend = "—"; dir = "flat"; ragClass = "na"; }
+  const ndTitre = val === "ND" ? ' title="Donnée non disponible pour la période sélectionnée"' : '';
   const trendCls = dir === "up" ? "up" : dir === "down" ? "down" : "flat";
   return `
-    <div class="kpi ${ragClass}">
+    <div class="kpi ${ragClass}"${ndTitre}>
       <div class="kpi-head">
         <div class="kpi-label">${label}</div>
       </div>
@@ -6466,7 +6416,7 @@ function renderMap(metric, opts = {}) {
         <div class="map-info-row"><span>Zone</span><span class="map-info-val" style="color:${infoZone.textDark ? '#5A3F1A' : infoZone.color};font-weight:700;">${infoZone.name}</span></div>
         <div class="map-info-row"><span>Valeur</span><span class="map-info-val">${dispVal(infoVal)}</span></div>
         <div class="map-info-row"><span>Statut</span><span class="map-info-val"><span class="pill ${infoRag}">${ragLabel(infoRag)}</span></span></div>
-        <div class="map-info-row"><span>Tendance N-1</span><span class="map-info-val">+${Math.abs((hash(defaultProv, metric) % 9) - 4)} pts</span></div>
+        <div class="map-info-row"><span>Tendance vs mois précédent</span><span class="map-info-val">${(() => { const pv = genValue(metric, defaultProv, 1); return (infoVal != null && pv != null) ? ((infoVal - pv >= 0 ? "+" : "") + (Math.round((infoVal - pv) * 10) / 10) + " pts") : "—"; })()}</span></div>
       </div>
     </div>
   `;
@@ -6479,15 +6429,18 @@ function showProvInfo(provId, metric, isVolume) {
   const isPda = PDA_PROVINCES.includes(provId);
   const inverse = metric === "rupture" || metric === "abandon" || metric === "perim" || isVolume;
   let r;
-  if (isVolume) {
+  if (val == null) {
+    r = "na";
+  } else if (isVolume) {
     r = val <= 2500 ? "green" : val <= 4500 ? "yellow" : val <= 6500 ? "orange" : "red";
   } else if (inverse) {
     r = val <= 30 ? "green" : val <= 50 ? "yellow" : val <= 70 ? "orange" : "red";
   } else {
     r = val >= 80 ? "green" : val >= 60 ? "yellow" : val >= 40 ? "orange" : "red";
   }
-  const trend = ((hash(provId, metric, 'trend') % 11) - 5);
-  const display = isVolume ? fmt(val) : val + "%";
+  const prev = genValue(metric, provId, 1);
+  const trend = (val != null && prev != null) ? Math.round((val - prev) * 10) / 10 : null;
+  const display = val == null ? "ND" : (isVolume ? fmt(val) : val + "%");
 
   const info = document.getElementById("map-info");
   if (info) {
@@ -6496,7 +6449,7 @@ function showProvInfo(provId, metric, isVolume) {
       <div class="map-info-name">${p.name}${isPda ? '<span class="map-info-pda">PDA</span>' : ''}</div>
       <div class="map-info-row"><span>Valeur</span><span class="map-info-val">${display}</span></div>
       <div class="map-info-row"><span>Statut</span><span class="map-info-val"><span class="pill ${r}">${ragLabel(r)}</span></span></div>
-      <div class="map-info-row"><span>Tendance N-1</span><span class="map-info-val">${trend >= 0 ? '+' : ''}${trend} pts</span></div>
+      <div class="map-info-row"><span>Tendance vs mois précédent</span><span class="map-info-val">${trend == null ? "—" : (trend >= 0 ? "+" : "") + trend + " pts"}</span></div>
     `;
   }
 }

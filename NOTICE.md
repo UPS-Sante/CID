@@ -84,10 +84,10 @@ premier passage de synchronisation effectue.
 
 | Fichier | Role | Qui le modifie |
 |---|---|---|
-| `referentiel.json` | provinces, variantes d'ecriture, mois | tout membre de l'equipe, sans code |
+| `referentiel.json` | provinces, variantes d'ecriture et d'indicateurs, mois | tout membre de l'equipe, sans code |
 | `config_sources.json` | association dossier Drive vers lecteur | tout membre de l'equipe, sans code |
 | `scripts/drive_sync.py` | telechargement Drive (91 lignes) | developpeur |
-| `scripts/normaliser.py` | conversion en format long (243 lignes) | developpeur |
+| `scripts/normaliser.py` | conversion en format long (256 lignes) | developpeur |
 | `.github/workflows/synchronisation.yml` | passage nocturne | rarement |
 
 Les deux fichiers JSON absorbent la maintenance courante. Une province ecrite

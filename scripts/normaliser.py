@@ -37,6 +37,14 @@ def simplifier(t):
     return re.sub(r"\s+", " ", re.sub(r"[^a-zA-Z0-9]+", " ", t)).strip().lower()
 
 
+VARIANTES_INDICATEURS = {simplifier(k): v for k, v in REF.get("indicateurs_variantes", {}).items()}
+
+def canon_indicateur(libelle):
+    """Libelle nettoye, rattache a sa forme canonique si une variante est declaree."""
+    import re as _re
+    libelle = _re.sub(r"\s+", " ", str(libelle)).strip()
+    return VARIANTES_INDICATEURS.get(simplifier(libelle), libelle)
+
 CLES = {simplifier(p): p for p in REF["provinces"]}
 CLES.update(REF["variantes"])
 TOTAUX = set(REF["libelles_total"])
@@ -137,7 +145,7 @@ def lecteur_matrice_provinces(lignes, ctx, anomalies):
     if i is None:
         anomalies.append({**ctx, "type": "matrice_non_reconnue"})
         return []
-    indicateurs = {j: re.sub(r"\s+", " ", str(lib)).strip()
+    indicateurs = {j: canon_indicateur(lib)
                    for j, lib in enumerate(lignes[i])
                    if j != j_prov and lib and len(str(lib).strip()) > 3}
     out = []
@@ -185,7 +193,7 @@ def lecteur_format_long(lignes, ctx, anomalies):
         elif v is not None:
             periode = str(ligne[cols["periode"]]).strip()[:7] if cols.get("periode") is not None and ligne[cols["periode"]] else ctx["periode"]
             out.append({"source": ctx["source"], "periode": periode, "province": province,
-                        "indicateur": re.sub(r"\s+", " ", str(ligne[cols["indicateur"]])).strip(), "valeur": v})
+                        "indicateur": canon_indicateur(ligne[cols["indicateur"]]), "valeur": v})
     return out
 
 

@@ -65,5 +65,8 @@
     "oct": 10,
     "nov": 11,
     "dec": 12
+  },
+  "indicateurs_variantes": {
+    "Proportion des accouchements avec complication": "Proportion des accouchements avec complications"
   }
 }
