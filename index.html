@@ -2644,6 +2644,33 @@
   .map-prov.rag-na { fill:#CBD5E1; }
   .map-cell.rag-na { background:#CBD5E1; color:#475569; }
   .period-sel + .period-sel { margin-left: 6px; }
+  .tb-actions { display:flex; gap:6px; align-items:center; margin-left:10px; }
+  .tb-btn { border:1px solid #CBD5E1; background:#fff; border-radius:6px; padding:5px 10px; font-size:12px; cursor:pointer; color:#1F3864; white-space:nowrap; }
+  .tb-btn:hover { background:#EFF3FA; }
+  .tb-btn-principal { background:#1F3864; color:#fff; border-color:#1F3864; }
+  .tb-btn-principal:hover { background:#2A4A80; }
+  .seuils-overlay { position:fixed; inset:0; background:rgba(15,23,42,.45); display:flex; align-items:center; justify-content:center; z-index:200; }
+  .seuils-panel { background:#fff; border-radius:10px; padding:18px 20px; width:540px; max-width:92vw; box-shadow:0 12px 40px rgba(15,23,42,.25); }
+  .seuils-titre { font-weight:700; font-size:15px; color:#1F3864; margin-bottom:6px; }
+  .seuils-note { font-size:11px; color:#64748B; margin:6px 0; line-height:1.5; }
+  .seuils-grille { display:flex; gap:18px; margin:10px 0; }
+  .seuils-col { flex:1; display:flex; flex-direction:column; gap:6px; }
+  .seuils-sous { font-weight:600; font-size:12px; color:#334155; }
+  .seuils-col label { font-size:12px; color:#334155; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .seuils-col input { width:72px; padding:3px 6px; border:1px solid #CBD5E1; border-radius:5px; font-size:12px; }
+  .seuils-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:8px; }
+  .chart-values-wrap { margin-top:6px; }
+  .chart-values-toggle { border:none; background:transparent; color:#64748B; font-size:10px; cursor:pointer; text-decoration:underline dotted; padding:0; }
+  .chart-values-wrap.cache .chart-values { display:none; }
+  .chart-values { width:100%; border-collapse:collapse; margin-top:4px; font-variant-numeric:tabular-nums; }
+  .chart-values td, .chart-values th { font-size:9.5px; padding:2px 3px; text-align:center; color:#475569; border-top:1px solid #EEF2F7; }
+  .chart-values th { text-align:left; color:#1F3864; font-weight:600; white-space:nowrap; }
+  @media print {
+    .sb, .tb-actions, .period-pills, .period-sel, .scope-block, .seuils-overlay, .chart-values-toggle { display:none !important; }
+    .main { margin:0 !important; padding:8mm !important; width:100% !important; }
+    body { background:#fff !important; }
+    * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
 </style>
 </head>
 <body>
@@ -3066,6 +3093,11 @@ async function chargerDonneesReelles() {
       .map(u => fetch(u).then(r => { if (!r.ok) throw new Error(u); return r.json(); })));
     if (!drConstruire(consolide, catalogue, correspondance, referentiel)) throw new Error("base vide");
     drActualiserPeriodes();
+    try {
+      const sj = await fetch("seuils_rag.json").then(r => r.ok ? r.json() : null);
+      if (sj) { SEUILS.normal = sj.normal || SEUILS.normal; SEUILS.inverse = sj.inverse || SEUILS.inverse; SEUILS.par_metrique = sj.par_metrique || {}; }
+    } catch (e) {}
+    chargerSeuilsLocaux();
     const badge = document.getElementById("h-data-status");
     if (badge) {
       const [ba, bm] = DR.periodes[DR.periodes.length - 1].split("-").map(Number);
@@ -3076,6 +3108,21 @@ async function chargerDonneesReelles() {
     const badge = document.getElementById("h-data-status");
     if (badge) badge.textContent = "Données indisponibles";
   }
+}
+/* valeur pour une periode explicite AAAA-MM, sans dependre du selecteur */
+function valeurPeriodeExplicite(metric, provId, periode) {
+  const indicateur = DR.metriques[metric];
+  if (!indicateur) return null;
+  const province = provId === null ? "National" : DR.provinces[provId];
+  if (!province) return null;
+  const v = DR.index.get(indicateur + "|" + province + "|" + periode);
+  return v === undefined ? null : v;
+}
+function valeurNatPeriode(metric, periode) {
+  const direct = valeurPeriodeExplicite(metric, null, periode);
+  if (direct !== null) return direct;
+  const vals = PROVINCES.map(p => valeurPeriodeExplicite(metric, p.id, periode)).filter(v => v != null);
+  return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 10) / 10 : null;
 }
 /*DR-FIN*/
 
@@ -3124,18 +3171,35 @@ function nationalAggregate(metric, scope = "national") {
 /* ==============================================================
    RAG helpers
 ============================================================== */
+let SEUILS = {
+  normal:  { vert: 1.0, jaune: 0.85, orange: 0.65 },
+  inverse: { vert: 0.5, jaune: 1.0,  orange: 1.5 },
+  par_metrique: {}
+};
+function chargerSeuilsLocaux() {
+  try { const s = localStorage.getItem("cid_seuils"); if (s) { const o = JSON.parse(s); SEUILS.normal = o.normal || SEUILS.normal; SEUILS.inverse = o.inverse || SEUILS.inverse; } } catch (e) {}
+}
+function sauverSeuilsLocaux() {
+  try { localStorage.setItem("cid_seuils", JSON.stringify({ normal: SEUILS.normal, inverse: SEUILS.inverse })); } catch (e) {}
+}
 function rag(val, target, inverse = false) {
   if (val == null || Number.isNaN(val)) return "na";
   if (inverse) {
-    if (val <= target * 0.5) return "green";
-    if (val <= target) return "yellow";
-    if (val <= target * 1.5) return "orange";
+    if (val <= target * SEUILS.inverse.vert) return "green";
+    if (val <= target * SEUILS.inverse.jaune) return "yellow";
+    if (val <= target * SEUILS.inverse.orange) return "orange";
     return "red";
   }
-  if (val >= target) return "green";
-  if (val >= target * 0.85) return "yellow";
-  if (val >= target * 0.65) return "orange";
+  if (val >= target * SEUILS.normal.vert) return "green";
+  if (val >= target * SEUILS.normal.jaune) return "yellow";
+  if (val >= target * SEUILS.normal.orange) return "orange";
   return "red";
+}
+function ragPour(metric, val, target, inverse = false) {
+  const s = SEUILS.par_metrique && SEUILS.par_metrique[metric];
+  if (!s || val == null || Number.isNaN(val)) return rag(val, target, inverse);
+  if (inverse) return val <= s.vert ? "green" : val <= s.jaune ? "yellow" : val <= s.orange ? "orange" : "red";
+  return val >= s.vert ? "green" : val >= s.jaune ? "yellow" : val >= s.orange ? "orange" : "red";
 }
 function ragLabel(r) {
   return { green:t("rag_green"), yellow:t("rag_yellow"), orange:t("rag_orange"), red:t("rag_red"), na:"—" }[r] || "—";
@@ -3251,7 +3315,7 @@ const I18N = {
     sec_b_meta: "3 indicateurs · Réactivité système",
     sec_c: "Pilotage & Engagements",
     sec_c_meta: "3 indicateurs · Gouvernance",
-    twelve_months: "12 mois glissants",
+    twelve_months: "Janvier–Décembre",
     cycle_data: "Cycle de données",
     next_min_review: "Prochaine revue ministérielle",
     production: "Production",
@@ -3348,7 +3412,7 @@ const I18N = {
     pda_card_map_sub: "13 provinces pilotes en surbrillance",
     pda_target_footer: "Cible : 80% par domaine · 13 provinces PDA",
     pda_trend_title: "Tendance score global PDA — Année courante vs N-1",
-    pda_trend_sub: "Comparaison 2026 vs 2025 · 13 provinces PDA · 12 mois glissants",
+    pda_trend_sub: "Comparaison 2026 vs 2025 · 13 provinces PDA · Janvier–Décembre",
     pda_alerts_title: "Alertes PDA — T1 2026",
     pda_alerts_sub: "Anomalies sur les 13 provinces PDA",
     pda_tabs_overview: "Vue d'ensemble",
@@ -4034,6 +4098,10 @@ function renderTopbar(v) {
         </select>
       </div>
 
+      <div class="tb-actions">
+        <button class="tb-btn" onclick="ouvrirSeuils()" title="Définir les seuils vert / jaune / orange / rouge">⚙ Seuils</button>
+        <button class="tb-btn" onclick="exporterPDF()" title="Enregistrer la vue courante en PDF">⬇ PDF</button>
+      </div>
       <div class="scope-block">
         <span class="time-label">${t("view_label")}</span>
         <select class="period-sel scope-sel" onchange="setProvinceFilter(this.value === '' ? null : this.value)">
@@ -4050,6 +4118,60 @@ function renderTopbar(v) {
       </div>
     </div>
   `;
+}
+
+function ouvrirSeuils() {
+  if (document.querySelector(".seuils-overlay")) return;
+  const n = SEUILS.normal, iv = SEUILS.inverse;
+  const boite = document.createElement("div");
+  boite.className = "seuils-overlay";
+  boite.innerHTML = `
+    <div class="seuils-panel">
+      <div class="seuils-titre">Seuils vert / jaune / orange / rouge</div>
+      <div class="seuils-note">Exprimés en proportion de la cible de chaque indicateur (1 = 100 % de la cible).
+      Indicateurs croissants : la valeur est verte au-dessus du seuil vert.
+      Indicateurs décroissants (ruptures, abandons, décès) : la valeur est verte en dessous du seuil vert.
+      Le rouge s'applique au-delà du dernier seuil.</div>
+      <div class="seuils-grille">
+        <div class="seuils-col"><div class="seuils-sous">Indicateurs croissants</div>
+          <label>Vert si ≥ cible ×<input id="sn-v" type="number" step="0.05" value="${n.vert}"></label>
+          <label>Jaune si ≥ cible ×<input id="sn-j" type="number" step="0.05" value="${n.jaune}"></label>
+          <label>Orange si ≥ cible ×<input id="sn-o" type="number" step="0.05" value="${n.orange}"></label>
+        </div>
+        <div class="seuils-col"><div class="seuils-sous">Indicateurs décroissants</div>
+          <label>Vert si ≤ cible ×<input id="si-v" type="number" step="0.05" value="${iv.vert}"></label>
+          <label>Jaune si ≤ cible ×<input id="si-j" type="number" step="0.05" value="${iv.jaune}"></label>
+          <label>Orange si ≤ cible ×<input id="si-o" type="number" step="0.05" value="${iv.orange}"></label>
+        </div>
+      </div>
+      <div class="seuils-actions">
+        <button class="tb-btn" onclick="reinitialiserSeuils()">Réinitialiser</button>
+        <button class="tb-btn" onclick="fermerSeuils()">Fermer</button>
+        <button class="tb-btn tb-btn-principal" onclick="appliquerSeuils()">Appliquer</button>
+      </div>
+      <div class="seuils-note">Les valeurs par défaut du dépôt, y compris des seuils absolus indicateur par indicateur, se règlent dans seuils_rag.json sans modification du code.</div>
+    </div>`;
+  boite.addEventListener("click", e => { if (e.target === boite) fermerSeuils(); });
+  document.body.appendChild(boite);
+}
+function fermerSeuils() { const o = document.querySelector(".seuils-overlay"); if (o) o.remove(); }
+function appliquerSeuils() {
+  const g = id => parseFloat(document.getElementById(id).value);
+  SEUILS.normal  = { vert: g("sn-v"), jaune: g("sn-j"), orange: g("sn-o") };
+  SEUILS.inverse = { vert: g("si-v"), jaune: g("si-j"), orange: g("si-o") };
+  sauverSeuilsLocaux(); fermerSeuils(); renderMain();
+}
+function reinitialiserSeuils() {
+  SEUILS.normal  = { vert: 1.0, jaune: 0.85, orange: 0.65 };
+  SEUILS.inverse = { vert: 0.5, jaune: 1.0,  orange: 1.5 };
+  try { localStorage.removeItem("cid_seuils"); } catch (e) {}
+  fermerSeuils(); renderMain();
+}
+function exporterPDF() {
+  const ancien = document.title;
+  document.title = `CID_${state.sub || "vue"}_${state.periodValue}`;
+  window.print();
+  setTimeout(() => { document.title = ancien; }, 500);
 }
 
 function setPeriodMode(mode) {
@@ -4708,7 +4830,7 @@ VIEWS["vacc-overview"] = (s) => {
         )}
 
         <div class="g-1-1">
-          ${card("Tendance Penta 3 — Année courante vs N-1", "Comparaison 2026 vs 2025 · 12 mois glissants", renderLineChart(
+          ${card("Tendance Penta 3 — Année courante vs N-1", `Comparaison ${state.periodYear} vs ${state.periodYear - 1} · Janvier–Décembre`, renderLineChart(
             yoySeriesData("couv-penta3")
           ), "")}
           ${card("Alertes du jour", "Anomalies détectées et signalées", `
@@ -5251,7 +5373,7 @@ VIEWS["vacc-surv"] = () => {
         </div>
 
         <div class="g-2-1">
-          ${card("Promptitude notification — Évolution N vs N-1", "TLOH hebdo + PFA · 12 mois glissants", renderLineChart(
+          ${card("Promptitude notification — Évolution N vs N-1", "TLOH hebdo + PFA · Janvier–Décembre", renderLineChart(
             yoySeriesData("surv-prom")
           ), "Comparaison année courante vs 2025")}
 
@@ -5377,7 +5499,7 @@ VIEWS["vacc-intrants"] = () => {
         </div>
 
         <div class="g-2-1">
-          ${card("Disponibilité Pentavalent — Année courante vs N-1", "Évolution 12 mois glissants", renderLineChart(
+          ${card("Disponibilité Pentavalent — Année courante vs N-1", "Évolution Janvier–Décembre", renderLineChart(
             yoySeriesData("dispo-penta")
           ), "Tendance saisonnière + couverture marchés PSP")}
 
@@ -5869,7 +5991,7 @@ VIEWS["dpsis-comp"] = () => {
         </div>
 
         <div class="g-2-1">
-          ${card("Complétude par système — Évolution N vs N-1", "Tendance annuelle des 5 SI · 12 mois glissants", renderLineChart([
+          ${card("Complétude par système — Évolution N vs N-1", "Tendance annuelle des 5 SI · Janvier–Décembre", renderLineChart([
             { name:"DHIS2",          data: sparklineData("comp-dhis2"),   color:"#1E40AF", style:"solid" },
             { name:"SIGL",           data: sparklineData("comp-sigl"),    color:"#EA580C", style:"solid" },
             { name:"DHIS2 Tracker",  data: sparklineData("comp-tracker"), color:"#0891B2", style:"solid" },
@@ -6024,7 +6146,7 @@ VIEWS["dpsis-qual"] = () => {
             showVal: s.val + "%"
           }))), "Source : DQS, LQAS, audits triangulation")}
 
-          ${card("Cohérence inter-systèmes — N vs N-1", "Triangulation moyenne · 12 mois glissants", renderLineChart(
+          ${card("Cohérence inter-systèmes — N vs N-1", "Triangulation moyenne · Janvier–Décembre", renderLineChart(
             yoySeriesData("couv-comp")
           ), "")}
         </div>
@@ -6150,7 +6272,7 @@ function renderLineChart(series, opts = {}) {
   const innerH = h - p.t - p.b;
   const xStep = innerW / (series[0].data.length - 1);
 
-  const months = ['M-11','M-10','M-9','M-8','M-7','M-6','M-5','M-4','M-3','M-2','M-1','M'];
+  const months = opts.labels || ["Jan","Fév","Mar","Avr","Mai","Jun","Jul","Aoû","Sep","Oct","Nov","Déc"];
   const lines = series.map((s, idx) => {
     const path = s.pts.map((pt, k) => {
       const x = p.l + pt.i * xStep;
@@ -6219,15 +6341,34 @@ function renderLineChart(series, opts = {}) {
         </div>
       `).join("")}
     </div>
+    <div class="chart-values-wrap">
+      <button class="chart-values-toggle" onclick="this.parentElement.classList.toggle('cache')">Afficher / masquer les valeurs</button>
+      <table class="chart-values">
+        <tr><th></th>${months.map(m => `<td><strong>${m}</strong></td>`).join("")}</tr>
+        ${series.map(s => `<tr><th>${s.name}</th>${s.data.map(v => `<td>${v == null || !Number.isFinite(v) ? "—" : v}</td>`).join("")}</tr>`).join("")}
+      </table>
+    </div>
   `;
 }
 
 // Helper to build YoY chart series (current year solid + N-1 dashed)
 function yoySeriesData(metric, scope = "national") {
-  const currentYear = sparklineData(metric, scope);
-  return [
-    { name: "Année 2026 (courante)", data: currentYear, color: "#1E40AF", style: "solid", opacity: 1 },
-  ];
+  const annee = state.periodYear;
+  const serieAnnee = (a) => Array.from({ length: 12 }, (_, i) => {
+    const periode = `${a}-${String(i + 1).padStart(2, "0")}`;
+    if (state.provinceFilter) return valeurPeriodeExplicite(metric, state.provinceFilter, periode);
+    if (scope === "pda") {
+      const vals = PDA_PROVINCES.map(p => valeurPeriodeExplicite(metric, p, periode)).filter(v => v != null);
+      return vals.length ? Math.round(vals.reduce((x, y) => x + y, 0) / vals.length * 10) / 10 : null;
+    }
+    return valeurNatPeriode(metric, periode);
+  });
+  const series = [{ name: `Année ${annee}`, data: serieAnnee(annee), color: "#1E40AF", style: "solid", opacity: 1 }];
+  [[annee - 1, "#94A3B8"], [annee - 2, "#CBD5E1"]].forEach(([a, c]) => {
+    const d = serieAnnee(a);
+    if (d.some(v => v != null)) series.push({ name: `Année ${a}`, data: d, color: c, style: "dashed", opacity: 0.9 });
+  });
+  return series;
 }
 
 /* ==============================================================
@@ -6244,6 +6385,10 @@ function renderMap(metric, opts = {}) {
 
   function getRag(val) {
     if (val == null || Number.isNaN(val)) return "na";
+    const abs = SEUILS.par_metrique && SEUILS.par_metrique[metric];
+    if (abs) return (opts.inverse
+      ? (val <= abs.vert ? "green" : val <= abs.jaune ? "yellow" : val <= abs.orange ? "orange" : "red")
+      : (val >= abs.vert ? "green" : val >= abs.jaune ? "yellow" : val >= abs.orange ? "orange" : "red"));
     if (isVolume) {
       if (val <= 2500) return "green";
       if (val <= 4500) return "yellow";

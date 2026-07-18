@@ -1,0 +1,7 @@
+{
+  "_aide": "Seuils vert/jaune/orange/rouge du tableau de bord, modifiables sans code. 'normal' (indicateurs croissants) et 'inverse' (ruptures, abandons, deces) s'expriment en proportion de la cible de chaque indicateur : vert 1.0 signifie vert a partir de 100 pour cent de la cible. 'par_metrique' definit des seuils absolus pour un indicateur precis et prime sur le reste ; exemple : \"couv-penta3\": { \"vert\": 90, \"jaune\": 80, \"orange\": 60 }. Les utilisateurs peuvent aussi ajuster les proportions depuis le bouton Seuils du tableau de bord, reglage propre a leur navigateur.",
+
+  "normal":  { "vert": 1.0, "jaune": 0.85, "orange": 0.65 },
+  "inverse": { "vert": 0.5, "jaune": 1.0,  "orange": 1.5 },
+  "par_metrique": {}
+}
