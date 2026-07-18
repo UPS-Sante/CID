@@ -1,7 +1,36 @@
 {
-  "_aide": "Seuils vert/jaune/orange/rouge du tableau de bord, modifiables sans code. 'normal' (indicateurs croissants) et 'inverse' (ruptures, abandons, deces) s'expriment en proportion de la cible de chaque indicateur : vert 1.0 signifie vert a partir de 100 pour cent de la cible. 'par_metrique' definit des seuils absolus pour un indicateur precis et prime sur le reste ; exemple : \"couv-penta3\": { \"vert\": 90, \"jaune\": 80, \"orange\": 60 }. Les utilisateurs peuvent aussi ajuster les proportions depuis le bouton Seuils du tableau de bord, reglage propre a leur navigateur.",
+  "_aide": "Seuils vert/jaune/orange/rouge. 'normal' et 'inverse' sont le reglage general en proportion de la cible. 'par_metrique' porte les seuils absolus suggeres indicateur par indicateur, avec leur sens de lecture ; ils priment sur le reglage general et restent modifiables par chaque utilisateur depuis le bouton Seuils du tableau de bord (reglage propre au navigateur). Un indicateur absent de cette liste suit le reglage general.",
 
   "normal":  { "vert": 1.0, "jaune": 0.85, "orange": 0.65 },
   "inverse": { "vert": 0.5, "jaune": 1.0,  "orange": 1.5 },
-  "par_metrique": {}
+
+  "par_metrique": {
+    "couv-penta1":     { "vert": 90, "jaune": 80, "orange": 60, "sens": "croissant" },
+    "couv-penta3":     { "vert": 90, "jaune": 80, "orange": 60, "sens": "croissant" },
+    "couv-var2":       { "vert": 80, "jaune": 65, "orange": 50, "sens": "croissant" },
+    "couv-vpi2":       { "vert": 80, "jaune": 65, "orange": 50, "sens": "croissant" },
+    "abandon":         { "vert": 10, "jaune": 15, "orange": 20, "sens": "decroissant" },
+    "zd-volume":       { "vert": 2500, "jaune": 4500, "orange": 6500, "sens": "decroissant" },
+    "couv-cpn1":       { "vert": 80, "jaune": 65, "orange": 50, "sens": "croissant" },
+    "couv-cpn4":       { "vert": 80, "jaune": 65, "orange": 50, "sens": "croissant" },
+    "couv-acc":        { "vert": 80, "jaune": 65, "orange": 50, "sens": "croissant" },
+    "accouch":         { "vert": 70, "jaune": 55, "orange": 40, "sens": "croissant" },
+    "dsr-abandon":     { "vert": 20, "jaune": 30, "orange": 40, "sens": "decroissant" },
+    "mcpr":            { "vert": 25, "jaune": 18, "orange": 12, "sens": "croissant" },
+    "comp-dhis2":      { "vert": 90, "jaune": 80, "orange": 70, "sens": "croissant" },
+    "comp-tracker":    { "vert": 70, "jaune": 55, "orange": 40, "sens": "croissant" },
+    "comp-sigl":       { "vert": 90, "jaune": 80, "orange": 70, "sens": "croissant" },
+    "comp-smt":        { "vert": 90, "jaune": 80, "orange": 70, "sens": "croissant" },
+    "comp-ihris":      { "vert": 90, "jaune": 80, "orange": 70, "sens": "croissant" },
+    "surv-prom":       { "vert": 80, "jaune": 70, "orange": 60, "sens": "croissant" },
+    "surv-tlohprompt": { "vert": 80, "jaune": 70, "orange": 60, "sens": "croissant" },
+    "surv-tlohcomp":   { "vert": 90, "jaune": 80, "orange": 70, "sens": "croissant" },
+    "cousp-notif24":   { "vert": 80, "jaune": 70, "orange": 60, "sens": "croissant" },
+    "cousp-rep48":     { "vert": 80, "jaune": 70, "orange": 60, "sens": "croissant" },
+    "dispo-essentiel": { "vert": 95, "jaune": 85, "orange": 75, "sens": "croissant" },
+    "log-rupture":     { "vert": 5,  "jaune": 10, "orange": 20, "sens": "decroissant" },
+    "palu-tdr":        { "vert": 90, "jaune": 80, "orange": 70, "sens": "croissant" },
+    "vih-arv":         { "vert": 90, "jaune": 80, "orange": 70, "sens": "croissant" },
+    "tb-succes":       { "vert": 85, "jaune": 75, "orange": 65, "sens": "croissant" }
+  }
 }

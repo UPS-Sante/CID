@@ -2665,10 +2665,27 @@
   .chart-values { width:100%; border-collapse:collapse; margin-top:4px; font-variant-numeric:tabular-nums; }
   .chart-values td, .chart-values th { font-size:9.5px; padding:2px 3px; text-align:center; color:#475569; border-top:1px solid #EEF2F7; }
   .chart-values th { text-align:left; color:#1F3864; font-weight:600; white-space:nowrap; }
+  .seuils-defile { max-height:240px; overflow-y:auto; border:1px solid #E2E8F0; border-radius:6px; }
+  .seuils-table { width:100%; border-collapse:collapse; font-size:11.5px; }
+  .seuils-table th { position:sticky; top:0; background:#F8FAFC; text-align:left; padding:5px 8px; color:#1F3864; border-bottom:1px solid #E2E8F0; }
+  .seuils-table td { padding:3px 8px; border-bottom:1px solid #F1F5F9; }
+  .seuils-table input { width:64px; padding:2px 5px; border:1px solid #CBD5E1; border-radius:4px; font-size:11.5px; }
+  .seuils-table select { padding:2px 4px; border:1px solid #CBD5E1; border-radius:4px; font-size:11.5px; }
+  .seuils-table code { font-size:11px; color:#334155; }
+  .tbl-s { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+  .tbl-s th { text-align:left; font-size:11px; color:#64748B; text-transform:uppercase; letter-spacing:.4px; padding:6px 8px; border-bottom:1px solid #E2E8F0; }
+  .tbl-s td { font-size:12.5px; color:#1E293B; padding:7px 8px; border-bottom:1px solid #F1F5F9; }
+  .tbl-s td.num, .tbl-s th.num { text-align:right; }
+  .tbl-s tr:last-child td { border-bottom:none; }
   @media print {
-    .sb, .tb-actions, .period-pills, .period-sel, .scope-block, .seuils-overlay, .chart-values-toggle { display:none !important; }
+    .sb, .tb-actions, .period-pills, .period-sel, .scope-block, .seuils-overlay, .chart-values-toggle, .exec-tabs { display:none !important; }
     .main { margin:0 !important; padding:8mm !important; width:100% !important; }
     body { background:#fff !important; }
+    .exec-grid { display:grid !important; grid-template-columns:repeat(2, 1fr) !important; gap:6mm !important; }
+    .kpi-grid { display:grid !important; grid-template-columns:repeat(3, 1fr) !important; gap:5mm !important; }
+    .grid-2 { display:grid !important; grid-template-columns:1fr 1fr !important; gap:6mm !important; }
+    .kpi, .kpi-exec, .card { break-inside:avoid; page-break-inside:avoid; box-shadow:none !important; }
+    .kpi-value { font-size:22px !important; }
     * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   }
 </style>
@@ -3097,6 +3114,7 @@ async function chargerDonneesReelles() {
       const sj = await fetch("seuils_rag.json").then(r => r.ok ? r.json() : null);
       if (sj) { SEUILS.normal = sj.normal || SEUILS.normal; SEUILS.inverse = sj.inverse || SEUILS.inverse; SEUILS.par_metrique = sj.par_metrique || {}; }
     } catch (e) {}
+    SEUILS_DEPOT = JSON.parse(JSON.stringify(SEUILS));
     chargerSeuilsLocaux();
     const badge = document.getElementById("h-data-status");
     if (badge) {
@@ -3177,10 +3195,18 @@ let SEUILS = {
   par_metrique: {}
 };
 function chargerSeuilsLocaux() {
-  try { const s = localStorage.getItem("cid_seuils"); if (s) { const o = JSON.parse(s); SEUILS.normal = o.normal || SEUILS.normal; SEUILS.inverse = o.inverse || SEUILS.inverse; } } catch (e) {}
+  try {
+    const s = localStorage.getItem("cid_seuils");
+    if (s) {
+      const o = JSON.parse(s);
+      SEUILS.normal = o.normal || SEUILS.normal;
+      SEUILS.inverse = o.inverse || SEUILS.inverse;
+      if (o.par_metrique) Object.assign(SEUILS.par_metrique, o.par_metrique);
+    }
+  } catch (e) {}
 }
 function sauverSeuilsLocaux() {
-  try { localStorage.setItem("cid_seuils", JSON.stringify({ normal: SEUILS.normal, inverse: SEUILS.inverse })); } catch (e) {}
+  try { localStorage.setItem("cid_seuils", JSON.stringify({ normal: SEUILS.normal, inverse: SEUILS.inverse, par_metrique: SEUILS.par_metrique })); } catch (e) {}
 }
 function rag(val, target, inverse = false) {
   if (val == null || Number.isNaN(val)) return "na";
@@ -3195,10 +3221,12 @@ function rag(val, target, inverse = false) {
   if (val >= target * SEUILS.normal.orange) return "orange";
   return "red";
 }
+let SEUILS_DEPOT = null;
 function ragPour(metric, val, target, inverse = false) {
   const s = SEUILS.par_metrique && SEUILS.par_metrique[metric];
   if (!s || val == null || Number.isNaN(val)) return rag(val, target, inverse);
-  if (inverse) return val <= s.vert ? "green" : val <= s.jaune ? "yellow" : val <= s.orange ? "orange" : "red";
+  const dec = s.sens ? s.sens === "decroissant" : inverse;
+  if (dec) return val <= s.vert ? "green" : val <= s.jaune ? "yellow" : val <= s.orange ? "orange" : "red";
   return val >= s.vert ? "green" : val >= s.jaune ? "yellow" : val >= s.orange ? "orange" : "red";
 }
 function ragLabel(r) {
@@ -3309,6 +3337,9 @@ const I18N = {
     min_title: "Tableau de bord du Ministre — 10 indicateurs clés",
     min_subtitle: "Vue synthétique des indicateurs prioritaires du système national de santé",
     min_validation: "Validation J+5",
+    exec_tag: "Vue Exécutive · Cabinet du Ministre",
+    exec_title: "Tableau de bord exécutif",
+    exec_sub: "Les priorités sanitaires nationales en trois lectures : couverture et impact, surveillance et urgences, pilotage et systèmes.",
     sec_a: "Couverture & Impact",
     sec_a_meta: "4 indicateurs · Programmes prioritaires",
     sec_b: "Surveillance & Urgences",
@@ -3496,6 +3527,9 @@ const I18N = {
     min_title: "Minister's Dashboard — 10 key indicators",
     min_subtitle: "Concise overview of priority indicators of the national health system",
     min_validation: "Validation D+5",
+    exec_tag: "Executive View · Minister's Cabinet",
+    exec_title: "Executive dashboard",
+    exec_sub: "National health priorities in three readings: coverage and impact, surveillance and emergencies, stewardship and systems.",
     sec_a: "Coverage & Impact",
     sec_a_meta: "4 indicators · Priority programmes",
     sec_b: "Surveillance & Emergencies",
@@ -3683,6 +3717,9 @@ const I18N = {
     min_title: "لوحة معلومات الوزير — 10 مؤشرات رئيسية",
     min_subtitle: "نظرة موجزة على المؤشرات ذات الأولوية للنظام الصحي الوطني",
     min_validation: "التحقق ي+5",
+    exec_tag: "العرض التنفيذي · ديوان الوزير",
+    exec_title: "لوحة القيادة التنفيذية",
+    exec_sub: "الأولويات الصحية الوطنية في ثلاث قراءات: التغطية والأثر، الترصد والطوارئ، القيادة والنظم.",
     sec_a: "التغطية والأثر",
     sec_a_meta: "4 مؤشرات · البرامج ذات الأولوية",
     sec_b: "المراقبة والطوارئ",
@@ -4123,33 +4160,56 @@ function renderTopbar(v) {
 function ouvrirSeuils() {
   if (document.querySelector(".seuils-overlay")) return;
   const n = SEUILS.normal, iv = SEUILS.inverse;
+  const metriques = Object.keys(SEUILS.par_metrique).sort();
+  const lignes = metriques.map(m => {
+    const s = SEUILS.par_metrique[m];
+    const libelle = (typeof DR !== "undefined" && DR.metriques[m]) ? DR.metriques[m] : "";
+    return `<tr class="seuils-ligne" data-metric="${m}">
+      <td title="${libelle.replace(/"/g, "&quot;")}"><code>${m}</code></td>
+      <td><select data-champ="sens">
+        <option value="croissant" ${s.sens !== "decroissant" ? "selected" : ""}>croissant</option>
+        <option value="decroissant" ${s.sens === "decroissant" ? "selected" : ""}>décroissant</option>
+      </select></td>
+      <td><input data-champ="vert" type="number" step="any" value="${s.vert}"></td>
+      <td><input data-champ="jaune" type="number" step="any" value="${s.jaune}"></td>
+      <td><input data-champ="orange" type="number" step="any" value="${s.orange}"></td>
+    </tr>`;
+  }).join("");
   const boite = document.createElement("div");
   boite.className = "seuils-overlay";
   boite.innerHTML = `
     <div class="seuils-panel">
       <div class="seuils-titre">Seuils vert / jaune / orange / rouge</div>
-      <div class="seuils-note">Exprimés en proportion de la cible de chaque indicateur (1 = 100 % de la cible).
-      Indicateurs croissants : la valeur est verte au-dessus du seuil vert.
-      Indicateurs décroissants (ruptures, abandons, décès) : la valeur est verte en dessous du seuil vert.
-      Le rouge s'applique au-delà du dernier seuil.</div>
+      <div class="seuils-note">Les seuils par indicateur ci-dessous sont des valeurs suggérées, modifiables librement ;
+      vos réglages restent propres à ce navigateur, les défauts institutionnels du dépôt ne changent pas.
+      Croissant : vert au-dessus du seuil vert. Décroissant (ruptures, abandons, décès) : vert en dessous.
+      Le rouge s'applique au-delà du dernier seuil. Un indicateur absent de la liste suit le réglage général.</div>
+      <div class="seuils-sous">Seuils par indicateur (valeurs absolues)</div>
+      <div class="seuils-defile">
+        <table class="seuils-table">
+          <tr><th>Indicateur</th><th>Sens</th><th>Vert</th><th>Jaune</th><th>Orange</th></tr>
+          ${lignes}
+        </table>
+      </div>
+      <div class="seuils-sous" style="margin-top:10px;">Réglage général (proportion de la cible, pour les indicateurs hors liste)</div>
       <div class="seuils-grille">
-        <div class="seuils-col"><div class="seuils-sous">Indicateurs croissants</div>
+        <div class="seuils-col"><div class="seuils-sous">Croissants</div>
           <label>Vert si ≥ cible ×<input id="sn-v" type="number" step="0.05" value="${n.vert}"></label>
           <label>Jaune si ≥ cible ×<input id="sn-j" type="number" step="0.05" value="${n.jaune}"></label>
           <label>Orange si ≥ cible ×<input id="sn-o" type="number" step="0.05" value="${n.orange}"></label>
         </div>
-        <div class="seuils-col"><div class="seuils-sous">Indicateurs décroissants</div>
+        <div class="seuils-col"><div class="seuils-sous">Décroissants</div>
           <label>Vert si ≤ cible ×<input id="si-v" type="number" step="0.05" value="${iv.vert}"></label>
           <label>Jaune si ≤ cible ×<input id="si-j" type="number" step="0.05" value="${iv.jaune}"></label>
           <label>Orange si ≤ cible ×<input id="si-o" type="number" step="0.05" value="${iv.orange}"></label>
         </div>
       </div>
       <div class="seuils-actions">
-        <button class="tb-btn" onclick="reinitialiserSeuils()">Réinitialiser</button>
+        <button class="tb-btn" onclick="reinitialiserSeuils()">Réinitialiser aux valeurs du dépôt</button>
         <button class="tb-btn" onclick="fermerSeuils()">Fermer</button>
         <button class="tb-btn tb-btn-principal" onclick="appliquerSeuils()">Appliquer</button>
       </div>
-      <div class="seuils-note">Les valeurs par défaut du dépôt, y compris des seuils absolus indicateur par indicateur, se règlent dans seuils_rag.json sans modification du code.</div>
+      <div class="seuils-note">Pour changer les défauts institutionnels ou ajouter un indicateur à la liste : seuils_rag.json dans le dépôt, sans modification du code.</div>
     </div>`;
   boite.addEventListener("click", e => { if (e.target === boite) fermerSeuils(); });
   document.body.appendChild(boite);
@@ -4159,19 +4219,26 @@ function appliquerSeuils() {
   const g = id => parseFloat(document.getElementById(id).value);
   SEUILS.normal  = { vert: g("sn-v"), jaune: g("sn-j"), orange: g("sn-o") };
   SEUILS.inverse = { vert: g("si-v"), jaune: g("si-j"), orange: g("si-o") };
+  document.querySelectorAll(".seuils-ligne").forEach(tr => {
+    const m = tr.dataset.metric;
+    const c = ch => tr.querySelector(`[data-champ="${ch}"]`);
+    SEUILS.par_metrique[m] = {
+      vert: parseFloat(c("vert").value),
+      jaune: parseFloat(c("jaune").value),
+      orange: parseFloat(c("orange").value),
+      sens: c("sens").value,
+    };
+  });
   sauverSeuilsLocaux(); fermerSeuils(); renderMain();
 }
 function reinitialiserSeuils() {
-  SEUILS.normal  = { vert: 1.0, jaune: 0.85, orange: 0.65 };
-  SEUILS.inverse = { vert: 0.5, jaune: 1.0,  orange: 1.5 };
+  if (SEUILS_DEPOT) SEUILS = JSON.parse(JSON.stringify(SEUILS_DEPOT));
+  else {
+    SEUILS.normal  = { vert: 1.0, jaune: 0.85, orange: 0.65 };
+    SEUILS.inverse = { vert: 0.5, jaune: 1.0,  orange: 1.5 };
+  }
   try { localStorage.removeItem("cid_seuils"); } catch (e) {}
   fermerSeuils(); renderMain();
-}
-function exporterPDF() {
-  const ancien = document.title;
-  document.title = `CID_${state.sub || "vue"}_${state.periodValue}`;
-  window.print();
-  setTimeout(() => { document.title = ancien; }, 500);
 }
 
 function setPeriodMode(mode) {
@@ -4540,188 +4607,99 @@ function kpiExec(opts) {
 VIEWS["min-overview"] = () => {
   const section = state.minSection || "A";
 
-  // --- Compute KPI values from existing data
-  const penta3       = nationalAggregate("couv-penta3");
-  const accouch      = nationalAggregate("accouch");
-  const mcpr         = nationalAggregate("mcpr");
-  const dispo        = nationalAggregate("dispo-essentiel");
-  const alertesNum   = null;
-  const promptTloh   = nationalAggregate("surv-prom");
-  const repAlertes   = null;
-  const compRma      = nationalAggregate("comp-dhis2");
-  const scorePda     = (() => {
-    const vals = [];
-    PDA_DOMAINS.forEach(d => {
-      PDA_PROVINCES.forEach(p => { const v = genValue("pda-" + d.id, p); if (v != null) vals.push(v); });
-    });
-    return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : null;
-  })();
-  const execBudget   = null;
+  /* -- aides locales : tendance nationale et ligne de synthese -- */
+  const tendance = (m) => {
+    const v0 = valeurReelle(m, null, 0), v1 = valeurReelle(m, null, 1);
+    if (v0 == null || v1 == null) return { txt: "—", dir: "flat" };
+    const d = Math.round((v0 - v1) * 10) / 10;
+    return { txt: (d >= 0 ? "+" : "") + d + " pts", dir: d > 0 ? "up" : d < 0 ? "down" : "flat" };
+  };
+  const ligne = (prio, lib, m, cible, unite = "%", inverse = false) => {
+    const v = nationalAggregate(m);
+    const r = ragPour(m, v, cible, inverse);
+    return `<tr><td><strong>${prio}</strong></td><td>${lib}</td>
+      <td class="num">${v == null ? "ND" : v + unite}</td><td class="num">${cible}${unite}</td>
+      <td><span class="pill ${r}">${ragLabel(r)}</span></td><td class="num">${tendance(m).txt}</td></tr>`;
+  };
+  const carteExec = (num, libelle, categorie, metric, cible, source, couleur, inverse = false) => {
+    const v = nationalAggregate(metric);
+    const td = tendance(metric);
+    return kpiExec({ n: num, label: libelle, category: categorie, value: v, unit: "%",
+      target: cible, trend: td.txt, trendDir: td.dir, rag: ragPour(metric, v, cible, inverse),
+      source, sparkData: sparklineData(metric), sparkColor: couleur, action: "" });
+  };
 
-  // --- Section A : Couverture & Impact
+  /* -- Acte A : Couverture & Impact -- */
   const sectionA = `
     <div class="exec-grid">
-      ${kpiExec({
-        n: "01",
-        label: t("kpi_penta3"),
-        category: t("cat_vacc_dlmvse"),
-        value: penta3, unit: "%",
-        target: 90,
-        trend: "", trendDir: "flat",
-        rag: rag(penta3, 90),
-        source: "DHIS2 · DLMVSE · M+5",
-        sparkData: sparklineData("couv-penta3"),
-        sparkColor: "#1E40AF",
-        action: t("act_penta3")
-      })}
-      ${kpiExec({
-        n: "02",
-        label: t("kpi_accouch"),
-        category: t("cat_mat_dsr"),
-        value: accouch, unit: "%",
-        target: 80,
-        trend: "", trendDir: "flat",
-        rag: "red",
-        source: "DHIS2 · RMA · DSR",
-        sparkData: sparklineData("accouch"),
-        sparkColor: "#991B1B",
-        action: t("act_accouch")
-      })}
-      ${kpiExec({
-        n: "03",
-        label: t("kpi_mcpr"),
-        category: t("cat_pf_dsr"),
-        value: mcpr, unit: "%",
-        target: 30,
-        trend: "", trendDir: "flat",
-        rag: "red",
-        source: "RMA + SIGL · DSR",
-        sparkData: sparklineData("mcpr"),
-        sparkColor: "#991B1B",
-        action: t("act_mcpr")
-      })}
-      ${kpiExec({
-        n: "04",
-        label: t("kpi_dispo"),
-        category: t("cat_log_dgpml"),
-        value: dispo, unit: "%",
-        target: 95,
-        trend: "", trendDir: "flat",
-        rag: rag(dispo, 95),
-        source: "SIGL · DGPML · M+5",
-        sparkData: sparklineData("dispo-essentiel"),
-        sparkColor: "#C2410C",
-        action: t("act_dispo")
-      })}
+      ${carteExec("01", t("kpi_penta3"), t("cat_vacc_dlmvse"), "couv-penta3", 90, "DHIS2 · DLMVSE · M+5", "#1E40AF")}
+      ${carteExec("02", t("kpi_accouch"), t("cat_mat_dsr"), "accouch", 70, "DHIS2 · RMA · DSR", "#991B1B")}
+      ${carteExec("03", t("kpi_mcpr"), t("cat_pf_dsr"), "mcpr", 25, "RMA + SIGL · DSR", "#991B1B")}
+      ${carteExec("04", t("kpi_dispo"), t("cat_log_dgpml"), "dispo-essentiel", 95, "SIGL · DGPML · M+5", "#C2410C")}
     </div>
-
-    ${aiBox(
-      "Couverture & Impact — Lecture exécutive",
-      `Les indicateurs de couverture restent en deçà des cibles nationales. <strong>L'accouchement assisté (${accouch}%)</strong> et le <strong>mCPR (${mcpr}%)</strong> sont les deux points les plus critiques nécessitant une action gouvernementale d'envergure. <strong>Recommandation au Cabinet :</strong> activer un groupe de travail interministériel (Santé, Famille, Économie) pour un Plan Accéléré 2026-2028 sur la santé maternelle, en mobilisant les fonds CIFF (mCPR) et OOAS-Gavi (SONU). Cible de redressement : +5 pts sur les 2 indicateurs d'ici mi-2027.`,
-      "Source : Triangulation DHIS2 + RMA + SIGL · Confiance 91%"
-    )}
+    <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+      ${card("Où en est la couverture ?", "Penta 3 par province — " + periodLabel(), renderMap("couv-penta3"), "Les provinces grisées n'ont pas rapporté sur la période.")}
+      ${card("Quelle trajectoire ?", "Penta 3 national — années comparées", renderLineChart(yoySeriesData("couv-penta3")), "Les valeurs des points figurent sous le graphique.")}
+    </div>
+    ${card("Synthèse par priorité nationale", "Indicateur phare, position et mouvement — " + periodLabel(), `
+      <table class="tbl-s">
+        <tr><th>Priorité</th><th>Indicateur</th><th class="num">Valeur</th><th class="num">Cible</th><th>Statut</th><th class="num">Tendance</th></tr>
+        ${ligne("P1", "Accouchements assistés par personnel qualifié", "accouch", 70)}
+        ${ligne("P1", "Couverture CPN 4", "couv-cpn4", 80)}
+        ${ligne("P2", "Couverture Penta 3", "couv-penta3", 90)}
+        ${ligne("P2", "Abandon spécifique Penta1–Penta3", "abandon", 10, "%", true)}
+        ${ligne("PF", "Prévalence contraceptive", "mcpr", 25)}
+        ${ligne("P4", "Promptitude de la surveillance (PFA)", "surv-prom", 80)}
+      </table>`, "Tendance : écart en points par rapport au mois précédent. Statut : seuils du dépôt, ajustables via le bouton Seuils.")}
   `;
 
-  // --- Section B : Surveillance & Urgences
+  /* -- Acte B : Surveillance & Urgences -- */
+  const alertes = nationalAggregate("cousp-alertes");
   const sectionB = `
     <div class="exec-grid">
-      ${kpiExec({
-        n: "05",
-        label: t("kpi_alertes"),
-        category: t("cat_surv_cousp"),
-        value: alertesNum, unit: "",
-        target: "≤ 5",
-        trend: "", trendDir: "flat",
-        rag: "orange",
-        source: "TLOH hebdo · COUSP · Temps réel",
-        sparkData: [],
-        sparkColor: "#C2410C",
-        action: t("act_alertes")
-      })}
-      ${kpiExec({
-        n: "06",
-        label: t("kpi_prom_tloh"),
-        category: t("cat_surv_epi"),
-        value: promptTloh, unit: "%",
-        target: 90,
-        trend: "", trendDir: "flat",
-        rag: rag(promptTloh, 90),
-        source: "DHIS2 SIMR · COUSP",
-        sparkData: sparklineData("surv-prom"),
-        sparkColor: "#C2410C",
-        action: t("act_prom_tloh")
-      })}
-      ${kpiExec({
-        n: "07",
-        label: t("kpi_rep_alertes"),
-        category: t("cat_resp_cousp"),
-        value: repAlertes, unit: "%",
-        target: 90,
-        trend: "", trendDir: "flat",
-        rag: rag(repAlertes, 90),
-        source: "Investigations COUSP · OMS-AFRO",
-        sparkData: [],
-        sparkColor: "#C2410C",
-        action: t("act_rep_alertes")
-      })}
+      ${kpiExec({ n: "05", label: t("kpi_alertes"), category: t("cat_surv_cousp"),
+        value: alertes, unit: "", target: "≤ 5", trend: tendance("cousp-alertes").txt,
+        trendDir: tendance("cousp-alertes").dir, rag: alertes == null ? "na" : alertes <= 5 ? "green" : alertes <= 10 ? "yellow" : "red",
+        source: "TLOH hebdo · COUSP", sparkData: sparklineData("cousp-alertes"), sparkColor: "#C2410C", action: "" })}
+      ${carteExec("06", t("kpi_prom_tloh"), t("cat_surv_epi"), "surv-tlohprompt", 80, "TLOH · COUSP", "#C2410C")}
+      ${carteExec("07", t("kpi_rep_alertes"), t("cat_resp_cousp"), "cousp-rep48", 80, "Investigations · COUSP", "#C2410C")}
     </div>
-
-    ${aiBox(
-      "Surveillance & Urgences — Lecture exécutive",
-      `Le système de surveillance s'améliore (+5 pts promptitude, +8 pts réponse) mais reste en-dessous des standards OMS-AFRO. <strong>${alertesNum} alertes actives</strong> dont 2 critiques (choléra Lac, rougeole Ouaddaï). <strong>Recommandation au Cabinet :</strong> activer le Plan National de Préparation aux Urgences Sanitaires (PNPUS) phase 2, débloquer une enveloppe de 450 M FCFA pour le pré-positionnement intrants T2-T3 et finaliser le décret de réorganisation du COUSP en intégrant l'approche "One Health".`,
-      "Source : COUSP + DPSIS + OMS-AFRO · Confiance 90%"
-    )}
+    <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+      ${card("Où la surveillance décroche-t-elle ?", "Promptitude hebdomadaire par province", renderMap("cousp-prompt"), "")}
+      ${card("La promptitude progresse-t-elle ?", "Notification PFA — années comparées", renderLineChart(yoySeriesData("surv-prom")), "")}
+    </div>
+    ${card("Fonctions de surveillance", "Détection, notification, investigation — " + periodLabel(), `
+      <table class="tbl-s">
+        <tr><th></th><th>Indicateur</th><th class="num">Valeur</th><th class="num">Cible</th><th>Statut</th><th class="num">Tendance</th></tr>
+        ${ligne("Détection", "Complétude surveillance hebdomadaire", "cousp-comphebdo", 90)}
+        ${ligne("Notification", "Alertes notifiées sous 24 heures", "cousp-notif24", 80)}
+        ${ligne("Investigation", "Alertes investiguées sous 48 heures", "cousp-rep48", 80)}
+        ${ligne("Rapports", "Promptitude des rapports TLOH", "surv-tlohprompt", 80)}
+        ${ligne("Rapports", "Complétude des rapports TLOH", "surv-tlohcomp", 90)}
+      </table>`, "")}
   `;
 
-  // --- Section C : Pilotage & Engagements
+  /* -- Acte C : Pilotage & Systèmes -- */
   const sectionC = `
     <div class="exec-grid">
-      ${kpiExec({
-        n: "08",
-        label: t("kpi_comp_rma"),
-        category: t("cat_si_dpsis"),
-        value: compRma, unit: "%",
-        target: 95,
-        trend: "", trendDir: "flat",
-        rag: rag(compRma, 95),
-        source: "DHIS2 · DPSIS · M+5",
-        sparkData: sparklineData("comp-dhis2"),
-        sparkColor: "#CA8A04",
-        action: t("act_comp_rma")
-      })}
-      ${kpiExec({
-        n: "09",
-        label: t("kpi_score_pda"),
-        category: t("cat_pda"),
-        value: scorePda, unit: "%",
-        target: 80,
-        trend: "", trendDir: "flat",
-        rag: rag(scorePda, 80),
-        source: "DHIS2 + SIGL · 13 provinces PDA",
-        sparkData: sparklineData("pda-D1", "pda"),
-        sparkColor: "#B8841C",
-        action: t("act_score_pda")
-      })}
-      ${kpiExec({
-        n: "10",
-        label: t("kpi_exec_budget"),
-        category: t("cat_daf"),
-        value: execBudget, unit: "%",
-        target: 85,
-        trend: "", trendDir: "flat",
-        rag: rag(execBudget, 85),
-        source: "DAF · Trésor public · DGPML",
-        sparkData: [],
-        sparkColor: "#1E40AF",
-        action: t("act_exec_budget")
-      })}
+      ${carteExec("08", t("kpi_comp_rma"), t("cat_si_dpsis"), "comp-dhis2", 90, "DHIS2 · DPSIS · M+5", "#1E40AF")}
+      ${carteExec("09", "Complétude DHIS2 Tracker", t("cat_si_dpsis"), "comp-tracker", 70, "DHIS2 Tracker · DPSIS", "#1E40AF")}
+      ${carteExec("10", "Score qualité des données", t("cat_si_dpsis"), "si-dqs", 80, "DQS · DPSIS", "#1E40AF")}
     </div>
-
-    ${aiBox(
-      "Pilotage & Engagements — Lecture exécutive",
-      `La gouvernance progresse sur les trois axes. <strong>L'exécution budgétaire (${execBudget}%)</strong> a connu une forte accélération (+18 pts) mais reste sous la cible (85%) — un effort soutenu sur T3-T4 est nécessaire. Le <strong>PDA atteint ${scorePda}%</strong> avec une trajectoire conforme à l'engagement Gates. La <strong>complétude RMA (${compRma}%)</strong> bénéficie du déploiement DHIS2 mais doit franchir le cap de 95% pour la certification PRSS-II. <strong>Recommandation au Cabinet :</strong> renforcer le suivi mensuel par la Salle des Indicateurs et systématiser les revues PTF trimestrielles.`,
-      "Source : DAF + DPSIS + Cellule PDA · Confiance 93%"
-    )}
+    <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+      ${card("La remontée des données s'améliore-t-elle ?", "Complétude DHIS2 routine — années comparées", renderLineChart(yoySeriesData("comp-dhis2")), "")}
+      ${card("Complétude par système d'information", periodLabel(), `
+        <table class="tbl-s">
+          <tr><th>Système</th><th class="num">Complétude</th><th>Statut</th><th class="num">Tendance</th></tr>
+          ${["comp-dhis2|DHIS2 routine", "comp-tracker|DHIS2 Tracker", "comp-sigl|SIGL", "comp-smt|eSMT", "comp-ihris|IHRIS"].map(x => {
+            const [m, lib] = x.split("|");
+            const v = nationalAggregate(m);
+            const r = ragPour(m, v, 90);
+            return `<tr><td>${lib}</td><td class="num">${v == null ? "ND" : v + "%"}</td>
+              <td><span class="pill ${r}">${ragLabel(r)}</span></td><td class="num">${tendance(m).txt}</td></tr>`;
+          }).join("")}
+        </table>`, "Sources : DPSIS · fichiers mensuels du CID.")}
+    </div>
   `;
 
   const sectionContent = section === "A" ? sectionA : section === "B" ? sectionB : sectionC;
@@ -4730,14 +4708,13 @@ VIEWS["min-overview"] = () => {
                     : t("sec_c");
 
   return {
-    crumbs: [t("prog_min"), sectionTitle],
+    crumbs: ["Vue Exécutive", sectionTitle],
     html: `
       <div class="ph ph-exec">
-        <div class="ph-tag ph-tag-exec">${t("min_tag")}</div>
-        <div class="ph-title">${t("min_title")}</div>
-        <div class="ph-sub">${t("min_subtitle")} · ${periodLabel()} · ${t("min_validation")}</div>
+        <div class="ph-tag">◆ ${t("exec_tag")}</div>
+        <div class="ph-title">${t("exec_title")}</div>
+        <div class="ph-sub">${t("exec_sub")}</div>
       </div>
-
       <div class="exec-tabs">
         <button class="exec-tab ${section === 'A' ? 'on' : ''}" onclick="setMinSection('A')">
           <span class="et-num">01</span>
