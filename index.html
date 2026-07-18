@@ -2684,7 +2684,20 @@
   .export-sousliste { display:flex; flex-wrap:wrap; gap:4px 14px; padding-left:20px; }
   .export-sousliste label { font-size:12px; color:#334155; cursor:pointer; white-space:nowrap; }
   .export-sousliste input, .export-prog input { margin-right:5px; }
+  .export-orientation { display:flex; gap:18px; font-size:12px; color:#334155; margin:4px 0 2px; }
+  .export-orientation input { margin-right:5px; }
   @media print {
+    /* controles d'ecran sans objet sur papier */
+    .map-toolbar, .map-mode-toggle, .prov-banner-clear, .lang-block { display:none !important; }
+    /* coupures maitrisees : une carte, un graphique, un tableau restent entiers */
+    .card, .kpi, .kpi-exec, .grid-2 > *, .exec-grid > *, .kpi-grid > * { break-inside:avoid; page-break-inside:avoid; }
+    .card { margin-bottom:5mm !important; }
+    .chart-svg { max-height:62mm; width:100%; height:auto; }
+    .map-svg { max-height:95mm; width:auto; height:auto; }
+    body.impression-paysage .chart-svg { max-height:55mm; }
+    body.impression-paysage .map-svg { max-height:80mm; }
+    body.impression-paysage .exec-grid { grid-template-columns:repeat(4, 1fr) !important; }
+    body.impression-paysage .kpi-grid { grid-template-columns:repeat(4, 1fr) !important; }
     body.impression-multi > :not(#zone-impression):not(script):not(style) { display:none !important; }
     body.impression-multi #zone-impression { display:block !important; }
     .page-imprimee { page-break-after:always; }
@@ -4265,6 +4278,11 @@ function ouvrirExportPDF() {
       Chaque section commence sur une nouvelle page, datée de la période courante (${periodLabel()}).
       La vue exécutive s'exporte avec ses trois volets.</div>
       <div class="export-liste">${groupes}</div>
+      <div class="seuils-sous" style="margin-top:10px;">Orientation</div>
+      <div class="export-orientation">
+        <label><input type="radio" name="orientation-pdf" value="paysage" checked> Paysage (recommandé : cartes et graphiques côte à côte)</label>
+        <label><input type="radio" name="orientation-pdf" value="portrait"> Portrait</label>
+      </div>
       <div class="seuils-actions">
         <button class="tb-btn" onclick="toutSelectionnerExport(true)">Tout le tableau de bord</button>
         <button class="tb-btn" onclick="toutSelectionnerExport(false)">Aucune</button>
@@ -4282,33 +4300,51 @@ function toutSelectionnerExport(etat) {
 function cocherProgramme(caseProg) {
   document.querySelectorAll(`.export-case[data-prog="${caseProg.dataset.prog}"]`).forEach(c => { c.checked = caseProg.checked; });
 }
+let _impressionEnCours = false;
 function genererPDF() {
+  if (_impressionEnCours) return;
   const vues = [...document.querySelectorAll(".export-case:checked")].map(c => c.dataset.vue);
   if (!vues.length) return;
+  const paysage = (document.querySelector('input[name="orientation-pdf"]:checked') || {}).value !== "portrait";
   fermerExport();
-  const memoire = { sub: state.sub, minSection: state.minSection };
+  _impressionEnCours = true;
+  let orientation = document.getElementById("orientation-impression");
+  if (!orientation) { orientation = document.createElement("style"); orientation.id = "orientation-impression"; document.head.appendChild(orientation); }
+  orientation.textContent = `@page { size: A4 ${paysage ? "landscape" : "portrait"}; margin: 10mm; }`;
+  document.body.classList.toggle("impression-paysage", paysage);
+  const memoire = { sub: state.sub, minSection: state.minSection, scope: state.scope, pdaDomain: state.pdaDomain };
   let zone = document.getElementById("zone-impression");
   if (!zone) { zone = document.createElement("div"); zone.id = "zone-impression"; document.body.appendChild(zone); }
   const entete = `<div class="entete-imprimee"><span>Centre d'Intelligence des Données · MSPP · République du Tchad</span><span>${periodLabel()}</span></div>`;
   const sections = [];
+  const rendreVue = (id) => {
+    try { return VIEWS[id]().html; }
+    catch (e) {
+      console.error("Section non exportee :", id, e);
+      return `<div style="padding:24px;color:#64748B;">Section « ${id} » indisponible à l'export.</div>`;
+    }
+  };
   vues.forEach(id => {
     if (!VIEWS[id]) return;
     if (id === "min-overview") {
-      ["A", "B", "C"].forEach(s => { state.minSection = s; sections.push(VIEWS[id]().html); });
+      ["A", "B", "C"].forEach(s => { state.minSection = s; sections.push(rendreVue(id)); });
     } else {
       state.sub = id;
-      sections.push(VIEWS[id]().html);
+      if (id === "vacc-pda") { state.scope = "pda"; state.pdaDomain = state.pdaDomain || "overview"; }
+      sections.push(rendreVue(id));
     }
   });
   state.sub = memoire.sub; state.minSection = memoire.minSection;
+  state.scope = memoire.scope; state.pdaDomain = memoire.pdaDomain;
   zone.innerHTML = sections.map(html => `<section class="page-imprimee">${entete}${html}</section>`).join("");
   document.body.classList.add("impression-multi");
   const ancienTitre = document.title;
   document.title = `CID_${state.periodValue}`;
   const nettoyer = () => {
-    document.body.classList.remove("impression-multi");
+    document.body.classList.remove("impression-multi", "impression-paysage");
     zone.innerHTML = "";
     document.title = ancienTitre;
+    _impressionEnCours = false;
     window.removeEventListener("afterprint", nettoyer);
   };
   window.addEventListener("afterprint", nettoyer);
