@@ -2685,6 +2685,24 @@
   .export-sousliste label { font-size:12px; color:#334155; cursor:pointer; white-space:nowrap; }
   .export-sousliste input, .export-prog input { margin-right:5px; }
   .export-orientation { display:flex; gap:18px; font-size:12px; color:#334155; margin:4px 0 2px; }
+  .atelier-overlay { position:fixed; inset:0; background:#3D4657; z-index:300; display:flex; flex-direction:column; }
+  .atelier-barre { background:#fff; padding:10px 18px; box-shadow:0 2px 8px rgba(15,23,42,.15); }
+  .atelier-titre { font-weight:700; color:#1F3864; font-size:14px; margin-bottom:6px; }
+  .atelier-outils { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .atelier-echelle { display:flex; align-items:center; gap:6px; font-size:12px; color:#334155; }
+  .atelier-echelle input { width:120px; }
+  .atelier-note { font-size:11px; color:#64748B; margin-top:5px; }
+  .atelier-defile { flex:1; overflow:auto; padding:18px 0 40px; }
+  body.atelier-actif #zone-impression { display:block; }
+  body.atelier-actif .page-imprimee { background:#fff; margin:0 auto 22px; padding:26px 30px; box-shadow:0 6px 24px rgba(0,0,0,.3); width:794px; min-height:1080px; }
+  body.atelier-actif.impression-paysage .page-imprimee { width:1122px; min-height:740px; }
+  .bloc-outils { position:absolute; top:4px; right:4px; display:none; gap:2px; background:#1F3864; border-radius:5px; padding:2px; z-index:5; }
+  .bloc-outils button { border:none; background:transparent; color:#fff; font-size:11px; width:22px; height:20px; cursor:pointer; border-radius:3px; }
+  .bloc-outils button:hover { background:#2A4A80; }
+  body.atelier-actif .card, body.atelier-actif .kpi, body.atelier-actif .kpi-exec { position:relative; }
+  body.atelier-actif .card:hover > .bloc-outils, body.atelier-actif .kpi:hover > .bloc-outils, body.atelier-actif .kpi-exec:hover > .bloc-outils { display:flex; }
+  .bloc-cache { display:none !important; }
+  .bloc-large { grid-column:1 / -1 !important; }
   .export-orientation input { margin-right:5px; }
   @media print {
     /* controles d'ecran sans objet sur papier */
@@ -2698,6 +2716,8 @@
     body.impression-paysage .map-svg { max-height:80mm; }
     body.impression-paysage .exec-grid { grid-template-columns:repeat(4, 1fr) !important; }
     body.impression-paysage .kpi-grid { grid-template-columns:repeat(4, 1fr) !important; }
+    .atelier-overlay, .bloc-outils { display:none !important; }
+    body.impression-multi .page-imprimee { width:auto !important; min-height:0 !important; margin:0 !important; padding:0 !important; box-shadow:none !important; }
     body.impression-multi > :not(#zone-impression):not(script):not(style) { display:none !important; }
     body.impression-multi #zone-impression { display:block !important; }
     .page-imprimee { page-break-after:always; }
@@ -4337,15 +4357,116 @@ function genererPDF() {
   state.sub = memoire.sub; state.minSection = memoire.minSection;
   state.scope = memoire.scope; state.pdaDomain = memoire.pdaDomain;
   zone.innerHTML = sections.map(html => `<section class="page-imprimee">${entete}${html}</section>`).join("");
+  _impressionEnCours = false;
+  ouvrirAtelier(paysage);
+}
+
+/* ==============================================================
+   ATELIER D'IMPRESSION
+   Apercu page par page avant impression : ajustement automatique
+   a la page, puis reglages manuels bloc par bloc (masquer,
+   elargir, deplacer) et echelle globale.
+============================================================== */
+function ouvrirAtelier(paysage) {
+  const zone = document.getElementById("zone-impression");
+  if (!zone || document.querySelector(".atelier-overlay")) return;
+  const overlay = document.createElement("div");
+  overlay.className = "atelier-overlay";
+  overlay.innerHTML = `
+    <div class="atelier-barre">
+      <div class="atelier-titre">Préparation du PDF · ${periodLabel()}</div>
+      <div class="atelier-outils">
+        <label class="atelier-echelle">Échelle
+          <input type="range" min="60" max="110" value="100" oninput="reglerEchelle(this.value)">
+          <span id="atelier-echelle-val">100%</span>
+        </label>
+        <button class="tb-btn" onclick="ajusterAuto()">Ajuster automatiquement</button>
+        <button class="tb-btn" onclick="retablirBlocs()">Rétablir les blocs masqués</button>
+        <button class="tb-btn" onclick="fermerAtelier()">Fermer</button>
+        <button class="tb-btn tb-btn-principal" onclick="atelierImprimer()">Imprimer / Enregistrer en PDF</button>
+      </div>
+      <div class="atelier-note">Survolez un bloc pour le masquer (✕), l'élargir (⤢) ou le déplacer (◀ ▶). L'ajustement automatique réduit chaque section pour qu'elle tienne sur sa page.</div>
+    </div>
+    <div class="atelier-defile"></div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector(".atelier-defile").appendChild(zone);
+  document.body.classList.add("atelier-actif");
+  document.body.classList.toggle("impression-paysage", paysage);
+  zone.querySelectorAll(".card, .kpi, .kpi-exec").forEach(bloc => {
+    if (bloc.parentElement.closest(".card, .kpi, .kpi-exec")) return;
+    const outils = document.createElement("div");
+    outils.className = "bloc-outils";
+    outils.innerHTML = `
+      <button title="Déplacer vers l'avant" onclick="deplacerBloc(this, -1)">◀</button>
+      <button title="Déplacer vers l'arrière" onclick="deplacerBloc(this, 1)">▶</button>
+      <button title="Pleine largeur / largeur normale" onclick="basculerLargeur(this)">⤢</button>
+      <button title="Masquer ce bloc" onclick="masquerBloc(this)">✕</button>`;
+    bloc.appendChild(outils);
+  });
+  ajusterAuto();
+}
+function fermerAtelier() {
+  const overlay = document.querySelector(".atelier-overlay");
+  const zone = document.getElementById("zone-impression");
+  if (zone) {
+    zone.querySelectorAll(".bloc-outils").forEach(o => o.remove());
+    zone.innerHTML = "";
+    document.body.appendChild(zone);
+  }
+  if (overlay) overlay.remove();
+  document.body.classList.remove("atelier-actif", "impression-paysage");
+}
+function deplacerBloc(btn, sens) {
+  const bloc = btn.closest(".card, .kpi, .kpi-exec");
+  const voisin = sens < 0 ? bloc.previousElementSibling : bloc.nextElementSibling;
+  if (!voisin) return;
+  bloc.parentElement.insertBefore(sens < 0 ? bloc : voisin, sens < 0 ? voisin : bloc);
+}
+function basculerLargeur(btn) {
+  btn.closest(".card, .kpi, .kpi-exec").classList.toggle("bloc-large");
+}
+function masquerBloc(btn) {
+  btn.closest(".card, .kpi, .kpi-exec").classList.add("bloc-cache");
+}
+function retablirBlocs() {
+  document.querySelectorAll("#zone-impression .bloc-cache").forEach(b => b.classList.remove("bloc-cache"));
+}
+function reglerEchelle(v) {
+  document.querySelectorAll("#zone-impression .page-imprimee").forEach(p => { p.style.zoom = v / 100; });
+  const lbl = document.getElementById("atelier-echelle-val");
+  if (lbl) lbl.textContent = v + "%";
+}
+function ajusterAuto() {
+  const paysage = document.body.classList.contains("impression-paysage");
+  const hauteurPage = paysage ? 700 : 1030;    /* zone imprimable approximative en pixels */
+  document.querySelectorAll("#zone-impression .page-imprimee").forEach(p => {
+    p.style.zoom = 1;
+    const h = p.scrollHeight;
+    if (h > hauteurPage) {
+      const echelle = Math.max(0.62, hauteurPage / h);
+      /* on ne reduit que si la section tient alors sur sa page ; sinon elle coule sur plusieurs pages proprement */
+      if (echelle >= 0.62) p.style.zoom = Math.round(echelle * 100) / 100;
+    }
+  });
+  const lbl = document.getElementById("atelier-echelle-val");
+  if (lbl) lbl.textContent = "auto";
+}
+function atelierImprimer() {
+  if (_impressionEnCours) return;
+  _impressionEnCours = true;
+  const overlay = document.querySelector(".atelier-overlay");
+  const zone = document.getElementById("zone-impression");
+  document.body.appendChild(zone);                     /* redevient enfant direct pour la regle d'impression */
+  if (overlay) overlay.style.display = "none";
   document.body.classList.add("impression-multi");
   const ancienTitre = document.title;
   document.title = `CID_${state.periodValue}`;
   const nettoyer = () => {
-    document.body.classList.remove("impression-multi", "impression-paysage");
-    zone.innerHTML = "";
+    document.body.classList.remove("impression-multi");
     document.title = ancienTitre;
     _impressionEnCours = false;
     window.removeEventListener("afterprint", nettoyer);
+    fermerAtelier();
   };
   window.addEventListener("afterprint", nettoyer);
   window.print();
