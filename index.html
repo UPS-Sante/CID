@@ -2677,8 +2677,20 @@
   .tbl-s td { font-size:12.5px; color:#1E293B; padding:7px 8px; border-bottom:1px solid #F1F5F9; }
   .tbl-s td.num, .tbl-s th.num { text-align:right; }
   .tbl-s tr:last-child td { border-bottom:none; }
+  #zone-impression { display:none; }
+  .export-liste { max-height:300px; overflow-y:auto; border:1px solid #E2E8F0; border-radius:6px; padding:8px 10px; }
+  .export-groupe { margin-bottom:8px; }
+  .export-prog { display:block; font-size:12.5px; color:#1F3864; margin-bottom:3px; cursor:pointer; }
+  .export-sousliste { display:flex; flex-wrap:wrap; gap:4px 14px; padding-left:20px; }
+  .export-sousliste label { font-size:12px; color:#334155; cursor:pointer; white-space:nowrap; }
+  .export-sousliste input, .export-prog input { margin-right:5px; }
   @media print {
-    .sb, .tb-actions, .period-pills, .period-sel, .scope-block, .seuils-overlay, .chart-values-toggle, .exec-tabs { display:none !important; }
+    body.impression-multi > :not(#zone-impression):not(script):not(style) { display:none !important; }
+    body.impression-multi #zone-impression { display:block !important; }
+    .page-imprimee { page-break-after:always; }
+    .page-imprimee:last-child { page-break-after:auto; }
+    .entete-imprimee { display:flex; justify-content:space-between; font-size:10px; color:#64748B; border-bottom:1px solid #E2E8F0; padding-bottom:2mm; margin-bottom:5mm; }
+    .sb, .tb-actions, .period-pills, .period-sel, .scope-block, .seuils-overlay, .export-overlay, .chart-values-toggle, .exec-tabs { display:none !important; }
     .main { margin:0 !important; padding:8mm !important; width:100% !important; }
     body { background:#fff !important; }
     .exec-grid { display:grid !important; grid-template-columns:repeat(2, 1fr) !important; gap:6mm !important; }
@@ -4137,7 +4149,7 @@ function renderTopbar(v) {
 
       <div class="tb-actions">
         <button class="tb-btn" onclick="ouvrirSeuils()" title="Définir les seuils vert / jaune / orange / rouge">⚙ Seuils</button>
-        <button class="tb-btn" onclick="exporterPDF()" title="Enregistrer la vue courante en PDF">⬇ PDF</button>
+        <button class="tb-btn" onclick="ouvrirExportPDF()" title="Exporter en PDF — tout ou partie du tableau de bord">⬇ PDF</button>
       </div>
       <div class="scope-block">
         <span class="time-label">${t("view_label")}</span>
@@ -4239,6 +4251,75 @@ function reinitialiserSeuils() {
   }
   try { localStorage.removeItem("cid_seuils"); } catch (e) {}
   fermerSeuils(); renderMain();
+}
+
+function ouvrirExportPDF() {
+  if (document.querySelector(".export-overlay")) return;
+  const groupes = PROGRAMS.map(p => `
+    <div class="export-groupe">
+      <label class="export-prog"><input type="checkbox" class="export-case-prog" data-prog="${p.id}" onchange="cocherProgramme(this)"> <strong>${p.label}</strong></label>
+      <div class="export-sousliste">
+        ${p.sub.map(s => `<label><input type="checkbox" class="export-case" data-vue="${s.id}" data-prog="${p.id}" ${s.id === state.sub ? "checked" : ""}> ${s.label}</label>`).join("")}
+      </div>
+    </div>`).join("");
+  const boite = document.createElement("div");
+  boite.className = "seuils-overlay export-overlay";
+  boite.innerHTML = `
+    <div class="seuils-panel">
+      <div class="seuils-titre">Exporter en PDF</div>
+      <div class="seuils-note">Choisissez les sections à inclure : la vue courante seule, une sélection, ou le tableau de bord entier.
+      Chaque section commence sur une nouvelle page, datée de la période courante (${periodLabel()}).
+      La vue exécutive s'exporte avec ses trois volets.</div>
+      <div class="export-liste">${groupes}</div>
+      <div class="seuils-actions">
+        <button class="tb-btn" onclick="toutSelectionnerExport(true)">Tout le tableau de bord</button>
+        <button class="tb-btn" onclick="toutSelectionnerExport(false)">Aucune</button>
+        <button class="tb-btn" onclick="fermerExport()">Fermer</button>
+        <button class="tb-btn tb-btn-principal" onclick="genererPDF()">Générer le PDF</button>
+      </div>
+    </div>`;
+  boite.addEventListener("click", e => { if (e.target === boite) fermerExport(); });
+  document.body.appendChild(boite);
+}
+function fermerExport() { const o = document.querySelector(".export-overlay"); if (o) o.remove(); }
+function toutSelectionnerExport(etat) {
+  document.querySelectorAll(".export-case, .export-case-prog").forEach(c => { c.checked = etat; });
+}
+function cocherProgramme(caseProg) {
+  document.querySelectorAll(`.export-case[data-prog="${caseProg.dataset.prog}"]`).forEach(c => { c.checked = caseProg.checked; });
+}
+function genererPDF() {
+  const vues = [...document.querySelectorAll(".export-case:checked")].map(c => c.dataset.vue);
+  if (!vues.length) return;
+  fermerExport();
+  const memoire = { sub: state.sub, minSection: state.minSection };
+  let zone = document.getElementById("zone-impression");
+  if (!zone) { zone = document.createElement("div"); zone.id = "zone-impression"; document.body.appendChild(zone); }
+  const entete = `<div class="entete-imprimee"><span>Centre d'Intelligence des Données · MSPP · République du Tchad</span><span>${periodLabel()}</span></div>`;
+  const sections = [];
+  vues.forEach(id => {
+    if (!VIEWS[id]) return;
+    if (id === "min-overview") {
+      ["A", "B", "C"].forEach(s => { state.minSection = s; sections.push(VIEWS[id]().html); });
+    } else {
+      state.sub = id;
+      sections.push(VIEWS[id]().html);
+    }
+  });
+  state.sub = memoire.sub; state.minSection = memoire.minSection;
+  zone.innerHTML = sections.map(html => `<section class="page-imprimee">${entete}${html}</section>`).join("");
+  document.body.classList.add("impression-multi");
+  const ancienTitre = document.title;
+  document.title = `CID_${state.periodValue}`;
+  const nettoyer = () => {
+    document.body.classList.remove("impression-multi");
+    zone.innerHTML = "";
+    document.title = ancienTitre;
+    window.removeEventListener("afterprint", nettoyer);
+  };
+  window.addEventListener("afterprint", nettoyer);
+  window.print();
+  setTimeout(nettoyer, 3000);
 }
 
 function setPeriodMode(mode) {
