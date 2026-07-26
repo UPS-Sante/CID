@@ -2812,6 +2812,21 @@
   .sao-methodo-note { margin-top: 14px; font-size: 12px; color: var(--body); line-height: 1.6; }
   .sao-methodo-note p { margin-bottom: 8px; }
   .sao-methodo-note .pill { margin-right: 6px; }
+  .sao-dist-intro { font-size:12.5px; color:var(--body); line-height:1.6; margin-bottom:14px; }
+  .sao-dist-grille { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:12px; }
+  .sao-dist-prov { border:1px solid var(--border); border-radius:var(--radius); padding:10px 12px; }
+  .sao-dist-prov-tete { display:flex; justify-content:space-between; align-items:baseline; font-family:var(--font-h); font-size:13px; color:var(--royal); margin-bottom:8px; }
+  .sao-dist-compte { font-family:var(--font); font-size:11px; color:var(--muted); font-weight:400; }
+  .sao-dist-liste { display:flex; flex-wrap:wrap; gap:5px; }
+  .sao-dist-puce { display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--body); background:var(--surface-2); border-radius:5px; padding:2px 6px; }
+  .sao-dist-puce .sao-sc { font-size:9px; padding:0 4px; }
+  .map-zoom-bar { display:flex; align-items:center; gap:12px; padding:6px 10px; }
+  .map-zoom-titre { font-family:var(--font-h); font-size:13px; color:var(--royal); }
+  .map-district { stroke:#fff; stroke-width:0.6px; cursor:default; transition:fill .12s; }
+  .map-district:hover { fill:var(--royal-pale); }
+  .map-label.district .map-label-name { font-size:6.5px; fill:var(--body); }
+  .map-district-note { font-size:11px; color:var(--muted); padding:8px 10px 0; line-height:1.5; }
+  .map-info-districts { margin-top:10px; width:100%; }
 </style>
 </head>
 <body>
@@ -3247,6 +3262,10 @@ async function chargerDonneesReelles(essai) {
       const sl = await fetch("sao_league.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (sl) { SAO.indicateurs = sl.indicateurs || []; SAO.en_attente = sl.indicateurs_en_attente || []; SAO.paliers = sl.paliers || SAO.paliers; }
     } catch (e) {}
+    try {
+      const dj = await fetch("districts.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (dj) DISTRICTS = dj.districts || [];
+    } catch (e) {}
     renderMain();
     // rafraichissement des donnees toutes les six heures pour les onglets laisses ouverts
     if (!window._cidRafraichissement) {
@@ -3352,6 +3371,23 @@ function rag(val, target, inverse = false) {
   return "red";
 }
 let SEUILS_DEPOT = null;
+let DISTRICTS = [];
+function districtsDe(prov) { return DISTRICTS.filter(d => d.prov === prov); }
+function bboxDistricts(prov) {
+  const ds = districtsDe(prov);
+  if (!ds.length) return null;
+  let xs = [], ys = [];
+  ds.forEach(d => {
+    const nums = d.d.match(/[\d.]+/g).map(Number);
+    for (let i = 0; i < nums.length; i += 2) { xs.push(nums[i]); ys.push(nums[i + 1]); }
+  });
+  const x0 = Math.min(...xs), y0 = Math.min(...ys), x1 = Math.max(...xs), y1 = Math.max(...ys);
+  const mx = (x1 - x0) * 0.08 + 6, my = (y1 - y0) * 0.08 + 6;
+  return `${(x0 - mx).toFixed(1)} ${(y0 - my).toFixed(1)} ${(x1 - x0 + 2 * mx).toFixed(1)} ${(y1 - y0 + 2 * my).toFixed(1)}`;
+}
+function setMapZoomProv(prov) { state.mapZoomProv = prov; state.provinceFilter = prov; renderMain(); }
+function clearMapZoomProv() { state.mapZoomProv = null; renderMain(); }
+
 /* ==============================================================
    SAO HEALTH CHALLENGE — moteur de classement (ILT subnational)
 ============================================================== */
@@ -4662,6 +4698,10 @@ function setMapMode(mode) {
    MAP — Size / Zoom / Pan interactive controls
 ============================================================== */
 function currentMapViewBox() {
+  if (state.mapZoomProv) {
+    const vb = bboxDistricts(state.mapZoomProv);
+    if (vb) return vb;
+  }
   const parts = MAP_VIEWBOX.split(' ').map(Number);
   const bx = parts[0], by = parts[1], bw = parts[2], bh = parts[3];
   const w = bw / state.mapZoom;
@@ -5044,16 +5084,29 @@ VIEWS["sao-league"] = () => {
   );
 
   /* ---- Onglet Districts : prêt, en attente de données ---- */
+  const parProv = PROVINCES.map(p => ({ p, ds: districtsDe(p.id) })).filter(x => x.ds.length)
+    .sort((a, b) => b.ds.length - a.ds.length);
+  const totalDist = parProv.reduce((s, x) => s + x.ds.length, 0);
+  const blocsDist = parProv.map(({ p, ds }) => `
+    <div class="sao-dist-prov">
+      <div class="sao-dist-prov-tete">
+        <span>${PDA_PROVINCES.includes(p.id) ? "* " : ""}${p.name}</span>
+        <span class="sao-dist-compte">${ds.length} ${saoT("districts", "districts", "منطقة")}</span>
+      </div>
+      <div class="sao-dist-liste">
+        ${ds.map(d => `<span class="sao-dist-puce">${d.name}<span class="pill na sao-sc">ND</span></span>`).join("")}
+      </div>
+    </div>`).join("");
   const tableDist = card(
     saoT("Classement par district", "District ranking", "الترتيب على مستوى المناطق"),
-    saoT("Structure prête · en attente des données de niveau district", "Ready · awaiting district-level data", "جاهز · بانتظار البيانات"),
-    `<div class="sao-vide">
-       <div class="sao-vide-titre">${saoT("En attente de données district", "Awaiting district data", "بانتظار بيانات المناطق")}</div>
-       <div class="sao-vide-txt">${saoT(
-         "Le moteur de classement est identique à l'échelon provincial et se peuplera dès que l'extraction descendra au niveau des districts sanitaires. Les données actuelles sont consolidées par province.",
-         "The ranking engine mirrors the provincial level and will populate once extraction reaches health districts. Current data is consolidated by province.",
-         "سيتم ملء الترتيب عند توفر بيانات المناطق الصحية.")}</div>
-     </div>`, "");
+    saoT(`${totalDist} districts rattachés à leur province · en attente des indicateurs de niveau district`,
+         `${totalDist} districts mapped to their province · awaiting district-level indicators`,
+         `${totalDist} منطقة`),
+    `<div class="sao-dist-intro">${saoT(
+       "Les 161 districts sanitaires sont rattachés à leur province et cartographiés. Le classement se calculera par la même méthode dès que les indicateurs seront disponibles à ce niveau ; ils figurent aujourd'hui en attente (ND). La carte permet déjà d'explorer les districts d'une province.",
+       "All 161 health districts are mapped to their province. Ranking will compute by the same method once district-level indicators exist.",
+       "المناطق الصحية مرتبطة بمقاطعاتها.")}</div>
+     <div class="sao-dist-grille">${blocsDist}</div>`, "");
 
   /* ---- Onglet Méthodologie ---- */
   const lignesMethodo = SAO.indicateurs.map(def => {
@@ -6926,6 +6979,31 @@ function renderMap(metric, opts = {}) {
     "LOE": { dx: 0, dy: 2 },
   };
 
+  // Mode district : une province exclusivement, avec ses districts
+  if (state.mapZoomProv) {
+    const prov = PROVINCES.find(x => x.id === state.mapZoomProv);
+    const ds = districtsDe(state.mapZoomProv);
+    const geoProv = PROVINCE_PATHS[state.mapZoomProv];
+    const dPaths = ds.map(d =>
+      `<path class="map-prov rag-na map-district" d="${d.d}"><title>${d.name} · ${prov ? prov.name : ""} — donnée district à venir</title></path>`).join("");
+    const dLabels = ds.map(d =>
+      `<g class="map-label district"><text class="map-label-name" x="${d.cx}" y="${d.cy}">${d.name}</text></g>`).join("");
+    const contour = geoProv ? `<path d="${geoProv.d}" fill="none" stroke="var(--royal)" stroke-width="1.2" opacity="0.9"/>` : "";
+    return `
+      <div class="map-wrap">
+        <div class="map-zoom-bar">
+          <button class="tb-btn" onclick="clearMapZoomProv()">← Toutes les provinces</button>
+          <span class="map-zoom-titre">${prov ? prov.name : state.mapZoomProv} · ${ds.length} districts sanitaires</span>
+        </div>
+        <svg class="map-svg" viewBox="${currentMapViewBox()}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-label="Districts de ${prov ? prov.name : ""}">
+          <g class="map-district-layer">${dPaths}</g>
+          ${contour}
+          <g class="map-district-labels">${dLabels}</g>
+        </svg>
+        <div class="map-district-note">Les tracés proviennent des limites sanitaires officielles (niveau district). Les indicateurs par district s'afficheront dès que l'extraction descendra à ce niveau ; ils figurent aujourd'hui en gris (donnée à venir).</div>
+      </div>`;
+  }
+
   // Build SVG paths and labels for each province
   const paths = [];
   const labels = [];
@@ -7065,6 +7143,7 @@ function renderMap(metric, opts = {}) {
         <div class="map-info-row"><span>Valeur</span><span class="map-info-val">${dispVal(infoVal)}</span></div>
         <div class="map-info-row"><span>Statut</span><span class="map-info-val"><span class="pill ${infoRag}">${ragLabel(infoRag)}</span></span></div>
         <div class="map-info-row"><span>Tendance vs mois précédent</span><span class="map-info-val">${(() => { const pv = genValue(metric, filtreProv, 1); return (infoVal != null && pv != null) ? ((infoVal - pv >= 0 ? "+" : "") + (Math.round((infoVal - pv) * 10) / 10) + " pts") : "—"; })()}</span></div>
+        ${districtsDe(filtreProv).length ? `<button class="tb-btn map-info-districts" onclick="setMapZoomProv('${filtreProv}')">Explorer les ${districtsDe(filtreProv).length} districts →</button>` : ""}
         ` : `
         <div class="map-info-tag">${pdaFocus ? "Agrégat PDA" : "Vue nationale"}</div>
         <div class="map-info-name">${pdaFocus ? "Provinces PDA" : "National · 23 provinces"}</div>
