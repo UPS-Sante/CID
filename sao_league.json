@@ -1,0 +1,31 @@
+{
+  "_aide": "Sao Health Challenge — moteur de classement des provinces inspire de l'Immunization League Table (OMS AFRO, edition subnationale). Chaque indicateur est score de 1 a 3 selon les seuils ci-dessous. L'indice IPI = (somme des scores / (nombre d'indicateurs renseignes x 3)) x 100, conforme a la formule OMS a N variable : une province n'est notee que sur ce qu'elle rapporte, jamais penalisee pour un indicateur sans source. Paliers : eleve >= 80, modere 60-79, faible < 60. Ajouter un indicateur ici quand sa source est branchee (ex. risque rougeole, ecart d'immunite fievre jaune) suffit a l'integrer au classement, sans modification du code.",
+
+  "indicateurs": [
+    {
+      "id": "I5", "code": "zero_dose", "metric": "couv-penta1", "transforme": "zero_dose",
+      "libelle_fr": "Prevalence zero-dose", "libelle_en": "Zero-dose prevalence", "libelle_ar": "معدل الأطفال صفر جرعة",
+      "sens": "decroissant", "seuils": { "vert": 5, "jaune": 10 },
+      "source": "PEV · 100 - Penta1"
+    },
+    {
+      "id": "I4", "code": "dtp_stockout", "metric": "log-rupture", "transforme": "direct",
+      "libelle_fr": "Ruptures de vaccins (traceurs)", "libelle_en": "DTP stockout", "libelle_ar": "نفاد مخزون اللقاحات",
+      "sens": "decroissant", "seuils": { "vert": 5, "jaune": 20 },
+      "source": "SIGL · DGPML"
+    },
+    {
+      "id": "I2", "code": "polio_surv", "metric": "surv-prom", "transforme": "direct",
+      "libelle_fr": "Surveillance PFA (notification)", "libelle_en": "AFP surveillance", "libelle_ar": "ترصد الشلل الرخو",
+      "sens": "croissant", "seuils": { "vert": 80, "jaune": 60 },
+      "source": "Surveillance · COUSP"
+    }
+  ],
+
+  "indicateurs_en_attente": [
+    { "id": "I1", "libelle_fr": "Risque programmatique rougeole", "source": "WHO Measles Risk Tool (externe)" },
+    { "id": "I3", "libelle_fr": "Ecart d'immunite fievre jaune", "source": "WHO YF Immunity Gap (externe)" }
+  ],
+
+  "paliers": { "eleve": 80, "modere": 60 }
+}

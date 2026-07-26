@@ -2795,6 +2795,23 @@
   .export-liste { border-color: var(--border); }
   .h-pill { box-shadow: none; border: 1px solid var(--border); background: rgba(255,255,255,.10); color: #fff; }
   .h-pill .live::before { background: var(--gold-l); }
+  .sao-tabs { margin-bottom: 4px; }
+  .sao-defile { overflow-x: auto; }
+  .sao-table th, .sao-table td { white-space: nowrap; }
+  .sao-table .sao-rang { text-align: center; font-weight: 700; color: var(--royal); width: 42px; }
+  .sao-table td.num { text-align: right; }
+  .pill.sao-sc { min-width: 20px; justify-content: center; padding: 1px 6px; font-weight: 700; }
+  .sao-val { display: inline-block; margin-left: 6px; color: var(--muted); font-size: 11px; min-width: 30px; }
+  [dir="rtl"] .sao-val { margin-left: 0; margin-right: 6px; }
+  .sao-total { color: var(--body); }
+  .sao-vide { padding: 40px 24px; text-align: center; }
+  .sao-vide-titre { font-family: var(--font-h); font-size: 15px; color: var(--royal); margin-bottom: 8px; }
+  .sao-vide-txt { font-size: 12.5px; color: var(--muted); max-width: 560px; margin: 0 auto; line-height: 1.6; }
+  .sao-sens { font-size: 10.5px; color: var(--muted-2); font-style: italic; }
+  .sao-attente td { color: var(--muted-2); font-style: italic; }
+  .sao-methodo-note { margin-top: 14px; font-size: 12px; color: var(--body); line-height: 1.6; }
+  .sao-methodo-note p { margin-bottom: 8px; }
+  .sao-methodo-note .pill { margin-right: 6px; }
 </style>
 </head>
 <body>
@@ -3021,6 +3038,13 @@ const PROGRAMS = [
     ]
   },
   {
+    id:"sao", c:"vacc", icon:"SAO", label:"Sao Health Challenge",
+    dir:"UPS-SANTÉ", priority:true,
+    sub:[
+      { id:"sao-league", i18n_key:"sub_sao_league", label:"Classement des provinces", status:"green" },
+    ]
+  },
+  {
     id:"vacc", c:"vacc", icon:"PEV", label:"Vaccination · PEV",
     dir:"DLMVSE",
     sub:[
@@ -3219,6 +3243,10 @@ async function chargerDonneesReelles(essai) {
     } catch (e) {}
     SEUILS_DEPOT = JSON.parse(JSON.stringify(SEUILS));
     chargerSeuilsLocaux();
+    try {
+      const sl = await fetch("sao_league.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (sl) { SAO.indicateurs = sl.indicateurs || []; SAO.en_attente = sl.indicateurs_en_attente || []; SAO.paliers = sl.paliers || SAO.paliers; }
+    } catch (e) {}
     renderMain();
     // rafraichissement des donnees toutes les six heures pour les onglets laisses ouverts
     if (!window._cidRafraichissement) {
@@ -3324,6 +3352,58 @@ function rag(val, target, inverse = false) {
   return "red";
 }
 let SEUILS_DEPOT = null;
+/* ==============================================================
+   SAO HEALTH CHALLENGE — moteur de classement (ILT subnational)
+============================================================== */
+let SAO = { indicateurs: [], en_attente: [], paliers: { eleve: 80, modere: 60 } };
+function saoT(fr, en, ar) { return state.lang === "en" ? en : state.lang === "ar" ? ar : fr; }
+function saoValeurBrute(def, provId) {
+  const v = genValue(def.metric, provId, 0);
+  if (v == null || Number.isNaN(v)) return null;
+  return def.transforme === "zero_dose" ? Math.round((100 - v) * 10) / 10 : v;
+}
+function saoScore(def, val) {
+  if (val == null || Number.isNaN(val)) return null;
+  const s = def.seuils;
+  if (def.sens === "decroissant") return val < s.vert ? 3 : val < s.jaune ? 2 : 1;
+  return val >= s.vert ? 3 : val >= s.jaune ? 2 : 1;
+}
+function saoRagDeScore(sc) { return sc == null ? "na" : sc === 3 ? "green" : sc === 2 ? "yellow" : "red"; }
+function saoProvince(provId) {
+  const details = SAO.indicateurs.map(def => {
+    const val = saoValeurBrute(def, provId);
+    return { def, val, score: saoScore(def, val) };
+  });
+  const notes = details.filter(d => d.score != null);
+  const total = notes.reduce((s, d) => s + d.score, 0);
+  const N = notes.length;
+  const ipi = N ? Math.round((total / (N * 3)) * 1000) / 10 : null;
+  return { provId, details, total, N, ipi };
+}
+function saoTier(ipi) {
+  if (ipi == null) return "na";
+  if (ipi >= SAO.paliers.eleve) return "green";
+  if (ipi >= SAO.paliers.modere) return "yellow";
+  return "red";
+}
+function saoTierLabel(t) {
+  return t === "green" ? saoT("Élevée", "High", "عالية")
+       : t === "yellow" ? saoT("Modérée", "Moderate", "متوسطة")
+       : t === "red" ? saoT("Faible", "Low", "منخفضة")
+       : "ND";
+}
+function saoClassement() {
+  const lignes = PROVINCES.map(p => saoProvince(p.id));
+  // renseignees d'abord (IPI decroissant), non renseignees en fin
+  lignes.sort((a, b) => {
+    if (a.ipi == null && b.ipi == null) return 0;
+    if (a.ipi == null) return 1;
+    if (b.ipi == null) return -1;
+    return b.ipi - a.ipi;
+  });
+  return lignes;
+}
+
 function ragPour(metric, val, target, inverse = false) {
   const s = SEUILS.par_metrique && SEUILS.par_metrique[metric];
   if (!s || val == null || Number.isNaN(val)) return rag(val, target, inverse);
@@ -3408,6 +3488,7 @@ const I18N = {
     prog_cousp: "Urgences · Surveillance",
     prog_dpsis: "Système d'Information",
     sub_min_overview: "Tableau de bord 10 KPI",
+    sub_sao_league: "Classement des provinces",
     sub_vacc_overview: "Vue d'ensemble",
     sub_vacc_couv: "Couverture vaccinale",
     sub_vacc_zd: "Zéro-dose",
@@ -3598,6 +3679,7 @@ const I18N = {
     prog_cousp: "Emergencies · Surveillance",
     prog_dpsis: "Information System",
     sub_min_overview: "10-KPI Dashboard",
+    sub_sao_league: "Provincial ranking",
     sub_vacc_overview: "Overview",
     sub_vacc_couv: "Vaccination coverage",
     sub_vacc_zd: "Zero-dose",
@@ -3788,6 +3870,7 @@ const I18N = {
     prog_cousp: "الطوارئ · المراقبة",
     prog_dpsis: "نظام المعلومات",
     sub_min_overview: "لوحة 10 مؤشرات",
+    sub_sao_league: "ترتيب المقاطعات",
     sub_vacc_overview: "نظرة عامة",
     sub_vacc_couv: "تغطية التطعيم",
     sub_vacc_zd: "صفر جرعة",
@@ -4535,6 +4618,7 @@ function atelierImprimer() {
   setTimeout(nettoyer, 3000);
 }
 
+function setSaoTab(tab) { state.saoTab = tab; renderMain(); }
 function setPeriodMode(mode) {
   state.periodMode = mode;
   majPeriodValue();
@@ -4897,6 +4981,140 @@ function kpiExec(opts) {
     </div>
   `;
 }
+
+VIEWS["sao-league"] = () => {
+  const tab = state.saoTab || "prov";
+  const nbInd = SAO.indicateurs.length;
+  const enAttente = SAO.en_attente.length;
+
+  const pastille = (sc) => `<span class="pill ${saoRagDeScore(sc)} sao-sc">${sc == null ? "ND" : sc}</span>`;
+  const valAff = (d) => d.val == null ? "ND" : (d.def.transforme === "zero_dose" || d.def.sens !== undefined ? d.val + (d.def.code === "dtp_stockout" || d.def.code === "zero_dose" || d.def.code === "polio_surv" ? "%" : "") : d.val);
+
+  /* ---- Onglet Provinces : le classement ---- */
+  const classement = saoClassement();
+  const enTete = SAO.indicateurs.map(def =>
+    `<th class="num" title="${def.source}">${def.id} · ${saoT(def.libelle_fr, def.libelle_en, def.libelle_ar)}</th>`).join("");
+  const rangs = (() => {
+    let rangCourant = 0, ipiPrec = null, vus = 0;
+    return classement.map(l => {
+      if (l.ipi == null) return { ...l, rang: null };
+      vus++;
+      if (l.ipi !== ipiPrec) { rangCourant = vus; ipiPrec = l.ipi; }
+      return { ...l, rang: rangCourant };
+    });
+  })();
+  const corps = rangs.map(l => {
+    const prov = PROVINCES.find(p => p.id === l.provId);
+    const pda = PDA_PROVINCES.includes(l.provId);
+    const tier = saoTier(l.ipi);
+    const cellules = SAO.indicateurs.map(def => {
+      const d = l.details.find(x => x.def.id === def.id);
+      return `<td class="num">${pastille(d.score)}<span class="sao-val">${d.val == null ? "" : d.val}</span></td>`;
+    }).join("");
+    return `<tr>
+      <td class="sao-rang">${l.rang == null ? "—" : l.rang}</td>
+      <td>${pda ? "* " : ""}${prov ? prov.name : l.provId}</td>
+      ${cellules}
+      <td class="num sao-total">${l.N ? l.total + " / " + (l.N * 3) : "—"}</td>
+      <td class="num"><strong>${l.ipi == null ? "ND" : l.ipi + "%"}</strong></td>
+      <td><span class="pill ${tier}">${saoTierLabel(tier)}</span></td>
+    </tr>`;
+  }).join("");
+
+  const nbClasses = rangs.filter(l => l.ipi != null).length;
+  const tableProv = card(
+    saoT("Classement provincial", "Provincial ranking", "الترتيب على مستوى المقاطعات"),
+    saoT(`${nbClasses} provinces classées · ${nbInd} indicateurs actifs · ${periodLabel()}`,
+         `${nbClasses} provinces ranked · ${nbInd} active indicators · ${periodLabel()}`,
+         `${nbClasses} مقاطعة · ${periodLabel()}`),
+    `<div class="sao-defile"><table class="tbl-s sao-table">
+      <tr>
+        <th class="sao-rang">${saoT("Rang", "Rank", "الرتبة")}</th>
+        <th>${saoT("Province", "Province", "المقاطعة")}</th>
+        ${enTete}
+        <th class="num">${saoT("Score", "Score", "النقاط")}</th>
+        <th class="num">IPI</th>
+        <th>${saoT("Performance", "Performance", "الأداء")}</th>
+      </tr>
+      ${corps}
+    </table></div>`,
+    saoT(`Indice IPI = somme des scores rapportée au maximum atteignable sur les indicateurs renseignés. Un astérisque signale une province PDA.${enAttente ? " Deux indicateurs restent en attente de source (rougeole, fièvre jaune)." : ""}`,
+         `IPI index = sum of scores over the maximum achievable on reported indicators.`,
+         `مؤشر IPI = مجموع النقاط على الحد الأقصى الممكن.`)
+  );
+
+  /* ---- Onglet Districts : prêt, en attente de données ---- */
+  const tableDist = card(
+    saoT("Classement par district", "District ranking", "الترتيب على مستوى المناطق"),
+    saoT("Structure prête · en attente des données de niveau district", "Ready · awaiting district-level data", "جاهز · بانتظار البيانات"),
+    `<div class="sao-vide">
+       <div class="sao-vide-titre">${saoT("En attente de données district", "Awaiting district data", "بانتظار بيانات المناطق")}</div>
+       <div class="sao-vide-txt">${saoT(
+         "Le moteur de classement est identique à l'échelon provincial et se peuplera dès que l'extraction descendra au niveau des districts sanitaires. Les données actuelles sont consolidées par province.",
+         "The ranking engine mirrors the provincial level and will populate once extraction reaches health districts. Current data is consolidated by province.",
+         "سيتم ملء الترتيب عند توفر بيانات المناطق الصحية.")}</div>
+     </div>`, "");
+
+  /* ---- Onglet Méthodologie ---- */
+  const lignesMethodo = SAO.indicateurs.map(def => {
+    const sens = def.sens === "decroissant"
+      ? saoT("plus la valeur est basse, meilleure est la performance", "lower is better", "الأقل أفضل")
+      : saoT("plus la valeur est haute, meilleure est la performance", "higher is better", "الأعلى أفضل");
+    const regle = def.sens === "decroissant"
+      ? `3 si < ${def.seuils.vert} · 2 si < ${def.seuils.jaune} · 1 sinon`
+      : `3 si ≥ ${def.seuils.vert} · 2 si ≥ ${def.seuils.jaune} · 1 sinon`;
+    return `<tr><td><strong>${def.id}</strong></td><td>${saoT(def.libelle_fr, def.libelle_en, def.libelle_ar)}</td>
+      <td>${def.source}</td><td>${regle}<div class="sao-sens">${sens}</div></td></tr>`;
+  }).join("");
+  const lignesAttente = SAO.en_attente.map(a =>
+    `<tr class="sao-attente"><td><strong>${a.id}</strong></td><td>${a.libelle_fr}</td><td colspan="2">${a.source} — ${saoT("en attente", "pending", "قيد الانتظار")}</td></tr>`).join("");
+  const methodo = card(
+    saoT("Méthodologie", "Methodology", "المنهجية"),
+    saoT("Inspirée de l'Immunization League Table · OMS AFRO (édition subnationale)", "Adapted from the WHO AFRO Immunization League Table", "مقتبسة من جدول دوري التمنيع"),
+    `<table class="tbl-s">
+       <tr><th>ID</th><th>${saoT("Indicateur", "Indicator", "المؤشر")}</th><th>Source</th><th>${saoT("Règle de score (1–3)", "Scoring rule", "قاعدة التنقيط")}</th></tr>
+       ${lignesMethodo}${lignesAttente}
+     </table>
+     <div class="sao-methodo-note">
+       <p>${saoT(
+         "Chaque indicateur est noté de 1 à 3. L'indice de performance IPI rapporte la somme des scores au maximum atteignable sur les seuls indicateurs renseignés, selon la formule à N variable de l'OMS : une province n'est jamais pénalisée pour un indicateur dont la source n'existe pas encore.",
+         "Each indicator is scored 1 to 3. The IPI relates the sum of scores to the maximum achievable on reported indicators only, following WHO's variable-N formula.",
+         "يتم تسجيل كل مؤشر من 1 إلى 3.")}</p>
+       <p>${saoT("Paliers de performance", "Performance tiers", "مستويات الأداء")} :
+         <span class="pill green">${saoTierLabel("green")} ≥ ${SAO.paliers.eleve}%</span>
+         <span class="pill yellow">${saoTierLabel("yellow")} ${SAO.paliers.modere}–${SAO.paliers.eleve - 1}%</span>
+         <span class="pill red">${saoTierLabel("red")} &lt; ${SAO.paliers.modere}%</span>
+       </p>
+     </div>`, "");
+
+  const contenu = tab === "prov" ? tableProv : tab === "dist" ? tableDist : methodo;
+
+  return {
+    crumbs: ["Sao Health Challenge", tab === "prov" ? saoT("Provinces", "Provinces", "المقاطعات") : tab === "dist" ? "Districts" : saoT("Méthodologie", "Methodology", "المنهجية")],
+    html: `
+      <div class="ph ph-exec">
+        <div class="ph-tag">◆ ${saoT("Classement de performance", "Performance ranking", "ترتيب الأداء")}</div>
+        <div class="ph-title">Sao Health Challenge</div>
+        <div class="ph-sub">${saoT(
+          "Classement des provinces selon la performance du système vaccinal, sur le modèle de l'Immunization League Table de l'OMS.",
+          "Ranking provinces by immunization system performance, on the WHO Immunization League Table model.",
+          "ترتيب المقاطعات حسب أداء نظام التمنيع.")}</div>
+      </div>
+      <div class="exec-tabs sao-tabs">
+        <button class="exec-tab ${tab === 'prov' ? 'on' : ''}" onclick="setSaoTab('prov')">
+          <span class="et-num">01</span><div class="et-text"><div class="et-label">${saoT("Provinces", "Provinces", "المقاطعات")}</div><div class="et-meta">${saoT("23 provinces classées", "23 provinces ranked", "٢٣ مقاطعة")}</div></div>
+        </button>
+        <button class="exec-tab ${tab === 'dist' ? 'on' : ''}" onclick="setSaoTab('dist')">
+          <span class="et-num">02</span><div class="et-text"><div class="et-label">Districts</div><div class="et-meta">${saoT("En attente de données", "Awaiting data", "بانتظار البيانات")}</div></div>
+        </button>
+        <button class="exec-tab ${tab === 'meth' ? 'on' : ''}" onclick="setSaoTab('meth')">
+          <span class="et-num">03</span><div class="et-text"><div class="et-label">${saoT("Méthodologie", "Methodology", "المنهجية")}</div><div class="et-meta">${nbInd} ${saoT("indicateurs actifs", "active indicators", "مؤشرات")}</div></div>
+        </button>
+      </div>
+      <div class="content">${contenu}</div>
+    `
+  };
+};
 
 VIEWS["min-overview"] = () => {
   const section = state.minSection || "A";
