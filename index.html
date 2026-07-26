@@ -2865,6 +2865,8 @@
   .map-label.district .map-label-name { font-size:6.5px; fill:var(--body); }
   .map-district-note { font-size:11px; color:var(--muted); padding:8px 10px 0; line-height:1.5; }
   .map-info-districts { margin-top:10px; width:100%; }
+  .map-grain-toggle { margin-bottom: 6px; }
+  .map-legend-note { font-size:10px; color:var(--muted); margin-top:5px; line-height:1.45; max-width:200px; }
 </style>
 </head>
 <body>
@@ -3424,6 +3426,7 @@ function bboxDistricts(prov) {
   return `${(x0 - mx).toFixed(1)} ${(y0 - my).toFixed(1)} ${(x1 - x0 + 2 * mx).toFixed(1)} ${(y1 - y0 + 2 * my).toFixed(1)}`;
 }
 function setMapZoomProv(prov) { state.mapZoomProv = prov; state.provinceFilter = prov; renderMain(); }
+function setMapGrain(g) { state.mapGrain = g; if (g === "province") state.mapZoomProv = null; renderMain(); }
 function clearMapZoomProv() { state.mapZoomProv = null; renderMain(); }
 
 /* ==============================================================
@@ -7115,6 +7118,24 @@ function renderMap(metric, opts = {}) {
   const infoRag = filtreProv ? getRag(infoVal) : getRag(natVal);
   const infoZone = filtreProv ? ZONES[PROV_ZONE[filtreProv]] : null;
 
+  // Couche districts au niveau national (structure prete, donnee a venir : ND)
+  const grainDistrictNat = (state.mapGrain === "district") && !state.mapZoomProv;
+  const coucheDistrictsNat = grainDistrictNat
+    ? DISTRICTS.map(d => {
+        const prov = PROVINCES.find(x => x.id === d.prov);
+        return `<path class="map-prov rag-na map-district" d="${d.d}" onclick="setMapZoomProv('${d.prov}')"><title>${d.name}${prov ? " · " + prov.name : ""} — donnée district à venir</title></path>`;
+      }).join("")
+    : "";
+
+  // Selecteur de granularite : provinces ou districts
+  const grain = state.mapGrain || "province";
+  const grainToggle = `
+    <div class="map-mode-toggle map-grain-toggle">
+      <button class="mm-btn ${grain === 'province' ? 'on' : ''}" onclick="setMapGrain('province')" title="Découpage par province (23)">Provinces</button>
+      <button class="mm-btn ${grain === 'district' ? 'on' : ''}" onclick="setMapGrain('district')" title="Découpage par district sanitaire (161)">Districts</button>
+    </div>
+  `;
+
   // Toggle
   const modeToggle = `
     <div class="map-mode-toggle">
@@ -7129,7 +7150,12 @@ function renderMap(metric, opts = {}) {
 
   // Legend depends on mode
   let legendHtml;
-  if (state.mapMode === "zones") {
+  if (grainDistrictNat) {
+    legendHtml = `
+      <div class="map-legend-title">Découpage sanitaire</div>
+      <div class="leg-item"><span class="leg-dot" style="background:var(--border-2)"></span>161 districts · donnée à venir</div>
+      <div class="map-legend-note">Cliquer un district ouvre sa province. Les indicateurs par district s'afficheront dès qu'une source sera branchée.</div>`;
+  } else if (state.mapMode === "zones") {
     legendHtml = `
       <div class="map-legend-title">Zones agroclimatiques</div>
       <div class="leg-item"><span class="leg-dot" style="background:${ZONES.SAH.color}"></span>Saharienne (${ZONES.SAH.count})</div>
@@ -7150,6 +7176,7 @@ function renderMap(metric, opts = {}) {
 
   return `
     <div class="map-wrap">
+      ${grainToggle}
       ${modeToggle}
       <div class="map-toolbar">
         <div class="map-tb-group" role="group" aria-label="Taille de la carte">
@@ -7167,9 +7194,9 @@ function renderMap(metric, opts = {}) {
         </div>
       </div>
       <div class="map-svg-wrap" data-size="${state.mapSize}">
-        <svg class="map-svg" viewBox="${currentMapViewBox()}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-label="Carte des 23 provinces du Tchad">
-          <g class="map-prov-layer">${paths.join("")}</g>
-          <g class="map-label-layer">${labels.join("")}</g>
+        <svg class="map-svg" viewBox="${currentMapViewBox()}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-label="Carte du Tchad">
+          <g class="map-prov-layer">${grainDistrictNat ? coucheDistrictsNat : paths.join("")}</g>
+          <g class="map-label-layer">${grainDistrictNat ? "" : labels.join("")}</g>
         </svg>
       </div>
       <div class="map-legend">${legendHtml}</div>
