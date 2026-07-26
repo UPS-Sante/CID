@@ -287,7 +287,7 @@
   }
   .prog.priority {
     border: 1.5px solid var(--gold);
-    background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+    background: linear-gradient(135deg, var(--gold-tint) 0%, var(--gold-tint) 100%);
     box-shadow: 0 2px 6px rgba(202,138,4,0.15);
     margin-bottom: 10px;
   }
@@ -783,7 +783,7 @@
   .kpi.orange { border-color: rgba(194,65,12,0.30); }
   .kpi.red    { border-color: rgba(153,27,27,0.30); }
   .kpi.green  .kpi-value { color: var(--rag-green); }
-  .kpi.yellow .kpi-value { color: #92400E; }
+  .kpi.yellow .kpi-value { color: var(--rag-yellow); }
   .kpi.orange .kpi-value { color: var(--rag-orange); }
   .kpi.red    .kpi-value { color: var(--rag-red); }
   .kpi:hover {
@@ -913,7 +913,7 @@
   ============================================================ */
   .map-wrap {
     position: relative;
-    background: linear-gradient(180deg, #FAFBFC 0%, #F4F6F9 100%);
+    background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface-2) 100%);
     padding: 60px 16px 18px;
   }
   .map-grid {
@@ -945,7 +945,7 @@
   .map-cell.rag-orange { background: var(--rag-orange); }
   .map-cell.rag-red    { background: var(--rag-red); }
   .map-cell.dark-text {
-    color: #1F2937;
+    color: var(--body);
     text-shadow: none;
   }
   .map-cell.dim { opacity: 0.32; }
@@ -1000,7 +1000,7 @@
   ============================================================ */
   .map-wrap {
     position: relative;
-    background: linear-gradient(180deg, #FAFBFC 0%, #F4F6F9 100%);
+    background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface-2) 100%);
     padding: 56px 16px 18px;
   }
   .map-svg-wrap {
@@ -1151,7 +1151,7 @@
     letter-spacing: -0.1px;
   }
   .map-label-name.dark {
-    fill: #1F2937;
+    fill: var(--body);
     stroke: rgba(255,255,255,0.7);
   }
   .map-label-val {
@@ -1166,7 +1166,7 @@
     letter-spacing: -0.3px;
   }
   .map-label-val.dark {
-    fill: #1F2937;
+    fill: var(--body);
     stroke: rgba(255,255,255,0.7);
   }
   .map-label.tiny .map-label-name { font-size: 8px; }
@@ -1182,7 +1182,7 @@
      APERÇU MINISTÉRIEL — Executive dashboard
   ============================================================ */
   .ph-exec {
-    background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+    background: linear-gradient(135deg, var(--gold-tint) 0%, var(--gold-tint) 100%);
     border-left: 4px solid var(--gold-d);
     padding: 18px 22px;
     margin-bottom: 0;
@@ -1424,7 +1424,7 @@
   /* Executive footer */
   .exec-footer {
     margin-top: 18px;
-    background: linear-gradient(135deg, var(--ink) 0%, #1F2A44 100%);
+    background: linear-gradient(135deg, var(--ink) 0%, var(--royal-d) 100%);
     color: white;
     border-radius: var(--radius);
     padding: 16px 22px;
@@ -1739,10 +1739,10 @@
     font-weight: 700;
     letter-spacing: 0.3px;
   }
-  .pill.green { background: var(--rag-green-l); color: #15803D; }
-  .pill.yellow { background: var(--rag-yellow-l); color: #A16207; }
-  .pill.orange { background: var(--rag-orange-l); color: #C2410C; }
-  .pill.red { background: var(--rag-red-l); color: #B91C1C; }
+  .pill.green { background: var(--rag-green-l); color: var(--rag-green); }
+  .pill.yellow { background: var(--rag-yellow-l); color: var(--rag-yellow); }
+  .pill.orange { background: var(--rag-orange-l); color: var(--rag-orange); }
+  .pill.red { background: var(--rag-red-l); color: var(--rag-red); }
 
   /* Province context banner — shown when single province selected */
   .prov-banner {
@@ -2641,73 +2641,73 @@
     /* Smaller lang switcher on phone — initials only */
     .lang-btn { padding: 4px 6px; font-size: 10px; min-width: 28px; }
   }
-  .pill.na { background:#E2E8F0; color:#64748B; }
-  .kpi.na .kpi-value { color:#94A3B8; }
-  .kpi-exec.rag-na { border-left-color:#CBD5E1; }
-  .map-prov.rag-na { fill:#CBD5E1; }
-  .map-cell.rag-na { background:#CBD5E1; color:#475569; }
+  .pill.na { background:var(--border); color:var(--muted); }
+  .kpi.na .kpi-value { color:var(--muted-2); }
+  .kpi-exec.rag-na { border-left-color:var(--border-2); }
+  .map-prov.rag-na { fill:var(--border-2); }
+  .map-cell.rag-na { background:var(--border-2); color:var(--body); }
   .period-sel + .period-sel { margin-left: 6px; }
   .tb-actions { display:flex; gap:6px; align-items:center; margin-left:10px; }
-  .tb-btn { border:1px solid #CBD5E1; background:#fff; border-radius:6px; padding:5px 10px; font-size:12px; cursor:pointer; color:#1F3864; white-space:nowrap; }
-  .tb-btn:hover { background:#EFF3FA; }
-  .tb-btn-principal { background:#1F3864; color:#fff; border-color:#1F3864; }
-  .tb-btn-principal:hover { background:#2A4A80; }
+  .tb-btn { border:1px solid var(--border-2); background:#fff; border-radius:6px; padding:5px 10px; font-size:12px; cursor:pointer; color:var(--royal); white-space:nowrap; }
+  .tb-btn:hover { background:var(--surface-2); }
+  .tb-btn-principal { background:var(--royal); color:#fff; border-color:var(--royal); }
+  .tb-btn-principal:hover { background:var(--royal-l); }
   .seuils-overlay { position:fixed; inset:0; background:rgba(15,23,42,.45); display:flex; align-items:center; justify-content:center; z-index:200; }
   .seuils-panel { background:#fff; border-radius:10px; padding:18px 20px; width:540px; max-width:92vw; box-shadow:0 12px 40px rgba(15,23,42,.25); }
-  .seuils-titre { font-weight:700; font-size:15px; color:#1F3864; margin-bottom:6px; }
-  .seuils-note { font-size:11px; color:#64748B; margin:6px 0; line-height:1.5; }
+  .seuils-titre { font-weight:700; font-size:15px; color:var(--royal); margin-bottom:6px; }
+  .seuils-note { font-size:11px; color:var(--muted); margin:6px 0; line-height:1.5; }
   .seuils-grille { display:flex; gap:18px; margin:10px 0; }
   .seuils-col { flex:1; display:flex; flex-direction:column; gap:6px; }
-  .seuils-sous { font-weight:600; font-size:12px; color:#334155; }
-  .seuils-col label { font-size:12px; color:#334155; display:flex; justify-content:space-between; align-items:center; gap:8px; }
-  .seuils-col input { width:72px; padding:3px 6px; border:1px solid #CBD5E1; border-radius:5px; font-size:12px; }
+  .seuils-sous { font-weight:600; font-size:12px; color:var(--body); }
+  .seuils-col label { font-size:12px; color:var(--body); display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .seuils-col input { width:72px; padding:3px 6px; border:1px solid var(--border-2); border-radius:5px; font-size:12px; }
   .seuils-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:8px; }
   .chart-values-wrap { margin-top:6px; }
-  .chart-values-toggle { border:none; background:transparent; color:#64748B; font-size:10px; cursor:pointer; text-decoration:underline dotted; padding:0; }
+  .chart-values-toggle { border:none; background:transparent; color:var(--muted); font-size:10px; cursor:pointer; text-decoration:underline dotted; padding:0; }
   .chart-values-wrap.cache .chart-values { display:none; }
   .chart-values { width:100%; border-collapse:collapse; margin-top:4px; font-variant-numeric:tabular-nums; }
-  .chart-values td, .chart-values th { font-size:9.5px; padding:2px 3px; text-align:center; color:#475569; border-top:1px solid #EEF2F7; }
-  .chart-values th { text-align:left; color:#1F3864; font-weight:600; white-space:nowrap; }
-  .seuils-defile { max-height:240px; overflow-y:auto; border:1px solid #E2E8F0; border-radius:6px; }
+  .chart-values td, .chart-values th { font-size:9.5px; padding:2px 3px; text-align:center; color:var(--body); border-top:1px solid var(--surface-2); }
+  .chart-values th { text-align:left; color:var(--royal); font-weight:600; white-space:nowrap; }
+  .seuils-defile { max-height:240px; overflow-y:auto; border:1px solid var(--border); border-radius:6px; }
   .seuils-table { width:100%; border-collapse:collapse; font-size:11.5px; }
-  .seuils-table th { position:sticky; top:0; background:#F8FAFC; text-align:left; padding:5px 8px; color:#1F3864; border-bottom:1px solid #E2E8F0; }
-  .seuils-table td { padding:3px 8px; border-bottom:1px solid #F1F5F9; }
-  .seuils-table input { width:64px; padding:2px 5px; border:1px solid #CBD5E1; border-radius:4px; font-size:11.5px; }
-  .seuils-table select { padding:2px 4px; border:1px solid #CBD5E1; border-radius:4px; font-size:11.5px; }
-  .seuils-table code { font-size:11px; color:#334155; }
+  .seuils-table th { position:sticky; top:0; background:var(--surface-2); text-align:left; padding:5px 8px; color:var(--royal); border-bottom:1px solid var(--border); }
+  .seuils-table td { padding:3px 8px; border-bottom:1px solid var(--bg); }
+  .seuils-table input { width:64px; padding:2px 5px; border:1px solid var(--border-2); border-radius:4px; font-size:11.5px; }
+  .seuils-table select { padding:2px 4px; border:1px solid var(--border-2); border-radius:4px; font-size:11.5px; }
+  .seuils-table code { font-size:11px; color:var(--body); }
   .tbl-s { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
-  .tbl-s th { text-align:left; font-size:11px; color:#64748B; text-transform:uppercase; letter-spacing:.4px; padding:6px 8px; border-bottom:1px solid #E2E8F0; }
-  .tbl-s td { font-size:12.5px; color:#1E293B; padding:7px 8px; border-bottom:1px solid #F1F5F9; }
+  .tbl-s th { text-align:left; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; padding:6px 8px; border-bottom:1px solid var(--border); }
+  .tbl-s td { font-size:12.5px; color:var(--body); padding:7px 8px; border-bottom:1px solid var(--bg); }
   .tbl-s td.num, .tbl-s th.num { text-align:right; }
   .tbl-s tr:last-child td { border-bottom:none; }
   #zone-impression { display:none; }
-  .export-liste { max-height:300px; overflow-y:auto; border:1px solid #E2E8F0; border-radius:6px; padding:8px 10px; }
+  .export-liste { max-height:300px; overflow-y:auto; border:1px solid var(--border); border-radius:6px; padding:8px 10px; }
   .export-groupe { margin-bottom:8px; }
-  .export-prog { display:block; font-size:12.5px; color:#1F3864; margin-bottom:3px; cursor:pointer; }
+  .export-prog { display:block; font-size:12.5px; color:var(--royal); margin-bottom:3px; cursor:pointer; }
   .export-sousliste { display:flex; flex-wrap:wrap; gap:4px 14px; padding-left:20px; }
-  .export-sousliste label { font-size:12px; color:#334155; cursor:pointer; white-space:nowrap; }
+  .export-sousliste label { font-size:12px; color:var(--body); cursor:pointer; white-space:nowrap; }
   .export-sousliste input, .export-prog input { margin-right:5px; }
-  .export-orientation { display:flex; gap:18px; font-size:12px; color:#334155; margin:4px 0 2px; }
-  .atelier-overlay { position:fixed; inset:0; background:#3D4657; z-index:300; display:flex; flex-direction:column; }
+  .export-orientation { display:flex; gap:18px; font-size:12px; color:var(--body); margin:4px 0 2px; }
+  .atelier-overlay { position:fixed; inset:0; background:var(--body); z-index:300; display:flex; flex-direction:column; }
   .atelier-barre { background:#fff; padding:10px 18px; box-shadow:0 2px 8px rgba(15,23,42,.15); }
-  .atelier-titre { font-weight:700; color:#1F3864; font-size:14px; margin-bottom:6px; }
+  .atelier-titre { font-weight:700; color:var(--royal); font-size:14px; margin-bottom:6px; }
   .atelier-outils { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-  .atelier-echelle { display:flex; align-items:center; gap:6px; font-size:12px; color:#334155; }
+  .atelier-echelle { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--body); }
   .atelier-echelle input { width:120px; }
-  .atelier-note { font-size:11px; color:#64748B; margin-top:5px; }
+  .atelier-note { font-size:11px; color:var(--muted); margin-top:5px; }
   .atelier-defile { flex:1; overflow:auto; padding:18px 0 40px; }
   body.atelier-actif #zone-impression { display:block; }
   body.atelier-actif .page-imprimee { background:#fff; margin:0 auto 22px; padding:26px 30px; box-shadow:0 6px 24px rgba(0,0,0,.3); width:794px; min-height:1080px; }
   body.atelier-actif.impression-paysage .page-imprimee { width:1122px; min-height:740px; }
-  .bloc-outils { position:absolute; top:4px; right:4px; display:none; gap:2px; background:#1F3864; border-radius:5px; padding:2px; z-index:5; }
+  .bloc-outils { position:absolute; top:4px; right:4px; display:none; gap:2px; background:var(--royal); border-radius:5px; padding:2px; z-index:5; }
   .bloc-outils button { border:none; background:transparent; color:#fff; font-size:11px; width:22px; height:20px; cursor:pointer; border-radius:3px; }
-  .bloc-outils button:hover { background:#2A4A80; }
+  .bloc-outils button:hover { background:var(--royal-l); }
   body.atelier-actif .card, body.atelier-actif .kpi, body.atelier-actif .kpi-exec { position:relative; }
   body.atelier-actif .card:hover > .bloc-outils, body.atelier-actif .kpi:hover > .bloc-outils, body.atelier-actif .kpi-exec:hover > .bloc-outils { display:flex; }
   body.atelier-actif #zone-impression .map-toolbar,
   body.atelier-actif #zone-impression .map-mode-toggle,
   body.atelier-actif #zone-impression .chart-values-toggle { display:none !important; }
-  .map-info-note { font-size:10.5px; color:#94A3B8; margin-top:6px; font-style:italic; }
+  .map-info-note { font-size:10.5px; color:var(--muted-2); margin-top:6px; font-style:italic; }
   .bloc-cache { display:none !important; }
   .bloc-large { grid-column:1 / -1 !important; }
   .export-orientation input { margin-right:5px; }
@@ -2729,7 +2729,7 @@
     body.impression-multi #zone-impression { display:block !important; }
     .page-imprimee { page-break-after:always; }
     .page-imprimee:last-child { page-break-after:auto; }
-    .entete-imprimee { display:flex; justify-content:space-between; font-size:10px; color:#64748B; border-bottom:1px solid #E2E8F0; padding-bottom:2mm; margin-bottom:5mm; }
+    .entete-imprimee { display:flex; justify-content:space-between; font-size:10px; color:var(--muted); border-bottom:1px solid var(--border); padding-bottom:2mm; margin-bottom:5mm; }
     .sb, .tb-actions, .period-pills, .period-sel, .scope-block, .seuils-overlay, .export-overlay, .chart-values-toggle, .exec-tabs { display:none !important; }
     .main { margin:0 !important; padding:8mm !important; width:100% !important; }
     body { background:#fff !important; }
@@ -2920,12 +2920,12 @@ const PROV_ZONE = {
 // 7 DOMAINES PDA (du Dashboard PDA Pro existant)
 const PDA_DOMAINS = [
   { id:"D1", code:"D1", label:"Gestion & Financement",     icon:"", color:"#0E3048" },
-  { id:"D2", code:"D2", label:"Offres de Services",         icon:"", color:"#0369A1" },
-  { id:"D3", code:"D3", label:"Surveillance Épidémio.",     icon:"", color:"#9F1239" },
-  { id:"D4", code:"D4", label:"Communication",              icon:"", color:"#6D28D9" },
-  { id:"D5", code:"D5", label:"Logistique & CdF",           icon:"", color:"#9A3412" },
-  { id:"D6", code:"D6", label:"Gestion de Données",         icon:"", color:"#166534" },
-  { id:"D7", code:"D7", label:"Renforcement Capacités",     icon:"", color:"#1E40AF" },
+  { id:"D2", code:"D2", label:"Offres de Services",         icon:"", color:"#33518C" },
+  { id:"D3", code:"D3", label:"Surveillance Épidémio.",     icon:"", color:"#8C4A5E" },
+  { id:"D4", code:"D4", label:"Communication",              icon:"", color:"#5F5286" },
+  { id:"D5", code:"D5", label:"Logistique & CdF",           icon:"", color:"#8C4038" },
+  { id:"D6", code:"D6", label:"Gestion de Données",         icon:"", color:"#2E6B3F" },
+  { id:"D7", code:"D7", label:"Renforcement Capacités",     icon:"", color:"#1F3864" },
 ];
 
 // PDA Indicators per domain (extraits du Dashboard PDA Pro)
@@ -4059,7 +4059,7 @@ function renderMain() {
   catch (e) {
     console.error("Erreur de rendu :", e);
     const zone = document.getElementById("main") || document.querySelector(".main");
-    if (zone) zone.innerHTML = `<div style="padding:32px;color:#64748B;font-size:13px;">
+    if (zone) zone.innerHTML = `<div style="padding:32px;color:var(--muted);font-size:13px;">
       Une erreur d'affichage est survenue sur cette vue.
       <button class="tb-btn" onclick="location.reload()" style="margin-left:10px;">Recharger la page</button></div>`;
   }
@@ -4382,7 +4382,7 @@ function genererPDF() {
     try { return VIEWS[id]().html; }
     catch (e) {
       console.error("Section non exportee :", id, e);
-      return `<div style="padding:24px;color:#64748B;">Section « ${id} » indisponible à l'export.</div>`;
+      return `<div style="padding:24px;color:var(--muted);">Section « ${id} » indisponible à l'export.</div>`;
     }
   };
   vues.forEach(id => {
@@ -4815,7 +4815,7 @@ const VIEWS = {};
 // =================================================================
 
 // Mini sparkline for executive KPI
-function miniSpark(data, color = "#1E40AF") {
+function miniSpark(data, color = "#1F3864") {
   data = (data || []).filter(v => Number.isFinite(v));
   if (data.length < 2) return '';
   const w = 140, h = 32;
@@ -4867,7 +4867,7 @@ function kpiExec(opts) {
           </div>
         </div>
         <div class="kpe-spark-block">
-          ${miniSpark(sparkData || [], sparkColor || "#1E40AF")}
+          ${miniSpark(sparkData || [], sparkColor || "#1F3864")}
           <div class="kpe-spark-lbl">${t("twelve_months")}</div>
         </div>
       </div>
@@ -4905,10 +4905,10 @@ VIEWS["min-overview"] = () => {
   /* -- Acte A : Couverture & Impact -- */
   const sectionA = `
     <div class="exec-grid">
-      ${carteExec("01", t("kpi_penta3"), t("cat_vacc_dlmvse"), "couv-penta3", 90, "DHIS2 · DLMVSE · M+5", "#1E40AF")}
-      ${carteExec("02", t("kpi_accouch"), t("cat_mat_dsr"), "accouch", 70, "DHIS2 · RMA · DSR", "#991B1B")}
-      ${carteExec("03", t("kpi_mcpr"), t("cat_pf_dsr"), "mcpr", 25, "RMA + SIGL · DSR", "#991B1B")}
-      ${carteExec("04", t("kpi_dispo"), t("cat_log_dgpml"), "dispo-essentiel", 95, "SIGL · DGPML · M+5", "#C2410C")}
+      ${carteExec("01", t("kpi_penta3"), t("cat_vacc_dlmvse"), "couv-penta3", 90, "DHIS2 · DLMVSE · M+5", "#1F3864")}
+      ${carteExec("02", t("kpi_accouch"), t("cat_mat_dsr"), "accouch", 70, "DHIS2 · RMA · DSR", "#A02233")}
+      ${carteExec("03", t("kpi_mcpr"), t("cat_pf_dsr"), "mcpr", 25, "RMA + SIGL · DSR", "#A02233")}
+      ${carteExec("04", t("kpi_dispo"), t("cat_log_dgpml"), "dispo-essentiel", 95, "SIGL · DGPML · M+5", "#AF4E10")}
     </div>
     <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
       ${card("Où en est la couverture ?", "Penta 3 par province — " + periodLabel(), renderMap("couv-penta3"), "Les provinces grisées n'ont pas rapporté sur la période.")}
@@ -4933,9 +4933,9 @@ VIEWS["min-overview"] = () => {
       ${kpiExec({ n: "05", label: t("kpi_alertes"), category: t("cat_surv_cousp"),
         value: alertes, unit: "", target: "≤ 5", trend: tendance("cousp-alertes").txt,
         trendDir: tendance("cousp-alertes").dir, rag: alertes == null ? "na" : alertes <= 5 ? "green" : alertes <= 10 ? "yellow" : "red",
-        source: "TLOH hebdo · COUSP", sparkData: sparklineData("cousp-alertes"), sparkColor: "#C2410C", action: "" })}
-      ${carteExec("06", t("kpi_prom_tloh"), t("cat_surv_epi"), "surv-tlohprompt", 80, "TLOH · COUSP", "#C2410C")}
-      ${carteExec("07", t("kpi_rep_alertes"), t("cat_resp_cousp"), "cousp-rep48", 80, "Investigations · COUSP", "#C2410C")}
+        source: "TLOH hebdo · COUSP", sparkData: sparklineData("cousp-alertes"), sparkColor: "#AF4E10", action: "" })}
+      ${carteExec("06", t("kpi_prom_tloh"), t("cat_surv_epi"), "surv-tlohprompt", 80, "TLOH · COUSP", "#AF4E10")}
+      ${carteExec("07", t("kpi_rep_alertes"), t("cat_resp_cousp"), "cousp-rep48", 80, "Investigations · COUSP", "#AF4E10")}
     </div>
     <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
       ${card("Où la surveillance décroche-t-elle ?", "Promptitude hebdomadaire par province", renderMap("cousp-prompt"), "")}
@@ -4955,9 +4955,9 @@ VIEWS["min-overview"] = () => {
   /* -- Acte C : Pilotage & Systèmes -- */
   const sectionC = `
     <div class="exec-grid">
-      ${carteExec("08", t("kpi_comp_rma"), t("cat_si_dpsis"), "comp-dhis2", 90, "DHIS2 · DPSIS · M+5", "#1E40AF")}
-      ${carteExec("09", "Complétude DHIS2 Tracker", t("cat_si_dpsis"), "comp-tracker", 70, "DHIS2 Tracker · DPSIS", "#1E40AF")}
-      ${carteExec("10", "Score qualité des données", t("cat_si_dpsis"), "si-dqs", 80, "DQS · DPSIS", "#1E40AF")}
+      ${carteExec("08", t("kpi_comp_rma"), t("cat_si_dpsis"), "comp-dhis2", 90, "DHIS2 · DPSIS · M+5", "#1F3864")}
+      ${carteExec("09", "Complétude DHIS2 Tracker", t("cat_si_dpsis"), "comp-tracker", 70, "DHIS2 Tracker · DPSIS", "#1F3864")}
+      ${carteExec("10", "Score qualité des données", t("cat_si_dpsis"), "si-dqs", 80, "DQS · DPSIS", "#1F3864")}
     </div>
     <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
       ${card("La remontée des données s'améliore-t-elle ?", "Complétude DHIS2 routine — années comparées", renderLineChart(yoySeriesData("comp-dhis2")), "")}
@@ -6242,9 +6242,9 @@ VIEWS["dpsis-comp"] = () => {
 
         <div class="g-2-1">
           ${card("Complétude par système — Évolution N vs N-1", "Tendance annuelle des 5 SI · Janvier–Décembre", renderLineChart([
-            { name:"DHIS2",          data: sparklineData("comp-dhis2"),   color:"#1E40AF", style:"solid" },
-            { name:"SIGL",           data: sparklineData("comp-sigl"),    color:"#EA580C", style:"solid" },
-            { name:"DHIS2 Tracker",  data: sparklineData("comp-tracker"), color:"#0891B2", style:"solid" },
+            { name:"DHIS2",          data: sparklineData("comp-dhis2"),   color:"#1F3864", style:"solid" },
+            { name:"SIGL",           data: sparklineData("comp-sigl"),    color:"#AF4E10", style:"solid" },
+            { name:"DHIS2 Tracker",  data: sparklineData("comp-tracker"), color:"#3E6E78", style:"solid" },
             { name:"IHRIS",          data: sparklineData("comp-ihris"),   color:"#7C3AED", style:"solid" },
             { name:"SMT / eSMT",     data: sparklineData("comp-smt"),     color:"#059669", style:"solid" },
           ]), "")}
@@ -6552,13 +6552,13 @@ function renderLineChart(series, opts = {}) {
     const v = yMin + (yRange * i / yTicks);
     const y = p.t + innerH - (innerH * i / yTicks);
     grid.push(`<line x1="${p.l}" y1="${y.toFixed(1)}" x2="${w-p.r}" y2="${y.toFixed(1)}" stroke="#E2E8F0" stroke-width="0.5" stroke-dasharray="2 3"/>`);
-    grid.push(`<text x="${p.l-6}" y="${(y+3).toFixed(1)}" font-size="9" fill="#94A3B8" text-anchor="end" font-family="JetBrains Mono">${Math.round(v)}</text>`);
+    grid.push(`<text x="${p.l-6}" y="${(y+3).toFixed(1)}" font-size="9" fill="#A09A93" text-anchor="end" font-family="JetBrains Mono">${Math.round(v)}</text>`);
   }
 
   const xLabels = months.map((m, i) => {
     if (i % 2 !== 0 && i !== months.length - 1) return '';
     const x = p.l + i * xStep;
-    return `<text x="${x.toFixed(1)}" y="${h-6}" font-size="9" fill="#94A3B8" text-anchor="middle">${m}</text>`;
+    return `<text x="${x.toFixed(1)}" y="${h-6}" font-size="9" fill="#A09A93" text-anchor="middle">${m}</text>`;
   }).join("");
 
   // Areas (rendered first, behind lines)
@@ -6613,8 +6613,8 @@ function yoySeriesData(metric, scope = "national") {
     }
     return valeurNatPeriode(metric, periode);
   });
-  const series = [{ name: `Année ${annee}`, data: serieAnnee(annee), color: "#1E40AF", style: "solid", opacity: 1 }];
-  [[annee - 1, "#94A3B8"], [annee - 2, "#CBD5E1"]].forEach(([a, c]) => {
+  const series = [{ name: `Année ${annee}`, data: serieAnnee(annee), color: "#1F3864", style: "solid", opacity: 1 }];
+  [[annee - 1, "#A09A93"], [annee - 2, "#CEC8BA"]].forEach(([a, c]) => {
     const d = serieAnnee(a);
     if (d.some(v => v != null)) series.push({ name: `Année ${a}`, data: d, color: c, style: "dashed", opacity: 0.9 });
   });
