@@ -6,65 +6,67 @@
 <title>Centre d'Intelligence des Données — Situation Room MSPP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Syne:wght@600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
 <style>
   :root {
     /* PPTX palette — bleu royal */
-    --royal: #1E40AF;
-    --royal-d: #1E3A8A;
-    --royal-l: #3B82F6;
-    --royal-pale: #DBEAFE;
-    --royal-tint: #EFF6FF;
+    --royal: #1F3864;
+    --royal-d: #16294A;
+    --royal-l: #46628F;
+    --royal-pale: #C7D2E4;
+    --royal-tint: #E8EDF7;
     /* Active / accent */
-    --gold: #FACC15;
-    --gold-d: #CA8A04;
-    --gold-tint: #FEF9C3;
+    --gold: #B4913C;
+    --gold-d: #856722;
+    --gold-l: #DCC084;
+    --gold-tint: #F5ECD7;
     /* Backgrounds */
-    --bg: #F1F5F9;
+    --bg: #F1EFEA;
     --surface: #FFFFFF;
-    --surface-2: #F8FAFC;
-    --border: #E2E8F0;
-    --border-2: #CBD5E1;
+    --surface-2: #F8F6F1;
+    --border: #E4E0D5;
+    --border-2: #CEC8BA;
     /* Text */
-    --ink: #0F172A;
-    --body: #1E293B;
-    --muted: #64748B;
-    --muted-2: #94A3B8;
+    --ink: #1B1A16;
+    --body: #44403A;
+    --muted: #75706B;
+    --muted-2: #A09A93;
     /* RAG (4 colors — saturated) */
-    --rag-green: #15803D;
-    --rag-green-l: #BBF7D0;
-    --rag-yellow: #CA8A04;
-    --rag-yellow-l: #FEF3C7;
-    --rag-orange: #C2410C;
-    --rag-orange-l: #FFEDD5;
-    --rag-red: #991B1B;
-    --rag-red-l: #FECACA;
-    --rag-na: #94A3B8;
-    --rag-na-l: #E2E8F0;
+    --rag-green: #2E6B3F;
+    --rag-green-l: #D8EBDD;
+    --rag-yellow: #7D5C07;
+    --rag-yellow-l: #F6EED6;
+    --rag-orange: #AF4E10;
+    --rag-orange-l: #FBEEE3;
+    --rag-red: #A02233;
+    --rag-red-l: #F3D8DA;
+    --rag-na: #655F52;
+    --rag-na-l: #E9E6DE;
     /* Direction colors */
-    --dir-vacc: #1D4ED8;
-    --dir-dsr: #DB2777;
-    --dir-dsc: #059669;
-    --dir-dpml: #EA580C;
-    --dir-dpsis: #475569;
-    --dir-drh: #7C3AED;
-    --dir-cousp: #DC2626;
-    --dir-prog: #0891B2;
+    --dir-vacc: #33518C;
+    --dir-dsr: #8C4A5E;
+    --dir-dsc: #3F6B52;
+    --dir-dpml: #8C5A2E;
+    --dir-dpsis: #5C6470;
+    --dir-drh: #5F5286;
+    --dir-cousp: #8C4038;
+    --dir-prog: #3E6E78;
     /* PDA specific */
     --pda: #2563EB;
     --pda-tint: #DBEAFE;
 
-    --font: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-h: 'Syne', 'DM Sans', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    --font: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-h: 'Source Serif 4', Georgia, serif;
+    --font-mono: 'Source Sans 3', -apple-system, sans-serif;
 
     --header-h: 56px;
     --sb-w: 268px;
     --radius: 8px;
     --radius-sm: 6px;
-    --shadow-sm: 0 1px 2px rgba(15,23,42,0.05);
-    --shadow: 0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
-    --shadow-md: 0 4px 12px rgba(15,23,42,0.08), 0 2px 4px rgba(15,23,42,0.04);
+    --shadow-sm: 0 1px 2px rgba(27,26,22,0.07);
+    --shadow: 0 2px 5px rgba(27,26,22,0.07), 0 1px 2px rgba(27,26,22,0.05);
+    --shadow-md: 0 6px 16px rgba(27,26,22,0.09), 0 2px 5px rgba(27,26,22,0.05);
+    --focus-ring: 0 0 0 2px var(--surface), 0 0 0 4px var(--royal-l);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -78,6 +80,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow: hidden;
+    font-variant-numeric: tabular-nums;
   }
 
   /* ============================================================
@@ -2737,6 +2740,40 @@
     .kpi-value { font-size:22px !important; }
     * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
   }
+
+  /* ============================================================
+     REFONTE VISUELLE — SURCHARGES (note de design)
+     Additives : aucune regle existante supprimee, la cascade tranche.
+  ============================================================ */
+  :focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 4px; }
+  .header { border-bottom: 2px solid var(--gold); }
+
+  .pill.green  { background: var(--rag-green-l);  color: var(--rag-green); }
+  .pill.yellow { background: var(--rag-yellow-l); color: var(--rag-yellow); }
+  .pill.orange { background: var(--rag-orange-l); color: var(--rag-orange); }
+  .pill.red    { background: var(--rag-red-l);    color: var(--rag-red); animation: none; }
+  .pill.na     { background: var(--rag-na-l);     color: var(--rag-na); }
+
+  .kpi::before, .kpi-exec::before {
+    top: 0; bottom: 0; left: 0; right: auto;
+    width: 3px; height: auto;
+  }
+  .kpi::after, .kpi-exec::after { display: none; }
+  [dir="rtl"] .kpi::before, [dir="rtl"] .kpi-exec::before { left: auto; right: 0; }
+
+  .kpi .kpi-value { color: var(--ink); font-family: var(--font); font-weight: 600; }
+  .kpi.green .kpi-value, .kpi.yellow .kpi-value, .kpi.orange .kpi-value, .kpi.red .kpi-value { color: var(--ink); }
+  .kpi.na .kpi-value { color: var(--rag-na); }
+
+  .map-prov.rag-na { fill: var(--border-2); }
+  .map-cell.rag-na { background: var(--rag-na-l); color: var(--rag-na); }
+
+  .pp.on { background: var(--royal); color: #fff; }
+
+  .tbl-s th { border-bottom: 1.5px solid var(--border-2); color: var(--muted); }
+  .tbl-s tr:nth-child(even) td { background: var(--surface-2); }
+
+  .card-title { font-family: var(--font-h); font-size: 13.5px; }
 </style>
 </head>
 <body>
