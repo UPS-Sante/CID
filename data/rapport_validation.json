@@ -1,9 +1,16 @@
 {
- "genere": "2026-07-26T06:05:41Z",
+ "genere": "2026-07-27T06:30:09Z",
  "anomalies": [
   {
    "fichier": "brut/ID_FOSA_DS_DPSP.csv",
    "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/DGPML/Facility_Stock_Status-2026-07-26-134635.xlsx",
+   "feuille": "Data List",
+   "source": "DGPML",
+   "periode": "2026-07",
+   "type": "matrice_non_reconnue"
   },
   {
    "fichier": "brut/PEV/RMA/20260710_PEV_Resultats_Simulation.csv",
