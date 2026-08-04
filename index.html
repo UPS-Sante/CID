@@ -2964,6 +2964,19 @@
   .lien-btn { font-size:11.5px; font-weight:600; padding:6px 12px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--royal); cursor:pointer; transition:all .12s; font-family:var(--font-b); }
   .lien-btn:hover { background:var(--royal); color:#fff; border-color:var(--royal); }
   .trend-up { color:var(--rag-green); } .trend-down { color:var(--rag-red); }
+  .sp-attente .sp-label { opacity:0.55; }
+  .sp-attente-badge { font-size:9px; font-weight:600; color:var(--muted); background:var(--surface-2); border:1px solid var(--border); padding:1px 7px; border-radius:10px; margin-left:auto; }
+  .attente-carte { display:flex; gap:20px; align-items:center; background:var(--surface); border:1px dashed var(--border); border-radius:14px; padding:32px 30px; box-shadow:var(--shadow-sm); }
+  .attente-ic { font-size:40px; color:var(--muted-2); flex-shrink:0; }
+  .attente-titre { font-family:var(--font-h); font-size:17px; font-weight:700; color:var(--royal); margin-bottom:6px; }
+  .attente-txt { font-size:13px; color:var(--body); line-height:1.5; max-width:640px; }
+  .palu-funnel { display:flex; flex-direction:column; gap:12px; margin-bottom:14px; }
+  .palu-etage { display:flex; align-items:center; gap:12px; }
+  .palu-lib { font-size:12px; color:var(--body); width:70px; flex-shrink:0; }
+  .palu-barre { flex:1; height:20px; background:var(--border); border-radius:5px; overflow:hidden; }
+  .palu-fill { height:100%; border-radius:5px; transition:width .3s; }
+  .palu-val { font-size:13px; font-weight:700; color:var(--ink); width:52px; text-align:right; font-variant-numeric:tabular-nums; }
+  .palu-note { font-size:11.5px; color:var(--muted); line-height:1.5; padding-top:12px; border-top:1px solid var(--border); }
 </style>
 </head>
 <body>
@@ -3200,14 +3213,15 @@ const PROGRAMS = [
     id:"vacc", c:"vacc", icon:"PEV", label:"Vaccination · PEV",
     dir:"DLMVSE",
     sub:[
-      { id:"vacc-overview",  i18n_key:"sub_vacc_overview", label:"Vue d'ensemble",      status:"yellow" },
-      { id:"vacc-couv",      i18n_key:"sub_vacc_couv",     label:"Couverture vaccinale",status:"orange" },
-      { id:"vacc-zd",        i18n_key:"sub_vacc_zd",       label:"Zéro-dose",           status:"red" },
-      { id:"vacc-surv",      i18n_key:"sub_vacc_surv",     label:"Surveillance épidémio.", status:"orange" },
-      { id:"vacc-intrants",  i18n_key:"sub_vacc_intrants", label:"Vaccins & intrants",  status:"yellow" },
-      { id:"vacc-cold",      i18n_key:"sub_vacc_cold",     label:"Chaîne du froid",     status:"green" },
+      { id:"vacc-overview",  i18n_key:"sub_vacc_overview", label:"Vue d'ensemble",      status:"green" },
+      { id:"vacc-couv",      i18n_key:"sub_vacc_couv",     label:"Couverture vaccinale",status:"green" },
+      { id:"vacc-zd",        i18n_key:"sub_vacc_zd",       label:"Zéro-dose",           status:"orange" },
+      { id:"vacc-palu",      i18n_key:"sub_vacc_palu",     label:"Vaccin antipaludique",status:"yellow" },
+      { id:"vacc-surv",      i18n_key:"sub_vacc_surv",     label:"Surveillance épidémio.", status:"na", attente:"Surveillance" },
+      { id:"vacc-intrants",  i18n_key:"sub_vacc_intrants", label:"Vaccins & intrants",  status:"na", attente:"SIGL" },
+      { id:"vacc-cold",      i18n_key:"sub_vacc_cold",     label:"Chaîne du froid",     status:"na", attente:"eSMT" },
       { id:"vacc-pda",       i18n_key:"sub_vacc_pda",      label:"PDA — Protocole d'Accord", status:"yellow", pda:true },
-      { id:"vacc-coord",     i18n_key:"sub_vacc_coord",    label:"Coordination",        status:"green" },
+      { id:"vacc-coord",     status:"na", attente:"Coordination", i18n_key:"sub_vacc_coord",    label:"Coordination",        status:"green" },
     ]
   },
   {
@@ -3777,6 +3791,7 @@ const I18N = {
     prog_dpsis: "Système d'Information",
     sub_min_overview: "Aperçu ministériel",
     sub_sao_league: "Classement des provinces",
+    sub_vacc_palu: "Vaccin antipaludique",
     sub_vacc_overview: "Vue d'ensemble",
     sub_vacc_couv: "Couverture vaccinale",
     sub_vacc_zd: "Zéro-dose",
@@ -3968,6 +3983,7 @@ const I18N = {
     prog_dpsis: "Information System",
     sub_min_overview: "Ministerial overview",
     sub_sao_league: "Provincial ranking",
+    sub_vacc_palu: "Malaria vaccine",
     sub_vacc_overview: "Overview",
     sub_vacc_couv: "Vaccination coverage",
     sub_vacc_zd: "Zero-dose",
@@ -4159,6 +4175,7 @@ const I18N = {
     prog_dpsis: "نظام المعلومات",
     sub_min_overview: "نظرة عامة وزارية",
     sub_sao_league: "ترتيب المقاطعات",
+    sub_vacc_palu: "لقاح الملاريا",
     sub_vacc_overview: "نظرة عامة",
     sub_vacc_couv: "تغطية التطعيم",
     sub_vacc_zd: "صفر جرعة",
@@ -4388,9 +4405,10 @@ function renderSidebar() {
       </div>
       <div class="subprog-list">
         ${p.sub.map(s => `
-          <div class="subprog" data-sub="${s.id}" onclick="selectSub('${p.id}','${s.id}')">
+          <div class="subprog ${s.attente ? 'sp-attente' : ''}" data-sub="${s.id}" onclick="selectSub('${p.id}','${s.id}')">
             <span class="sp-label">${s.i18n_key ? t(s.i18n_key) : s.label}</span>
             ${s.pda ? '<span class="sp-pda-badge">PDA</span>' : ''}
+            ${s.attente ? '<span class="sp-attente-badge">à venir</span>' : ''}
           </div>
         `).join("")}
       </div>
@@ -5480,6 +5498,81 @@ VIEWS["min-overview"] = () => {
 };
 
 
+// ---- Etat generique : vue en attente de source ----
+function vueEnAttente(titre, crumb, source, desc) {
+  return {
+    crumbs: ["Vaccination · PEV", crumb],
+    html: `
+      <div class="ph"><div class="ph-tag">En attente de source</div><div class="ph-title">${titre}</div><div class="ph-sub">${desc}</div></div>
+      <div class="content"><div class="attente-carte">
+        <div class="attente-ic">◷</div>
+        <div class="attente-corps">
+          <div class="attente-titre">Cette vue attend sa source de données</div>
+          <div class="attente-txt">Le relevé mensuel du PEV ne couvre pas ce domaine. Les indicateurs seront alimentés dès le branchement de ${source}.</div>
+        </div>
+      </div></div>`
+  };
+}
+VIEWS["vacc-surv"] = () => vueEnAttente("Surveillance épidémiologique", "Surveillance épidémio.", "<strong>la surveillance des maladies évitables par la vaccination</strong>, poliomyélite et rougeole notamment", "Cas notifiés, complétude et promptitude de la surveillance.");
+VIEWS["vacc-intrants"] = () => vueEnAttente("Vaccins et intrants", "Vaccins & intrants", "<strong>le SIGL</strong>, système d'information pour la gestion logistique", "Stocks de vaccins, consommation et disponibilité des intrants.");
+VIEWS["vacc-cold"] = () => vueEnAttente("Chaîne du froid", "Chaîne du froid", "<strong>eSMT</strong>, suivi des stocks de vaccins et de la chaîne du froid", "Fonctionnalité des équipements et température des points de stockage.");
+VIEWS["vacc-coord"] = () => vueEnAttente("Coordination", "Coordination", "<strong>les instances de coordination du PEV</strong>", "Réunions de coordination, financement et engagements des partenaires.");
+
+// ---- Vue VACCIN ANTIPALUDIQUE (donnees RIM reelles) ----
+VIEWS["vacc-palu"] = () => {
+  if (!pevDispo() || !PEV.palu || !PEV.palu.length) {
+    return vueEnAttente("Vaccin antipaludique", "Vaccin antipaludique", "<strong>le relevé du vaccin antipaludique</strong>", "Couverture des quatre doses dans les districts éligibles.");
+  }
+  const palu = PEV.palu;
+  const moy = (k) => { const v = palu.map(p => p[k]).filter(x => x != null); return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length * 10) / 10 : null; };
+  const p1 = moy("palu1"), p2 = moy("palu2"), p3 = moy("palu3"), p4 = moy("palu4");
+  const chute = (p1 != null && p4 != null) ? Math.round((p1 - p4) * 10) / 10 : null;
+  const provs = [...new Set(palu.map(p => p.province))];
+  const nomPr = (s) => s.charAt(0) + s.slice(1).toLowerCase();
+  const rag90 = (v) => v == null ? "na" : v >= 90 ? "green" : v >= 70 ? "yellow" : v >= 50 ? "orange" : "red";
+
+  const lignes = palu.slice().sort((a, b) => (a.palu4 == null ? -1 : a.palu4) - (b.palu4 == null ? -1 : b.palu4)).map(d => {
+    const cell = (v) => `<td class="num">${v == null ? "ND" : `<span class="pill ${rag90(v)}">${v}%</span>`}</td>`;
+    return `<tr><td>${nomPr(d.nom)}</td><td>${nomPr(d.province)}</td>${cell(d.palu1)}${cell(d.palu2)}${cell(d.palu3)}${cell(d.palu4)}</tr>`;
+  }).join("");
+
+  return {
+    crumbs: ["Vaccination · PEV", "Vaccin antipaludique"],
+    html: `
+      <div class="ph">
+        <div class="ph-tag">Vaccin antipaludique · R21 / RTS,S</div>
+        <div class="ph-title">Vaccin antipaludique — montée en charge</div>
+        <div class="ph-sub">Déployé dans ${palu.length} districts éligibles répartis sur ${provs.length} provinces à forte transmission. Schéma à quatre doses. ${PEV.meta.periode}.</div>
+      </div>
+      <div class="content">
+        <div class="kpi-grid">
+          ${kpi("1re dose", p1, "%", "Entrée dans le schéma", "", "flat", rag90(p1))}
+          ${kpi("2e dose", p2, "%", "", "", "flat", rag90(p2))}
+          ${kpi("3e dose", p3, "%", "", "", "flat", rag90(p3))}
+          ${kpi("4e dose", p4, "%", "Schéma complet", "", "flat", rag90(p4))}
+        </div>
+        <div class="grid-2">
+          ${card("Complétude du schéma", "De la première à la quatrième dose",
+            `<div class="palu-funnel">
+              ${[["1re", p1], ["2e", p2], ["3e", p3], ["4e", p4]].map(([lib, v]) => `
+                <div class="palu-etage">
+                  <span class="palu-lib">${lib} dose</span>
+                  <div class="palu-barre"><div class="palu-fill rag-${rag90(v)}-bg" style="width:${v == null ? 0 : Math.min(100, v)}%"></div></div>
+                  <span class="palu-val">${v == null ? "ND" : v + "%"}</span>
+                </div>`).join("")}
+            </div>
+            <div class="palu-note">La couverture passe de ${p1 != null ? p1 + "%" : "ND"} à la première dose à ${p4 != null ? p4 + "%" : "ND"} au schéma complet, soit ${chute != null ? chute + " points" : "un écart"} perdus en cours de route. La rétention entre doses est l'enjeu central de ce nouveau vaccin.</div>`,
+            "Source : RIM PEV, feuille vaccin antipaludique.")}
+          ${card("Couverture par district", palu.length + " districts éligibles, triés par schéma complet",
+            `<div class="sao-defile"><table class="tbl-s"><tr><th>District</th><th>Province</th><th class="num">Dose 1</th><th class="num">Dose 2</th><th class="num">Dose 3</th><th class="num">Dose 4</th></tr>${lignes}</table></div>`,
+            "")}
+        </div>
+      </div>
+    `
+  };
+};
+
+
 VIEWS["vacc-overview"] = (s) => {
   if (!pevDispo()) {
     return { crumbs: ["Vaccination · PEV", "Vue d'ensemble"], html: `<div class="ph"><div class="ph-title">Vaccination</div><div class="ph-sub">Données PEV en cours de chargement.</div></div>` };
@@ -5638,89 +5731,43 @@ VIEWS["vacc-couv"] = (s) => {
 // =================================================================
 // VACCINATION — Zéro-dose
 // =================================================================
-VIEWS["vacc-zd"] = (s) => {
-  const provMap = provincesValueMap("zd-volume");
-  const top = PROVINCES.slice().sort((a,b) => provMap[b.id] - provMap[a.id]).slice(0,8);
-  const totalZD = Object.values(provMap).reduce((a,b) => a+b, 0);
-  const maxZD = Math.max(...top.map(p => provMap[p.id]));
-
+VIEWS["vacc-zd"] = () => {
+  if (!pevDispo()) return { crumbs: ["Vaccination · PEV", "Zéro-dose"], html: `<div class="ph"><div class="ph-title">Zéro-dose</div></div>` };
+  const nomPr = (s) => s.charAt(0) + s.slice(1).toLowerCase();
+  // Le zero-dose se lit la ou la 1re dose de Penta n'atteint pas tous les enfants
+  const sc = pevSousCible("Penta1", 90);
+  const provBas = pevProvCV("Penta1").filter(x => x.val < 90).slice(0, 8);
+  const rag = (v) => v == null ? "na" : v >= 90 ? "green" : v >= 80 ? "yellow" : v >= 60 ? "orange" : "red";
+  const rows = provBas.map(x => {
+    const zd = Math.max(0, Math.round((100 - x.val) * 10) / 10);
+    return `<tr><td>${nomPr(x.nom)}</td><td class="num"><span class="pill ${rag(x.val)}">${x.val}%</span></td><td class="num">${zd}%</td></tr>`;
+  }).join("");
   return {
-    crumbs:["Vaccination · PEV", "Zéro-dose"],
+    crumbs: ["Vaccination · PEV", "Zéro-dose"],
     html: `
       <div class="ph">
-        <div class="ph-tag">⚠ Enfants zéro-dose · DLMVSE</div>
-        <div class="ph-title">Enfants zéro-dose — Concentration géographique</div>
-        <div class="ph-sub">Enfants n'ayant reçu aucun vaccin · suivi GAVI / GAVI-FUND · stratégie de rattrapage.</div>
+        <div class="ph-tag">Équité vaccinale · enfants non atteints</div>
+        <div class="ph-title">Zéro-dose — là où la vaccination n'atteint pas l'enfant</div>
+        <div class="ph-sub">Un enfant zéro-dose n'a reçu aucune dose de Penta. Le déficit se lit à travers la première dose de Penta, qui mesure l'entrée dans le système. ${PEV.meta.periode}.</div>
       </div>
       <div class="content">
         <div class="kpi-grid">
-          ${kpi("Volume national", fmt(totalZD), "enfants", "Cible 2026 : −30%", "", "flat", "orange", true)}
-          ${kpi("% population < 1 an", nationalAggregate("zd-pop"), "%", "Cible : < 3%", "", "flat", "red", true)}
-          ${kpi("Provinces critiques (>5 000 ZD)", String(Object.values(provMap).filter(v => v > 5000).length), "/23", "Concentration", "", "flat", "red", true)}
-          ${kpi("Stratégies avancées planifiées", nationalAggregate("zd-strat"), "%", "Plans validés", "", "flat", "green")}
+          ${kpi("Provinces sous la cible", sc.prov, "", "sur " + sc.provTot + " · Penta1 < 90%", "", "flat", sc.prov === 0 ? "green" : sc.prov <= 4 ? "yellow" : "red", true)}
+          ${kpi("Districts sous la cible", sc.dist, "", "sur " + sc.distTot + " · Penta1 < 90%", "", "flat", "orange", true)}
+          ${kpi("Antigène de lecture", null, "", "Penta 1", "", "flat", "na")}
+          ${kpi("Grain disponible", null, "", "Province et district", "", "flat", "na")}
         </div>
-
-        <div class="g-2-1">
-          ${card("Volume zéro-dose par province", "Carte concentration géographique", renderMap("zd-volume", { inverse: true, isVolume: true }), "")}
-          ${card("Top 8 — Volume zéro-dose", "Enfants 0-11 mois jamais vaccinés", renderBars(top.map(p => ({
-            label: p.short, val: provMap[p.id], target: null,
-            rag: provMap[p.id] > 6500 ? "red" : provMap[p.id] > 4500 ? "orange" : "yellow",
-            max: maxZD * 1.1, showVal: fmt(provMap[p.id])
-          }))), "")}
+        <div class="grid-2">
+          ${card("Concentration géographique", "Première dose de Penta par province et district",
+            renderMap("couv-penta1"), "Plus la couverture est basse, plus la poche de zéro-dose est probable. Source : RIM PEV.")}
+          ${card("Provinces à surveiller", (provBas.length || "Aucune") + " provinces sous la cible d'accès",
+            provBas.length ? `<table class="tbl-s"><tr><th>Province</th><th class="num">Penta1</th><th class="num">Déficit</th></tr>${rows}</table>` : `<div class="attente-txt">Toutes les provinces atteignent la cible de première dose.</div>`,
+            "Le déficit approxime la part d'enfants non entrés dans le calendrier. Lecture prudente : les dénominateurs administratifs surestiment parfois la couverture.")}
         </div>
-
-        ${aiBox(
-          "Stratégie de rattrapage à intensifier",
-          `Les provinces du <strong>Tibesti, Borkou et Ennedi-Ouest</strong> concentrent <strong>${fmt(top.slice(0,3).reduce((a,p)=>a+provMap[p.id],0))} enfants zéro-dose</strong> (≈40% du total). La stratégie avancée mobile a déjà permis +12 pts au Lac en 6 semaines. Recommandation : <strong>doubler les équipes mobiles de 16 à 32 dès T2</strong>. Coordination Fondation Gates pour financement (240 M FCFA, dossier prêt).`,
-          "Source : DHIS2-Tracker · Triangulation : T+24h · Confiance : 89%"
-        )}
       </div>
     `
   };
 };
-
-// =================================================================
-// VACCINATION — Chaîne du froid
-// =================================================================
-VIEWS["vacc-cold"] = (s) => {
-  const fonct = nationalAggregate("couv-cdf");
-  return {
-    crumbs:["Vaccination · PEV", "Chaîne du froid"],
-    html: `
-      <div class="ph">
-        <div class="ph-tag">Chaîne du froid · DLMVSE / DGPML</div>
-        <div class="ph-title">Chaîne du froid — Fonctionnalité et équipements</div>
-        <div class="ph-sub">Suivi de la chaîne d'approvisionnement vaccinal · équipements frigorifiques et conformité.</div>
-      </div>
-      <div class="content">
-        <div class="kpi-grid">
-          ${kpi("CdF fonctionnelle DS", fonct, "%", "Cible : 95%", "", "flat", rag(fonct,95))}
-          ${kpi("CdF fonctionnelle CS", nationalAggregate("couv-cdf"), "%", "Cible : 90%", "", "flat", "yellow")}
-          ${kpi("Pannes ce trimestre", nationalAggregate("cdf-pannes"), "", "Cible : < 50", "", "flat", "red", true)}
-          ${kpi("Délai moyen réparation", nationalAggregate("cdf-delai"), "jours", "Cible : < 5 j", "", "flat", "orange", true)}
-        </div>
-        <div class="g-2-1">
-          ${card("Fonctionnalité CdF par province", "% CS avec CdF fonctionnelle", renderMap("couv-cdf"), "Source : SMT (Stocks vaccins)")}
-          ${card("Composition du parc CdF", "Équipements frigorifiques", renderBars([
-            { label:"Solaires",   val:null, target:60 },
-            { label:"Électriques",val:null, target:30 },
-            { label:"Gaz",        val:null, target:5 },
-            { label:"Mixtes",     val:null, target:5 },
-          ]), "Évolution : transition solaire en cours")}
-        </div>
-        ${aiBox(
-          "Transition solaire à accélérer",
-          `Les équipements à gaz (12% du parc) sont à l'origine de <strong>43% des pannes</strong>. Plan d'élimination programmé sur T3-T4 avec financement Banque Mondiale (cadre PRSS-II). 35 nouveaux congélateurs solaires en cours de déploiement.`,
-          "Source : SMT · Maintenance terrain"
-        )}
-      </div>
-    `
-  };
-};
-
-// =================================================================
-// VACCINATION — PDA (Protocole d'Accord) — COMPOSANTE PRINCIPALE
-// =================================================================
 VIEWS["vacc-pda"] = (s) => {
   return {
     crumbs:["Vaccination · PEV", "PDA — Protocole d'Accord", s.pdaDomain === "overview" ? "Vue d'ensemble" : PDA_DOMAINS.find(d => d.id === s.pdaDomain)?.label || s.pdaDomain],
@@ -5999,261 +6046,6 @@ function domainNarrative(domId, avg, inds) {
   return narratives[domId] || `Score moyen du domaine : ${avg}%. Analyse détaillée à venir.`;
 }
 
-VIEWS["vacc-surv"] = () => {
-  // Surveillance indicators (MAPI + PFA + Rougeole + Méningite + Fièvre Jaune)
-  const survIndicators = [
-    { id:"pfa-notif",     l:"PFA notifiés sous 7 jours",                 val:nationalAggregate("surv-prom"), target:80, dir:"gte" },
-    { id:"pfa-rate",      l:"Taux PFA non polio / 100k < 15 ans",        val:null, target:200, dir:"gte", abs:true, unit:"" },
-    { id:"rougeole",      l:"Cas suspects de rougeole notifiés",         val:nationalAggregate("surv-rougeole"), target:null, unit:"" },
-    { id:"meningite",     l:"Cas suspects de méningite notifiés",        val:nationalAggregate("surv-meningite"), target:null, unit:"" },
-    { id:"fj",            l:"Prélèvements fièvre jaune (≥1/DS)",         val:null, target:80, dir:"gte" },
-    { id:"prom-pfa",      l:"Promptitude notification PFA (≤ 48h)",       val:null, target:90, dir:"gte" },
-    { id:"prom-rougeole", l:"Promptitude notification rougeole (≤ 48h)",  val:null, target:90, dir:"gte" },
-    { id:"comp-hebdo",    l:"Complétude rapports hebdo TLOH",              val:nationalAggregate("surv-tlohcomp"), target:95, dir:"gte" },
-    { id:"prom-hebdo",    l:"Promptitude rapports hebdo TLOH",             val:nationalAggregate("surv-tlohprompt"), target:90, dir:"gte" },
-  ];
-
-  const mapiIndicators = [
-    { l:"MAPI graves notifiées", val:null, raw:true },
-    { l:"Délai notification moyen (j)",     val:null, target:7, dir:"lte", inverse:true },
-    { l:"MAPI investiguées (≤ 30j)",        val:null, target:100, dir:"gte" },
-    { l:"Causalité confirmée",              val:null, raw:true },
-  ];
-
-  return {
-    crumbs:["Vaccination · PEV", "Surveillance épidémiologique"],
-    html: `
-      <div class="ph">
-        <div class="ph-tag">${t("surv_ph_tag")}</div>
-        <div class="ph-title">${t("surv_ph_title")}</div>
-        <div class="ph-sub">${t("surv_ph_sub")}</div>
-      </div>
-      <div class="content">
-
-        <div class="kpi-grid">
-          ${kpi("PFA notifiés < 7 jours", nationalAggregate("surv-prom"), "%", "Cible OMS : 80%", "", "flat", "green")}
-          ${kpi("Districts notifiant rougeole", nationalAggregate("surv-rougeole"), "%", "Cible : 80%", "", "flat", "yellow")}
-          ${kpi("Complétude TLOH hebdo", nationalAggregate("surv-tlohcomp"), "%", "Cible : 95%", "", "flat", "yellow")}
-          ${kpi("Promptitude TLOH hebdo", nationalAggregate("surv-tlohprompt"), "%", "Cible : 90%", "", "flat", "orange")}
-        </div>
-
-        <div class="card" style="margin-bottom:14px;">
-          <div class="card-hdr">
-            <div>
-              <div class="card-title">Indicateurs de surveillance — Performance</div>
-              <div class="card-sub">9 indicateurs traceurs · Complétude × Promptitude × Investigation</div>
-            </div>
-          </div>
-          <div class="card-body">
-            ${renderBars(survIndicators.map(ind => ({
-              label: ind.l.substring(0, 36),
-              val: ind.val,
-              target: ind.target,
-              rag: rag(ind.val, ind.target, ind.dir === "lte"),
-              showVal: ind.val == null ? "ND" : ind.val + (ind.unit !== undefined ? ind.unit : "%"),
-              max: 100
-            })))}
-          </div>
-          <div class="card-foot">Source : TLOH hebdomadaire · DHIS2 SIMR · COUSP · Investigations OMS-AFRO</div>
-        </div>
-
-        <div class="g-2-1">
-          ${card("PFA notifiés < 7 jours par province", "Carte de performance — 23 provinces", renderMap("surv-pfa"), "Cible OMS : 80% — Maintien certification éradication polio")}
-
-          ${card("MAPI graves — T1 2026", "Pharmacovigilance vaccinale", `
-            <div class="bar-list">
-              ${mapiIndicators.map(m => `
-                <div class="bar-row">
-                  <div class="bar-label">${m.l}</div>
-                  <div class="bar-track">
-                    ${m.raw || m.val == null ? '' : `<div class="bar-fill ${m.target ? rag(m.val, m.target, m.inverse) : 'yellow'}" data-w="${Math.min(100, m.val)}" style="width:0%;"></div>`}
-                    ${m.target ? `<div class="bar-target" style="left:${Math.min(100, m.target)}%;"></div>` : ''}
-                  </div>
-                  <div class="bar-val ${m.target ? rag(m.val, m.target, m.inverse) : ''}">${m.suffix || (m.val == null ? "ND" : m.val + (m.target && m.target > 10 ? '%' : ''))}</div>
-                </div>
-              `).join("")}
-            </div>
-            <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:11.5px;color:var(--muted);">
-              <strong style="color:var(--ink);">Types de MAPI graves :</strong> ND — en attente des données du Comité National de Pharmacovigilance.
-            </div>
-          `, "Source : Comité National de Pharmacovigilance")}
-        </div>
-
-        <div class="g-2-1">
-          ${card("Promptitude notification — Évolution N vs N-1", "TLOH hebdo + PFA · Janvier–Décembre", renderLineChart(
-            yoySeriesData("surv-prom")
-          ), "Comparaison année courante vs 2025")}
-
-          ${card("Alertes surveillance — En cours", "Notifications actives à investiguer", `
-            ${alert("red","!","Lac — Suspicion choléra","8 cas suspects à Bol depuis 72h. Investigation en cours.","Détecté · 12 mai 09:30 · COUSP")}
-            ${alert("orange","!","Ouaddaï — Pic rougeole","Dépassement seuil épidémique sur 2 districts.","Détecté · 11 mai · SIMR")}
-            ${alert("yellow","!","Logone-Oriental — Méningite","Augmentation cas suspects. Surveillance renforcée.","Détecté · 10 mai · DSP")}
-            ${alert("yellow","!","Tibesti — Retard notification PFA","2 cas signalés au-delà du seuil 7j.","Détecté · 09 mai · DHIS2 Tracker")}
-            ${alert("green","✓","Mandoul — Fin épidémie polio","Aucun nouveau cas depuis 28 jours.","Confirmé · 09 mai · OMS")}
-          `, "")}
-        </div>
-
-        ${aiBox(
-          "Promptitude TLOH en retrait, à corriger en T2",
-          `La <strong>promptitude TLOH hebdomadaire (72%)</strong> reste sous la cible OMS (90%). Trois provinces (Tibesti, Borkou, Ennedi-Ouest) saisissent au-delà du seuil de 5 jours dans 40% des cas. Recommandation : <strong>renforcer la connexion satellite (V-SAT)</strong> sur ces 13 provinces (cadre PRSS-II, Banque Mondiale) et <strong>doter chaque ECP d'une tablette ODK</strong> pour la saisie déconnectée. Impact attendu : +12 pts en 4 mois.`,
-          "Source : COUSP + DPSIS · Confiance : 90%"
-        )}
-      </div>
-    `
-  };
-};
-
-VIEWS["vacc-intrants"] = () => {
-  // Vaccines & inputs (antigens + injection devices + safety boxes + cold chain consumables)
-  const antigens = [
-    { id:"bcg",       l:"BCG",                 dispo:null, msd:null, rupt:null, perim:null },
-    { id:"penta",     l:"Pentavalent (DTC-HepB-Hib)", dispo:null, msd:null, rupt:null, perim:null },
-    { id:"vpo",       l:"VPO (oral polio)",    dispo:null, msd:null, rupt:null, perim:null },
-    { id:"vpi",       l:"VPI (poliomyélite inactivé)", dispo:null, msd:null, rupt:null, perim:null },
-    { id:"var",       l:"VAR (rougeole)",      dispo:null, msd:null, rupt:null, perim:null },
-    { id:"pcv",       l:"PCV-13 (pneumocoque)",dispo:null, msd:null, rupt:null, perim:null },
-    { id:"rota",      l:"Rotavirus",           dispo:null, msd:null, rupt:null, perim:null },
-    { id:"fj",        l:"Fièvre jaune",        dispo:null, msd:null, rupt:null, perim:null },
-    { id:"r21",       l:"R21/Matrix-M (paludisme)",dispo:null, msd:null, rupt:null, perim:null },
-    { id:"vat",       l:"VAT (Tétanos)",       dispo:null, msd:null, rupt:null, perim:null },
-  ];
-
-  const consumables = [
-    { l:"Seringues 0.05 ml (BCG)",        val:null, target:95 },
-    { l:"Seringues 0.5 ml AD",            val:null, target:95 },
-    { l:"Boîtes de sécurité (5L)",        val:null, target:95 },
-    { l:"Coton, alcool, compresses",      val:null, target:95 },
-    { l:"Sachets de glace (CdF mobile)",  val:null, target:90 },
-    { l:"Thermomètres mini-max",          val:null, target:95 },
-    { l:"Cartes 30DTR / freeze-tag",      val:null, target:90 },
-  ];
-
-  const dispoVals = antigens.map(x => x.dispo).filter(Number.isFinite);
-  const ruptVals = antigens.map(x => x.rupt).filter(Number.isFinite);
-  const dispoAvg = dispoVals.length ? Math.round(dispoVals.reduce((a, b) => a + b, 0) / dispoVals.length) : null;
-  const ruptAvg = ruptVals.length ? Math.round(ruptVals.reduce((a, b) => a + b, 0) / ruptVals.length) : null;
-
-  return {
-    crumbs:["Vaccination · PEV", "Vaccins & intrants"],
-    html: `
-      <div class="ph">
-        <div class="ph-tag">${t("intr_ph_tag")}</div>
-        <div class="ph-title">${t("intr_ph_title")}</div>
-        <div class="ph-sub">${t("intr_ph_sub")}</div>
-      </div>
-      <div class="content">
-
-        <div class="kpi-grid">
-          ${kpi("Disponibilité antigènes", dispoAvg, "%", "Cible : 95%", "", "flat", rag(dispoAvg, 95))}
-          ${kpi("Taux de rupture moyen", ruptAvg, "%", "Cible : ≤ 5%", "", "flat", rag(ruptAvg, 5, true), true)}
-          ${kpi("MSD national moyen", nationalAggregate("pev-msd"), "mois", "Cible : ≥ 3 mois", "", "flat", "yellow")}
-          ${kpi("Péremption moyenne", nationalAggregate("pev-perim"), "%", "Cible : ≤ 2%", "", "flat", "green", true)}
-        </div>
-
-        <div class="card" style="margin-bottom:14px;">
-          <div class="card-hdr">
-            <div>
-              <div class="card-title">Antigènes traceurs — Tableau de bord</div>
-              <div class="card-sub">10 antigènes du calendrier vaccinal · Disponibilité, MSD, ruptures, péremption</div>
-            </div>
-          </div>
-          <div class="card-body" style="padding:0;">
-            <table class="dt si-table">
-              <thead>
-                <tr>
-                  <th style="width:24%">Antigène</th>
-                  <th style="text-align:right">Disponibilité</th>
-                  <th style="text-align:right">MSD</th>
-                  <th style="text-align:right">Taux rupture</th>
-                  <th style="text-align:right">Péremption</th>
-                  <th style="text-align:right">Statut</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${antigens.map(a => {
-                  const rDispo = rag(a.dispo, 95);
-                  const rRupt = rag(a.rupt, 5, true);
-                  const rMsd = a.msd == null ? "na" : a.msd >= 3 ? "green" : a.msd >= 2 ? "yellow" : a.msd >= 1.5 ? "orange" : "red";
-                  // Score composite : penta = max indicator score
-                  const ragScore = { green:4, yellow:3, orange:2, red:1 };
-                  const avgScore = (ragScore[rDispo] + ragScore[rRupt] + ragScore[rMsd]) / 3;
-                  const overall = Number.isFinite(avgScore) ? (avgScore >= 3.5 ? "green" : avgScore >= 2.7 ? "yellow" : avgScore >= 1.7 ? "orange" : "red") : "na";
-                  return `<tr>
-                    <td class="l">${a.l}</td>
-                    <td class="num"><span class="pill ${rDispo}">${a.dispo == null ? "ND" : a.dispo + "%"}</span></td>
-                    <td class="num"><span class="pill ${rMsd}">${a.msd == null ? "ND" : a.msd.toFixed(1) + " mois"}</span></td>
-                    <td class="num"><span class="pill ${rRupt}">${a.rupt == null ? "ND" : a.rupt + "%"}</span></td>
-                    <td class="num"><span style="color:${(a.perim ?? 0) > 2 ? 'var(--rag-red)' : 'var(--muted)'};font-family:var(--font-mono);font-weight:600;">${a.perim == null ? "ND" : a.perim.toFixed(1) + "%"}</span></td>
-                    <td class="num"><span class="pill ${overall}" style="font-weight:700;">${ragLabel(overall)}</span></td>
-                  </tr>`;
-                }).join("")}
-              </tbody>
-            </table>
-          </div>
-          <div class="card-foot">Source : SMT (Stocks Médicaments Traceurs) + SIGL · Données mensuelles · MSD = Mois de Stock Disponible</div>
-        </div>
-
-        <div class="g-2-1">
-          ${card("Disponibilité Pentavalent par province", "Carte de chaleur — Antigène prioritaire", renderMap("dispo-penta"), "Cible nationale : 95% sur tous CS")}
-
-          ${card("Matériel d'injection & consommables", "% CS approvisionnés", renderBars(consumables.map(c => ({
-            label: c.l.substring(0, 30),
-            val: c.val,
-            target: c.target,
-            rag: rag(c.val, c.target),
-            showVal: c.val + "%"
-          }))), "Source : SIGL · Cible : 95%")}
-        </div>
-
-        <div class="g-2-1">
-          ${card("Disponibilité Pentavalent — Année courante vs N-1", "Évolution Janvier–Décembre", renderLineChart(
-            yoySeriesData("dispo-penta")
-          ), "Tendance saisonnière + couverture marchés PSP")}
-
-          ${card("Alertes intrants — En cours", "Ruptures critiques et péremptions", `
-            ${alert("red","!","R21/Matrix-M — Stock central critique","2 semaines de stock central restant. Commande UNICEF en cours. Introduction récente.","Détecté · 11 mai · SMT")}
-            ${alert("red","!","Pentavalent Lac/Kanem","Rupture > 14 jours sur 5 CS. Approvisionnement urgent activé.","Détecté · 09 mai · SMT")}
-            ${alert("orange","!","PCV-13 Tibesti","MSD passé sous 1.5 mois. Distribution prioritaire.","Détecté · 08 mai · SIGL")}
-            ${alert("yellow","!","Sachets de glace","Sous-disponibilité (72%) limitant sortie mobile.","Détecté · 07 mai · SIGL")}
-            ${alert("green","✓","Rotavirus N'Djamena","Stock reconstitué post-livraison Gates Fund T1.","Confirmé · 06 mai · SMT")}
-          `, "")}
-        </div>
-
-        ${aiBox(
-          "R21 et Pentavalent en ligne de front · Action urgente",
-          `Deux antigènes en alerte critique : <strong>R21/Matrix-M (58% disponibilité, 22% rupture)</strong>, introduit récemment dans le calendrier vaccinal contre le paludisme, et <strong>Pentavalent (74%, 14% rupture)</strong>. La rupture Pentavalent au <strong>Lac et Kanem</strong> compromet la chaîne PEV de routine sur 5 CS pilotes PDA. Trois actions immédiates : <strong>(1)</strong> Activer la <strong>commande UNICEF Supply Division</strong> (délai 14 jours, dossier prêt) pour le Pentavalent. <strong>(2)</strong> Sécuriser l'approvisionnement R21 via le mécanisme <strong>Gavi MVIP</strong> (Malaria Vaccine Implementation Programme). <strong>(3)</strong> Lancer un <strong>audit MSD national</strong> pour identifier les zones à risque T2. Cadre de financement : Gates Foundation (PDA) + Fonds Mondial NFM4 + Gavi.`,
-          "Source : SMT · SIGL · DLMVSE / DGPML · Confiance : 93%"
-        )}
-      </div>
-    `
-  };
-};
-
-// =================================================================
-// VACCINATION — Coordination
-// =================================================================
-VIEWS["vacc-coord"] = () => ({
-  crumbs:["Vaccination · PEV", "Coordination"],
-  html: `
-    <div class="ph">
-      <div class="ph-tag">🤝 Coordination · DLMVSE</div>
-      <div class="ph-title">Coordination — CTA-PEV, CCIA, revues</div>
-      <div class="ph-sub">Instances de gouvernance du Programme Élargi de Vaccination · réunions de coordination.</div>
-    </div>
-    <div class="content">
-      <div class="kpi-grid">
-        ${kpi("Réunions CTA-PEV", nationalAggregate("coord-cta"), "/4", "Toutes tenues T1", "", "flat", "green")}
-        ${kpi("Revues semestrielles", nationalAggregate("coord-revsem"), "/1", "À jour", "", "flat", "green")}
-        ${kpi("Revues trimestrielles prov.", nationalAggregate("coord-revtrim"), "%", "Cible : 100%", "", "flat", "yellow")}
-        ${kpi("Coord. interministérielle", nationalAggregate("coord-inter"), "%", "Cible : 80%", "", "flat", "yellow")}
-      </div>
-    </div>
-  `
-});
-
-// =================================================================
-// DSR — Santé Reproductive
-// =================================================================
 VIEWS["dsr-overview"] = () => {
   const cpn1 = nationalAggregate("couv-cpn1");
   const cpn4 = nationalAggregate("couv-cpn4");
