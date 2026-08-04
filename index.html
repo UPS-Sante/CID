@@ -3236,7 +3236,7 @@ const PROGRAMS = [
     ]
   },
   {
-    id:"prog", c:"prog", icon:"PRG", label:"Programmes verticaux",
+    id:"prog", c:"prog", masque:true, icon:"PRG", label:"Programmes verticaux",
     dir:"DLMVSE",
     sub:[
       { id:"prog-palu",     i18n_key:"sub_prg_palu", label:"PNLP — Paludisme",     status:"orange" },
@@ -3254,7 +3254,7 @@ const PROGRAMS = [
     ]
   },
   {
-    id:"drh", c:"drh", icon:"RH", label:"Ressources Humaines",
+    id:"drh", c:"drh", masque:true, icon:"RH", label:"Ressources Humaines",
     dir:"DRH",
     sub:[
       { id:"drh-effectifs", i18n_key:"sub_rh_eff",  label:"Effectifs personnel",  status:"orange" },
@@ -3271,7 +3271,7 @@ const PROGRAMS = [
     ]
   },
   {
-    id:"dpsis", c:"dpsis", icon:"SI", label:"Système d'Information",
+    id:"dpsis", c:"dpsis", masque:true, icon:"SI", label:"Système d'Information",
     dir:"DPSIS",
     sub:[
       { id:"dpsis-comp",    i18n_key:"sub_dpsis_comp", label:"Complétude & promptitude",  status:"yellow" },
@@ -4393,7 +4393,7 @@ function renderSidebar() {
     prog: "prog_prg", dpml: "prog_log", drh: "prog_rh",
     cousp: "prog_cousp", dpsis: "prog_dpsis"
   };
-  const html = PROGRAMS.map(p => {
+  const html = PROGRAMS.filter(p => !p.masque).map(p => {
     const label = progI18nKey[p.id] ? t(progI18nKey[p.id]) : p.label;
     return `
     <div class="prog ${p.priority ? 'priority' : ''}" data-prog="${p.id}" data-c="${p.c}">
@@ -4736,7 +4736,7 @@ function reinitialiserSeuils() {
 
 function ouvrirExportPDF() {
   if (document.querySelector(".export-overlay")) return;
-  const groupes = PROGRAMS.map(p => `
+  const groupes = PROGRAMS.filter(p => !p.masque).map(p => `
     <div class="export-groupe">
       <label class="export-prog"><input type="checkbox" class="export-case-prog" data-prog="${p.id}" onchange="cocherProgramme(this)"> <strong>${p.label}</strong></label>
       <div class="export-sousliste">
@@ -5449,7 +5449,7 @@ VIEWS["min-overview"] = () => {
       ${carte("◉", "Priorité", pevRag(p3 ? p3.v2026 : null, CIBLE), scP3.prov + " / " + scP3.provTot, "Provinces sous la cible vaccinale", scP3.dist + " districts concernés sur la troisième dose de Penta.", "vacc", "vacc-couv")}
       ${carte("♀", "Santé maternelle", pevRag(mm.val, 700, true), mm.val == null ? "ND" : Math.round(mm.val), "Mortalité maternelle hospitalière", (mm.k != null ? "Pour 100 000, relevé de " + moisReculLabel(mm.k) + "." : ""), "dsr", "dsr-mat")}
       ${carte("▦", "Logistique", pevRag(rup.val, 5, true), rup.val == null ? "ND" : rup.val + "%", "Ruptures de stock des traceurs", (rup.k != null ? "Relevé de " + moisReculLabel(rup.k) + ", cible 5%." : ""), "dpml", "dpml-rupt")}
-      ${carte("◈", "Rapportage", pevRag(prom ? prom.v2026 : null, 80), prom ? prom.v2026 + "%" : "ND", "Promptitude du rapportage", "Complétude à " + (comp ? comp.v2026 + "%" : "ND") + ", à surveiller.", "dpsis", "dpsis-comp")}
+      ${carte("◈", "Rapportage", pevRag(prom ? prom.v2026 : null, 80), prom ? prom.v2026 + "%" : "ND", "Promptitude du rapportage", "Complétude à " + (comp ? comp.v2026 + "%" : "ND") + ", à surveiller.", "vacc", "vacc-overview")}
     </div>`;
 
   // ---- Brief du jour ----
