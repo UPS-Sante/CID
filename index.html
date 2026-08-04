@@ -2960,6 +2960,10 @@
   .antig-btn { font-size:11px; font-weight:600; padding:5px 10px; border-radius:16px; border:1px solid var(--border); background:var(--surface); color:var(--body); cursor:pointer; transition:all .12s; font-family:var(--font-b); }
   .antig-btn:hover { border-color:var(--royal-l); color:var(--royal); }
   .antig-btn.on { background:var(--royal); border-color:var(--royal); color:#fff; }
+  .mini-liens { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+  .lien-btn { font-size:11.5px; font-weight:600; padding:6px 12px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--royal); cursor:pointer; transition:all .12s; font-family:var(--font-b); }
+  .lien-btn:hover { background:var(--royal); color:#fff; border-color:var(--royal); }
+  .trend-up { color:var(--rag-green); } .trend-down { color:var(--rag-red); }
 </style>
 </head>
 <body>
@@ -5477,75 +5481,76 @@ VIEWS["min-overview"] = () => {
 
 
 VIEWS["vacc-overview"] = (s) => {
-  const penta3  = nationalAggregate("couv-penta3");
-  const var2    = nationalAggregate("couv-var2");
-  const abandon = nationalAggregate("abandon");
-  const zd      = nationalAggregate("zd-volume");
+  if (!pevDispo()) {
+    return { crumbs: ["Vaccination · PEV", "Vue d'ensemble"], html: `<div class="ph"><div class="ph-title">Vaccination</div><div class="ph-sub">Données PEV en cours de chargement.</div></div>` };
+  }
+  const CIBLE = PEV.meta.cible_couverture;
+  const rag90 = (v) => v == null ? "na" : v >= CIBLE ? "green" : v >= 80 ? "yellow" : v >= 60 ? "orange" : "red";
+  const nat = (c) => pevNatCouv(c);
+  const ab = PEV.national.abandon.specifique, comp = PEV.national.qualite.completude, prom = PEV.national.qualite.promptitude;
+  const p3 = nat("Penta3"), var1 = nat("VAR1"), rota3 = nat("ROTA3");
+  const deltaTxt = (a) => (a && a.v2025 != null) ? ((a.v2026 - a.v2025 >= 0 ? "+" : "") + Math.round((a.v2026 - a.v2025) * 10) / 10 + " pts") : "";
+  const deltaDir = (a) => (a && a.v2025 != null) ? (a.v2026 - a.v2025 > 0.2 ? "up" : a.v2026 - a.v2025 < -0.2 ? "down" : "flat") : "flat";
 
-  const provMap = provincesValueMap("couv-penta3");
-  const provList = PROVINCES.map(p => ({
-    p, val: provMap[p.id]
-  })).filter(x => x.val != null).sort((a, b) => a.val - b.val);
+  // Tableau des 15 antigènes
+  const lignes = PEV.meta.antigenes.map(a => {
+    const c = nat(a.code);
+    if (!c || c.v2026 == null) return `<tr><td>${a.label}</td><td class="num">ND</td><td class="num">${c && c.v2025 != null ? c.v2025 + "%" : "ND"}</td><td class="num">—</td><td><span class="pill na">ND</span></td></tr>`;
+    const r = rag90(c.v2026);
+    const ecart = c.v2026 >= CIBLE ? "atteint" : "−" + Math.round((CIBLE - c.v2026) * 10) / 10 + " pts";
+    const d = c.v2025 != null ? Math.round((c.v2026 - c.v2025) * 10) / 10 : null;
+    return `<tr>
+      <td><strong>${a.label}</strong></td>
+      <td class="num"><span class="pill ${r}">${c.v2026}%</span></td>
+      <td class="num">${c.v2025 != null ? c.v2025 + "%" : "ND"}</td>
+      <td class="num ${d == null ? "" : d >= 0 ? "trend-up" : "trend-down"}">${d == null ? "—" : (d >= 0 ? "+" : "") + d + " pts"}</td>
+      <td>${c.v2026 >= CIBLE ? `<span class="pill green">${ecart}</span>` : `<span class="pill ${r}">${ecart}</span>`}</td>
+    </tr>`;
+  }).join("");
+
+  // Provinces sous la cible (Penta3)
+  const scP3 = pevSousCible("Penta3", CIBLE);
+  const bas = pevProvCV("Penta3").slice(0, 5).map(x =>
+    `<tr><td>${x.nom.charAt(0) + x.nom.slice(1).toLowerCase()}</td><td class="num"><span class="pill ${rag90(x.val)}">${x.val}%</span></td></tr>`).join("");
 
   return {
     crumbs: ["Vaccination · PEV", "Vue d'ensemble"],
     html: `
       <div class="ph">
-        <div class="ph-tag">${t("vacc_ph_tag")}</div>
-        <div class="ph-title">${t("vacc_ph_title")}</div>
-        <div class="ph-sub">${t("vacc_ph_sub")}</div>
+        <div class="ph-tag">Programme Élargi de Vaccination · DLMVSE</div>
+        <div class="ph-title">Vaccination — Vue d'ensemble</div>
+        <div class="ph-sub">Couvertures des quinze antigènes de routine sur le relevé mensuel. ${PEV.meta.periode}.</div>
       </div>
-
       <div class="content">
-
         <div class="kpi-grid">
-          ${kpi(t("vacc_k_penta3"), penta3, "%", "Cible : 90%", "", "flat", rag(penta3, 90))}
-          ${kpi(t("vacc_k_var2"), var2, "%", "Cible : 90%", "", "flat", rag(var2, 90))}
-          ${kpi(t("vacc_k_abandon"), abandon, "%", "Cible : ≤ 10%", "", "flat", rag(abandon, 10, true), true)}
-          ${kpi(t("vacc_k_prom"), null, "%", "Cible : 90%", "", "flat", "orange")}
+          ${kpi("Penta 3", p3 ? p3.v2026 : null, "%", "Cible 90% · calendrier complet", deltaTxt(p3), deltaDir(p3), rag90(p3 ? p3.v2026 : null))}
+          ${kpi("Rougeole (VAR1)", var1 ? var1.v2026 : null, "%", "Cible 90%", deltaTxt(var1), deltaDir(var1), rag90(var1 ? var1.v2026 : null))}
+          ${kpi("Rotavirus (Rota3)", rota3 ? rota3.v2026 : null, "%", "Antigène récent, en montée", deltaTxt(rota3), deltaDir(rota3), rag90(rota3 ? rota3.v2026 : null))}
+          ${kpi("Abandon Penta1-3", ab ? ab.v2026 : null, "%", "Seuil ≤ 10%", deltaTxt(ab), deltaDir(ab) === "up" ? "down" : "up", ab && ab.v2026 <= 10 ? "green" : "red", true)}
         </div>
-
         <div class="kpi-grid">
-          ${kpi(t("vacc_k_comp"), null, "%", "Cible : 95%", "", "flat", "yellow")}
-          ${kpi(t("vacc_k_zd"), zd == null ? null : fmt(zd), "", "Mois courant", "", "flat", zd == null ? "na" : "yellow", true)}
-          ${kpi(t("vacc_k_risk"), null, "/89", "Surveillance renforcée", "", "flat", "yellow", true)}
-          ${kpi(t("vacc_k_strat"), null, "%", "Plans validés", "", "flat", "green")}
+          ${kpi("Complétude du rapportage", comp ? comp.v2026 : null, "%", "Cible 100%", deltaTxt(comp), deltaDir(comp), comp && comp.v2026 >= 90 ? "green" : "yellow")}
+          ${kpi("Promptitude", prom ? prom.v2026 : null, "%", "Cible 80%", deltaTxt(prom), deltaDir(prom), prom && prom.v2026 >= 80 ? "green" : "orange")}
+          ${kpi("Provinces sous la cible", scP3.prov, "", "sur " + scP3.provTot + " · Penta3", "", "flat", scP3.prov === 0 ? "green" : scP3.prov <= 4 ? "yellow" : "red", true)}
+          ${kpi("Districts sous la cible", scP3.dist, "", "sur " + scP3.distTot + " · Penta3", "", "flat", "orange", true)}
         </div>
 
-        <div class="g-2-1">
-          ${card("Couverture Penta 3 par province", "Vue nationale — 23 provinces", renderMap("couv-penta3"), "Cible 90% — Source : RIM PEV, cumul jan-juin 2026 — grain province et district")}
-          ${card("Top 5 — Plus faibles couvertures", "Provinces à intervention prioritaire", renderBars(provList.slice(0,5).map(x => ({
-            label: x.p.short, val: x.val, target: 90, rag: rag(x.val, 90), max: 100, showVal: x.val == null ? "ND" : x.val + "%"
-          }))), "")}
-        </div>
-
-        ${aiBox(
-          "Six provinces concentrent 70% du retard vaccinal",
-          `Les provinces de <strong>Tibesti, Borkou, Ennedi-Ouest, Ennedi-Est, Kanem et Bahr-el-Gazel</strong> affichent une couverture Penta 3 inférieure à 50%, accumulant <strong>${fmt(20800)} enfants zéro-dose</strong>. Recommandation : <strong>déploiement de stratégies avancées mobiles</strong> en T2 sur ces 6 provinces. Financement Gates Foundation (cadre PDA) : 240 M FCFA prêts à mobiliser sous 30 jours.`,
-          "Source : DHIS2 + DHIS2 Tracker · Triangulation J+5 · Confiance : 92%"
-        )}
-
-        <div class="g-1-1">
-          ${card("Tendance Penta 3 — Année courante vs N-1", `Comparaison ${state.periodYear} vs ${state.periodYear - 1} · Janvier–Décembre`, renderLineChart(
-            yoySeriesData("couv-penta3")
-          ), "")}
-          ${card("Alertes du jour", "Anomalies détectées et signalées", `
-            <div>
-              ${alert("red","!","Tibesti — Rupture vaccins Penta","Stock résiduel < 7 jours sur 4 CS. Cold chain compromise.","Détecté il y a 2h · DHIS2 Tracker")}
-              ${alert("orange","!","Kanem — Baisse Penta 3","Couverture chute de 6 pts ce mois.","Détecté hier · DHIS2")}
-              ${alert("yellow","!","Ennedi-Est — Promptitude DHIS2","Saisie après J+5 sur 2 districts.","Détecté ce matin · DPSIS")}
-              ${alert("green","✓","Lac — Couverture VAR 2 rattrapée","Stratégie avancée mobile : +12 pts en 6 sem.","Confirmé hier · ODK")}
-            </div>
-          `, "")}
+        <div class="grid-2">
+          ${card("Couverture par antigène", "National · 2026 comparé à 2025 · cible " + CIBLE + "%",
+            `<table class="tbl-s"><tr><th>Antigène</th><th class="num">2026</th><th class="num">2025</th><th class="num">Évolution</th><th>Écart à la cible</th></tr>${lignes}</table>`,
+            "Source : RIM PEV. Plusieurs couvertures administratives dépassent 100%, signe de cibles démographiques à réviser ; lecture en repérage d'écarts.")}
+          ${card("Où le calendrier complet décroche", scP3.prov + " provinces sous la cible sur Penta3",
+            `<table class="tbl-s"><tr><th>Province</th><th class="num">Penta3</th></tr>${bas}</table>
+             <div class="mini-liens"><button class="lien-btn" onclick="selectSub('vacc','vacc-couv')">Voir la carte par antigène →</button>
+             <button class="lien-btn" onclick="selectSub('sao','sao-league')">Classement immunisation →</button></div>`,
+            "")}
         </div>
       </div>
     `
   };
 };
 
-// =================================================================
-// VACCINATION — Couverture vaccinale (détail antigènes)
-// =================================================================
+
 VIEWS["vacc-couv"] = (s) => {
   const bcg     = nationalAggregate("couv-bcg");
   const penta1  = nationalAggregate("couv-penta1");
