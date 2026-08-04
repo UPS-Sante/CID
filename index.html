@@ -3429,7 +3429,11 @@ function valeurNatPeriode(metric, periode) {
 // Map of values for a metric across all 23 provinces
 function provincesValueMap(metric) {
   const m = {};
-  PROVINCES.forEach(p => { m[p.id] = genValue(metric, p.id); });
+  const pev = estMetriquePEV(metric);
+  PROVINCES.forEach(p => {
+    if (pev) { const v = valeurPEVprov(metric, p.name || p.id); m[p.id] = (v === undefined ? null : v); }
+    else m[p.id] = genValue(metric, p.id);
+  });
   return m;
 }
 
@@ -3529,6 +3533,27 @@ function derniereValeurNat(metric) {
   for (let k = 0; k < 18; k++) { const v = valeurReelle(metric, null, k); if (v != null) return { val: v, k }; }
   return { val: null, k: null };
 }
+// ---- Pont de connexion PEV <-> systeme de metriques (couvertures reelles RIM) ----
+const PEV_MAP = { "couv-penta3": "Penta3", "couv-penta1": "Penta1" };
+function pevNorm(s) {
+  s = String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+  s = s.replace(/GH/g, "G").replace(/BAHR/g, "BARH").replace(/OU/g, "U");
+  s = s.replace(/[-'\u2019.]/g, " ").replace(/\b(DISTRICT|SANITAIRE|DE|DU|DES|LA|LE|DS|D)\b/g, " ");
+  s = s.replace(/ARRONDISSEMENT/g, "ARR").replace(/EME/g, "E").replace(/ER/g, "");
+  return s.replace(/\s+/g, "");
+}
+let _pevIdxProv = null, _pevIdxDist = null;
+function pevIndexer() {
+  if (!PEV) return;
+  if (!_pevIdxProv) { _pevIdxProv = {}; PEV.provinces.forEach(p => { _pevIdxProv[pevNorm(p.nom)] = p; }); }
+  if (!_pevIdxDist) { _pevIdxDist = {}; PEV.districts.forEach(d => { _pevIdxDist[pevNorm(d.nom)] = d; }); }
+}
+function pevProvParNom(nom) { pevIndexer(); return _pevIdxProv ? (_pevIdxProv[pevNorm(nom)] || null) : null; }
+function pevDistParNom(nom) { pevIndexer(); return _pevIdxDist ? (_pevIdxDist[pevNorm(nom)] || null) : null; }
+function estMetriquePEV(metric) { return !!(PEV_MAP[metric] && PEV); }
+function valeurPEVprov(metric, provNom) { const a = PEV_MAP[metric]; if (!a) return undefined; const p = pevProvParNom(provNom); return p ? (p.cv[a] == null ? null : p.cv[a]) : null; }
+function valeurPEVdist(metric, distNom) { const a = PEV_MAP[metric]; if (!a) return undefined; const d = pevDistParNom(distNom); return d ? (d.cv[a] == null ? null : d.cv[a]) : null; }
+
 function dateMinistre() {
   const j = ["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
   const mo = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
@@ -5468,7 +5493,7 @@ VIEWS["vacc-overview"] = (s) => {
         </div>
 
         <div class="g-2-1">
-          ${card("Couverture Penta 3 par province", "Vue nationale — 23 provinces", renderMap("couv-penta3"), "Cible nationale : 90% — Source : DHIS2 (M+5)")}
+          ${card("Couverture Penta 3 par province", "Vue nationale — 23 provinces", renderMap("couv-penta3"), "Cible 90% — Source : RIM PEV, cumul jan-juin 2026 — grain province et district")}
           ${card("Top 5 — Plus faibles couvertures", "Provinces à intervention prioritaire", renderBars(provList.slice(0,5).map(x => ({
             label: x.p.short, val: x.val, target: 90, rag: rag(x.val, 90), max: 100, showVal: x.val == null ? "ND" : x.val + "%"
           }))), "")}
@@ -5531,7 +5556,7 @@ VIEWS["vacc-couv"] = (s) => {
         </div>
 
         <div class="g-2-1">
-          ${card("Couverture Penta 3 par province", "Carte de chaleur — 23 provinces", renderMap("couv-penta3"), "Cible nationale : 90%")}
+          ${card("Couverture Penta 3 par province", "Carte de chaleur — 23 provinces", renderMap("couv-penta3"), "Cible 90% — Source : RIM PEV — districts colorés au réel")}
           ${card("Performance par antigène", "Moyenne nationale", renderBars([
             { label:"BCG",     val:bcg,    target:95, rag:rag(bcg,95) },
             { label:"Penta 1", val:penta1, target:95, rag:rag(penta1,95) },
@@ -7093,8 +7118,13 @@ function renderMap(metric, opts = {}) {
     const prov = PROVINCES.find(x => x.id === state.mapZoomProv);
     const ds = districtsDe(state.mapZoomProv);
     const geoProv = PROVINCE_PATHS[state.mapZoomProv];
-    const dPaths = ds.map(d =>
-      `<path class="map-prov rag-na map-district" d="${d.d}"><title>${d.name} · ${prov ? prov.name : ""} — donnée district à venir</title></path>`).join("");
+    const dPaths = ds.map(d => {
+      const vp = valeurPEVdist(metric, d.name);
+      const val = (vp === undefined ? null : vp);
+      const rag = getRag(val);
+      const titre = val == null ? (d.name + " · " + (prov ? prov.name : "") + " — donnée à venir") : (d.name + " · " + (prov ? prov.name : "") + " : " + val + "%");
+      return `<path class="map-prov rag-${rag} map-district" d="${d.d}"><title>${titre}</title></path>`;
+    }).join("");
     const dLabels = ds.map(d =>
       `<g class="map-label district"><text class="map-label-name" x="${d.cx}" y="${d.cy}">${d.name}</text></g>`).join("");
     const contour = geoProv ? `<path d="${geoProv.d}" fill="none" stroke="var(--royal)" stroke-width="1.2" opacity="0.9"/>` : "";
@@ -7191,7 +7221,11 @@ function renderMap(metric, opts = {}) {
   const coucheDistrictsNat = grainDistrictNat
     ? DISTRICTS.map(d => {
         const prov = PROVINCES.find(x => x.id === d.prov);
-        return `<path class="map-prov rag-na map-district" d="${d.d}" onclick="setMapZoomProv('${d.prov}')"><title>${d.name}${prov ? " · " + prov.name : ""} — donnée district à venir</title></path>`;
+        const vp = valeurPEVdist(metric, d.name);
+        const val = (vp === undefined ? null : vp);
+        const rag = getRag(val);
+        const titre = val == null ? (d.name + (prov ? " · " + prov.name : "") + " — donnée à venir") : (d.name + (prov ? " · " + prov.name : "") + " : " + val + "%");
+        return `<path class="map-prov rag-${rag} map-district" d="${d.d}" onclick="setMapZoomProv('${d.prov}')"><title>${titre}</title></path>`;
       }).join("")
     : "";
 
