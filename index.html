@@ -2867,6 +2867,37 @@
   .map-info-districts { margin-top:10px; width:100%; }
   .map-grain-toggle { margin-bottom: 6px; }
   .map-legend-note { font-size:10px; color:var(--muted); margin-top:5px; line-height:1.45; max-width:200px; }
+
+  /* ====== VUE DELIVERY UNIT — Priorité vaccination ====== */
+  .du-piliers { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:16px; }
+  .du-pilier { background:var(--surface); border-radius:var(--radius); padding:16px 16px 14px; box-shadow:var(--shadow-sm); border-top:3px solid var(--royal); }
+  .du-pilier-tete { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; min-height:56px; }
+  .du-pilier-nom { font-family:var(--font-h); font-size:15px; font-weight:700; color:var(--royal); }
+  .du-pilier-sous { font-size:10.5px; color:var(--muted); line-height:1.3; margin-top:3px; }
+  .du-feu { width:14px; height:14px; border-radius:50%; flex-shrink:0; margin-top:3px; box-shadow:0 0 0 3px rgba(0,0,0,0.04); }
+  .du-feu.rag-green { background:var(--rag-green); } .du-feu.rag-yellow { background:var(--rag-yellow); }
+  .du-feu.rag-orange { background:var(--rag-orange); } .du-feu.rag-red { background:var(--rag-red); } .du-feu.rag-na { background:var(--rag-na); }
+  .du-pilier-chiffre { display:flex; align-items:baseline; gap:8px; margin:6px 0 8px; }
+  .du-val { font-size:34px; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums; letter-spacing:-0.5px; }
+  .du-cible { font-size:11px; color:var(--muted); }
+  .du-jauge { height:7px; background:var(--border); border-radius:4px; overflow:hidden; margin-bottom:10px; }
+  .du-jauge-fill { height:100%; border-radius:4px; }
+  .rag-green-bg { background:var(--rag-green); } .rag-yellow-bg { background:var(--rag-yellow); }
+  .rag-orange-bg { background:var(--rag-orange); } .rag-red-bg { background:var(--rag-red); } .rag-na-bg { background:var(--rag-na); }
+  .du-pilier-pied { display:flex; flex-direction:column; gap:5px; font-size:11px; }
+  .du-traj { font-weight:600; }
+  .du-traj.dir-up { color:var(--rag-green); } .du-traj.dir-down { color:var(--rag-red); } .du-traj.dir-flat { color:var(--muted); }
+  .du-traj-lib { color:var(--muted); font-weight:400; }
+  .du-disp { color:var(--body); }
+  .du-bas { display:grid; grid-template-columns:1.4fr 1fr; gap:14px; }
+  .du-equite-sous { font-size:12px; color:var(--body); margin-bottom:10px; line-height:1.4; }
+  .du-equite-tbl td, .du-equite-tbl th { padding:6px 8px; }
+  .du-ecart { font-size:11.5px; color:var(--rag-red); font-weight:600; }
+  .du-q-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border); font-size:12.5px; }
+  .du-q-lib { color:var(--body); } .du-q-val { font-weight:700; color:var(--royal); font-variant-numeric:tabular-nums; }
+  .du-lecture-note { font-size:11px; color:var(--muted); line-height:1.5; margin-top:12px; }
+  @media (max-width:900px){ .du-piliers{ grid-template-columns:repeat(2,1fr);} .du-bas{ grid-template-columns:1fr;} }
+  @media (max-width:480px){ .du-piliers{ grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
@@ -3306,6 +3337,10 @@ async function chargerDonneesReelles(essai) {
       const dj = await fetch("districts.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (dj) DISTRICTS = dj.districts || [];
     } catch (e) {}
+    try {
+      const pj = await fetch("pev_data.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (pj) PEV = pj;
+    } catch (e) {}
     renderMain();
     // rafraichissement des donnees toutes les six heures pour les onglets laisses ouverts
     if (!window._cidRafraichissement) {
@@ -3412,6 +3447,26 @@ function rag(val, target, inverse = false) {
 }
 let SEUILS_DEPOT = null;
 let DISTRICTS = [];
+let PEV = null;
+function pevDispo() { return PEV && PEV.provinces && PEV.provinces.length; }
+function pevNatCouv(code) { return (PEV && PEV.national.couvertures[code]) || null; }
+function pevProvCV(code) {
+  if (!PEV) return [];
+  return PEV.provinces.map(p => ({ nom: p.nom, val: p.cv[code] })).filter(x => x.val != null).sort((a, b) => a.val - b.val);
+}
+function pevSousCible(code, cible) {
+  if (!PEV) return { prov: 0, provTot: 0, dist: 0, distTot: 0 };
+  const pv = PEV.provinces.filter(p => p.cv[code] != null);
+  const ds = PEV.districts.filter(d => d.cv[code] != null);
+  return { prov: pv.filter(p => p.cv[code] < cible).length, provTot: pv.length,
+           dist: ds.filter(d => d.cv[code] < cible).length, distTot: ds.length };
+}
+function pevRag(val, cible, inverse) {
+  if (val == null) return "na";
+  if (inverse) return val <= cible ? "green" : val <= cible * 1.5 ? "yellow" : "red";
+  const r = val / cible;
+  return r >= 1 ? "green" : r >= 0.8 ? "yellow" : "red";
+}
 function districtsDe(prov) { return DISTRICTS.filter(d => d.prov === prov); }
 function bboxDistricts(prov) {
   const ds = districtsDe(prov);
@@ -5211,158 +5266,113 @@ VIEWS["sao-league"] = () => {
 };
 
 VIEWS["min-overview"] = () => {
-  const section = state.minSection || "A";
+  if (!pevDispo()) {
+    return { crumbs: ["Cabinet du Ministre"], html: `<div class="ph ph-exec"><div class="ph-title">Priorité vaccination</div><div class="ph-sub">Données PEV en cours de chargement.</div></div>` };
+  }
+  const CIBLE = PEV.meta.cible_couverture, SEUIL_AB = PEV.meta.seuil_abandon;
 
-  /* -- aides locales : tendance nationale et ligne de synthese -- */
-  const tendance = (m) => {
-    const v0 = valeurReelle(m, null, 0), v1 = valeurReelle(m, null, 1);
-    if (v0 == null || v1 == null) return { txt: "—", dir: "flat" };
-    const d = Math.round((v0 - v1) * 10) / 10;
-    return { txt: (d >= 0 ? "+" : "") + d + " pts", dir: d > 0 ? "up" : d < 0 ? "down" : "flat" };
-  };
-  const ligne = (prio, lib, m, cible, unite = "%", inverse = false) => {
-    const v = nationalAggregate(m);
-    const r = ragPour(m, v, cible, inverse);
-    return `<tr><td><strong>${prio}</strong></td><td>${lib}</td>
-      <td class="num">${v == null ? "ND" : v + unite}</td><td class="num">${cible}${unite}</td>
-      <td><span class="pill ${r}">${ragLabel(r)}</span></td><td class="num">${tendance(m).txt}</td></tr>`;
-  };
-  const carteExec = (num, libelle, categorie, metric, cible, source, couleur, inverse = false) => {
-    const v = nationalAggregate(metric);
-    const td = tendance(metric);
-    return kpiExec({ n: num, label: libelle, category: categorie, value: v, unit: "%",
-      target: cible, trend: td.txt, trendDir: td.dir, rag: ragPour(metric, v, cible, inverse),
-      source, sparkData: sparklineData(metric), sparkColor: couleur, action: "" });
+  const flèche = (dir) => dir === "up" ? "▲" : dir === "down" ? "▼" : "▬";
+  const trajDe = (a) => {
+    if (!a || a.v2025 == null || a.v2026 == null) return { d: null, dir: "flat" };
+    const d = Math.round((a.v2026 - a.v2025) * 10) / 10;
+    return { d, dir: d > 0.2 ? "up" : d < -0.2 ? "down" : "flat" };
   };
 
-  /* -- Acte A : Couverture & Impact -- */
-  const sectionA = `
-    <div class="exec-grid">
-      ${carteExec("01", t("kpi_penta3"), t("cat_vacc_dlmvse"), "couv-penta3", 90, "DHIS2 · DLMVSE · M+5", "#1F3864")}
-      ${carteExec("02", t("kpi_accouch"), t("cat_mat_dsr"), "accouch", 70, "DHIS2 · RMA · DSR", "#A02233")}
-      ${carteExec("03", t("kpi_mcpr"), t("cat_pf_dsr"), "mcpr", 25, "RMA + SIGL · DSR", "#A02233")}
-      ${carteExec("04", t("kpi_dispo"), t("cat_log_dgpml"), "dispo-essentiel", 95, "SIGL · DGPML · M+5", "#AF4E10")}
-    </div>
-    <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
-      ${card("Où en est la couverture ?", "Penta 3 par province — " + periodLabel(), renderMap("couv-penta3"), "Les provinces grisées n'ont pas rapporté sur la période.")}
-      ${card("Quelle trajectoire ?", "Penta 3 national — années comparées", renderLineChart(yoySeriesData("couv-penta3")), "Les valeurs des points figurent sous le graphique.")}
-    </div>
-    ${card("Synthèse par priorité nationale", "Indicateur phare, position et mouvement — " + periodLabel(), `
-      <table class="tbl-s">
-        <tr><th>Priorité</th><th>Indicateur</th><th class="num">Valeur</th><th class="num">Cible</th><th>Statut</th><th class="num">Tendance</th></tr>
-        ${ligne("P1", "Accouchements assistés par personnel qualifié", "accouch", 70)}
-        ${ligne("P1", "Couverture CPN 4", "couv-cpn4", 80)}
-        ${ligne("P2", "Couverture Penta 3", "couv-penta3", 90)}
-        ${ligne("P2", "Abandon spécifique Penta1–Penta3", "abandon", 10, "%", true)}
-        ${ligne("PF", "Prévalence contraceptive", "mcpr", 25)}
-        ${ligne("P4", "Promptitude de la surveillance (PFA)", "surv-prom", 80)}
-      </table>`, "Tendance : écart en points par rapport au mois précédent. Statut : seuils du dépôt, ajustables via le bouton Seuils.")}
-  `;
+  // ---- Piliers de la priorité vaccination ----
+  const piliers = [
+    { code: "Penta3", nom: "Calendrier complet", sous: "Troisième dose de Penta, marqueur d'un parcours vaccinal achevé", cible: CIBLE },
+    { code: "VAR1",   nom: "Rougeole",           sous: "Première dose du vaccin antirougeoleux", cible: CIBLE },
+    { code: "ROTA3",  nom: "Rotavirus",          sous: "Antigène récent, en montée de charge", cible: CIBLE },
+  ];
+  const pilierHtml = (p) => {
+    const a = pevNatCouv(p.code);
+    const val = a ? a.v2026 : null;
+    const rag = pevRag(val, p.cible);
+    const tr = trajDe(a);
+    const sc = pevSousCible(p.code, p.cible);
+    const largeur = val == null ? 0 : Math.max(3, Math.min(100, (val / p.cible) * 100));
+    return `<div class="du-pilier">
+      <div class="du-pilier-tete">
+        <div class="du-pilier-id"><div class="du-pilier-nom">${p.nom}</div><div class="du-pilier-sous">${p.sous}</div></div>
+        <span class="du-feu rag-${rag}"></span>
+      </div>
+      <div class="du-pilier-chiffre"><span class="du-val">${val == null ? "ND" : val + "%"}</span><span class="du-cible">cible ${p.cible}%</span></div>
+      <div class="du-jauge"><div class="du-jauge-fill rag-${rag}-bg" style="width:${largeur}%"></div></div>
+      <div class="du-pilier-pied">
+        <span class="du-traj dir-${tr.dir}">${flèche(tr.dir)} ${tr.d == null ? "—" : (tr.d >= 0 ? "+" : "") + tr.d + " pts"} <span class="du-traj-lib">vs 2025</span></span>
+        <span class="du-disp">${sc.prov} / ${sc.provTot} provinces sous la cible</span>
+      </div>
+    </div>`;
+  };
 
-  /* -- Acte B : Surveillance & Urgences -- */
-  const alertes = nationalAggregate("cousp-alertes");
-  const sectionB = `
-    <div class="exec-grid">
-      ${kpiExec({ n: "05", label: t("kpi_alertes"), category: t("cat_surv_cousp"),
-        value: alertes, unit: "", target: "≤ 5", trend: tendance("cousp-alertes").txt,
-        trendDir: tendance("cousp-alertes").dir, rag: alertes == null ? "na" : alertes <= 5 ? "green" : alertes <= 10 ? "yellow" : "red",
-        source: "TLOH hebdo · COUSP", sparkData: sparklineData("cousp-alertes"), sparkColor: "#AF4E10", action: "" })}
-      ${carteExec("06", t("kpi_prom_tloh"), t("cat_surv_epi"), "surv-tlohprompt", 80, "TLOH · COUSP", "#AF4E10")}
-      ${carteExec("07", t("kpi_rep_alertes"), t("cat_resp_cousp"), "cousp-rep48", 80, "Investigations · COUSP", "#AF4E10")}
+  // Pilier abandon (inverse)
+  const ab = PEV.national.abandon.specifique;
+  const abVal = ab ? ab.v2026 : null;
+  const abRag = pevRag(abVal, SEUIL_AB, true);
+  const abTr = trajDe(ab);
+  const abProvHautes = PEV.provinces.filter(p => p.abandon_p1p3 != null && p.abandon_p1p3 > SEUIL_AB).length;
+  const pilierAbandon = `<div class="du-pilier">
+    <div class="du-pilier-tete">
+      <div class="du-pilier-id"><div class="du-pilier-nom">Fidélité au calendrier</div><div class="du-pilier-sous">Taux d'abandon entre la première et la troisième dose de Penta</div></div>
+      <span class="du-feu rag-${abRag}"></span>
     </div>
-    <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
-      ${card("Où la surveillance décroche-t-elle ?", "Promptitude hebdomadaire par province", renderMap("cousp-prompt"), "")}
-      ${card("La promptitude progresse-t-elle ?", "Notification PFA — années comparées", renderLineChart(yoySeriesData("surv-prom")), "")}
+    <div class="du-pilier-chiffre"><span class="du-val">${abVal == null ? "ND" : abVal + "%"}</span><span class="du-cible">seuil ${SEUIL_AB}%</span></div>
+    <div class="du-jauge"><div class="du-jauge-fill rag-${abRag}-bg" style="width:${abVal == null ? 0 : Math.min(100, (abVal / (SEUIL_AB * 2)) * 100)}%"></div></div>
+    <div class="du-pilier-pied">
+      <span class="du-traj dir-${abTr.dir === 'up' ? 'down' : abTr.dir === 'down' ? 'up' : 'flat'}">${flèche(abTr.dir)} ${abTr.d == null ? "—" : (abTr.d >= 0 ? "+" : "") + abTr.d + " pts"} <span class="du-traj-lib">vs 2025</span></span>
+      <span class="du-disp">${abProvHautes} provinces au-dessus du seuil</span>
     </div>
-    ${card("Fonctions de surveillance", "Détection, notification, investigation — " + periodLabel(), `
-      <table class="tbl-s">
-        <tr><th></th><th>Indicateur</th><th class="num">Valeur</th><th class="num">Cible</th><th>Statut</th><th class="num">Tendance</th></tr>
-        ${ligne("Détection", "Complétude surveillance hebdomadaire", "cousp-comphebdo", 90)}
-        ${ligne("Notification", "Alertes notifiées sous 24 heures", "cousp-notif24", 80)}
-        ${ligne("Investigation", "Alertes investiguées sous 48 heures", "cousp-rep48", 80)}
-        ${ligne("Rapports", "Promptitude des rapports TLOH", "surv-tlohprompt", 80)}
-        ${ligne("Rapports", "Complétude des rapports TLOH", "surv-tlohcomp", 90)}
-      </table>`, "")}
-  `;
+  </div>`;
 
-  /* -- Acte C : Pilotage & Systèmes -- */
-  const sectionC = `
-    <div class="exec-grid">
-      ${carteExec("08", t("kpi_comp_rma"), t("cat_si_dpsis"), "comp-dhis2", 90, "DHIS2 · DPSIS · M+5", "#1F3864")}
-      ${carteExec("09", "Complétude DHIS2 Tracker", t("cat_si_dpsis"), "comp-tracker", 70, "DHIS2 Tracker · DPSIS", "#1F3864")}
-      ${carteExec("10", "Score qualité des données", t("cat_si_dpsis"), "si-dqs", 80, "DQS · DPSIS", "#1F3864")}
-    </div>
-    <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
-      ${card("La remontée des données s'améliore-t-elle ?", "Complétude DHIS2 routine — années comparées", renderLineChart(yoySeriesData("comp-dhis2")), "")}
-      ${card("Complétude par système d'information", periodLabel(), `
-        <table class="tbl-s">
-          <tr><th>Système</th><th class="num">Complétude</th><th>Statut</th><th class="num">Tendance</th></tr>
-          ${["comp-dhis2|DHIS2 routine", "comp-tracker|DHIS2 Tracker", "comp-sigl|SIGL", "comp-smt|eSMT", "comp-ihris|IHRIS"].map(x => {
-            const [m, lib] = x.split("|");
-            const v = nationalAggregate(m);
-            const r = ragPour(m, v, 90);
-            return `<tr><td>${lib}</td><td class="num">${v == null ? "ND" : v + "%"}</td>
-              <td><span class="pill ${r}">${ragLabel(r)}</span></td><td class="num">${tendance(m).txt}</td></tr>`;
-          }).join("")}
-        </table>`, "Sources : DPSIS · fichiers mensuels du CID.")}
-    </div>
-  `;
+  // ---- Équité : provinces les plus basses sur le calendrier complet ----
+  const bas = pevProvCV("Penta3").slice(0, 6);
+  const equiteRows = bas.map(x => {
+    const rag = pevRag(x.val, CIBLE);
+    return `<tr><td>${x.nom.charAt(0) + x.nom.slice(1).toLowerCase()}</td>
+      <td class="num"><span class="pill ${rag}">${x.val}%</span></td>
+      <td class="du-ecart">${x.val < CIBLE ? "−" + Math.round((CIBLE - x.val) * 10) / 10 + " pts" : "atteint"}</td></tr>`;
+  }).join("");
+  const scP3 = pevSousCible("Penta3", CIBLE);
 
-  const sectionContent = section === "A" ? sectionA : section === "B" ? sectionB : sectionC;
-  const sectionTitle = section === "A" ? t("sec_a")
-                    : section === "B" ? t("sec_b")
-                    : t("sec_c");
+  // ---- Qualité de la donnée ----
+  const comp = PEV.national.qualite.completude, prom = PEV.national.qualite.promptitude;
+  const nbSup100 = PEV.meta.antigenes.filter(a => { const c = pevNatCouv(a.code); return c && c.v2026 != null && c.v2026 > 100; }).length;
 
   return {
-    crumbs: ["Vue Exécutive", sectionTitle],
+    crumbs: ["Cabinet du Ministre", "Priorité vaccination"],
     html: `
-      <div class="ph ph-exec">
-        <div class="ph-tag">◆ ${t("exec_tag")}</div>
-        <div class="ph-title">${t("exec_title")}</div>
-        <div class="ph-sub">${t("exec_sub")}</div>
-      </div>
-      <div class="exec-tabs">
-        <button class="exec-tab ${section === 'A' ? 'on' : ''}" onclick="setMinSection('A')">
-          <span class="et-num">01</span>
-          <div class="et-text">
-            <div class="et-label">${t("sec_a")}</div>
-            <div class="et-meta">${t("sec_a_meta")}</div>
-          </div>
-        </button>
-        <button class="exec-tab ${section === 'B' ? 'on' : ''}" onclick="setMinSection('B')">
-          <span class="et-num">02</span>
-          <div class="et-text">
-            <div class="et-label">${t("sec_b")}</div>
-            <div class="et-meta">${t("sec_b_meta")}</div>
-          </div>
-        </button>
-        <button class="exec-tab ${section === 'C' ? 'on' : ''}" onclick="setMinSection('C')">
-          <span class="et-num">03</span>
-          <div class="et-text">
-            <div class="et-label">${t("sec_c")}</div>
-            <div class="et-meta">${t("sec_c_meta")}</div>
-          </div>
-        </button>
+      <div class="ph ph-exec du-tete">
+        <div class="ph-tag">◆ Delivery Unit · Priorité nationale</div>
+        <div class="ph-title">Vaccination des enfants</div>
+        <div class="ph-sub">Le pays vaccine à un niveau élevé en moyenne. L'enjeu porté au Cabinet se déplace vers l'équité entre provinces et le rattrapage des nouveaux antigènes. ${PEV.meta.periode}.</div>
       </div>
 
-      <div class="content">
-        ${sectionContent}
+      <div class="du-piliers">
+        ${piliers.map(pilierHtml).join("")}
+        ${pilierAbandon}
+      </div>
 
-        <div class="exec-footer">
-          <div class="exec-footer-row">
-            <div><span class="ef-label">${t("cycle_data").toUpperCase()}</span><span class="ef-val">M+5 · ${periodLabel()}</span></div>
-            <div><span class="ef-label">${t("next_min_review").toUpperCase()}</span><span class="ef-val">${t('next_min_date')}</span></div>
-            <div><span class="ef-label">${t("production").toUpperCase()}</span><span class="ef-val">${t("salle_indicateurs")}</span></div>
-          </div>
+      <div class="du-bas">
+        <div class="card du-equite">
+          <div class="card-title">Là où le calendrier complet décroche</div>
+          <div class="du-equite-sous">${scP3.prov} provinces et ${scP3.dist} districts restent sous la cible de ${CIBLE}% sur la troisième dose de Penta.</div>
+          <table class="tbl-s du-equite-tbl">
+            <tr><th>Province</th><th class="num">Penta3</th><th>Écart à la cible</th></tr>
+            ${equiteRows}
+          </table>
+        </div>
+        <div class="card du-lecture">
+          <div class="card-title">Lecture de la donnée</div>
+          <div class="du-q-row"><span class="du-q-lib">Complétude du rapportage</span><span class="du-q-val">${comp ? comp.v2026 + "%" : "ND"}</span></div>
+          <div class="du-q-row"><span class="du-q-lib">Promptitude</span><span class="du-q-val">${prom ? prom.v2026 + "%" : "ND"}</span></div>
+          <div class="du-lecture-note">Plusieurs couvertures dépassent 100%, ce qui signale des cibles démographiques à réviser plus que des enfants surnuméraires. Les taux servent ici au repérage des écarts entre territoires, non à la lecture d'un niveau absolu.</div>
         </div>
       </div>
     `
   };
 };
 
-// =================================================================
-// VACCINATION — Vue d'ensemble
-// =================================================================
+
 VIEWS["vacc-overview"] = (s) => {
   const penta3  = nationalAggregate("couv-penta3");
   const var2    = nationalAggregate("couv-var2");
