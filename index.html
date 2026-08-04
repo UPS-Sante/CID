@@ -2898,6 +2898,64 @@
   .du-lecture-note { font-size:11px; color:var(--muted); line-height:1.5; margin-top:12px; }
   @media (max-width:900px){ .du-piliers{ grid-template-columns:repeat(2,1fr);} .du-bas{ grid-template-columns:1fr;} }
   @media (max-width:480px){ .du-piliers{ grid-template-columns:1fr;} }
+
+  /* ============ COCKPIT MINISTRE ============ */
+  .ck-hero { background:linear-gradient(135deg,var(--royal-d),var(--royal)); border-radius:16px; padding:26px 30px; display:flex; justify-content:space-between; align-items:center; gap:24px; margin-bottom:18px; box-shadow:var(--shadow-md); flex-wrap:wrap; }
+  .ck-hero-kicker { font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold-l); margin-bottom:8px; }
+  .ck-hero-titre { font-family:var(--font-h); font-size:30px; font-weight:700; color:#fff; line-height:1.05; }
+  .ck-hero-date { font-size:12.5px; color:#C7D2E4; margin-top:8px; }
+  .ck-hero-r { display:flex; align-items:center; gap:22px; }
+  .ck-hero-stat { text-align:center; }
+  .ck-hs-val { font-family:var(--font-h); font-size:26px; font-weight:700; color:#fff; font-variant-numeric:tabular-nums; }
+  .ck-hs-lib { font-size:10.5px; color:#B8C4DC; margin-top:2px; max-width:96px; }
+  .ck-hero-sep { width:1px; height:44px; background:rgba(255,255,255,0.18); }
+
+  .ck-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px; }
+  .ck-kpi { background:var(--surface); border-radius:14px; padding:18px; box-shadow:var(--shadow-sm); cursor:pointer; transition:box-shadow .14s, transform .14s; }
+  .ck-kpi:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+  .ck-kpi:focus-visible { box-shadow:var(--focus-ring); outline:none; }
+  .ck-kpi-tete { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .ck-kpi-ic { width:42px; height:42px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:18px; color:#fff; }
+  .ck-ic-green { background:var(--rag-green); } .ck-ic-yellow { background:var(--rag-yellow); } .ck-ic-orange { background:var(--rag-orange); } .ck-ic-red { background:var(--rag-red); } .ck-ic-na { background:var(--rag-na); }
+  .ck-kpi-badge { font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px; }
+  .ck-kpi-badge.rag-green { background:var(--rag-green-l); color:var(--rag-green); } .ck-kpi-badge.rag-yellow { background:var(--rag-yellow-l); color:var(--rag-yellow); } .ck-kpi-badge.rag-orange { background:var(--rag-orange-l); color:var(--rag-orange); } .ck-kpi-badge.rag-red { background:var(--rag-red-l); color:var(--rag-red); } .ck-kpi-badge.rag-na { background:var(--rag-na-l); color:var(--rag-na); }
+  .ck-kpi-val { font-family:var(--font-h); font-size:32px; font-weight:700; color:var(--ink); line-height:1; font-variant-numeric:tabular-nums; }
+  .ck-kpi-lib { font-size:13px; font-weight:600; color:var(--body); margin:6px 0 4px; }
+  .ck-kpi-sous { font-size:11px; color:var(--muted); line-height:1.4; }
+  .ck-kpi-lien { color:var(--royal-l); font-weight:600; white-space:nowrap; }
+
+  .ck-brief { background:var(--gold-tint); border-radius:14px; padding:20px 24px; margin-bottom:18px; }
+  .ck-brief-kicker { font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--gold-d); margin-bottom:8px; }
+  .ck-brief-titre { font-family:var(--font-h); font-size:18px; font-weight:700; color:var(--ink); margin-bottom:14px; }
+  .ck-brief-grille { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .ck-brief-pt { display:flex; gap:9px; font-size:12.5px; color:var(--body); line-height:1.45; }
+  .ck-brief-puce { width:7px; height:7px; border-radius:50%; background:var(--gold); flex-shrink:0; margin-top:6px; }
+
+  .ck-section { background:var(--surface); border-radius:14px; padding:22px 24px; box-shadow:var(--shadow-sm); }
+  .ck-section-tete { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; }
+  .ck-section-titre { font-family:var(--font-h); font-size:18px; font-weight:700; color:var(--ink); }
+  .ck-section-sous { font-size:12px; color:var(--muted); margin-top:2px; }
+  .ck-section-maj { font-size:11px; color:var(--royal); background:var(--royal-tint); padding:5px 11px; border-radius:20px; white-space:nowrap; }
+  .ck-inds { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  .ck-ind { cursor:pointer; border-radius:10px; padding:6px; margin:-6px; transition:background .12s; }
+  .ck-ind:hover { background:var(--surface-2); }
+  .ck-ind:focus-visible { box-shadow:var(--focus-ring); outline:none; }
+  .ck-ind-tete { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .ck-ind-lib { font-size:12px; font-weight:600; color:var(--body); }
+  .ck-ind-delta { font-size:11px; font-weight:700; }
+  .ck-ind-delta.dir-up { color:var(--rag-green); } .ck-ind-delta.dir-down { color:var(--rag-red); } .ck-ind-delta.dir-flat { color:var(--muted); }
+  .ck-ind-chiffre { display:flex; align-items:baseline; gap:5px; margin-bottom:8px; flex-wrap:wrap; }
+  .ck-ind-val { font-family:var(--font-h); font-size:26px; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums; }
+  .ck-ind-unite { font-size:12px; color:var(--muted); }
+  .ck-ind-cible { font-size:10.5px; color:var(--muted-2); margin-left:auto; }
+  .ck-ind-barre { height:6px; background:var(--border); border-radius:4px; overflow:hidden; margin-bottom:7px; }
+  .ck-ind-fill { height:100%; border-radius:4px; }
+  .ck-ind-source { font-size:10px; color:var(--muted-2); }
+  .ck-lecture { font-size:11px; color:var(--muted); line-height:1.5; margin-top:16px; padding-top:14px; border-top:1px solid var(--border); }
+
+  @media (max-width:1024px){ .ck-kpis,.ck-inds{ grid-template-columns:repeat(2,1fr);} .ck-brief-grille{ grid-template-columns:1fr;} }
+  @media (max-width:900px){ .ck-hero{ flex-direction:column; align-items:flex-start;} .ck-hero-r{ width:100%; justify-content:space-between; gap:10px;} }
+  @media (max-width:480px){ .ck-kpis,.ck-inds{ grid-template-columns:1fr;} .ck-hero-titre{ font-size:24px;} }
 </style>
 </head>
 <body>
@@ -3466,6 +3524,22 @@ function pevRag(val, cible, inverse) {
   if (inverse) return val <= cible ? "green" : val <= cible * 1.5 ? "yellow" : "red";
   const r = val / cible;
   return r >= 1 ? "green" : r >= 0.8 ? "yellow" : "red";
+}
+function derniereValeurNat(metric) {
+  for (let k = 0; k < 18; k++) { const v = valeurReelle(metric, null, k); if (v != null) return { val: v, k }; }
+  return { val: null, k: null };
+}
+function dateMinistre() {
+  const j = ["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+  const mo = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  const d = new Date();
+  return j[d.getDay()] + " " + d.getDate() + " " + mo[d.getMonth()] + " " + d.getFullYear();
+}
+function moisReculLabel(k) {
+  const mo = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  let m = state.periodMonth - k, y = state.periodYear;
+  while (m < 1) { m += 12; y--; }
+  return mo[m - 1] + " " + y;
 }
 function districtsDe(prov) { return DISTRICTS.filter(d => d.prov === prov); }
 function bboxDistricts(prov) {
@@ -5267,109 +5341,98 @@ VIEWS["sao-league"] = () => {
 
 VIEWS["min-overview"] = () => {
   if (!pevDispo()) {
-    return { crumbs: ["Cabinet du Ministre"], html: `<div class="ph ph-exec"><div class="ph-title">Priorité vaccination</div><div class="ph-sub">Données PEV en cours de chargement.</div></div>` };
+    return { crumbs: ["Cabinet du Ministre"], html: `<div class="ph ph-exec"><div class="ph-title">Cockpit</div><div class="ph-sub">Données en cours de chargement.</div></div>` };
   }
-  const CIBLE = PEV.meta.cible_couverture, SEUIL_AB = PEV.meta.seuil_abandon;
+  const CIBLE = PEV.meta.cible_couverture;
+  const nav = (prog, sub) => `onclick="selectSub('${prog}','${sub}')"`;
 
-  const flèche = (dir) => dir === "up" ? "▲" : dir === "down" ? "▼" : "▬";
-  const trajDe = (a) => {
-    if (!a || a.v2025 == null || a.v2026 == null) return { d: null, dir: "flat" };
-    const d = Math.round((a.v2026 - a.v2025) * 10) / 10;
-    return { d, dir: d > 0.2 ? "up" : d < -0.2 ? "down" : "flat" };
-  };
+  // ---- Données réelles ----
+  const p3 = pevNatCouv("Penta3");
+  const scP3 = pevSousCible("Penta3", CIBLE);
+  const comp = PEV.national.qualite.completude, prom = PEV.national.qualite.promptitude;
+  const rota = pevNatCouv("ROTA3");
+  const rotaDelta = rota && rota.v2025 != null ? Math.round((rota.v2026 - rota.v2025) * 10) / 10 : null;
+  const basP3 = pevProvCV("Penta3")[0];
+  const mm = derniereValeurNat("mortmat");
+  const rup = derniereValeurNat("log-rupture");
+  const cpn1 = derniereValeurNat("couv-cpn1");
 
-  // ---- Piliers de la priorité vaccination ----
-  const piliers = [
-    { code: "Penta3", nom: "Calendrier complet", sous: "Troisième dose de Penta, marqueur d'un parcours vaccinal achevé", cible: CIBLE },
-    { code: "VAR1",   nom: "Rougeole",           sous: "Première dose du vaccin antirougeoleux", cible: CIBLE },
-    { code: "ROTA3",  nom: "Rotavirus",          sous: "Antigène récent, en montée de charge", cible: CIBLE },
-  ];
-  const pilierHtml = (p) => {
-    const a = pevNatCouv(p.code);
-    const val = a ? a.v2026 : null;
-    const rag = pevRag(val, p.cible);
-    const tr = trajDe(a);
-    const sc = pevSousCible(p.code, p.cible);
-    const largeur = val == null ? 0 : Math.max(3, Math.min(100, (val / p.cible) * 100));
-    return `<div class="du-pilier">
-      <div class="du-pilier-tete">
-        <div class="du-pilier-id"><div class="du-pilier-nom">${p.nom}</div><div class="du-pilier-sous">${p.sous}</div></div>
-        <span class="du-feu rag-${rag}"></span>
+  // ---- Bandeau de bienvenue ----
+  const bandeau = `
+    <div class="ck-hero">
+      <div class="ck-hero-l">
+        <div class="ck-hero-kicker">Delivery Unit · Ministère de la Santé Publique et de la Prévention</div>
+        <div class="ck-hero-titre">Bonjour Monsieur le Ministre</div>
+        <div class="ck-hero-date">◷ ${dateMinistre()}</div>
       </div>
-      <div class="du-pilier-chiffre"><span class="du-val">${val == null ? "ND" : val + "%"}</span><span class="du-cible">cible ${p.cible}%</span></div>
-      <div class="du-jauge"><div class="du-jauge-fill rag-${rag}-bg" style="width:${largeur}%"></div></div>
-      <div class="du-pilier-pied">
-        <span class="du-traj dir-${tr.dir}">${flèche(tr.dir)} ${tr.d == null ? "—" : (tr.d >= 0 ? "+" : "") + tr.d + " pts"} <span class="du-traj-lib">vs 2025</span></span>
-        <span class="du-disp">${sc.prov} / ${sc.provTot} provinces sous la cible</span>
+      <div class="ck-hero-r">
+        <div class="ck-hero-stat"><div class="ck-hs-val">${PEV.provinces.length}</div><div class="ck-hs-lib">provinces suivies</div></div>
+        <div class="ck-hero-sep"></div>
+        <div class="ck-hero-stat"><div class="ck-hs-val">${PEV.meta.antigenes.length}</div><div class="ck-hs-lib">antigènes pilotés</div></div>
+        <div class="ck-hero-sep"></div>
+        <div class="ck-hero-stat"><div class="ck-hs-val">${comp ? comp.v2026 + "%" : "ND"}</div><div class="ck-hs-lib">complétude du rapportage</div></div>
       </div>
     </div>`;
+
+  // ---- 4 cartes de priorité (avec deep-dive) ----
+  const carte = (icone, badge, badgeRag, val, lib, sous, prog, sub) => `
+    <div class="ck-kpi" ${nav(prog, sub)} role="link" tabindex="0">
+      <div class="ck-kpi-tete"><span class="ck-kpi-ic ck-ic-${badgeRag}">${icone}</span><span class="ck-kpi-badge rag-${badgeRag}">${badge}</span></div>
+      <div class="ck-kpi-val">${val}</div>
+      <div class="ck-kpi-lib">${lib}</div>
+      <div class="ck-kpi-sous">${sous} <span class="ck-kpi-lien">Approfondir →</span></div>
+    </div>`;
+  const cartes = `
+    <div class="ck-kpis">
+      ${carte("◉", "Priorité", pevRag(p3 ? p3.v2026 : null, CIBLE), scP3.prov + " / " + scP3.provTot, "Provinces sous la cible vaccinale", scP3.dist + " districts concernés sur la troisième dose de Penta.", "vacc", "vacc-couv")}
+      ${carte("♀", "Santé maternelle", pevRag(mm.val, 700, true), mm.val == null ? "ND" : Math.round(mm.val), "Mortalité maternelle hospitalière", (mm.k != null ? "Pour 100 000, relevé de " + moisReculLabel(mm.k) + "." : ""), "dsr", "dsr-mat")}
+      ${carte("▦", "Logistique", pevRag(rup.val, 5, true), rup.val == null ? "ND" : rup.val + "%", "Ruptures de stock des traceurs", (rup.k != null ? "Relevé de " + moisReculLabel(rup.k) + ", cible 5%." : ""), "dpml", "dpml-rupt")}
+      ${carte("◈", "Rapportage", pevRag(prom ? prom.v2026 : null, 80), prom ? prom.v2026 + "%" : "ND", "Promptitude du rapportage", "Complétude à " + (comp ? comp.v2026 + "%" : "ND") + ", à surveiller.", "dpsis", "dpsis-comp")}
+    </div>`;
+
+  // ---- Brief du jour ----
+  const brief = `
+    <div class="ck-brief">
+      <div class="ck-brief-kicker">◆ Brief Delivery Unit · Ce que le tableau signale</div>
+      <div class="ck-brief-titre">Trois écarts appellent votre attention.</div>
+      <div class="ck-brief-grille">
+        <div class="ck-brief-pt"><span class="ck-brief-puce"></span><span><strong>${scP3.prov} provinces</strong> restent sous la cible vaccinale${basP3 ? ", la plus basse à " + basP3.val + "% sur Penta3 (" + (basP3.nom.charAt(0) + basP3.nom.slice(1).toLowerCase()) + ")" : ""}.</span></div>
+        ${rotaDelta != null ? `<div class="ck-brief-pt"><span class="ck-brief-puce"></span><span>Le <strong>rotavirus</strong> progresse de ${rotaDelta >= 0 ? "+" : ""}${rotaDelta} points en un an, à ${rota.v2026}%.</span></div>` : ""}
+        ${rup.val != null ? `<div class="ck-brief-pt"><span class="ck-brief-puce"></span><span>Les <strong>ruptures de traceurs</strong> atteignent ${rup.val}%, loin de la cible de 5%.</span></div>` : ""}
+      </div>
+    </div>`;
+
+  // ---- Indicateurs sanitaires nationaux (barres vers cible + deep-dive) ----
+  const barre = (val, cible, inverse) => {
+    if (val == null) return 0;
+    if (inverse) return Math.max(4, Math.min(100, (cible / val) * 100));
+    return Math.max(4, Math.min(100, (val / cible) * 100));
   };
-
-  // Pilier abandon (inverse)
-  const ab = PEV.national.abandon.specifique;
-  const abVal = ab ? ab.v2026 : null;
-  const abRag = pevRag(abVal, SEUIL_AB, true);
-  const abTr = trajDe(ab);
-  const abProvHautes = PEV.provinces.filter(p => p.abandon_p1p3 != null && p.abandon_p1p3 > SEUIL_AB).length;
-  const pilierAbandon = `<div class="du-pilier">
-    <div class="du-pilier-tete">
-      <div class="du-pilier-id"><div class="du-pilier-nom">Fidélité au calendrier</div><div class="du-pilier-sous">Taux d'abandon entre la première et la troisième dose de Penta</div></div>
-      <span class="du-feu rag-${abRag}"></span>
-    </div>
-    <div class="du-pilier-chiffre"><span class="du-val">${abVal == null ? "ND" : abVal + "%"}</span><span class="du-cible">seuil ${SEUIL_AB}%</span></div>
-    <div class="du-jauge"><div class="du-jauge-fill rag-${abRag}-bg" style="width:${abVal == null ? 0 : Math.min(100, (abVal / (SEUIL_AB * 2)) * 100)}%"></div></div>
-    <div class="du-pilier-pied">
-      <span class="du-traj dir-${abTr.dir === 'up' ? 'down' : abTr.dir === 'down' ? 'up' : 'flat'}">${flèche(abTr.dir)} ${abTr.d == null ? "—" : (abTr.d >= 0 ? "+" : "") + abTr.d + " pts"} <span class="du-traj-lib">vs 2025</span></span>
-      <span class="du-disp">${abProvHautes} provinces au-dessus du seuil</span>
-    </div>
-  </div>`;
-
-  // ---- Équité : provinces les plus basses sur le calendrier complet ----
-  const bas = pevProvCV("Penta3").slice(0, 6);
-  const equiteRows = bas.map(x => {
-    const rag = pevRag(x.val, CIBLE);
-    return `<tr><td>${x.nom.charAt(0) + x.nom.slice(1).toLowerCase()}</td>
-      <td class="num"><span class="pill ${rag}">${x.val}%</span></td>
-      <td class="du-ecart">${x.val < CIBLE ? "−" + Math.round((CIBLE - x.val) * 10) / 10 + " pts" : "atteint"}</td></tr>`;
-  }).join("");
-  const scP3 = pevSousCible("Penta3", CIBLE);
-
-  // ---- Qualité de la donnée ----
-  const comp = PEV.national.qualite.completude, prom = PEV.national.qualite.promptitude;
-  const nbSup100 = PEV.meta.antigenes.filter(a => { const c = pevNatCouv(a.code); return c && c.v2026 != null && c.v2026 > 100; }).length;
-
-  return {
-    crumbs: ["Cabinet du Ministre", "Priorité vaccination"],
-    html: `
-      <div class="ph ph-exec du-tete">
-        <div class="ph-tag">◆ Delivery Unit · Priorité nationale</div>
-        <div class="ph-title">Vaccination des enfants</div>
-        <div class="ph-sub">Le pays vaccine à un niveau élevé en moyenne. L'enjeu porté au Cabinet se déplace vers l'équité entre provinces et le rattrapage des nouveaux antigènes. ${PEV.meta.periode}.</div>
-      </div>
-
-      <div class="du-piliers">
-        ${piliers.map(pilierHtml).join("")}
-        ${pilierAbandon}
-      </div>
-
-      <div class="du-bas">
-        <div class="card du-equite">
-          <div class="card-title">Là où le calendrier complet décroche</div>
-          <div class="du-equite-sous">${scP3.prov} provinces et ${scP3.dist} districts restent sous la cible de ${CIBLE}% sur la troisième dose de Penta.</div>
-          <table class="tbl-s du-equite-tbl">
-            <tr><th>Province</th><th class="num">Penta3</th><th>Écart à la cible</th></tr>
-            ${equiteRows}
-          </table>
-        </div>
-        <div class="card du-lecture">
-          <div class="card-title">Lecture de la donnée</div>
-          <div class="du-q-row"><span class="du-q-lib">Complétude du rapportage</span><span class="du-q-val">${comp ? comp.v2026 + "%" : "ND"}</span></div>
-          <div class="du-q-row"><span class="du-q-lib">Promptitude</span><span class="du-q-val">${prom ? prom.v2026 + "%" : "ND"}</span></div>
-          <div class="du-lecture-note">Plusieurs couvertures dépassent 100%, ce qui signale des cibles démographiques à réviser plus que des enfants surnuméraires. Les taux servent ici au repérage des écarts entre territoires, non à la lecture d'un niveau absolu.</div>
-        </div>
-      </div>
-    `
+  const indic = (lib, val, unite, cible, cibleLib, inverse, delta, source, prog, sub) => {
+    const rag = pevRag(val, cible, inverse);
+    return `<div class="ck-ind" ${nav(prog, sub)} role="link" tabindex="0">
+      <div class="ck-ind-tete"><span class="ck-ind-lib">${lib}</span>${delta != null ? `<span class="ck-ind-delta dir-${delta.dir}">${delta.dir === "up" ? "↑" : delta.dir === "down" ? "↓" : "→"} ${delta.txt}</span>` : ""}</div>
+      <div class="ck-ind-chiffre"><span class="ck-ind-val">${val == null ? "ND" : val}</span><span class="ck-ind-unite">${val == null ? "" : unite}</span><span class="ck-ind-cible">${cibleLib}</span></div>
+      <div class="ck-ind-barre"><div class="ck-ind-fill rag-${rag}-bg" style="width:${barre(val, cible, inverse)}%"></div></div>
+      <div class="ck-ind-source">${source}</div>
+    </div>`;
   };
+  const indicateurs = `
+    <div class="ck-section">
+      <div class="ck-section-tete">
+        <div><div class="ck-section-titre">Indicateurs sanitaires nationaux</div><div class="ck-section-sous">Suivi des cibles du Plan National de Développement Sanitaire</div></div>
+        <span class="ck-section-maj">◷ ${PEV.meta.periode}</span>
+      </div>
+      <div class="ck-inds">
+        ${indic("Couverture vaccinale (Penta3)", p3 ? p3.v2026 : null, "%", CIBLE, "Cible " + CIBLE + "%", false, (p3 && p3.v2025 != null ? { dir: p3.v2026 >= p3.v2025 ? "up" : "down", txt: (Math.round((p3.v2026 - p3.v2025) * 10) / 10) + "" } : null), "RIM PEV · cumul jan-juin 2026", "vacc", "vacc-overview")}
+        ${indic("Mortalité maternelle hospitalière", mm.val == null ? null : Math.round(mm.val), "/100k", 700, "Cible 700/100k", true, null, "DSR · " + (mm.k != null ? moisReculLabel(mm.k) : "ND"), "dsr", "dsr-mat")}
+        ${indic("Suivi de grossesse (CPN1)", cpn1.val, "%", 90, "Cible 90%", false, null, "DSR · " + (cpn1.k != null ? moisReculLabel(cpn1.k) : "ND"), "dsr", "dsr-overview")}
+        ${indic("Ruptures de stock (traceurs)", rup.val, "%", 5, "Cible 5%", true, null, "SIGL · " + (rup.k != null ? moisReculLabel(rup.k) : "ND"), "dpml", "dpml-rupt")}
+      </div>
+      <div class="ck-lecture">Plusieurs couvertures administratives dépassent 100%, signe de cibles démographiques à réviser ; les taux servent au repérage des écarts entre territoires. Chaque carte ouvre le détail par province et district.</div>
+    </div>`;
+
+  return { crumbs: ["Cabinet du Ministre", "Cockpit"], html: bandeau + cartes + brief + indicateurs };
 };
 
 
