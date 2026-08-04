@@ -2956,6 +2956,10 @@
   @media (max-width:1024px){ .ck-kpis,.ck-inds{ grid-template-columns:repeat(2,1fr);} .ck-brief-grille{ grid-template-columns:1fr;} }
   @media (max-width:900px){ .ck-hero{ flex-direction:column; align-items:flex-start;} .ck-hero-r{ width:100%; justify-content:space-between; gap:10px;} }
   @media (max-width:480px){ .ck-kpis,.ck-inds{ grid-template-columns:1fr;} .ck-hero-titre{ font-size:24px;} }
+  .antig-sel { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:12px; }
+  .antig-btn { font-size:11px; font-weight:600; padding:5px 10px; border-radius:16px; border:1px solid var(--border); background:var(--surface); color:var(--body); cursor:pointer; transition:all .12s; font-family:var(--font-b); }
+  .antig-btn:hover { border-color:var(--royal-l); color:var(--royal); }
+  .antig-btn.on { background:var(--royal); border-color:var(--royal); color:#fff; }
 </style>
 </head>
 <body>
@@ -3534,7 +3538,17 @@ function derniereValeurNat(metric) {
   return { val: null, k: null };
 }
 // ---- Pont de connexion PEV <-> systeme de metriques (couvertures reelles RIM) ----
-const PEV_MAP = { "couv-penta3": "Penta3", "couv-penta1": "Penta1" };
+const PEV_MAP = {
+  "couv-penta3": "Penta3", "couv-penta1": "Penta1",
+  "pev-BCG": "BCG", "pev-Penta1": "Penta1", "pev-Penta3": "Penta3", "pev-VPO3": "VPO3",
+  "pev-VPI1": "VPI1", "pev-VPI2": "VPI2", "pev-VAR1": "VAR1", "pev-VAR2": "VAR2", "pev-VAA": "VAA",
+  "pev-MenA": "MenA", "pev-Td2": "Td2", "pev-PCV1": "PCV1", "pev-PCV3": "PCV3", "pev-ROTA1": "ROTA1", "pev-ROTA3": "ROTA3"
+};
+const PEV_ALIAS_DIST = {
+  "Bebedja": "BEBIDJA", "Baktchoro": "BAHTCHORO", "Kirdimi": "KIRDJIMI", "Michemire": "MICHEMERE",
+  "Chaddra": "CHADRA", "Noukou": "NOKOU", "Ounianga kebir": "OUNIANGA KEBBIR", "Djoddo Gassa": "DJODO GASSA",
+  "Bilam Oursi": "BILIAM OURSI", "Derssia": "DERESSIA", "Dibinitchi": "DIBININTCHI", "N'Djamena Bilala": "NDJAMMENA BILALA"
+};
 function pevNorm(s) {
   s = String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
   s = s.replace(/GH/g, "G").replace(/BAHR/g, "BARH").replace(/OU/g, "U");
@@ -3549,7 +3563,12 @@ function pevIndexer() {
   if (!_pevIdxDist) { _pevIdxDist = {}; PEV.districts.forEach(d => { _pevIdxDist[pevNorm(d.nom)] = d; }); }
 }
 function pevProvParNom(nom) { pevIndexer(); return _pevIdxProv ? (_pevIdxProv[pevNorm(nom)] || null) : null; }
-function pevDistParNom(nom) { pevIndexer(); return _pevIdxDist ? (_pevIdxDist[pevNorm(nom)] || null) : null; }
+function pevDistParNom(nom) {
+  pevIndexer(); if (!_pevIdxDist) return null;
+  let d = _pevIdxDist[pevNorm(nom)];
+  if (!d && PEV_ALIAS_DIST[nom]) d = _pevIdxDist[pevNorm(PEV_ALIAS_DIST[nom])];
+  return d || null;
+}
 function estMetriquePEV(metric) { return !!(PEV_MAP[metric] && PEV); }
 function valeurPEVprov(metric, provNom) { const a = PEV_MAP[metric]; if (!a) return undefined; const p = pevProvParNom(provNom); return p ? (p.cv[a] == null ? null : p.cv[a]) : null; }
 function valeurPEVdist(metric, distNom) { const a = PEV_MAP[metric]; if (!a) return undefined; const d = pevDistParNom(distNom); return d ? (d.cv[a] == null ? null : d.cv[a]) : null; }
@@ -3581,6 +3600,7 @@ function bboxDistricts(prov) {
 }
 function setMapZoomProv(prov) { state.mapZoomProv = prov; state.provinceFilter = prov; renderMain(); }
 function setMapGrain(g) { state.mapGrain = g; if (g === "province") state.mapZoomProv = null; renderMain(); }
+function setPevAntigene(code) { state.pevAntigene = code; renderMain(); }
 function clearMapZoomProv() { state.mapZoomProv = null; renderMain(); }
 
 /* ==============================================================
@@ -5556,7 +5576,13 @@ VIEWS["vacc-couv"] = (s) => {
         </div>
 
         <div class="g-2-1">
-          ${card("Couverture Penta 3 par province", "Carte de chaleur — 23 provinces", renderMap("couv-penta3"), "Cible 90% — Source : RIM PEV — districts colorés au réel")}
+          ${(() => {
+            const ANTIG = [["Penta3","Penta 3"],["Penta1","Penta 1"],["BCG","BCG"],["VAR1","VAR 1"],["VAR2","VAR 2"],["VPO3","VPO 3"],["VPI1","VPI 1"],["VPI2","VPI 2"],["VAA","VAA"],["MenA","MenA"],["Td2","Td2+"],["PCV1","PCV 1"],["PCV3","PCV 3"],["ROTA1","Rota 1"],["ROTA3","Rota 3"]];
+            const ag = state.pevAntigene || "Penta3";
+            const lib = (ANTIG.find(a => a[0] === ag) || ["Penta3","Penta 3"])[1];
+            const sel = `<div class="antig-sel">${ANTIG.map(([c,l]) => `<button class="antig-btn ${c === ag ? "on" : ""}" onclick="setPevAntigene('${c}')">${l}</button>`).join("")}</div>`;
+            return card("Couverture " + lib + " par province et district", "Carte de chaleur sur données réelles du RIM", sel + renderMap("pev-" + ag), "Cible 90% — Source : RIM PEV, cumul jan-juin 2026 — 155 districts colorés au réel");
+          })()}
           ${card("Performance par antigène", "Moyenne nationale", renderBars([
             { label:"BCG",     val:bcg,    target:95, rag:rag(bcg,95) },
             { label:"Penta 1", val:penta1, target:95, rag:rag(penta1,95) },
