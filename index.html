@@ -2977,6 +2977,39 @@
   .palu-fill { height:100%; border-radius:5px; transition:width .3s; }
   .palu-val { font-size:13px; font-weight:700; color:var(--ink); width:52px; text-align:right; font-variant-numeric:tabular-nums; }
   .palu-note { font-size:11.5px; color:var(--muted); line-height:1.5; padding-top:12px; border-top:1px solid var(--border); }
+  .epi-chart { display:flex; align-items:flex-end; gap:6px; height:170px; padding:10px 4px 0; }
+  .epi-col { flex:1; display:flex; flex-direction:column; align-items:center; height:100%; }
+  .epi-bar-wrap { flex:1; width:100%; display:flex; align-items:flex-end; }
+  .epi-bar { width:100%; background:linear-gradient(180deg,var(--royal-l),var(--royal)); border-radius:4px 4px 0 0; position:relative; min-height:3px; }
+  .epi-val { position:absolute; top:-16px; left:0; right:0; text-align:center; font-size:10px; font-weight:700; color:var(--body); }
+  .epi-lab { font-size:10px; color:var(--muted); margin-top:5px; }
+  .demo-liste { display:flex; flex-direction:column; gap:9px; }
+  .demo-row { display:flex; align-items:center; gap:10px; }
+  .demo-lab { font-size:11.5px; color:var(--body); width:96px; flex-shrink:0; }
+  .demo-barre { flex:1; height:16px; background:var(--border); border-radius:4px; overflow:hidden; }
+  .demo-fill { height:100%; background:var(--gold); border-radius:4px; }
+  .demo-val { font-size:12px; font-weight:700; color:var(--ink); width:36px; text-align:right; }
+  .sexe-split { display:flex; flex-direction:column; gap:12px; margin-bottom:12px; }
+  .sexe-part { display:flex; flex-direction:column; gap:4px; }
+  .sexe-part span { font-size:12px; color:var(--body); }
+  .sexe-barre { height:14px; background:var(--border); border-radius:4px; overflow:hidden; }
+  .sexe-fill-h { height:100%; background:var(--royal); border-radius:4px; }
+  .sexe-fill-f { height:100%; background:var(--gold); border-radius:4px; }
+  .chol-note { font-size:11px; color:var(--muted); line-height:1.5; padding-top:10px; border-top:1px solid var(--border); }
+  .chol-alerte { display:flex; gap:10px; align-items:flex-start; background:var(--rag-red-l); border:1px solid var(--rag-red); border-radius:12px; padding:14px 18px; margin-bottom:16px; font-size:12.5px; color:var(--ink); line-height:1.5; }
+  .chol-alerte-ic { color:var(--rag-red); font-weight:700; font-size:15px; flex-shrink:0; }
+  .ck-surv { display:flex; justify-content:space-between; align-items:center; gap:20px; background:linear-gradient(135deg,#7A1E1E,#A62C2C); border-radius:12px; padding:16px 22px; margin-bottom:14px; cursor:pointer; transition:box-shadow .14s, transform .14s; box-shadow:var(--shadow-sm); flex-wrap:wrap; }
+  .ck-surv:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+  .ck-surv:focus-visible { box-shadow:var(--focus-ring); outline:none; }
+  .ck-surv-tag { font-size:10.5px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#F3C9C9; }
+  .ck-surv-titre { font-family:var(--font-h); font-size:19px; font-weight:700; color:#fff; margin-top:4px; }
+  .ck-surv-zone { font-size:11px; color:#EBC9C9; margin-top:2px; }
+  .ck-surv-stats { display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
+  .ck-surv-stat { text-align:center; }
+  .cs-val { font-family:var(--font-h); font-size:24px; font-weight:700; color:#fff; font-variant-numeric:tabular-nums; }
+  .cs-val.cs-alerte { color:#FFD9A8; }
+  .cs-lib { font-size:10px; color:#EBC9C9; margin-top:2px; }
+  .ck-surv-lien { font-size:12px; font-weight:600; color:#fff; background:rgba(255,255,255,0.15); padding:7px 13px; border-radius:8px; white-space:nowrap; }
 </style>
 </head>
 <body>
@@ -3263,11 +3296,11 @@ const PROGRAMS = [
     ]
   },
   {
-    id:"cousp", c:"cousp", icon:"URG", label:"Urgences · Surveillance",
+    id:"cousp", c:"cousp", icon:"CHO", label:"Surveillance · Choléra",
     dir:"COUSP",
     sub:[
-      { id:"cousp-alert",   i18n_key:"sub_cousp_alerts", label:"Alertes en cours",     status:"red" },
-      { id:"cousp-surv",    i18n_key:"sub_cousp_surv",   label:"Surveillance épidémio",status:"yellow" },
+      { id:"cousp-surv",    i18n_key:"sub_cousp_surv",   label:"Riposte au choléra",  status:"red" },
+      { id:"cousp-alert",   i18n_key:"sub_cousp_alerts", label:"Foyers actifs",       status:"orange" },
     ]
   },
   {
@@ -3421,6 +3454,10 @@ async function chargerDonneesReelles(essai) {
       const pj = await fetch("pev_data.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (pj) PEV = pj;
     } catch (e) {}
+    try {
+      const cj = await fetch("cholera_data.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (cj) CHOLERA = cj;
+    } catch (e) {}
     renderMain();
     // rafraichissement des donnees toutes les six heures pour les onglets laisses ouverts
     if (!window._cidRafraichissement) {
@@ -3532,6 +3569,8 @@ function rag(val, target, inverse = false) {
 let SEUILS_DEPOT = null;
 let DISTRICTS = [];
 let PEV = null;
+let CHOLERA = null;
+function cholDispo() { return CHOLERA && CHOLERA.global; }
 function pevDispo() { return PEV && PEV.provinces && PEV.provinces.length; }
 function pevNatCouv(code) { return (PEV && PEV.national.couvertures[code]) || null; }
 function pevProvCV(code) {
@@ -3814,8 +3853,8 @@ const I18N = {
     sub_rh_eff: "Effectifs",
     sub_rh_vac: "Postes vacants",
     sub_rh_form: "Formations",
-    sub_cousp_alerts: "Alertes en cours",
-    sub_cousp_surv: "Surveillance épidémio",
+    sub_cousp_alerts: "Foyers actifs",
+    sub_cousp_surv: "Riposte au choléra",
     sub_dpsis_comp: "Complétude & promptitude",
     sub_dpsis_qual: "Qualité des données",
     santex_tag: "Santex",
@@ -4006,7 +4045,7 @@ const I18N = {
     sub_rh_eff: "Workforce",
     sub_rh_vac: "Vacancies",
     sub_rh_form: "Training",
-    sub_cousp_alerts: "Active alerts",
+    sub_cousp_alerts: "Active clusters",
     sub_cousp_surv: "Epi surveillance",
     sub_dpsis_comp: "Completeness & timeliness",
     sub_dpsis_qual: "Data quality",
@@ -4198,7 +4237,7 @@ const I18N = {
     sub_rh_eff: "القوى العاملة",
     sub_rh_vac: "الوظائف الشاغرة",
     sub_rh_form: "التدريب",
-    sub_cousp_alerts: "التنبيهات الجارية",
+    sub_cousp_alerts: "البؤر النشطة",
     sub_cousp_surv: "المراقبة الوبائية",
     sub_dpsis_comp: "الاكتمال والسرعة",
     sub_dpsis_qual: "جودة البيانات",
@@ -5494,7 +5533,24 @@ VIEWS["min-overview"] = () => {
       <div class="ck-lecture">Plusieurs couvertures administratives dépassent 100%, signe de cibles démographiques à réviser ; les taux servent au repérage des écarts entre territoires. Chaque carte ouvre le détail par province et district.</div>
     </div>`;
 
-  return { crumbs: ["Cabinet du Ministre", "Cockpit"], html: bandeau + cartes + brief + indicateurs };
+  // Ligne surveillance : riposte cholera
+  const chol = cholDispo() ? CHOLERA.global : null;
+  const surveillance = chol ? `
+    <div class="ck-surv" onclick="selectSub('cousp','cousp-surv')" role="link" tabindex="0">
+      <div class="ck-surv-l">
+        <span class="ck-surv-tag">◆ Surveillance · Épidémie en cours</span>
+        <div class="ck-surv-titre">Riposte au choléra</div>
+        <div class="ck-surv-zone">${CHOLERA.meta.zone} · ${CHOLERA.meta.periode}</div>
+      </div>
+      <div class="ck-surv-stats">
+        <div class="ck-surv-stat"><div class="cs-val">${chol.cas}</div><div class="cs-lib">cas cumulés</div></div>
+        <div class="ck-surv-stat"><div class="cs-val">${chol.deces}</div><div class="cs-lib">décès</div></div>
+        <div class="ck-surv-stat"><div class="cs-val cs-alerte">${chol.létalité}%</div><div class="cs-lib">létalité · seuil 1%</div></div>
+        <div class="ck-surv-stat"><div class="cs-val">${CHOLERA.districts.length}</div><div class="cs-lib">districts touchés</div></div>
+        <span class="ck-surv-lien">Voir la riposte →</span>
+      </div>
+    </div>` : "";
+  return { crumbs: ["Cabinet du Ministre", "Cockpit"], html: bandeau + cartes + brief + surveillance + indicateurs };
 };
 
 
@@ -5567,6 +5623,94 @@ VIEWS["vacc-palu"] = () => {
             `<div class="sao-defile"><table class="tbl-s"><tr><th>District</th><th>Province</th><th class="num">Dose 1</th><th class="num">Dose 2</th><th class="num">Dose 3</th><th class="num">Dose 4</th></tr>${lignes}</table></div>`,
             "")}
         </div>
+      </div>
+    `
+  };
+};
+
+
+VIEWS["cousp-surv"] = () => {
+  if (!cholDispo()) return { crumbs: ["Surveillance · Choléra", "Riposte"], html: `<div class="ph"><div class="ph-title">Choléra</div><div class="ph-sub">Données en cours de chargement.</div></div>` };
+  const g = CHOLERA.global, M = CHOLERA.meta;
+  const cfrRag = g.létalité >= 3 ? "red" : g.létalité >= 1 ? "orange" : "green";
+  const nomPr = (s) => s.split(" ").map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(" ");
+
+  // Courbe épidémique hebdomadaire
+  const maxH = Math.max(...CHOLERA.hebdo.map(x => x.cas));
+  const courbe = CHOLERA.hebdo.map(x => {
+    const ht = Math.round((x.cas / maxH) * 100);
+    return `<div class="epi-col"><div class="epi-bar-wrap"><div class="epi-bar" style="height:${ht}%"><span class="epi-val">${x.cas}</span></div></div><div class="epi-lab">S${x.sem}</div></div>`;
+  }).join("");
+
+  // Provinces
+  const provRows = CHOLERA.provinces.map(p => {
+    const r = p.létalité >= 3 ? "red" : p.létalité >= 1 ? "orange" : "green";
+    return `<tr><td><strong>${p.nom}</strong></td><td class="num">${p.cas}</td><td class="num">${p.deces}</td><td class="num"><span class="pill ${r}">${p.létalité}%</span></td></tr>`;
+  }).join("");
+
+  // Démographie
+  const maxA = Math.max(...CHOLERA.age.map(a => a.cas));
+  const ageRows = CHOLERA.age.map(a => `<div class="demo-row"><span class="demo-lab">${a.tranche}</span><div class="demo-barre"><div class="demo-fill" style="width:${Math.round(a.cas / maxA * 100)}%"></div></div><span class="demo-val">${a.cas}</span></div>`).join("");
+  const totSexe = CHOLERA.sexe.M + CHOLERA.sexe.F;
+
+  return {
+    crumbs: ["Surveillance · Choléra", "Riposte"],
+    html: `
+      <div class="ph">
+        <div class="ph-tag">◆ Épidémie en cours · COUSP</div>
+        <div class="ph-title">Riposte au choléra</div>
+        <div class="ph-sub">${M.zone}. ${M.periode}. Données issues de la liste linéaire de surveillance.</div>
+      </div>
+      <div class="content">
+        <div class="kpi-grid">
+          ${kpi("Cas cumulés", g.cas, "", "depuis la semaine 24", "", "flat", "orange", true)}
+          ${kpi("Décès", g.deces, "", g.gueris + " guéris", "", "flat", "red", true)}
+          ${kpi("Létalité", g.létalité, "%", "seuil d'alerte 1%", "", "flat", cfrRag, true)}
+          ${kpi("Districts touchés", CHOLERA.districts.length, "", "sur 2 provinces", "", "flat", "orange", true)}
+        </div>
+        <div class="grid-2">
+          ${card("Courbe épidémique", "Cas confirmés et suspects par semaine", `<div class="epi-chart">${courbe}</div>`,
+            "Pic en semaine 26, rebond en semaine 30. La transmission n'est pas éteinte.")}
+          ${card("Répartition géographique", "Par province touchée",
+            `<table class="tbl-s"><tr><th>Province</th><th class="num">Cas</th><th class="num">Décès</th><th class="num">Létalité</th></tr>${provRows}</table>`,
+            "N'Djamena concentre une létalité plus forte, signe d'une prise en charge tardive.")}
+        </div>
+        <div class="grid-2">
+          ${card("Profil par âge", "Tranches les plus touchées",
+            `<div class="demo-liste">${ageRows}</div>`, "")}
+          ${card("Répartition par sexe", g.cas + " cas au total",
+            `<div class="sexe-split">
+              <div class="sexe-part"><div class="sexe-barre"><div class="sexe-fill-h" style="width:${Math.round(CHOLERA.sexe.M/totSexe*100)}%"></div></div><span>Hommes ${CHOLERA.sexe.M} (${Math.round(CHOLERA.sexe.M/totSexe*100)}%)</span></div>
+              <div class="sexe-part"><div class="sexe-barre"><div class="sexe-fill-f" style="width:${Math.round(CHOLERA.sexe.F/totSexe*100)}%"></div></div><span>Femmes ${CHOLERA.sexe.F} (${Math.round(CHOLERA.sexe.F/totSexe*100)}%)</span></div>
+            </div>
+            <div class="chol-note">Confirmation biologique : ${g.confirmes_tdr} cas positifs au test de diagnostic rapide. Hospitalisés : ${g.hospitalises}.</div>`, "")}
+        </div>
+      </div>
+    `
+  };
+};
+
+VIEWS["cousp-alert"] = () => {
+  if (!cholDispo()) return { crumbs: ["Surveillance · Choléra", "Foyers"], html: `<div class="ph"><div class="ph-title">Foyers</div></div>` };
+  const nomPr = (s) => s.split(" ").map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(" ");
+  const rows = CHOLERA.districts.map((d, i) => {
+    const r = d.létalité >= 3 ? "red" : d.létalité >= 1 ? "orange" : "green";
+    return `<tr><td class="sao-rang">${i + 1}</td><td><strong>${nomPr(d.nom)}</strong></td><td class="num">${d.cas}</td><td class="num">${d.deces}</td><td class="num"><span class="pill ${r}">${d.létalité}%</span></td></tr>`;
+  }).join("");
+  const critiques = CHOLERA.districts.filter(d => d.létalité >= 3);
+  return {
+    crumbs: ["Surveillance · Choléra", "Foyers actifs"],
+    html: `
+      <div class="ph">
+        <div class="ph-tag">◆ Foyers à surveiller</div>
+        <div class="ph-title">Foyers actifs de choléra</div>
+        <div class="ph-sub">Districts classés par charge de cas et létalité. ${CHOLERA.meta.periode}.</div>
+      </div>
+      <div class="content">
+        ${critiques.length ? `<div class="chol-alerte"><span class="chol-alerte-ic">▲</span> <span>${critiques.map(d => nomPr(d.nom) + " (" + d.létalité + "% de létalité)").join(", ")} ${critiques.length > 1 ? "dépassent" : "dépasse"} nettement le seuil d'alerte. La prise en charge précoce et la réhydratation sont à renforcer en priorité.</span></div>` : ""}
+        ${card("Districts touchés", CHOLERA.districts.length + " districts, triés par nombre de cas",
+          `<table class="tbl-s"><tr><th class="sao-rang">Rang</th><th>District</th><th class="num">Cas</th><th class="num">Décès</th><th class="num">Létalité</th></tr>${rows}</table>`,
+          "Source : liste linéaire COUSP. La létalité, plus que le nombre de cas, signale où la riposte doit se concentrer.")}
       </div>
     `
   };
@@ -6356,55 +6500,6 @@ VIEWS["drh-vacance"] = () => ({
         ${kpi("Vacance médecins", nationalAggregate("rh-vacmed"), "%", "Cible : < 15%", "", "flat", "red", true)}
         ${kpi("Vacance sages-femmes", nationalAggregate("rh-vacsf"), "%", "Cible : < 15%", "", "flat", "red", true)}
         ${kpi("Vacance infirmiers", nationalAggregate("rh-vacinf"), "%", "Cible : < 10%", "", "flat", "orange", true)}
-      </div>
-    </div>
-  `
-});
-
-VIEWS["cousp-alert"] = () => ({
-  crumbs:["Urgences · Surveillance","Alertes en cours"],
-  html: `
-    <div class="ph">
-      <div class="ph-tag">Centre d'Opérations · COUSP</div>
-      <div class="ph-title">Alertes en cours — Surveillance épidémiologique</div>
-      <div class="ph-sub">Notifications de cas, investigations, réponse aux flambées.</div>
-    </div>
-    <div class="content">
-      <div class="kpi-grid">
-        ${kpi("Alertes actives", nationalAggregate("cousp-alertes"), "", "Tous types", "", "flat", "orange", true)}
-        ${kpi("Délai notification < 24h", nationalAggregate("cousp-notif24"), "%", "Cible : 95%", "", "flat", "yellow")}
-        ${kpi("Réponse < 48h", nationalAggregate("cousp-rep48"), "%", "Cible : 90%", "", "flat", "orange")}
-        ${kpi("Provinces en alerte", nationalAggregate("cousp-provalerte"), "/23", "Niveau orange+", "", "flat", "yellow")}
-      </div>
-      <div class="card">
-        <div class="card-hdr">
-          <div><div class="card-title">Alertes en cours</div><div class="card-sub">12 mai 2026 · Mise à jour temps réel</div></div>
-        </div>
-        <div class="card-body">
-          ${alert("red","!","Lac — Suspicion choléra","8 cas suspects à Bol depuis 72h. Investigation en cours.","Détecté · 12 mai 09:30 · COUSP")}
-          ${alert("orange","!","Ouaddaï — Pic rougeole","Dépassement seuil épidémique sur 2 districts.","Détecté · 11 mai · DHIS2")}
-          ${alert("yellow","!","Logone-Oriental — Méningite","Augmentation cas suspects. Surveillance renforcée.","Détecté · 10 mai · DSP")}
-          ${alert("green","✓","Mandoul — Fin épidémie polio","Aucun nouveau cas depuis 28 jours.","Confirmé · 09 mai · OMS")}
-        </div>
-      </div>
-    </div>
-  `
-});
-
-VIEWS["cousp-surv"] = () => ({
-  crumbs:["Urgences · Surveillance","Surveillance épidémio"],
-  html: `
-    <div class="ph">
-      <div class="ph-tag">Surveillance · COUSP</div>
-      <div class="ph-title">Surveillance épidémiologique</div>
-      <div class="ph-sub">Notification des cas, complétude, promptitude des rapports hebdomadaires.</div>
-    </div>
-    <div class="content">
-      <div class="kpi-grid">
-        ${kpi("Complétude rapports hebdo", nationalAggregate("cousp-comphebdo"), "%", "Cible : 95%", "", "flat", "yellow")}
-        ${kpi("Promptitude (à temps)", nationalAggregate("cousp-prompt"), "%", "Cible : 90%", "", "flat", "orange")}
-        ${kpi("PFA notifiés < 7j", nationalAggregate("surv-prom"), "%", "Cible : 80%", "", "flat", "green")}
-        ${kpi("DS notifiant méningite", nationalAggregate("surv-meningite"), "%", "Cible : 80%", "", "flat", "yellow")}
       </div>
     </div>
   `
