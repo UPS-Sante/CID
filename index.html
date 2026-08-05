@@ -3010,6 +3010,64 @@
   .cs-val.cs-alerte { color:#FFD9A8; }
   .cs-lib { font-size:10px; color:#EBC9C9; margin-top:2px; }
   .ck-surv-lien { font-size:12px; font-weight:600; color:#fff; background:rgba(255,255,255,0.15); padding:7px 13px; border-radius:8px; white-space:nowrap; }
+
+  /* ====== ANALYSE APPROFONDIE CHOLÉRA ====== */
+  .dd-constats { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:18px; }
+  .dd-constat { background:var(--surface); border-radius:12px; padding:18px 20px; box-shadow:var(--shadow-sm); border-left:4px solid var(--royal); display:flex; gap:14px; }
+  .dd-constat.dd-c1 { border-left-color:#A62C2C; } .dd-constat.dd-c2 { border-left-color:var(--gold); } .dd-constat.dd-c3 { border-left-color:var(--royal); }
+  .dd-num { font-family:var(--font-h); font-size:22px; font-weight:700; color:var(--muted-2); flex-shrink:0; line-height:1; }
+  .dd-txt { font-size:12.5px; color:var(--body); line-height:1.5; }
+  .dd-txt strong { color:var(--ink); }
+
+  .chol-carte-wrap { display:flex; flex-direction:column; gap:10px; }
+  .chol-carte { width:100%; height:auto; max-height:340px; }
+  .chol-fond { fill:var(--surface-2); stroke:var(--border); stroke-width:1; }
+  .chol-dist { stroke:#fff; stroke-width:1.2; transition:fill .2s; }
+  .chol-dist.niv-critique { fill:var(--rag-red); }
+  .chol-dist.niv-eleve { fill:var(--rag-orange); }
+  .chol-dist.niv-modere { fill:var(--rag-yellow); }
+  .chol-dist.niv-faible { fill:var(--rag-green); }
+  @keyframes cholPulse { 0%,100% { opacity:1; } 50% { opacity:0.35; } }
+  .chol-clignote { animation:cholPulse 1.4s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .chol-clignote { animation:none; stroke:#7A1E1E; stroke-width:2.5; } }
+  .chol-legende { display:flex; flex-wrap:wrap; gap:14px; font-size:11px; color:var(--body); }
+  .cl-item { display:flex; align-items:center; gap:6px; }
+  .cl-pastille { width:11px; height:11px; border-radius:3px; display:inline-block; }
+  .cl-pastille.niv-critique { background:var(--rag-red); } .cl-pastille.niv-eleve { background:var(--rag-orange); }
+  .cl-pastille.niv-modere { background:var(--rag-yellow); } .cl-pastille.niv-faible { background:var(--rag-green); }
+
+  .mig-bloc { display:flex; flex-direction:column; gap:10px; }
+  .mig-ligne { display:grid; grid-template-columns:150px 1fr 34px; align-items:center; gap:10px; }
+  .mig-nom { font-size:11.5px; color:var(--body); font-weight:600; display:flex; flex-direction:column; }
+  .mig-etat { font-size:9.5px; font-weight:500; margin-top:1px; }
+  .mig-etat.actif { color:var(--rag-red); } .mig-etat.eteint { color:var(--muted-2); }
+  .mig-graph { display:flex; align-items:flex-end; gap:3px; height:44px; }
+  .mig-col { flex:1; height:100%; display:flex; align-items:flex-end; }
+  .mig-bar { width:100%; border-radius:2px 2px 0 0; min-height:2px; }
+  .mig-bar.niv-critique { background:var(--rag-red); } .mig-bar.niv-eleve { background:var(--rag-orange); }
+  .mig-bar.niv-modere { background:var(--rag-yellow); } .mig-bar.niv-faible { background:var(--rag-green); }
+  .mig-tot { font-size:12px; font-weight:700; color:var(--ink); text-align:right; }
+  .mig-axe { display:grid; grid-template-columns:150px 1fr 34px; }
+  .mig-axe span { display:none; }
+  .mig-axe { font-size:9.5px; color:var(--muted-2); display:flex; justify-content:space-between; padding:0 34px 0 160px; }
+  .mig-axe span { display:inline; }
+
+  .dd-test-note { font-size:11px; color:var(--muted); line-height:1.5; margin-top:12px; padding-top:10px; border-top:1px solid var(--border); }
+  .tst-n { font-size:9.5px; color:var(--muted-2); margin-left:5px; }
+  .tst-sig { font-size:10px; color:var(--royal); font-weight:700; }
+  tr.test-ns td { opacity:0.5; }
+  .dd-encart { background:var(--gold-tint); border-radius:10px; padding:14px 16px; margin-top:14px; font-size:12px; color:var(--body); line-height:1.55; }
+  .dd-encart-t { font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--gold-d); margin-bottom:6px; }
+  .loc-dist { display:block; font-size:10px; color:var(--muted-2); font-weight:400; }
+  .chol-badge { display:inline-block; min-width:32px; text-align:center; font-size:11.5px; font-weight:700; padding:3px 8px; border-radius:8px; color:#fff; }
+  .chol-badge.niv-critique { background:var(--rag-red); } .chol-badge.niv-eleve { background:var(--rag-orange); }
+  .chol-badge.niv-modere { background:var(--rag-yellow); color:var(--ink); } .chol-badge.niv-faible { background:var(--rag-green); }
+  .dd-sous-titre { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--royal); margin-bottom:9px; }
+  .sympt-fill { background:var(--royal-l) !important; }
+  .dd-limites { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .dd-lim { font-size:12px; color:var(--body); line-height:1.55; }
+  .dd-lim-t { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--royal); margin-bottom:7px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+  @media (max-width:1024px){ .dd-constats,.dd-limites{ grid-template-columns:1fr; } .mig-ligne{ grid-template-columns:110px 1fr 30px; } }
 </style>
 </head>
 <body>
@@ -3301,6 +3359,7 @@ const PROGRAMS = [
     sub:[
       { id:"cousp-surv",    i18n_key:"sub_cousp_surv",   label:"Riposte au choléra",  status:"red" },
       { id:"cousp-alert",   i18n_key:"sub_cousp_alerts", label:"Foyers actifs",       status:"orange" },
+      { id:"cousp-deepdive", i18n_key:"sub_cousp_dd",    label:"Analyse approfondie", status:"red" },
     ]
   },
   {
@@ -3458,6 +3517,10 @@ async function chargerDonneesReelles(essai) {
       const cj = await fetch("cholera_data.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (cj) CHOLERA = cj;
     } catch (e) {}
+    try {
+      const ca = await fetch("chol_analyse.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (ca) CHOL_A = ca;
+    } catch (e) {}
     renderMain();
     // rafraichissement des donnees toutes les six heures pour les onglets laisses ouverts
     if (!window._cidRafraichissement) {
@@ -3570,6 +3633,7 @@ let SEUILS_DEPOT = null;
 let DISTRICTS = [];
 let PEV = null;
 let CHOLERA = null;
+let CHOL_A = null;
 function cholDispo() { return CHOLERA && CHOLERA.global; }
 function pevDispo() { return PEV && PEV.provinces && PEV.provinces.length; }
 function pevNatCouv(code) { return (PEV && PEV.national.couvertures[code]) || null; }
@@ -3853,6 +3917,7 @@ const I18N = {
     sub_rh_eff: "Effectifs",
     sub_rh_vac: "Postes vacants",
     sub_rh_form: "Formations",
+    sub_cousp_dd: "Analyse approfondie",
     sub_cousp_alerts: "Foyers actifs",
     sub_cousp_surv: "Riposte au choléra",
     sub_dpsis_comp: "Complétude & promptitude",
@@ -4045,6 +4110,7 @@ const I18N = {
     sub_rh_eff: "Workforce",
     sub_rh_vac: "Vacancies",
     sub_rh_form: "Training",
+    sub_cousp_dd: "In-depth analysis",
     sub_cousp_alerts: "Active clusters",
     sub_cousp_surv: "Epi surveillance",
     sub_dpsis_comp: "Completeness & timeliness",
@@ -4237,6 +4303,7 @@ const I18N = {
     sub_rh_eff: "القوى العاملة",
     sub_rh_vac: "الوظائف الشاغرة",
     sub_rh_form: "التدريب",
+    sub_cousp_dd: "تحليل معمق",
     sub_cousp_alerts: "البؤر النشطة",
     sub_cousp_surv: "المراقبة الوبائية",
     sub_dpsis_comp: "الاكتمال والسرعة",
@@ -5712,6 +5779,189 @@ VIEWS["cousp-alert"] = () => {
           `<table class="tbl-s"><tr><th class="sao-rang">Rang</th><th>District</th><th class="num">Cas</th><th class="num">Décès</th><th class="num">Létalité</th></tr>${rows}</table>`,
           "Source : liste linéaire COUSP. La létalité, plus que le nombre de cas, signale où la riposte doit se concentrer.")}
       </div>
+    `
+  };
+};
+
+
+// ---- Carte choléra : districts touchés colorés par niveau de risque, clignotants sur les foyers actifs ----
+function renderCarteCholera() {
+  if (!CHOL_A) return "";
+  const CARTE_DIST = { "KARAL": "Karal", "N'Djamena Nord": "Ndjamena-Nord", "N'Djamena Centre": "Ndjamena-Centre", "N'Djamena Est": "Ndjamena-Est" };
+  const parTrace = {};
+  CHOL_A.districts.forEach(d => { if (CARTE_DIST[d.nom]) parTrace[CARTE_DIST[d.nom]] = d; });
+  const fond = Object.entries(PROVINCE_PATHS).map(([id, dd]) =>
+    `<path class="chol-fond" d="${dd}"></path>`).join("");
+  const couches = DISTRICTS.filter(d => parTrace[d.name]).map(d => {
+    const info = parTrace[d.name];
+    const cls = "chol-dist niv-" + info.niveau + (info.niveau === "critique" ? " chol-clignote" : "");
+    return `<path class="${cls}" d="${d.d}"><title>${d.name} — ${info.cas} cas, ${info.deces} décès, létalité ${info.cfr}%${info.recents ? ", " + info.recents + " cas récents" : ", plus de cas récent"}</title></path>`;
+  }).join("");
+  return `
+    <div class="chol-carte-wrap">
+      <svg class="chol-carte" viewBox="0 0 1000 780" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-label="Carte des foyers de choléra">
+        <g>${fond}</g><g>${couches}</g>
+      </svg>
+      <div class="chol-legende">
+        <span class="cl-item"><span class="cl-pastille niv-critique chol-clignote"></span> Transmission active</span>
+        <span class="cl-item"><span class="cl-pastille niv-eleve"></span> Risque élevé</span>
+        <span class="cl-item"><span class="cl-pastille niv-modere"></span> Foyer contrôlé</span>
+        <span class="cl-item"><span class="cl-pastille niv-faible"></span> Résiduel</span>
+      </div>
+    </div>`;
+}
+
+VIEWS["cousp-deepdive"] = () => {
+  if (!CHOL_A) return { crumbs: ["Surveillance · Choléra", "Analyse"], html: `<div class="ph"><div class="ph-title">Analyse</div><div class="ph-sub">Chargement.</div></div>` };
+  const A = CHOL_A, M = A.meta;
+  const pFmt = (p) => p < 0.001 ? "p < 0,001" : "p = " + p.toFixed(3).replace(".", ",");
+  const sig = (p) => p < 0.001 ? "***" : p < 0.01 ? "**" : p < 0.05 ? "*" : "ns";
+  const nomPr = (s) => s.split(" ").map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(" ");
+
+  // --- Constats en tête ---
+  const actifs = A.districts.filter(d => d.actif && d.recents > 0);
+  const eteints = A.districts.filter(d => !d.actif && d.cas > 20);
+  const constats = `
+    <div class="dd-constats">
+      <div class="dd-constat dd-c1">
+        <div class="dd-num">01</div>
+        <div class="dd-txt"><strong>L'épidémie a changé de territoire.</strong> Le foyer de Karal, qui portait ${eteints.length ? eteints[0].cas : ""} cas, est éteint depuis la semaine ${eteints.length ? eteints[0].der : ""}. La transmission se poursuit désormais à N'Djamena, où ${actifs.reduce((s, d) => s + d.recents, 0)} cas sont survenus sur les deux dernières semaines.</div>
+      </div>
+      <div class="dd-constat dd-c2">
+        <div class="dd-num">02</div>
+        <div class="dd-txt"><strong>La surmortalité de N'Djamena ne s'explique pas par la gravité des cas.</strong> Hadjer Lamis reçoit une part de cas sévères plus forte (${A.mix[0].severe}% contre ${A.mix[1].severe}%) et enregistre pourtant moins de décès. À gravité égale, le risque de décès reste ${A.modele[2].OR} fois plus élevé à N'Djamena (${pFmt(A.modele[2].p)}).</div>
+      </div>
+      <div class="dd-constat dd-c3">
+        <div class="dd-num">03</div>
+        <div class="dd-txt"><strong>Deux signes cliniques concentrent le risque.</strong> La déshydratation sévère multiplie par ${A.modele[0].OR} le risque de décès et la fièvre par ${A.modele[1].OR}. Ces deux critères, relevés à l'admission, identifient les patients à surveiller en priorité.</div>
+      </div>
+    </div>`;
+
+  // --- Courbes par district (migration) ---
+  const maxC = Math.max(...A.districts.map(d => Math.max(...d.courbe)));
+  const courbesHtml = A.districts.filter(d => d.cas > 1).map(d => {
+    const barres = d.courbe.map((v, i) => {
+      const h = maxC ? Math.round(v / maxC * 100) : 0;
+      return `<div class="mig-col" title="S${M.sems[i]} : ${v} cas"><div class="mig-bar niv-${d.niveau}" style="height:${h}%"></div></div>`;
+    }).join("");
+    return `<div class="mig-ligne">
+      <div class="mig-nom">${nomPr(d.nom)}<span class="mig-etat ${d.actif ? 'actif' : 'eteint'}">${d.actif ? 'transmission active' : 'éteint'}</span></div>
+      <div class="mig-graph">${barres}</div>
+      <div class="mig-tot">${d.cas}</div>
+    </div>`;
+  }).join("");
+  const axeSem = M.sems.map(s => `<span>S${s}</span>`).join("");
+
+  // --- Tests statistiques ---
+  const grad = A.tests[0];
+  const gradRows = grad.groupes.map(g => {
+    const r = g.cfr >= 10 ? "red" : g.cfr >= 3 ? "orange" : "green";
+    return `<tr><td>${g.niveau}</td><td class="num">${g.n}</td><td class="num">${g.deces}</td><td class="num"><span class="pill ${r}">${String(g.cfr).replace(".", ",")}%</span></td></tr>`;
+  }).join("");
+  const autresTests = A.tests.filter(t => t.type === "binaire").map(t => {
+    const fort = t.p < 0.05;
+    return `<tr class="${fort ? '' : 'test-ns'}">
+      <td><strong>${t.nom}</strong></td>
+      <td class="num">${String(t.cfr1).replace(".", ",")}%<span class="tst-n">n=${t.n1}</span></td>
+      <td class="num">${String(t.cfr0).replace(".", ",")}%<span class="tst-n">n=${t.n0}</span></td>
+      <td class="num">${t.OR >= 1 ? String(t.OR).replace(".", ",") : "1/" + (1 / t.OR).toFixed(1).replace(".", ",")}</td>
+      <td class="num">${pFmt(t.p)} <span class="tst-sig">${sig(t.p)}</span></td>
+    </tr>`;
+  }).join("");
+
+  // --- Stratification ---
+  const stratRows = A.strat.map(s => `<tr>
+      <td>${s.niveau}</td>
+      <td class="num">${s.hl.cfr == null ? "—" : s.hl.deces + "/" + s.hl.n + " (" + String(s.hl.cfr).replace(".", ",") + "%)"}</td>
+      <td class="num">${s.nd.cfr == null ? "—" : s.nd.deces + "/" + s.nd.n + " (" + String(s.nd.cfr).replace(".", ",") + "%)"}</td>
+    </tr>`).join("");
+
+  // --- Modèle ---
+  const modRows = A.modele.map(m => `<tr>
+      <td>${m.var}</td>
+      <td class="num"><strong>${String(m.OR).replace(".", ",")}</strong></td>
+      <td class="num">${String(m.ic[0]).replace(".", ",")} – ${String(m.ic[1]).replace(".", ",")}</td>
+      <td class="num">${pFmt(m.p)} <span class="tst-sig">${sig(m.p)}</span></td>
+    </tr>`).join("");
+
+  // --- Localités à risque ---
+  const locRows = A.localites.slice(0, 8).map(l => `<tr>
+      <td><strong>${l.nom}</strong><span class="loc-dist">${nomPr(l.dist)}</span></td>
+      <td class="num">${l.cas}</td>
+      <td class="num">${l.recents || "—"}</td>
+      <td class="num">${String(l.cfr_lisse).replace(".", ",")}%</td>
+      <td><span class="chol-badge niv-${l.niveau}">${l.score}</span></td>
+    </tr>`).join("");
+
+  // --- Profil ---
+  const maxP = Math.max(...A.profil.map(p => p.cas));
+  const profilHtml = A.profil.map(p => `<div class="demo-row"><span class="demo-lab">${p.tranche}</span><div class="demo-barre"><div class="demo-fill" style="width:${Math.round(p.cas / maxP * 100)}%"></div></div><span class="demo-val">${p.cas}</span></div>`).join("");
+  const symptHtml = A.symptomes.map(s => `<div class="demo-row"><span class="demo-lab">${s.nom}</span><div class="demo-barre"><div class="demo-fill sympt-fill" style="width:${s.pct}%"></div></div><span class="demo-val">${String(s.pct).replace(".", ",")}%</span></div>`).join("");
+
+  return {
+    crumbs: ["Surveillance · Choléra", "Analyse approfondie"],
+    html: `
+      <div class="ph ph-exec">
+        <div class="ph-tag">◆ Analyse épidémiologique · aide à la décision</div>
+        <div class="ph-title">Ce que les données disent de la riposte</div>
+        <div class="ph-sub">${M.n} cas analysés, ${M.deces} décès, ${M.localites} localités. ${M.zone}, semaines ${M.sems[0]} à ${M.sem_max}. Analyse sur liste linéaire individuelle.</div>
+      </div>
+      ${constats}
+
+      <div class="grid-2">
+        ${card("Où se joue la riposte aujourd'hui", "Districts touchés, colorés par niveau de risque", renderCarteCholera(),
+          "Les zones clignotantes signalent une transmission active sur les deux dernières semaines. Score composite : activité récente, excès de létalité, part de cas sévères, volume.")}
+        ${card("Déplacement du foyer épidémique", "Cas par semaine et par district",
+          `<div class="mig-bloc">${courbesHtml}<div class="mig-axe">${axeSem}</div></div>`,
+          "Le foyer initial de Karal s'est éteint après la semaine 30. Un second foyer, indépendant, s'est ouvert à N'Djamena à partir de la semaine 28.")}
+      </div>
+
+      <div class="grid-2">
+        ${card("La déshydratation commande la létalité", "Gradient dose-réponse",
+          `<table class="tbl-s"><tr><th>Déshydratation</th><th class="num">Cas</th><th class="num">Décès</th><th class="num">Létalité</th></tr>${gradRows}</table>
+           <div class="dd-test-note">Test de tendance : ${grad.detail.replace("r=", "coefficient r = ").replace("p=", ", ").replace(".", ",")}. La relation est graduée, ce qui renforce l'hypothèse d'un lien causal plutôt que fortuit.</div>`, "")}
+        ${card("Facteurs testés sur le risque de décès", "Comparaison des létalités et rapport de cotes",
+          `<table class="tbl-s"><tr><th>Facteur</th><th class="num">Présent</th><th class="num">Absent</th><th class="num">OR</th><th class="num">Signification</th></tr>${autresTests}</table>
+           <div class="dd-test-note">Tests exacts de Fisher. Les lignes grisées ne montrent pas d'association décelable. L'astérisque marque le seuil de signification, sans préjuger de l'ampleur clinique.</div>`, "")}
+      </div>
+
+      <div class="grid-2">
+        ${card("La gravité des cas n'explique pas l'écart entre territoires", "Létalité stratifiée sur la sévérité",
+          `<table class="tbl-s"><tr><th>Déshydratation</th><th class="num">Hadjer Lamis</th><th class="num">N'Djamena</th></tr>${stratRows}</table>
+           <div class="dd-encart">
+             <div class="dd-encart-t">Lecture décisionnelle</div>
+             Dans chaque strate de gravité, la létalité est plus forte à N'Djamena. Trois décès y sont survenus parmi des cas seulement modérément déshydratés, situation évitable par une réhydratation conduite à temps. L'écart oriente vers la qualité de la prise en charge plutôt que vers le profil des malades.
+           </div>`, "")}
+        ${card("Modèle multivarié du risque de décès", "Régression logistique, " + M.n_analyse + " cas et " + M.deces + " décès",
+          `<table class="tbl-s"><tr><th>Variable</th><th class="num">OR ajusté</th><th class="num">IC 95%</th><th class="num">p</th></tr>${modRows}</table>
+           <div class="dd-test-note">Capacité de discrimination validée hors échantillon : aire sous la courbe ROC = ${String(A.auc).replace(".", ",")} (IC 95% ${String(A.auc_ic[0]).replace(".", ",")} – ${String(A.auc_ic[1]).replace(".", ",")}), validation croisée en cinq blocs. Avec ${M.deces} décès, le modèle reste limité à trois variables et ses intervalles sont larges : il hiérarchise les facteurs, il ne prédit pas un destin individuel.</div>`, "")}
+      </div>
+
+      <div class="grid-2">
+        ${card("Localités à surveiller en priorité", "Score composite de risque",
+          `<table class="tbl-s"><tr><th>Localité</th><th class="num">Cas</th><th class="num">Récents</th><th class="num">Létalité lissée</th><th>Score</th></tr>${locRows}</table>
+           <div class="dd-test-note">La létalité est lissée par une pondération bayésienne pour éviter qu'une localité à un seul cas et un décès n'affiche 100%. Le score combine activité récente, excès de létalité, sévérité et volume.</div>`, "")}
+        ${card("Profil des malades", "Répartition par âge et fréquence des signes",
+          `<div class="dd-sous-titre">Âge des cas</div><div class="demo-liste">${profilHtml}</div>
+           <div class="dd-sous-titre" style="margin-top:16px;">Signes cliniques relevés</div><div class="demo-liste">${symptHtml}</div>`,
+          "Les moins de quinze ans forment la majorité des cas, ce qui oriente la communication et la prise en charge vers les familles et les écoles.")}
+      </div>
+
+      ${card("Portée et limites de cette analyse", "Ce que les données permettent d'affirmer, et ce qu'elles ne permettent pas",
+        `<div class="dd-limites">
+          <div class="dd-lim">
+            <div class="dd-lim-t">Ce qui est établi</div>
+            La sévérité de la déshydratation et la fièvre à l'admission sont associées au décès, avec une relation graduée pour la première. L'écart de létalité entre N'Djamena et Hadjer Lamis persiste après ajustement sur ces deux facteurs. Le foyer de Karal est éteint, celui de N'Djamena reste actif.
+          </div>
+          <div class="dd-lim">
+            <div class="dd-lim-t">Ce qui ne peut pas être conclu</div>
+            La base recense uniquement des malades, sans groupe de comparaison issu de la population. Elle ne permet donc pas d'identifier les facteurs de risque d'attraper la maladie, notamment le rôle des sources d'eau ou l'effet protecteur du vaccin. Ces questions demanderaient une enquête cas-témoins.
+          </div>
+          <div class="dd-lim">
+            <div class="dd-lim-t">Précautions de lecture</div>
+            Avec ${M.deces} décès, les intervalles de confiance sont larges et les associations mesurées sur de petits effectifs restent fragiles. Le statut vaccinal n'est renseigné que pour une minorité de cas, la source d'eau pour un tiers, ce qui interdit toute conclusion sur ces variables.
+          </div>
+        </div>`, "")}
     `
   };
 };
