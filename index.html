@@ -3068,6 +3068,45 @@
   .dd-lim { font-size:12px; color:var(--body); line-height:1.55; }
   .dd-lim-t { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--royal); margin-bottom:7px; padding-bottom:6px; border-bottom:1px solid var(--border); }
   @media (max-width:1024px){ .dd-constats,.dd-limites{ grid-template-columns:1fr; } .mig-ligne{ grid-template-columns:110px 1fr 30px; } }
+
+  /* ====== LÉTALITÉ : chiffre, courbe, variations ====== */
+  .cfr-bloc { display:grid; grid-template-columns:auto 1fr auto; gap:26px; align-items:center; background:var(--surface); border-radius:12px; padding:18px 22px; margin-bottom:14px; box-shadow:var(--shadow-sm); border-left:4px solid var(--rag-red); }
+  .cfr-lib { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--muted); }
+  .cfr-chiffre { display:flex; align-items:baseline; gap:3px; margin:3px 0; }
+  .cfr-val { font-family:var(--font-h); font-size:38px; font-weight:700; line-height:1; font-variant-numeric:tabular-nums; }
+  .rag-green-txt { color:var(--rag-green); } .rag-yellow-txt { color:var(--rag-yellow); }
+  .rag-orange-txt { color:var(--rag-orange); } .rag-red-txt { color:var(--rag-red); } .rag-na-txt { color:var(--rag-na); }
+  .cfr-unite { font-size:17px; font-weight:600; color:var(--muted); }
+  .cfr-sous { font-size:10.5px; color:var(--muted-2); }
+  .cfr-courbe { min-width:0; }
+  .cfr-courbe-tete { display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-bottom:3px; }
+  .cfr-courbe-seuil { color:var(--rag-orange); }
+  .spark-let { width:100%; height:46px; display:block; }
+  .spark-aire { fill:var(--rag-red); opacity:0.13; }
+  .spark-ligne { fill:none; stroke:var(--rag-red); stroke-width:1.8; stroke-linejoin:round; vector-effect:non-scaling-stroke; }
+  .spark-seuil { stroke:var(--rag-orange); stroke-width:1; stroke-dasharray:3 3; vector-effect:non-scaling-stroke; }
+  .spark-pt { fill:var(--rag-red); }
+  .cfr-axe { display:flex; justify-content:space-between; font-size:9.5px; color:var(--muted-2); }
+  .cfr-variations { display:flex; flex-direction:column; gap:7px; min-width:210px; }
+  .cfr-var { display:flex; justify-content:space-between; gap:14px; font-size:11px; padding-bottom:5px; border-bottom:1px solid var(--border); }
+  .cfr-var:last-child { border-bottom:none; }
+  .cfr-var-lib { color:var(--muted); }
+  .cfr-var-val { font-weight:700; color:var(--ink); white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .cfr-var-val.var-hausse { color:var(--rag-red); } .cfr-var-val.var-baisse { color:var(--rag-green); } .cfr-var-val.var-stable { color:var(--muted); }
+
+  /* ====== PYRAMIDE DES ÂGES ====== */
+  .pyr-bloc { display:flex; flex-direction:column; gap:5px; }
+  .pyr-entete { display:grid; grid-template-columns:1fr 96px 1fr; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); margin-bottom:4px; }
+  .pyr-lg { text-align:right; } .pyr-lc { text-align:center; } .pyr-ld { text-align:left; }
+  .pyr-ligne { display:grid; grid-template-columns:1fr 96px 1fr; align-items:center; gap:6px; }
+  .pyr-cote { display:flex; align-items:center; gap:5px; }
+  .pyr-g { flex-direction:row-reverse; }
+  .pyr-bar { height:15px; border-radius:2px; min-width:2px; }
+  .pyr-h { background:var(--royal); } .pyr-f { background:var(--gold); }
+  .pyr-n { font-size:10.5px; color:var(--body); font-variant-numeric:tabular-nums; min-width:20px; }
+  .pyr-g .pyr-n { text-align:left; } .pyr-d .pyr-n { text-align:right; }
+  .pyr-lab { font-size:10.5px; color:var(--body); text-align:center; }
+  @media (max-width:900px){ .cfr-bloc{ grid-template-columns:1fr; gap:14px; } .cfr-variations{ min-width:0; } }
 </style>
 </head>
 <body>
@@ -3521,6 +3560,10 @@ async function chargerDonneesReelles(essai) {
       const ca = await fetch("chol_analyse.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (ca) CHOL_A = ca;
     } catch (e) {}
+    try {
+      const cs = await fetch("chol_series.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (cs) CHOL_S = cs;
+    } catch (e) {}
     renderMain();
     // rafraichissement des donnees toutes les six heures pour les onglets laisses ouverts
     if (!window._cidRafraichissement) {
@@ -3634,6 +3677,7 @@ let DISTRICTS = [];
 let PEV = null;
 let CHOLERA = null;
 let CHOL_A = null;
+let CHOL_S = null;
 function cholDispo() { return CHOLERA && CHOLERA.global; }
 function pevDispo() { return PEV && PEV.provinces && PEV.provinces.length; }
 function pevNatCouv(code) { return (PEV && PEV.national.couvertures[code]) || null; }
@@ -5699,6 +5743,7 @@ VIEWS["vacc-palu"] = () => {
 VIEWS["cousp-surv"] = () => {
   if (!cholDispo()) return { crumbs: ["Surveillance · Choléra", "Riposte"], html: `<div class="ph"><div class="ph-title">Choléra</div><div class="ph-sub">Données en cours de chargement.</div></div>` };
   const g = CHOLERA.global, M = CHOLERA.meta;
+  const V = (CHOL_S && CHOL_S.variation) ? CHOL_S.variation : null;
   const cfrRag = g.létalité >= 3 ? "red" : g.létalité >= 1 ? "orange" : "green";
   const nomPr = (s) => s.split(" ").map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(" ");
 
@@ -5726,31 +5771,61 @@ VIEWS["cousp-surv"] = () => {
       <div class="ph">
         <div class="ph-tag">◆ Épidémie en cours · COUSP</div>
         <div class="ph-title">Riposte au choléra</div>
-        <div class="ph-sub">${M.zone}. ${M.periode}. Données issues de la liste linéaire de surveillance.</div>
+        <div class="ph-sub">${M.zone}. ${M.periode}. Données individuelles issues de la liste linéaire de surveillance.</div>
       </div>
       <div class="content">
         <div class="kpi-grid">
-          ${kpi("Cas cumulés", g.cas, "", "depuis la semaine 24", "", "flat", "orange", true)}
-          ${kpi("Décès", g.deces, "", g.gueris + " guéris", "", "flat", "red", true)}
-          ${kpi("Létalité", g.létalité, "%", "seuil d'alerte 1%", "", "flat", cfrRag, true)}
-          ${kpi("Districts touchés", CHOLERA.districts.length, "", "sur 2 provinces", "", "flat", "orange", true)}
+          ${kpi("Cas cumulés", g.cas, "", "depuis la semaine " + CHOLERA.meta.periode.match(/\d+/)[0], "", "flat", "orange", true)}
+          ${kpi("Décès", g.deces, "", g.gueris + " sortis guéris", "", "flat", "red", true)}
+          ${kpi("Cas confirmés", g.confirmes_tdr, "", "test de diagnostic rapide positif", "", "flat", "yellow", true)}
+          ${kpi("Districts affectés", CHOLERA.districts.length, "", "sur 2 provinces", "", "flat", "orange", true)}
         </div>
-        <div class="grid-2">
-          ${card("Courbe épidémique", "Cas confirmés et suspects par semaine", `<div class="epi-chart">${courbe}</div>`,
-            "Pic en semaine 26, rebond en semaine 30. La transmission n'est pas éteinte.")}
-          ${card("Répartition géographique", "Par province touchée",
-            `<table class="tbl-s"><tr><th>Province</th><th class="num">Cas</th><th class="num">Décès</th><th class="num">Létalité</th></tr>${provRows}</table>`,
-            "N'Djamena concentre une létalité plus forte, signe d'une prise en charge tardive.")}
-        </div>
-        <div class="grid-2">
-          ${card("Profil par âge", "Tranches les plus touchées",
-            `<div class="demo-liste">${ageRows}</div>`, "")}
-          ${card("Répartition par sexe", g.cas + " cas au total",
-            `<div class="sexe-split">
-              <div class="sexe-part"><div class="sexe-barre"><div class="sexe-fill-h" style="width:${Math.round(CHOLERA.sexe.M/totSexe*100)}%"></div></div><span>Hommes ${CHOLERA.sexe.M} (${Math.round(CHOLERA.sexe.M/totSexe*100)}%)</span></div>
-              <div class="sexe-part"><div class="sexe-barre"><div class="sexe-fill-f" style="width:${Math.round(CHOLERA.sexe.F/totSexe*100)}%"></div></div><span>Femmes ${CHOLERA.sexe.F} (${Math.round(CHOLERA.sexe.F/totSexe*100)}%)</span></div>
+        ${V ? `<div class="cfr-bloc">
+          <div class="cfr-principal">
+            <div class="cfr-lib">Taux de létalité</div>
+            <div class="cfr-chiffre"><span class="cfr-val rag-${cfrRag}-txt">${String(V.cfr_actuel).replace(".", ",")}</span><span class="cfr-unite">%</span></div>
+            <div class="cfr-sous">sur les 3 dernières semaines glissantes</div>
+          </div>
+          <div class="cfr-courbe">
+            <div class="cfr-courbe-tete"><span>Évolution hebdomadaire</span><span class="cfr-courbe-seuil">— seuil d'alerte 1%</span></div>
+            ${sparkLetalite(CHOL_S.cfr_glissant)}
+            <div class="cfr-axe"><span>S${CHOL_S.sems[0]}</span><span>S${CHOL_S.sems[CHOL_S.sems.length - 1]}</span></div>
+          </div>
+          <div class="cfr-variations">
+            <div class="cfr-var">
+              <span class="cfr-var-lib">Depuis la semaine précédente</span>
+              <span class="cfr-var-val ${V.delta > 0 ? 'var-hausse' : V.delta < 0 ? 'var-baisse' : 'var-stable'}">${V.delta > 0 ? "▲" : V.delta < 0 ? "▼" : "▬"} ${(V.delta > 0 ? "+" : "") + String(V.delta).replace(".", ",")} point${Math.abs(V.delta) >= 2 ? "s" : ""}</span>
             </div>
-            <div class="chol-note">Confirmation biologique : ${g.confirmes_tdr} cas positifs au test de diagnostic rapide. Hospitalisés : ${g.hospitalises}.</div>`, "")}
+            <div class="cfr-var">
+              <span class="cfr-var-lib">Létalité cumulée depuis le début</span>
+              <span class="cfr-var-val">${String(V.cfr_cumule).replace(".", ",")}%</span>
+            </div>
+            <div class="cfr-var">
+              <span class="cfr-var-lib">Cas notifiés, S${V.sem_precedente} → S${V.sem_actuelle}</span>
+              <span class="cfr-var-val ${V.cas_actuel > V.cas_precedent ? 'var-hausse' : 'var-baisse'}">${V.cas_precedent} → ${V.cas_actuel}</span>
+            </div>
+          </div>
+        </div>` : ""}
+        <div class="grid-2">
+          ${card("Courbe épidémique", "Cas notifiés par semaine épidémiologique", `<div class="epi-chart">${courbe}</div>`,
+            "Deux vagues distinctes : pic en semaine 26 dans le foyer initial, reprise en semaine 30 sur un second foyer.")}
+          ${card("Répartition géographique", "Cas notifiés et létalité par province",
+            `<table class="tbl-s"><tr><th>Province</th><th class="num">Cas notifiés</th><th class="num">Décès</th><th class="num">Létalité</th></tr>${provRows}</table>`,
+            "Le taux de létalité est plus élevé à N'Djamena, ce qui oriente vers un délai de prise en charge plutôt que vers une gravité initiale supérieure.")}
+        </div>
+        <div class="grid-2">
+          ${card("Structure démographique des cas", "Pyramide des âges, " + g.cas + " cas notifiés",
+            CHOL_S ? pyramideAges(CHOL_S.pyramide) : `<div class="demo-liste">${ageRows}</div>`,
+            "Les moins de 15 ans concentrent la majorité des cas. Au-delà de 15 ans, les femmes sont plus représentées, ce qui suit l'exposition domestique à l'eau.")}
+          ${card("Prise en charge", "Suivi des cas notifiés",
+            `<table class="tbl-s">
+              <tr><th>Indicateur</th><th class="num">Effectif</th><th class="num">Part</th></tr>
+              <tr><td>Cas hospitalisés</td><td class="num">${g.hospitalises}</td><td class="num">${Math.round(g.hospitalises / g.cas * 100)}%</td></tr>
+              <tr><td>Confirmés par test rapide</td><td class="num">${g.confirmes_tdr}</td><td class="num">${Math.round(g.confirmes_tdr / g.cas * 100)}%</td></tr>
+              <tr><td>Sortis guéris</td><td class="num">${g.gueris}</td><td class="num">${Math.round(g.gueris / g.cas * 100)}%</td></tr>
+              <tr><td>Décès</td><td class="num">${g.deces}</td><td class="num">${String(g.létalité).replace(".", ",")}%</td></tr>
+            </table>`,
+            "La confirmation biologique porte sur un échantillon des cas, conformément aux recommandations en phase épidémique déclarée : les autres cas répondent à la définition clinique.")}
         </div>
       </div>
     `
@@ -5771,13 +5846,13 @@ VIEWS["cousp-alert"] = () => {
       <div class="ph">
         <div class="ph-tag">◆ Foyers à surveiller</div>
         <div class="ph-title">Foyers actifs de choléra</div>
-        <div class="ph-sub">Districts classés par charge de cas et létalité. ${CHOLERA.meta.periode}.</div>
+        <div class="ph-sub">Districts classés par charge de cas notifiés et taux de létalité. ${CHOLERA.meta.periode}.</div>
       </div>
       <div class="content">
         ${critiques.length ? `<div class="chol-alerte"><span class="chol-alerte-ic">▲</span> <span>${critiques.map(d => nomPr(d.nom) + " (" + d.létalité + "% de létalité)").join(", ")} ${critiques.length > 1 ? "dépassent" : "dépasse"} nettement le seuil d'alerte. La prise en charge précoce et la réhydratation sont à renforcer en priorité.</span></div>` : ""}
-        ${card("Districts touchés", CHOLERA.districts.length + " districts, triés par nombre de cas",
-          `<table class="tbl-s"><tr><th class="sao-rang">Rang</th><th>District</th><th class="num">Cas</th><th class="num">Décès</th><th class="num">Létalité</th></tr>${rows}</table>`,
-          "Source : liste linéaire COUSP. La létalité, plus que le nombre de cas, signale où la riposte doit se concentrer.")}
+        ${card("Districts affectés", CHOLERA.districts.length + " districts, classés par nombre de cas notifiés",
+          `<table class="tbl-s"><tr><th class="sao-rang">Rang</th><th>District</th><th class="num">Cas notifiés</th><th class="num">Décès</th><th class="num">Létalité</th></tr>${rows}</table>`,
+          "Source : liste linéaire de surveillance. Le taux de létalité, plus que le nombre de cas notifiés, indique où la prise en charge doit être renforcée.")}
       </div>
     `
   };
@@ -5785,6 +5860,40 @@ VIEWS["cousp-alert"] = () => {
 
 
 // ---- Carte choléra : districts touchés colorés par niveau de risque, clignotants sur les foyers actifs ----
+// Sparkline de létalité : courbe en aires, seuil d'alerte OMS à 1%
+function sparkLetalite(serie, w, hh) {
+  w = w || 200; hh = hh || 46;
+  const pts = serie.filter(p => p.cfr != null);
+  if (pts.length < 2) return "";
+  const maxV = Math.max(...pts.map(p => p.cfr), 2);
+  const x = (i) => (i / (pts.length - 1)) * (w - 2) + 1;
+  const y = (v) => hh - 3 - (v / maxV) * (hh - 8);
+  const ligne = pts.map((p, i) => `${x(i).toFixed(1)},${y(p.cfr).toFixed(1)}`).join(" ");
+  const aire = `1,${hh - 3} ${ligne} ${(w - 1).toFixed(1)},${hh - 3}`;
+  const ySeuil = y(1);
+  const dernier = pts[pts.length - 1];
+  return `<svg class="spark-let" viewBox="0 0 ${w} ${hh}" preserveAspectRatio="none" role="img" aria-label="Évolution de la létalité">
+    <line class="spark-seuil" x1="1" y1="${ySeuil.toFixed(1)}" x2="${w - 1}" y2="${ySeuil.toFixed(1)}"></line>
+    <polygon class="spark-aire" points="${aire}"></polygon>
+    <polyline class="spark-ligne" points="${ligne}"></polyline>
+    <circle class="spark-pt" cx="${x(pts.length - 1).toFixed(1)}" cy="${y(dernier.cfr).toFixed(1)}" r="2.6"></circle>
+  </svg>`;
+}
+// Pyramide des âges : standard épidémiologique pour la structure démographique des cas
+function pyramideAges(pyr) {
+  const maxV = Math.max(...pyr.map(p => Math.max(p.H, p.F)));
+  const lignes = pyr.slice().reverse().map(p => `
+    <div class="pyr-ligne">
+      <div class="pyr-cote pyr-g"><div class="pyr-bar pyr-h" style="width:${(p.H / maxV * 100).toFixed(0)}%" title="${p.H} hommes"></div><span class="pyr-n">${p.H}</span></div>
+      <div class="pyr-lab">${p.tranche}</div>
+      <div class="pyr-cote pyr-d"><div class="pyr-bar pyr-f" style="width:${(p.F / maxV * 100).toFixed(0)}%" title="${p.F} femmes"></div><span class="pyr-n">${p.F}</span></div>
+    </div>`).join("");
+  return `<div class="pyr-bloc">
+    <div class="pyr-entete"><span class="pyr-lg">Masculin</span><span class="pyr-lc">Tranche d'âge</span><span class="pyr-ld">Féminin</span></div>
+    ${lignes}
+  </div>`;
+}
+
 function renderCarteCholera() {
   if (!CHOL_A) return "";
   const CARTE_DIST = { "KARAL": "Karal", "N'Djamena Nord": "Ndjamena-Nord", "N'Djamena Centre": "Ndjamena-Centre", "N'Djamena Est": "Ndjamena-Est" };
@@ -5918,7 +6027,7 @@ VIEWS["cousp-deepdive"] = () => {
 
       <div class="grid-2">
         ${card("La déshydratation commande la létalité", "Gradient dose-réponse",
-          `<table class="tbl-s"><tr><th>Déshydratation</th><th class="num">Cas</th><th class="num">Décès</th><th class="num">Létalité</th></tr>${gradRows}</table>
+          `<table class="tbl-s"><tr><th>Degré de déshydratation</th><th class="num">Cas</th><th class="num">Décès</th><th class="num">Taux de létalité</th></tr>${gradRows}</table>
            <div class="dd-test-note">Test de tendance : ${grad.detail.replace("r=", "coefficient r = ").replace("p=", ", ").replace(".", ",")}. La relation est graduée, ce qui renforce l'hypothèse d'un lien causal plutôt que fortuit.</div>`, "")}
         ${card("Facteurs testés sur le risque de décès", "Comparaison des létalités et rapport de cotes",
           `<table class="tbl-s"><tr><th>Facteur</th><th class="num">Présent</th><th class="num">Absent</th><th class="num">OR</th><th class="num">Signification</th></tr>${autresTests}</table>
@@ -5938,8 +6047,8 @@ VIEWS["cousp-deepdive"] = () => {
       </div>
 
       <div class="grid-2">
-        ${card("Localités à surveiller en priorité", "Score composite de risque",
-          `<table class="tbl-s"><tr><th>Localité</th><th class="num">Cas</th><th class="num">Récents</th><th class="num">Létalité lissée</th><th>Score</th></tr>${locRows}</table>
+        ${card("Localités à surveiller en priorité", "Score composite de risque, 2 dernières semaines",
+          `<table class="tbl-s"><tr><th>Localité</th><th class="num">Cas notifiés</th><th class="num">2 dern. sem.</th><th class="num">Létalité lissée</th><th>Score</th></tr>${locRows}</table>
            <div class="dd-test-note">La létalité est lissée par une pondération bayésienne pour éviter qu'une localité à un seul cas et un décès n'affiche 100%. Le score combine activité récente, excès de létalité, sévérité et volume.</div>`, "")}
         ${card("Profil des malades", "Répartition par âge et fréquence des signes",
           `<div class="dd-sous-titre">Âge des cas</div><div class="demo-liste">${profilHtml}</div>
