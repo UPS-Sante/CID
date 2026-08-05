@@ -404,7 +404,7 @@
     margin: 14px 12px 0;
     padding: 10px 12px;
     background: var(--royal-tint);
-    border: 1px solid var(--royal-pale);
+    border: none;
     border-radius: var(--radius-sm);
     font-size: 10.5px;
     color: var(--royal-d);
@@ -575,7 +575,7 @@
     margin: 16px 22px 0;
     padding: 11px 14px;
     background: linear-gradient(90deg, var(--pda-tint) 0%, var(--royal-tint) 100%);
-    border: 1px solid var(--royal-pale);
+    border: none;
     border-radius: var(--radius);
     display: flex;
     align-items: center;
@@ -872,7 +872,7 @@
   .card {
     background: var(--surface);
     border-radius: var(--radius);
-    border: 1px solid var(--border);
+    border:none;
     overflow: hidden;
   }
   .card-hdr {
@@ -1396,7 +1396,6 @@
 
   .kpe-action {
     background: var(--royal-tint);
-    border-left: 3px solid var(--royal);
     padding: 9px 12px;
     margin-top: 10px;
     border-radius: 4px;
@@ -1749,8 +1748,7 @@
     margin: 14px 22px 0;
     padding: 11px 14px;
     background: linear-gradient(90deg, var(--royal-tint) 0%, white 70%);
-    border: 1px solid var(--royal-pale);
-    border-left: 4px solid var(--royal);
+    border: none;
     border-radius: var(--radius);
     display: flex;
     align-items: center;
@@ -2870,7 +2868,7 @@
 
   /* ====== VUE DELIVERY UNIT — Priorité vaccination ====== */
   .du-piliers { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:16px; }
-  .du-pilier { background:var(--surface); border-radius:var(--radius); padding:16px 16px 14px; box-shadow:var(--shadow-sm); border-top:3px solid var(--royal); }
+  .du-pilier { background:var(--surface); border-radius:var(--radius); padding:16px 16px 14px; box-shadow:var(--shadow-sm); }
   .du-pilier-tete { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; min-height:56px; }
   .du-pilier-nom { font-family:var(--font-h); font-size:15px; font-weight:700; color:var(--royal); }
   .du-pilier-sous { font-size:10.5px; color:var(--muted); line-height:1.3; margin-top:3px; }
@@ -2900,43 +2898,43 @@
   @media (max-width:480px){ .du-piliers{ grid-template-columns:1fr;} }
 
   /* ============ COCKPIT MINISTRE ============ */
-  .ck-hero { background:linear-gradient(135deg,var(--royal-d),var(--royal)); border-radius:14px; padding:18px 24px; display:flex; justify-content:space-between; align-items:center; gap:24px; margin-bottom:14px; box-shadow:var(--shadow-md); flex-wrap:wrap; }
+  .ck-hero { background:linear-gradient(135deg,var(--royal-d),var(--royal)); border-radius:12px; padding:13px 20px; display:flex; justify-content:space-between; align-items:center; gap:24px; margin-bottom:10px; box-shadow:var(--shadow-md); flex-wrap:wrap; }
   .ck-hero-kicker { font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold-l); margin-bottom:8px; }
-  .ck-hero-titre { font-family:var(--font-h); font-size:25px; font-weight:700; color:#fff; line-height:1.05; }
+  .ck-hero-titre { font-family:var(--font-h); font-size:20px; font-weight:700; color:#fff; line-height:1.05; }
   .ck-hero-date { font-size:12.5px; color:#C7D2E4; margin-top:8px; }
   .ck-hero-r { display:flex; align-items:center; gap:22px; }
   .ck-hero-stat { text-align:center; }
-  .ck-hs-val { font-family:var(--font-h); font-size:26px; font-weight:700; color:#fff; font-variant-numeric:tabular-nums; }
+  .ck-hs-val { font-family:var(--font-h); font-size:20px; font-weight:700; color:#fff; font-variant-numeric:tabular-nums; }
   .ck-hs-lib { font-size:10.5px; color:#B8C4DC; margin-top:2px; max-width:96px; }
   .ck-hero-sep { width:1px; height:44px; background:rgba(255,255,255,0.18); }
 
-  .ck-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:14px; }
-  .ck-kpi { background:var(--surface); border-radius:12px; padding:14px 15px; box-shadow:var(--shadow-sm); cursor:pointer; transition:box-shadow .14s, transform .14s; }
+  .ck-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:10px; }
+  .ck-kpi { background:var(--surface); border-radius:10px; padding:11px 13px; box-shadow:var(--shadow-sm); cursor:pointer; transition:box-shadow .14s, transform .14s; }
   .ck-kpi:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
   .ck-kpi:focus-visible { box-shadow:var(--focus-ring); outline:none; }
-  .ck-kpi-tete { display:flex; justify-content:space-between; align-items:center; margin-bottom:9px; }
-  .ck-kpi-ic { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; color:#fff; }
+  .ck-kpi-tete { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .ck-kpi-ic { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; color:#fff; }
   .ck-ic-green { background:var(--rag-green); } .ck-ic-yellow { background:var(--rag-yellow); } .ck-ic-orange { background:var(--rag-orange); } .ck-ic-red { background:var(--rag-red); } .ck-ic-na { background:var(--rag-na); }
   .ck-kpi-badge { font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px; }
   .ck-kpi-badge.rag-green { background:var(--rag-green-l); color:var(--rag-green); } .ck-kpi-badge.rag-yellow { background:var(--rag-yellow-l); color:var(--rag-yellow); } .ck-kpi-badge.rag-orange { background:var(--rag-orange-l); color:var(--rag-orange); } .ck-kpi-badge.rag-red { background:var(--rag-red-l); color:var(--rag-red); } .ck-kpi-badge.rag-na { background:var(--rag-na-l); color:var(--rag-na); }
-  .ck-kpi-val { font-family:var(--font-h); font-size:27px; font-weight:700; color:var(--ink); line-height:1; font-variant-numeric:tabular-nums; }
+  .ck-kpi-val { font-family:var(--font-h); font-size:22px; font-weight:700; color:var(--ink); line-height:1; font-variant-numeric:tabular-nums; }
   .ck-kpi-lib { font-size:13px; font-weight:600; color:var(--body); margin:6px 0 4px; }
   .ck-kpi-sous { font-size:11px; color:var(--muted); line-height:1.4; }
   .ck-kpi-lien { color:var(--royal-l); font-weight:600; white-space:nowrap; }
 
-  .ck-brief { background:var(--gold-tint); border-radius:12px; padding:15px 20px; margin-bottom:14px; }
+  .ck-brief { background:var(--gold-tint); border-radius:10px; padding:11px 16px; margin-bottom:10px; }
   .ck-brief-kicker { font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--gold-d); margin-bottom:8px; }
-  .ck-brief-titre { font-family:var(--font-h); font-size:16px; font-weight:700; color:var(--ink); margin-bottom:10px; }
+  .ck-brief-titre { font-family:var(--font-h); font-size:14px; font-weight:700; color:var(--ink); margin-bottom:7px; }
   .ck-brief-grille { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
   .ck-brief-pt { display:flex; gap:9px; font-size:12.5px; color:var(--body); line-height:1.45; }
   .ck-brief-puce { width:7px; height:7px; border-radius:50%; background:var(--gold); flex-shrink:0; margin-top:6px; }
 
-  .ck-section { background:var(--surface); border-radius:12px; padding:16px 20px; box-shadow:var(--shadow-sm); }
-  .ck-section-tete { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; }
+  .ck-section { background:var(--surface); border-radius:10px; padding:12px 16px; box-shadow:var(--shadow-sm); }
+  .ck-section-tete { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
   .ck-section-titre { font-family:var(--font-h); font-size:18px; font-weight:700; color:var(--ink); }
   .ck-section-sous { font-size:12px; color:var(--muted); margin-top:2px; }
   .ck-section-maj { font-size:11px; color:var(--royal); background:var(--royal-tint); padding:5px 11px; border-radius:20px; white-space:nowrap; }
-  .ck-inds { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  .ck-inds { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
   .ck-ind { cursor:pointer; border-radius:10px; padding:6px; margin:-6px; transition:background .12s; }
   .ck-ind:hover { background:var(--surface-2); }
   .ck-ind:focus-visible { box-shadow:var(--focus-ring); outline:none; }
@@ -2945,13 +2943,13 @@
   .ck-ind-delta { font-size:11px; font-weight:700; }
   .ck-ind-delta.dir-up { color:var(--rag-green); } .ck-ind-delta.dir-down { color:var(--rag-red); } .ck-ind-delta.dir-flat { color:var(--muted); }
   .ck-ind-chiffre { display:flex; align-items:baseline; gap:5px; margin-bottom:8px; flex-wrap:wrap; }
-  .ck-ind-val { font-family:var(--font-h); font-size:23px; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums; }
+  .ck-ind-val { font-family:var(--font-h); font-size:19px; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums; }
   .ck-ind-unite { font-size:12px; color:var(--muted); }
   .ck-ind-cible { font-size:10.5px; color:var(--muted-2); margin-left:auto; }
   .ck-ind-barre { height:6px; background:var(--border); border-radius:4px; overflow:hidden; margin-bottom:7px; }
   .ck-ind-fill { height:100%; border-radius:4px; }
   .ck-ind-source { font-size:10px; color:var(--muted-2); }
-  .ck-lecture { font-size:11px; color:var(--muted); line-height:1.5; margin-top:16px; padding-top:14px; border-top:1px solid var(--border); }
+  .ck-lecture { font-size:10px; color:var(--muted); line-height:1.45; margin-top:10px; padding-top:9px; border-top:1px solid var(--border); }
 
   @media (max-width:1024px){ .ck-kpis,.ck-inds{ grid-template-columns:repeat(2,1fr);} .ck-brief-grille{ grid-template-columns:1fr;} }
   @media (max-width:900px){ .ck-hero{ flex-direction:column; align-items:flex-start;} .ck-hero-r{ width:100%; justify-content:space-between; gap:10px;} }
@@ -2966,7 +2964,7 @@
   .trend-up { color:var(--rag-green); } .trend-down { color:var(--rag-red); }
   .sp-attente .sp-label { opacity:0.55; }
   .sp-attente-badge { font-size:9px; font-weight:600; color:var(--muted); background:var(--surface-2); border:1px solid var(--border); padding:1px 7px; border-radius:10px; margin-left:auto; }
-  .attente-carte { display:flex; gap:20px; align-items:center; background:var(--surface); border:1px dashed var(--border); border-radius:14px; padding:32px 30px; box-shadow:var(--shadow-sm); }
+  .attente-carte { display:flex; gap:20px; align-items:center; background:var(--surface); border:none; border-radius:14px; padding:32px 30px; box-shadow:var(--shadow-sm); }
   .attente-ic { font-size:40px; color:var(--muted-2); flex-shrink:0; }
   .attente-titre { font-family:var(--font-h); font-size:17px; font-weight:700; color:var(--royal); margin-bottom:6px; }
   .attente-txt { font-size:13px; color:var(--body); line-height:1.5; max-width:640px; }
@@ -2996,25 +2994,25 @@
   .sexe-fill-h { height:100%; background:var(--royal); border-radius:4px; }
   .sexe-fill-f { height:100%; background:var(--gold); border-radius:4px; }
   .chol-note { font-size:11px; color:var(--muted); line-height:1.5; padding-top:10px; border-top:1px solid var(--border); }
-  .chol-alerte { display:flex; gap:10px; align-items:flex-start; background:var(--rag-red-l); border:1px solid var(--rag-red); border-radius:12px; padding:14px 18px; margin-bottom:16px; font-size:12.5px; color:var(--ink); line-height:1.5; }
+  .chol-alerte { display:flex; gap:10px; align-items:flex-start; background:var(--rag-red-l); border:none; border-radius:12px; padding:14px 18px; margin-bottom:16px; font-size:12.5px; color:var(--ink); line-height:1.5; }
   .chol-alerte-ic { color:var(--rag-red); font-weight:700; font-size:15px; flex-shrink:0; }
-  .ck-surv { display:flex; justify-content:space-between; align-items:center; gap:20px; background:linear-gradient(135deg,#7A1E1E,#A62C2C); border-radius:12px; padding:16px 22px; margin-bottom:14px; cursor:pointer; transition:box-shadow .14s, transform .14s; box-shadow:var(--shadow-sm); flex-wrap:wrap; }
+  .ck-surv { display:flex; justify-content:space-between; align-items:center; gap:16px; background:linear-gradient(135deg,#7A1E1E,#A62C2C); border-radius:10px; padding:11px 18px; margin-bottom:10px; cursor:pointer; transition:box-shadow .14s, transform .14s; box-shadow:var(--shadow-sm); flex-wrap:wrap; }
   .ck-surv:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
   .ck-surv:focus-visible { box-shadow:var(--focus-ring); outline:none; }
   .ck-surv-tag { font-size:10.5px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#F3C9C9; }
-  .ck-surv-titre { font-family:var(--font-h); font-size:19px; font-weight:700; color:#fff; margin-top:4px; }
+  .ck-surv-titre { font-family:var(--font-h); font-size:16px; font-weight:700; color:#fff; margin-top:4px; }
   .ck-surv-zone { font-size:11px; color:#EBC9C9; margin-top:2px; }
   .ck-surv-stats { display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
   .ck-surv-stat { text-align:center; }
-  .cs-val { font-family:var(--font-h); font-size:24px; font-weight:700; color:#fff; font-variant-numeric:tabular-nums; }
+  .cs-val { font-family:var(--font-h); font-size:19px; font-weight:700; color:#fff; font-variant-numeric:tabular-nums; }
   .cs-val.cs-alerte { color:#FFD9A8; }
   .cs-lib { font-size:10px; color:#EBC9C9; margin-top:2px; }
   .ck-surv-lien { font-size:12px; font-weight:600; color:#fff; background:rgba(255,255,255,0.15); padding:7px 13px; border-radius:8px; white-space:nowrap; }
 
   /* ====== ANALYSE APPROFONDIE CHOLÉRA ====== */
   .dd-constats { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:18px; }
-  .dd-constat { background:var(--surface); border-radius:12px; padding:18px 20px; box-shadow:var(--shadow-sm); border-left:4px solid var(--royal); display:flex; gap:14px; }
-  .dd-constat.dd-c1 { border-left-color:#A62C2C; } .dd-constat.dd-c2 { border-left-color:var(--gold); } .dd-constat.dd-c3 { border-left-color:var(--royal); }
+  .dd-constat { background:var(--surface); border-radius:12px; padding:18px 20px; box-shadow:var(--shadow-sm); display:flex; gap:14px; }
+  
   .dd-num { font-family:var(--font-h); font-size:22px; font-weight:700; color:var(--muted-2); flex-shrink:0; line-height:1; }
   .dd-txt { font-size:12.5px; color:var(--body); line-height:1.5; }
   .dd-txt strong { color:var(--ink); }
@@ -3070,7 +3068,7 @@
   @media (max-width:1024px){ .dd-constats,.dd-limites{ grid-template-columns:1fr; } .mig-ligne{ grid-template-columns:110px 1fr 30px; } }
 
   /* ====== LÉTALITÉ : chiffre, courbe, variations ====== */
-  .cfr-bloc { display:grid; grid-template-columns:auto 1fr auto; gap:26px; align-items:center; background:var(--surface); border-radius:12px; padding:18px 22px; margin-bottom:14px; box-shadow:var(--shadow-sm); border-left:4px solid var(--rag-red); }
+  .cfr-bloc { display:grid; grid-template-columns:auto auto 1fr; gap:26px; align-items:center; background:var(--surface); border-radius:12px; padding:18px 22px; margin-bottom:14px; box-shadow:var(--shadow-sm); }
   .cfr-lib { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--muted); }
   .cfr-chiffre { display:flex; align-items:baseline; gap:3px; margin:3px 0; }
   .cfr-val { font-family:var(--font-h); font-size:38px; font-weight:700; line-height:1; font-variant-numeric:tabular-nums; }
@@ -3078,7 +3076,8 @@
   .rag-orange-txt { color:var(--rag-orange); } .rag-red-txt { color:var(--rag-red); } .rag-na-txt { color:var(--rag-na); }
   .cfr-unite { font-size:17px; font-weight:600; color:var(--muted); }
   .cfr-sous { font-size:10.5px; color:var(--muted-2); }
-  .cfr-courbe { min-width:0; }
+  .cfr-courbe { min-width:0; max-width:300px; }
+  .cfr-spark-wrap { width:100%; }
   .cfr-courbe-tete { display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-bottom:3px; }
   .cfr-courbe-seuil { color:var(--rag-orange); }
   .spark-let { width:100%; height:46px; display:block; }
@@ -3107,6 +3106,35 @@
   .pyr-g .pyr-n { text-align:left; } .pyr-d .pyr-n { text-align:right; }
   .pyr-lab { font-size:10.5px; color:var(--body); text-align:center; }
   @media (max-width:900px){ .cfr-bloc{ grid-template-columns:1fr; gap:14px; } .cfr-variations{ min-width:0; } }
+
+  /* carte de focus zone epidemique */
+  .cf-hors { fill:var(--surface-2); stroke:#fff; stroke-width:1.2; }
+  .cf-dist { stroke:#fff; stroke-width:1.4; }
+  .cf-dist.niv-critique { fill:var(--rag-red); }
+  .cf-dist.niv-eleve { fill:var(--rag-orange); }
+  .cf-dist.niv-modere { fill:var(--rag-yellow); }
+  .cf-dist.niv-faible { fill:var(--rag-green); }
+  @keyframes cfOnde { 0% { r:6; opacity:0.75; } 100% { r:30; opacity:0; } }
+  .cf-onde { fill:none; stroke:#7A1E1E; stroke-width:2; animation:cfOnde 2.1s ease-out infinite; }
+  .cf-onde2 { animation-delay:1.05s; }
+  .cf-coeur { fill:#7A1E1E; stroke:#fff; stroke-width:1.5; }
+  .cf-etiq { font-family:var(--font-b); font-size:13px; font-weight:700; fill:#5A1414; paint-order:stroke; stroke:#fff; stroke-width:3.5; stroke-linejoin:round; }
+  .cl-pastille.cl-hors { background:var(--surface-2); border:1px solid var(--border); }
+  @media (prefers-reduced-motion: reduce) { .cf-onde { animation:none; opacity:0.4; } }
+  /* module meteo */
+  .mt-bloc { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .mt-tete { display:flex; align-items:baseline; gap:8px; margin-bottom:9px; }
+  .mt-nom { font-size:13px; font-weight:700; color:var(--ink); }
+  .mt-prov { font-size:10.5px; color:var(--muted-2); }
+  .mt-temp { margin-left:auto; font-size:13px; font-weight:700; color:var(--royal); }
+  .mt-graph { display:flex; align-items:flex-end; gap:5px; height:64px; }
+  .mt-col { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; }
+  .mt-bar { width:100%; background:var(--royal-l); border-radius:3px 3px 0 0; opacity:0.55; }
+  .mt-bar.mt-fort { background:var(--royal); opacity:1; }
+  .mt-j { font-size:9px; color:var(--muted-2); margin-top:3px; }
+  .mt-note { font-size:10.5px; color:var(--muted); margin-top:7px; line-height:1.45; }
+  .mt-lecture { font-size:11px; color:var(--muted); line-height:1.55; margin-top:14px; padding-top:12px; border-top:1px solid var(--border); }
+  @media (max-width:900px){ .mt-bloc{ grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
@@ -3564,6 +3592,14 @@ async function chargerDonneesReelles(essai) {
       const cs = await fetch("chol_series.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (cs) CHOL_S = cs;
     } catch (e) {}
+    try {
+      const mt = await fetch("meteo.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (mt) METEO = mt;
+    } catch (e) {}
+    try {
+      const cf = await fetch("carte_focus.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (cf) CARTE_FOCUS = cf;
+    } catch (e) {}
     renderMain();
     // rafraichissement des donnees toutes les six heures pour les onglets laisses ouverts
     if (!window._cidRafraichissement) {
@@ -3678,6 +3714,8 @@ let PEV = null;
 let CHOLERA = null;
 let CHOL_A = null;
 let CHOL_S = null;
+let METEO = null;
+let CARTE_FOCUS = null;
 function cholDispo() { return CHOLERA && CHOLERA.global; }
 function pevDispo() { return PEV && PEV.provinces && PEV.provinces.length; }
 function pevNatCouv(code) { return (PEV && PEV.national.couvertures[code]) || null; }
@@ -5788,7 +5826,7 @@ VIEWS["cousp-surv"] = () => {
           </div>
           <div class="cfr-courbe">
             <div class="cfr-courbe-tete"><span>Évolution hebdomadaire</span><span class="cfr-courbe-seuil">— seuil d'alerte 1%</span></div>
-            ${sparkLetalite(CHOL_S.cfr_glissant)}
+            <div class="cfr-spark-wrap">${sparkLetalite(CHOL_S.cfr_glissant, 300, 46)}</div>
             <div class="cfr-axe"><span>S${CHOL_S.sems[0]}</span><span>S${CHOL_S.sems[CHOL_S.sems.length - 1]}</span></div>
           </div>
           <div class="cfr-variations">
@@ -5824,8 +5862,9 @@ VIEWS["cousp-surv"] = () => {
               <tr><td>Confirmés par test rapide</td><td class="num">${g.confirmes_tdr}</td><td class="num">${Math.round(g.confirmes_tdr / g.cas * 100)}%</td></tr>
               <tr><td>Sortis guéris</td><td class="num">${g.gueris}</td><td class="num">${Math.round(g.gueris / g.cas * 100)}%</td></tr>
               <tr><td>Décès</td><td class="num">${g.deces}</td><td class="num">${String(g.létalité).replace(".", ",")}%</td></tr>
+              <tr><td>Issue non renseignée</td><td class="num">${g.sans_issue || 0}</td><td class="num">—</td></tr>
             </table>`,
-            "La confirmation biologique porte sur un échantillon des cas, conformément aux recommandations en phase épidémique déclarée : les autres cas répondent à la définition clinique.")}
+            "Le taux de létalité est rapporté aux ${g.cas_issue_connue} cas dont l'issue est renseignée, et non au total notifié. La confirmation biologique porte sur un échantillon, conformément aux recommandations en phase épidémique déclarée.")}
         </div>
       </div>
     `
@@ -5895,29 +5934,55 @@ function pyramideAges(pyr) {
 }
 
 function renderCarteCholera() {
-  if (!CHOL_A) return "";
+  if (!CHOL_A || !CARTE_FOCUS) return "";
   const CARTE_DIST = { "KARAL": "Karal", "N'Djamena Nord": "Ndjamena-Nord", "N'Djamena Centre": "Ndjamena-Centre", "N'Djamena Est": "Ndjamena-Est" };
   const parTrace = {};
   CHOL_A.districts.forEach(d => { if (CARTE_DIST[d.nom]) parTrace[CARTE_DIST[d.nom]] = d; });
-  const fond = Object.entries(PROVINCE_PATHS).map(([id, dd]) =>
-    `<path class="chol-fond" d="${dd}"></path>`).join("");
-  const couches = DISTRICTS.filter(d => parTrace[d.name]).map(d => {
-    const info = parTrace[d.name];
-    const cls = "chol-dist niv-" + info.niveau + (info.niveau === "critique" ? " chol-clignote" : "");
-    return `<path class="${cls}" d="${d.d}"><title>${d.name} — ${info.cas} cas, ${info.deces} décès, létalité ${info.cfr}%${info.recents ? ", " + info.recents + " cas récents" : ", plus de cas récent"}</title></path>`;
+  const F = CARTE_FOCUS;
+  const formes = F.districts.map(d => {
+    const info = parTrace[d.nom];
+    if (!info) return `<path class="cf-hors" d="${d.d}"><title>${d.nom} — aucun cas notifié</title></path>`;
+    const actif = info.actif && info.recents > 0;
+    return `<path class="cf-dist niv-${info.niveau}${actif ? " cf-actif" : ""}" d="${d.d}"><title>${d.nom} : ${info.cas} cas notifiés, ${info.deces} décès, létalité ${info.cfr}%${actif ? ", " + info.recents + " cas sur 2 semaines" : ", foyer éteint"}</title></path>`;
+  }).join("");
+  // Halos d'alerte sur les foyers en transmission active
+  const centres = { "Ndjamena-Nord": [470, 452], "Ndjamena-Centre": [487, 470], "Ndjamena-Est": [505, 462], "Karal": [455, 250] };
+  const halos = F.districts.filter(d => {
+    const i = parTrace[d.nom]; return i && i.actif && i.recents > 0 && centres[d.nom];
+  }).map(d => {
+    const [cx, cy] = centres[d.nom]; const i = parTrace[d.nom];
+    return `<g class="cf-halo"><circle class="cf-onde" cx="${cx}" cy="${cy}" r="16"></circle><circle class="cf-onde cf-onde2" cx="${cx}" cy="${cy}" r="16"></circle><circle class="cf-coeur" cx="${cx}" cy="${cy}" r="5"></circle><text class="cf-etiq" x="${cx + 14}" y="${cy + 4}">${d.nom.replace("Ndjamena-", "N'Dj. ")} · ${i.recents} cas</text></g>`;
   }).join("");
   return `
     <div class="chol-carte-wrap">
-      <svg class="chol-carte" viewBox="0 0 1000 780" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-label="Carte des foyers de choléra">
-        <g>${fond}</g><g>${couches}</g>
+      <svg class="chol-carte" viewBox="0 0 ${F.w} ${F.h}" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" aria-label="Carte de la zone épidémique">
+        <g>${formes}</g><g>${halos}</g>
       </svg>
       <div class="chol-legende">
-        <span class="cl-item"><span class="cl-pastille niv-critique chol-clignote"></span> Transmission active</span>
+        <span class="cl-item"><span class="cl-pastille niv-critique"></span> Transmission active</span>
         <span class="cl-item"><span class="cl-pastille niv-eleve"></span> Risque élevé</span>
         <span class="cl-item"><span class="cl-pastille niv-modere"></span> Foyer contrôlé</span>
-        <span class="cl-item"><span class="cl-pastille niv-faible"></span> Résiduel</span>
+        <span class="cl-item"><span class="cl-pastille niv-faible"></span> Cas résiduels</span>
+        <span class="cl-item"><span class="cl-pastille cl-hors"></span> Aucun cas</span>
       </div>
     </div>`;
+}
+
+// Module météo : lecture contextuelle du risque environnemental
+function renderMeteoCroisement() {
+  if (!METEO) return "";
+  const sites = METEO.sites.map(s => {
+    const pics = s.jours.filter(j => j.p >= 50);
+    const maxP = Math.max(...s.jours.map(j => j.p));
+    const barres = s.jours.map(j => `<div class="mt-col" title="${j.d} : ${j.p}% de probabilité, ${j.h}°C"><div class="mt-bar ${j.p >= 50 ? "mt-fort" : ""}" style="height:${Math.max(6, j.p)}%"></div><span class="mt-j">${j.d.slice(0, 2)}</span></div>`).join("");
+    return `<div class="mt-site">
+      <div class="mt-tete"><span class="mt-nom">${s.nom}</span><span class="mt-prov">${s.prov}</span><span class="mt-temp">${String(s.temp).replace(".", ",")}°C</span></div>
+      <div class="mt-graph">${barres}</div>
+      <div class="mt-note">${pics.length ? "Précipitations probables à " + maxP + "% attendues, surveillance renforcée des points d'eau" : "Pas d'épisode pluvieux marqué sur la période"}</div>
+    </div>`;
+  }).join("");
+  return `<div class="mt-bloc">${sites}</div>
+    <div class="mt-lecture">Le Tchad se trouve en ${METEO.saison.nom.toLowerCase()} (${METEO.saison.mois}), période de ${METEO.saison.phase} pour les maladies hydriques. Les pluies favorisent le débordement des latrines et la contamination des puits peu protégés. Cette lecture est contextuelle : elle situe le risque environnemental sans établir de lien statistique, faute de série pluviométrique historique alignée sur les semaines épidémiologiques.</div>`;
 }
 
 VIEWS["cousp-deepdive"] = () => {
@@ -6055,6 +6120,9 @@ VIEWS["cousp-deepdive"] = () => {
            <div class="dd-sous-titre" style="margin-top:16px;">Signes cliniques relevés</div><div class="demo-liste">${symptHtml}</div>`,
           "Les moins de quinze ans forment la majorité des cas, ce qui oriente la communication et la prise en charge vers les familles et les écoles.")}
       </div>
+
+      ${card("Contexte environnemental", "Conditions météorologiques sur les zones affectées",
+        renderMeteoCroisement(), "Source : prévisions météorologiques à huit jours, relevés au " + (METEO ? METEO.maj.split("-").reverse().join("/") : "") + ".")}
 
       ${card("Portée et limites de cette analyse", "Ce que les données permettent d'affirmer, et ce qu'elles ne permettent pas",
         `<div class="dd-limites">
