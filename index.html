@@ -3166,6 +3166,44 @@
   .pl-touchee .pl-rang-fill { background:var(--rag-red); }
   .pl-rang-tag { font-size:9px; font-weight:700; color:#fff; background:var(--rag-red); padding:1px 7px; border-radius:9px; }
   @media (max-width:900px){ .pl-cols{ grid-template-columns:1fr; } .pl-rang{ grid-template-columns:20px 96px 1fr 34px auto; } }
+
+  /* barre de controle temporelle */
+  .bc-barre { display:flex; align-items:center; gap:14px; flex-wrap:wrap; background:var(--surface); border-radius:10px; padding:10px 14px; margin-bottom:14px; box-shadow:var(--shadow-sm); }
+  .bc-groupe { display:flex; gap:3px; background:var(--surface-2); border-radius:8px; padding:3px; }
+  .bc-typ { font-size:11.5px; font-weight:600; padding:5px 13px; border-radius:6px; border:none; background:transparent; color:var(--body); cursor:pointer; font-family:var(--font-b); transition:all .12s; }
+  .bc-typ:hover { color:var(--royal); }
+  .bc-typ.on { background:var(--royal); color:#fff; }
+  .bc-nav { display:flex; align-items:center; gap:6px; }
+  .bc-fleche { width:26px; height:26px; border-radius:6px; border:1px solid var(--border); background:var(--surface); color:var(--royal); font-size:15px; cursor:pointer; line-height:1; }
+  .bc-fleche:hover:not(:disabled) { background:var(--royal); color:#fff; border-color:var(--royal); }
+  .bc-fleche:disabled { opacity:0.35; cursor:default; }
+  .bc-select { font-family:var(--font-b); font-size:12px; padding:5px 10px; border-radius:7px; border:1px solid var(--border); background:var(--surface); color:var(--ink); cursor:pointer; min-width:210px; }
+  .bc-info { margin-left:auto; font-size:11px; color:var(--muted); }
+  /* chiffres cles du rapport */
+  .sr-cles { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin-bottom:14px; }
+  .sr-chiffre { background:var(--surface); border-radius:10px; padding:13px 12px; text-align:center; box-shadow:var(--shadow-sm); }
+  .sr-val { font-family:var(--font-h); font-size:26px; font-weight:700; line-height:1.05; font-variant-numeric:tabular-nums; }
+  .sr-lib { font-size:11px; font-weight:600; color:var(--body); margin-top:5px; line-height:1.25; }
+  .sr-sous { font-size:9.5px; color:var(--muted-2); margin-top:3px; line-height:1.3; }
+  .sr-total td { border-top:2px solid var(--border); font-weight:700; }
+  .sr-rep { display:flex; flex-direction:column; gap:9px; }
+  .sr-rep-l { display:grid; grid-template-columns:135px 1fr 92px; align-items:center; gap:9px; }
+  .sr-rep-lib { font-size:11.5px; color:var(--body); }
+  .sr-rep-barre { height:15px; background:var(--surface-2); border-radius:4px; overflow:hidden; }
+  .sr-rep-fill { height:100%; border-radius:4px; }
+  .sr-rep-val { font-size:11.5px; font-weight:700; color:var(--ink); text-align:right; }
+  .sr-rep-pct { font-weight:400; color:var(--muted); }
+  /* blocs d'analyse modifiables */
+  .ed-bloc { margin-bottom:14px; }
+  .ed-tete { display:flex; align-items:baseline; gap:10px; margin-bottom:6px; flex-wrap:wrap; }
+  .ed-titre { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--royal); }
+  .ed-tag { font-size:9.5px; color:var(--muted-2); font-style:italic; }
+  .ed-zone { font-size:12.5px; color:var(--body); line-height:1.6; background:var(--surface-2); border-radius:8px; padding:12px 15px; text-align:justify; transition:box-shadow .12s; }
+  .ed-zone:hover { box-shadow:inset 0 0 0 1px var(--border); }
+  .ed-zone:focus { outline:none; background:var(--surface); box-shadow:inset 0 0 0 2px var(--royal-l); }
+  @media print { .bc-barre { display:none; } .ed-zone { background:transparent; padding:0; } .ed-tag { display:none; } }
+  @media (max-width:1100px){ .sr-cles{ grid-template-columns:repeat(3,1fr); } }
+  @media (max-width:600px){ .sr-cles{ grid-template-columns:repeat(2,1fr); } .bc-info{ margin-left:0; width:100%; } }
 </style>
 </head>
 <body>
@@ -3455,6 +3493,7 @@ const PROGRAMS = [
     id:"cousp", c:"cousp", icon:"CHO", label:"Surveillance · Choléra",
     dir:"COUSP",
     sub:[
+      { id:"cousp-sitrep",  i18n_key:"sub_cousp_sitrep", label:"Rapport de situation", status:"red" },
       { id:"cousp-surv",    i18n_key:"sub_cousp_surv",   label:"Riposte au choléra",  status:"red" },
       { id:"cousp-alert",   i18n_key:"sub_cousp_alerts", label:"Foyers actifs",       status:"orange" },
       { id:"cousp-deepdive", i18n_key:"sub_cousp_dd",    label:"Analyse approfondie", status:"red" },
@@ -3635,6 +3674,10 @@ async function chargerDonneesReelles(essai) {
       const pa = await fetch("pluie_analyse.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (pa) PLUIE_A = pa;
     } catch (e) {}
+    try {
+      const cp = await fetch("chol_periodes.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (cp) CHOL_P = cp;
+    } catch (e) {}
     renderMain();
     // rafraichissement des donnees toutes les six heures pour les onglets laisses ouverts
     if (!window._cidRafraichissement) {
@@ -3752,6 +3795,7 @@ let CHOL_S = null;
 let METEO = null;
 let CARTE_FOCUS = null;
 let PLUIE_A = null;
+let CHOL_P = null;
 function cholDispo() { return CHOLERA && CHOLERA.global; }
 function pevDispo() { return PEV && PEV.provinces && PEV.provinces.length; }
 function pevNatCouv(code) { return (PEV && PEV.national.couvertures[code]) || null; }
@@ -4035,6 +4079,7 @@ const I18N = {
     sub_rh_eff: "Effectifs",
     sub_rh_vac: "Postes vacants",
     sub_rh_form: "Formations",
+    sub_cousp_sitrep: "Rapport de situation",
     sub_cousp_dd: "Analyse approfondie",
     sub_cousp_alerts: "Foyers actifs",
     sub_cousp_surv: "Riposte au choléra",
@@ -4228,6 +4273,7 @@ const I18N = {
     sub_rh_eff: "Workforce",
     sub_rh_vac: "Vacancies",
     sub_rh_form: "Training",
+    sub_cousp_sitrep: "Situation report",
     sub_cousp_dd: "In-depth analysis",
     sub_cousp_alerts: "Active clusters",
     sub_cousp_surv: "Epi surveillance",
@@ -4421,6 +4467,7 @@ const I18N = {
     sub_rh_eff: "القوى العاملة",
     sub_rh_vac: "الوظائف الشاغرة",
     sub_rh_form: "التدريب",
+    sub_cousp_sitrep: "تقرير الوضع",
     sub_cousp_dd: "تحليل معمق",
     sub_cousp_alerts: "البؤر النشطة",
     sub_cousp_surv: "المراقبة الوبائية",
@@ -6071,6 +6118,156 @@ function renderAnalysePluie() {
     <div class="pl-note">Cumul de juin et juillet 2026 sur les ${cl.length} provinces. Les deux provinces en épidémie occupent les rangs ${A.falsification.rangs.join(" et ")}, au milieu du classement, tandis que les cinq provinces les plus arrosées ne rapportent aucun cas (test de Mann-Whitney, p = ${nb(A.falsification.p)}). La pluviométrie ne distingue donc pas les territoires atteints : d'autres déterminants, accès à l'eau potable, assainissement, densité urbaine, expliquent mieux la localisation des foyers.</div>
   `;
 }
+
+// ---- Barre de contrôle temporelle : jour, semaine épidémiologique, mois ----
+function cholPeriodeCourante() {
+  if (!CHOL_P) return null;
+  const typ = state.cholTypePeriode || "semaine";
+  const cles = CHOL_P.cles[typ];
+  const cle = state.cholPeriode && cles.includes(state.cholPeriode) ? state.cholPeriode : cles[cles.length - 1];
+  return { typ, cle, cles, bloc: CHOL_P[typ][cle] };
+}
+function setCholTypePeriode(typ) {
+  state.cholTypePeriode = typ;
+  state.cholPeriode = CHOL_P.cles[typ][CHOL_P.cles[typ].length - 1];
+  renderMain();
+}
+function setCholPeriode(cle) { state.cholPeriode = cle; renderMain(); }
+function decalerCholPeriode(pas) {
+  const p = cholPeriodeCourante(); if (!p) return;
+  const i = p.cles.indexOf(p.cle) + pas;
+  if (i >= 0 && i < p.cles.length) { state.cholPeriode = p.cles[i]; renderMain(); }
+}
+function libellePeriode(typ, cle) {
+  if (typ === "jour") { const [a, m, j] = cle.split("-"); return `${j}/${m}/${a}`; }
+  if (typ === "semaine") { const [a, s] = cle.split("-S"); return `Semaine épidémiologique ${parseInt(s, 10)}, ${a}`; }
+  const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+  const [a, m] = cle.split("-"); return `${MOIS[parseInt(m, 10) - 1]} ${a}`;
+}
+function barreControleChol() {
+  const p = cholPeriodeCourante(); if (!p) return "";
+  const i = p.cles.indexOf(p.cle);
+  const opts = p.cles.map(c => `<option value="${c}"${c === p.cle ? " selected" : ""}>${libellePeriode(p.typ, c)}</option>`).join("");
+  const onglet = (t, lib) => `<button class="bc-typ ${p.typ === t ? "on" : ""}" onclick="setCholTypePeriode('${t}')">${lib}</button>`;
+  return `<div class="bc-barre">
+    <div class="bc-groupe">${onglet("jour", "Jour")}${onglet("semaine", "Semaine épi.")}${onglet("mois", "Mois")}</div>
+    <div class="bc-nav">
+      <button class="bc-fleche" onclick="decalerCholPeriode(-1)" ${i === 0 ? "disabled" : ""} aria-label="Période précédente">‹</button>
+      <select class="bc-select" onchange="setCholPeriode(this.value)">${opts}</select>
+      <button class="bc-fleche" onclick="decalerCholPeriode(1)" ${i === p.cles.length - 1 ? "disabled" : ""} aria-label="Période suivante">›</button>
+    </div>
+    <div class="bc-info">${p.bloc.periode.cas} cas sur la période · ${p.bloc.cumul.cas} en cumul</div>
+  </div>`;
+}
+
+// ---- Analyse rédigée à partir des données, modifiable avant export ----
+function blocEditable(id, titre, texte) {
+  return `<div class="ed-bloc">
+    <div class="ed-tete"><span class="ed-titre">${titre}</span><span class="ed-tag">Proposition à valider · texte modifiable</span></div>
+    <div class="ed-zone" contenteditable="true" spellcheck="false" data-ed="${id}">${texte}</div>
+  </div>`;
+}
+function analyseSituation(p) {
+  const P = p.bloc.periode, C = p.bloc.cumul;
+  const lib = libellePeriode(p.typ, p.cle).toLowerCase();
+  const cfr = C.letalite;
+  const tendance = P.cas === 0 ? "Aucun cas notifié sur la période."
+    : `${P.cas} cas ${P.cas > 1 ? "ont été notifiés" : "a été notifié"} sur ${lib}, dont ${P.deces} décès.`;
+  const dist = C.districts.length ? C.districts.map(d => `${d.nom} (${d.cas} cas, ${d.deces} décès)`).join(", ") : "aucun district";
+  const seuil = cfr > 1 ? `Le taux de létalité cumulé s'établit à ${String(cfr).replace(".", ",")}%, au-dessus du seuil acceptable de 1% retenu par les normes internationales.`
+    : `Le taux de létalité cumulé, à ${String(cfr).replace(".", ",")}%, demeure sous le seuil de 1%.`;
+  const desh = C.desh.moderee + C.desh.severe;
+  const partDesh = C.cas ? Math.round(desh / C.cas * 100) : 0;
+  return `${tendance} Le cumul atteint ${C.cas} cas et ${C.deces} décès depuis le début de l'épisode, répartis sur ${C.districts.length} districts sanitaires : ${dist}. ${seuil} Près de ${partDesh}% des patients se présentent avec une déshydratation modérée ou sévère, ce qui souligne le besoin d'une détection précoce et d'une prise en charge rapide.`;
+}
+function analyseRisque(p) {
+  const C = p.bloc.cumul;
+  const parCfr = C.districts.filter(d => d.cas >= 5).map(d => ({ ...d, cfr: d.cas ? d.deces / d.cas * 100 : 0 })).sort((a, b) => b.cfr - a.cfr);
+  const pire = parCfr[0];
+  const villages = C.villages;
+  return `Le suivi porte sur ${villages} villages ou quartiers ayant notifié au moins un cas. ${pire ? `Le district de ${pire.nom} enregistre la létalité la plus élevée parmi les districts à effectif suffisant, à ${pire.cfr.toFixed(1).replace(".", ",")}%, ce qui appelle une revue des délais de prise en charge et de la disponibilité des solutés.` : ""} La structure démographique des cas, avec un âge médian de ${C.age_median} ans et un sexe ratio femmes sur hommes de ${String(C.ratio_fh).replace(".", ",")}, oriente la communication vers les ménages et les établissements scolaires.`;
+}
+
+VIEWS["cousp-sitrep"] = () => {
+  if (!CHOL_P) return { crumbs: ["Surveillance · Choléra", "Rapport de situation"], html: `<div class="ph"><div class="ph-title">Rapport de situation</div><div class="ph-sub">Chargement.</div></div>` };
+  const p = cholPeriodeCourante();
+  const P = p.bloc.periode, C = p.bloc.cumul;
+  const nb = (x) => x == null ? "ND" : String(x).replace(".", ",");
+  const cfrRag = C.letalite == null ? "na" : C.letalite >= 3 ? "red" : C.letalite >= 1 ? "orange" : "green";
+
+  // Chiffres clés, dans l'ordre du rapport de situation
+  const chiffre = (val, lib, sous, rag) => `<div class="sr-chiffre">
+      <div class="sr-val rag-${rag || "na"}-txt">${val}</div>
+      <div class="sr-lib">${lib}</div>
+      <div class="sr-sous">${sous}</div>
+    </div>`;
+  const cles = `<div class="sr-cles">
+    ${chiffre(C.cas, "Cas cumulés", (P.cas ? "+" + P.cas + " sur la période" : "aucun nouveau cas"), "na")}
+    ${chiffre(C.deces, "Décès cumulés", (P.deces ? "+" + P.deces + " sur la période" : "aucun nouveau décès"), "red")}
+    ${chiffre(nb(C.letalite) + " %", "Létalité globale", "seuil acceptable < 1 %", cfrRag)}
+    ${chiffre(C.districts.length, "Districts touchés", C.provinces.length + " province" + (C.provinces.length > 1 ? "s" : ""), "orange")}
+    ${chiffre(C.villages, "Villages ou quartiers", "ayant notifié au moins un cas", "na")}
+    ${chiffre(C.tdr_total ? Math.round(C.tdr_pos / C.tdr_total * 100) + " %" : "ND", "Positivité au test rapide", C.tdr_pos + " sur " + C.tdr_total + " prélèvements", "na")}
+  </div>`;
+
+  // Tableau de répartition, calqué sur le tableau I du rapport
+  const lignes = C.districts.map(d => {
+    const cfr = d.cas ? (d.deces / d.cas * 100) : 0;
+    const nouv = (P.districts.find(x => x.nom === d.nom) || {}).cas || 0;
+    const rag = cfr >= 3 ? "red" : cfr >= 1 ? "orange" : "green";
+    return `<tr><td><strong>${d.nom}</strong></td><td class="num">${nouv || "—"}</td><td class="num">${d.cas}</td><td class="num">${d.deces}</td><td class="num"><span class="pill ${rag}">${cfr.toFixed(1).replace(".", ",")}%</span></td></tr>`;
+  }).join("");
+  const tot = `<tr class="sr-total"><td><strong>Total</strong></td><td class="num">${P.cas || "—"}</td><td class="num">${C.cas}</td><td class="num">${C.deces}</td><td class="num">${nb(C.letalite)}%</td></tr>`;
+
+  // Déshydratation et évolution
+  const dTot = C.desh.legere + C.desh.moderee + C.desh.severe;
+  const pct = (x) => dTot ? Math.round(x / dTot * 100) : 0;
+  const desh = `<div class="sr-rep">
+    ${[["Légère", C.desh.legere, "green"], ["Modérée", C.desh.moderee, "orange"], ["Sévère", C.desh.severe, "red"]].map(([l, v, r]) =>
+      `<div class="sr-rep-l"><span class="sr-rep-lib">${l}</span><div class="sr-rep-barre"><div class="sr-rep-fill rag-${r}-bg" style="width:${pct(v)}%"></div></div><span class="sr-rep-val">${v} <span class="sr-rep-pct">(${pct(v)}%)</span></span></div>`).join("")}
+  </div>`;
+  const eTot = C.gueris + C.malades + C.deces;
+  const evol = `<div class="sr-rep">
+    ${[["Guéris", C.gueris, "green"], ["En cours de traitement", C.malades, "yellow"], ["Décès", C.deces, "red"]].map(([l, v, r]) =>
+      `<div class="sr-rep-l"><span class="sr-rep-lib">${l}</span><div class="sr-rep-barre"><div class="sr-rep-fill rag-${r}-bg" style="width:${eTot ? Math.round(v / eTot * 100) : 0}%"></div></div><span class="sr-rep-val">${v} <span class="sr-rep-pct">(${eTot ? Math.round(v / eTot * 100) : 0}%)</span></span></div>`).join("")}
+  </div>`;
+
+  return {
+    crumbs: ["Surveillance · Choléra", "Rapport de situation"],
+    html: `
+      <div class="ph">
+        <div class="ph-tag">Rapport de situation · Épidémie de choléra</div>
+        <div class="ph-title">Situation au ${libellePeriode(p.typ, p.cle)}</div>
+        <div class="ph-sub">Chiffres établis sur la liste linéaire de surveillance, selon la structure du rapport de situation du COUSP.</div>
+      </div>
+      ${barreControleChol()}
+      <div class="content">
+        ${cles}
+        <div class="grid-2">
+          ${card("Répartition par district sanitaire", "Cas notifiés et décès, cumul et période",
+            `<table class="tbl-s"><tr><th>District</th><th class="num">Nouveaux</th><th class="num">Cumul</th><th class="num">Décès</th><th class="num">Létalité</th></tr>${lignes}${tot}</table>`,
+            "Les nouveaux cas correspondent à la période sélectionnée dans la barre de contrôle.")}
+          ${card("Profil des cas", "Caractéristiques démographiques",
+            `<table class="tbl-s">
+              <tr><td>Âge médian</td><td class="num"><strong>${nb(C.age_median)} ans</strong></td><td class="num">de ${nb(C.age_min)} à ${nb(C.age_max)} ans</td></tr>
+              <tr><td>Sexe ratio femmes sur hommes</td><td class="num"><strong>${nb(C.ratio_fh)}</strong></td><td class="num">${C.sexe.F} F · ${C.sexe.M} H</td></tr>
+              <tr><td>Prélèvements analysés</td><td class="num"><strong>${C.tdr_total}</strong></td><td class="num">${C.tdr_pos} positifs</td></tr>
+            </table>`, "")}
+        </div>
+        <div class="grid-2">
+          ${card("État de déshydratation à l'admission", dTot + " cas documentés", desh,
+            "La part des formes modérées et sévères mesure la précocité du recours aux soins.")}
+          ${card("Évolution des cas", eTot + " cas suivis", evol, "")}
+        </div>
+        ${card("Analyse de la situation", "Rédigée à partir des données, à valider avant diffusion",
+          blocEditable("situation", "Situation épidémiologique", analyseSituation(p)) +
+          blocEditable("risque", "Facteurs de risque et orientations", analyseRisque(p)),
+          "Ces textes sont proposés automatiquement à partir des chiffres de la période. Cliquez dans un bloc pour le corriger avant l'export.")}
+      </div>
+    `
+  };
+};
+
 
 VIEWS["cousp-deepdive"] = () => {
   if (!CHOL_A) return { crumbs: ["Surveillance · Choléra", "Analyse"], html: `<div class="ph"><div class="ph-title">Analyse</div><div class="ph-sub">Chargement.</div></div>` };
