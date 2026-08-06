@@ -3135,6 +3135,37 @@
   .mt-note { font-size:10.5px; color:var(--muted); margin-top:7px; line-height:1.45; }
   .mt-lecture { font-size:11px; color:var(--muted); line-height:1.55; margin-top:14px; padding-top:12px; border-top:1px solid var(--border); }
   @media (max-width:900px){ .mt-bloc{ grid-template-columns:1fr; } }
+
+  /* analyse pluviometrie */
+  .pl-verdict { background:var(--surface-2); border-radius:10px; padding:14px 18px; margin-bottom:16px; }
+  .pl-verdict-t { font-family:var(--font-h); font-size:15px; font-weight:700; color:var(--ink); margin-bottom:5px; }
+  .pl-verdict-c { font-size:12px; color:var(--body); line-height:1.5; }
+  .pl-cols { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+  .pl-note { font-size:11px; color:var(--muted); line-height:1.55; margin-top:10px; }
+  .pl-serie { margin-bottom:14px; }
+  .pl-serie-t { font-size:11.5px; font-weight:600; color:var(--body); margin-bottom:5px; }
+  .pl-graph { display:flex; gap:6px; height:74px; align-items:flex-end; }
+  .pl-col { flex:1; display:flex; flex-direction:column; align-items:center; height:100%; }
+  .pl-paire { flex:1; display:flex; align-items:flex-end; gap:2px; width:100%; }
+  .pl-b { flex:1; border-radius:2px 2px 0 0; min-height:2px; }
+  .pl-b.pl-pluie { background:var(--royal-l); }
+  .pl-b.pl-cas { background:var(--rag-red); }
+  .pl-sem { font-size:8.5px; color:var(--muted-2); margin-top:3px; }
+  .pl-legende { display:flex; gap:16px; font-size:10.5px; color:var(--body); margin-top:4px; }
+  .pl-lg { display:flex; align-items:center; gap:5px; }
+  .pl-pt { width:9px; height:9px; border-radius:2px; display:inline-block; }
+  .pl-pt.pl-pluie { background:var(--royal-l); } .pl-pt.pl-cas { background:var(--rag-red); }
+  .pl-classement { display:flex; flex-direction:column; gap:3px; max-height:290px; overflow-y:auto; padding-right:4px; }
+  .pl-rang { display:grid; grid-template-columns:22px 130px 1fr 40px auto; align-items:center; gap:8px; font-size:11px; padding:2px 0; }
+  .pl-rang-n { color:var(--muted-2); text-align:right; }
+  .pl-rang-nom { color:var(--body); }
+  .pl-rang-barre { height:11px; background:var(--surface-2); border-radius:3px; overflow:hidden; }
+  .pl-rang-fill { height:100%; background:var(--royal-l); border-radius:3px; }
+  .pl-rang-mm { color:var(--body); text-align:right; font-variant-numeric:tabular-nums; }
+  .pl-touchee .pl-rang-nom { font-weight:700; color:var(--rag-red); }
+  .pl-touchee .pl-rang-fill { background:var(--rag-red); }
+  .pl-rang-tag { font-size:9px; font-weight:700; color:#fff; background:var(--rag-red); padding:1px 7px; border-radius:9px; }
+  @media (max-width:900px){ .pl-cols{ grid-template-columns:1fr; } .pl-rang{ grid-template-columns:20px 96px 1fr 34px auto; } }
 </style>
 </head>
 <body>
@@ -3600,6 +3631,10 @@ async function chargerDonneesReelles(essai) {
       const cf = await fetch("carte_focus.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (cf) CARTE_FOCUS = cf;
     } catch (e) {}
+    try {
+      const pa = await fetch("pluie_analyse.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (pa) PLUIE_A = pa;
+    } catch (e) {}
     renderMain();
     // rafraichissement des donnees toutes les six heures pour les onglets laisses ouverts
     if (!window._cidRafraichissement) {
@@ -3716,6 +3751,7 @@ let CHOL_A = null;
 let CHOL_S = null;
 let METEO = null;
 let CARTE_FOCUS = null;
+let PLUIE_A = null;
 function cholDispo() { return CHOLERA && CHOLERA.global; }
 function pevDispo() { return PEV && PEV.provinces && PEV.provinces.length; }
 function pevNatCouv(code) { return (PEV && PEV.national.couvertures[code]) || null; }
@@ -5968,21 +6004,72 @@ function renderCarteCholera() {
     </div>`;
 }
 
-// Module météo : lecture contextuelle du risque environnemental
-function renderMeteoCroisement() {
-  if (!METEO) return "";
-  const sites = METEO.sites.map(s => {
-    const pics = s.jours.filter(j => j.p >= 50);
-    const maxP = Math.max(...s.jours.map(j => j.p));
-    const barres = s.jours.map(j => `<div class="mt-col" title="${j.d} : ${j.p}% de probabilité, ${j.h}°C"><div class="mt-bar ${j.p >= 50 ? "mt-fort" : ""}" style="height:${Math.max(6, j.p)}%"></div><span class="mt-j">${j.d.slice(0, 2)}</span></div>`).join("");
-    return `<div class="mt-site">
-      <div class="mt-tete"><span class="mt-nom">${s.nom}</span><span class="mt-prov">${s.prov}</span><span class="mt-temp">${String(s.temp).replace(".", ",")}°C</span></div>
-      <div class="mt-graph">${barres}</div>
-      <div class="mt-note">${pics.length ? "Précipitations probables à " + maxP + "% attendues, surveillance renforcée des points d'eau" : "Pas d'épisode pluvieux marqué sur la période"}</div>
+// Analyse de l'association entre pluviométrie et incidence
+function renderAnalysePluie() {
+  if (!PLUIE_A) return "";
+  const A = PLUIE_A;
+  const nb = (x) => String(x).replace(".", ",");
+
+  // Verdict
+  const verdict = `<div class="pl-verdict">
+    <div class="pl-verdict-t">Aucune association démontrable en l'état</div>
+    <div class="pl-verdict-c">Sur les ${A.n_semaines} semaines où pluviométrie et cas se recouvrent, aucune corrélation n'atteint le seuil de signification. Les deux provinces suivent d'ailleurs des dynamiques opposées, ce qui interdit de les regrouper.</div>
+  </div>`;
+
+  // Corrélations par province
+  const provRows = A.provinces.map(p => `<tr>
+      <td><strong>${p.nom}</strong></td>
+      <td class="num">${p.rho >= 0 ? "+" : ""}${nb(p.rho)}</td>
+      <td class="num">${nb(p.p.toFixed(3))}</td>
+      <td><span class="pill ${p.p < 0.05 ? "green" : "na"}">${p.p < 0.05 ? "significatif" : "non significatif"}</span></td>
+    </tr>`).join("");
+
+  // Séries superposées pluie / cas
+  const series = A.series.map(s => {
+    const maxP = Math.max(...s.pluie, 1), maxC = Math.max(...s.cas, 1);
+    const cols = s.sems.map((sem, i) => `
+      <div class="pl-col" title="S${sem} : ${nb(s.pluie[i])} mm, ${s.cas[i]} cas">
+        <div class="pl-paire">
+          <div class="pl-b pl-pluie" style="height:${Math.max(2, s.pluie[i] / maxP * 100)}%"></div>
+          <div class="pl-b pl-cas" style="height:${Math.max(2, s.cas[i] / maxC * 100)}%"></div>
+        </div>
+        <span class="pl-sem">S${sem}</span>
+      </div>`).join("");
+    return `<div class="pl-serie">
+      <div class="pl-serie-t">${s.province}</div>
+      <div class="pl-graph">${cols}</div>
     </div>`;
   }).join("");
-  return `<div class="mt-bloc">${sites}</div>
-    <div class="mt-lecture">Le Tchad se trouve en ${METEO.saison.nom.toLowerCase()} (${METEO.saison.mois}), période de ${METEO.saison.phase} pour les maladies hydriques. Les pluies favorisent le débordement des latrines et la contamination des puits peu protégés. Cette lecture est contextuelle : elle situe le risque environnemental sans établir de lien statistique, faute de série pluviométrique historique alignée sur les semaines épidémiologiques.</div>`;
+
+  // Test de falsification : classement des provinces
+  const cl = A.classement;
+  const maxMM = Math.max(...cl.map(c => c.mm));
+  const barres = cl.map((c, i) => `<div class="pl-rang ${c.touchee ? "pl-touchee" : ""}">
+      <span class="pl-rang-n">${i + 1}</span>
+      <span class="pl-rang-nom">${c.nom}</span>
+      <div class="pl-rang-barre"><div class="pl-rang-fill" style="width:${(c.mm / maxMM * 100).toFixed(0)}%"></div></div>
+      <span class="pl-rang-mm">${Math.round(c.mm)}</span>
+      ${c.touchee ? '<span class="pl-rang-tag">épidémie</span>' : ""}
+    </div>`).join("");
+
+  return `
+    ${verdict}
+    <div class="pl-cols">
+      <div>
+        <div class="dd-sous-titre">Corrélation entre cumul hebdomadaire et cas notifiés</div>
+        <table class="tbl-s"><tr><th>Province</th><th class="num">Coefficient</th><th class="num">p</th><th>Conclusion</th></tr>${provRows}</table>
+        <div class="pl-note">Coefficient de Spearman sur ${A.n_semaines} semaines complètes. Avec un effectif aussi réduit, il faudrait un coefficient d'au moins ${nb(A.r_min_detectable.n7)} pour conclure : aucun ne l'atteint. À N'Djamena, la hausse conjointe s'explique surtout par la progression propre de l'épidémie, les cas suivant le temps avec un coefficient de 0,91.</div>
+      </div>
+      <div>
+        <div class="dd-sous-titre">Pluie et cas, semaine par semaine</div>
+        ${series}
+        <div class="pl-legende"><span class="pl-lg"><span class="pl-pt pl-pluie"></span>Cumul de pluie</span><span class="pl-lg"><span class="pl-pt pl-cas"></span>Cas notifiés</span></div>
+      </div>
+    </div>
+    <div class="dd-sous-titre" style="margin-top:18px;">Épreuve de falsification : les provinces les plus arrosées sont-elles les plus touchées ?</div>
+    <div class="pl-classement">${barres}</div>
+    <div class="pl-note">Cumul de juin et juillet 2026 sur les ${cl.length} provinces. Les deux provinces en épidémie occupent les rangs ${A.falsification.rangs.join(" et ")}, au milieu du classement, tandis que les cinq provinces les plus arrosées ne rapportent aucun cas (test de Mann-Whitney, p = ${nb(A.falsification.p)}). La pluviométrie ne distingue donc pas les territoires atteints : d'autres déterminants, accès à l'eau potable, assainissement, densité urbaine, expliquent mieux la localisation des foyers.</div>
+  `;
 }
 
 VIEWS["cousp-deepdive"] = () => {
@@ -6121,8 +6208,8 @@ VIEWS["cousp-deepdive"] = () => {
           "Les moins de quinze ans forment la majorité des cas, ce qui oriente la communication et la prise en charge vers les familles et les écoles.")}
       </div>
 
-      ${card("Contexte environnemental", "Conditions météorologiques sur les zones affectées",
-        renderMeteoCroisement(), "Source : prévisions météorologiques à huit jours, relevés au " + (METEO ? METEO.maj.split("-").reverse().join("/") : "") + ".")}
+      ${card("Pluviométrie et incidence : l'association testée", "Analyse sur données satellitaires ERA5, " + (PLUIE_A ? PLUIE_A.periode : ""),
+        renderAnalysePluie(), "Source : réanalyse ERA5, cumuls journaliers agrégés par semaine épidémiologique. Une association temporelle ne démontrerait pas la causalité, et son absence ici ne l'exclut pas non plus : elle indique que les données disponibles ne permettent pas de trancher.")}
 
       ${card("Portée et limites de cette analyse", "Ce que les données permettent d'affirmer, et ce qu'elles ne permettent pas",
         `<div class="dd-limites">
