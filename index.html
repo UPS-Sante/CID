@@ -3252,31 +3252,34 @@
 
     /* Page de garde */
     .sr-garde { page-break-after:always; box-shadow:none; border:1px solid var(--border); display:flex; flex-direction:column; }
-    .sr-garde-haut { padding:18px 26px; }
+    .sr-garde-haut { padding:13px 24px; }
     .sr-garde-armes { font-size:14px; }
-    .sr-garde-min { font-size:19px; }
+    .sr-garde-min { font-size:17px; }
     .sr-garde-org { font-size:14px; }
-    .sr-garde-corps { padding:12mm 26px 8mm; }
+    .sr-garde-corps { padding:7mm 24px 5mm; }
     .sr-garde-sur { font-size:14px; }
-    .sr-garde-titre { font-size:36px; }
-    .sr-garde-zone { font-size:18px; }
+    .sr-garde-titre { font-size:30px; }
+    .sr-garde-zone { font-size:16px; }
     .sr-garde-periode { font-size:14px; }
-    .sr-gr-v { font-size:32px; }
+    .sr-gr-v { font-size:27px; }
     .sr-gr-l { font-size:14px; }
-    .sr-garde-milieu { display:grid !important; grid-template-columns:1.25fr 1fr 1fr !important; gap:18px !important; padding:0 26px 16px; }
-    .sr-gm-t { font-size:14px; }
-    .sr-gm-liste li, .sr-gm-part { font-size:14px; line-height:1.5; }
-    .sr-garde-bas { padding:14px 26px; }
-    .sr-garde-src, .sr-garde-maj { font-size:14px; line-height:1.55; }
+    .sr-garde-milieu { display:grid !important; grid-template-columns:1.25fr 1fr 1fr !important; gap:14px !important; padding:0 24px 12px; }
+    .sr-gm-t { font-size:14px !important; }
+    .sr-gm-d, .ch-edit, .sr-gm-liste li, .sr-gm-part { font-size:14px !important; }
+    .chol-legende, .chol-legende span, .sr-epi-leg, .pl-lg { font-size:14px !important; }
+    text, tspan { font-size:14px !important; }
+    .sr-gm-liste li, .sr-gm-part { font-size:14px; line-height:1.4; }
+    .sr-garde-bas { padding:11px 24px; }
+    .sr-garde-src, .sr-garde-maj { font-size:14px; line-height:1.4; }
 
     /* Structure des pages de contenu */
     /* Le flux se repartit naturellement, sans saut force */
     .grid-2 { display:grid !important; grid-template-columns:1fr 1fr !important;
-              gap:9px !important; margin-bottom:9px !important; align-items:stretch; }
+              gap:7px !important; margin-bottom:7px !important; align-items:stretch; }
     .sr-cles { display:grid !important; grid-template-columns:repeat(6,1fr) !important;
                gap:7px !important; margin-bottom:9px !important; page-break-inside:avoid; }
     .card { page-break-inside:avoid; box-shadow:none; border:1px solid var(--border);
-            display:flex; flex-direction:column; padding:10px 12px; margin:0;
+            display:flex; flex-direction:column; padding:8px 10px; margin:0;
             max-width:100% !important; width:100% !important; box-sizing:border-box; }
 
     /* Chiffres cles */
@@ -3288,9 +3291,9 @@
     /* Cartes et tableaux */
     .card-title { font-size:17px; }
     .card-sub { font-size:14px; }
-    .card-hdr { margin-bottom:9px; }
+    .card-hdr { margin-bottom:6px; }
     .card-body { flex:1; }
-    .card-foot, .dd-test-note, .pl-note { font-size:14px; line-height:1.42; margin-top:7px; padding-top:6px; }
+    .card-foot, .dd-test-note, .pl-note { font-size:14px; line-height:1.35; margin-top:6px; padding-top:5px; }
     table, .tbl-s { max-width:100% !important; width:100% !important; table-layout:auto !important; }
     .tbl-s td, .tbl-s th { padding:5px 3px !important; font-size:14px !important; white-space:normal !important; }
     .tbl-dist td, .tbl-dist th { padding:5px 2px !important; }
@@ -3301,12 +3304,12 @@
     .pill { font-size:14px; padding:2px 7px; }
 
     /* Graphiques dimensionnes pour la lisibilite */
-    .sr-epi { height:118px; padding-top:19px; }
+    .sr-epi { height:100px; padding-top:18px; }
     .sr-epi-lab { font-size:14px; }
     .sr-epi-v { font-size:14px; top:-19px; }
     .sr-epi-leg, .chol-legende { font-size:14px; gap:14px; }
-    .chol-carte { max-height:148px; }
-    .sr-rep { gap:7px; }
+    .chol-carte { max-height:126px; }
+    .sr-rep { gap:6px; }
     .sr-rep-l { grid-template-columns:150px 1fr 110px; }
     .sr-rep-lib, .sr-rep-val { font-size:14px; }
     .sr-rep-pct { font-size:14px; }
@@ -3316,9 +3319,9 @@
     .pyr-ligne { grid-template-columns:1fr 110px 1fr; gap:8px; }
 
     /* Blocs d'analyse */
-    .ed-bloc { margin-bottom:7px; }
+    .ed-bloc { margin-bottom:6px; }
     .ed-titre { font-size:14px; margin-bottom:5px; }
-    .ed-zone { font-size:14px; line-height:1.45; padding:8px 10px; background:var(--surface-2); text-align:justify; }
+    .ed-zone { font-size:14px; line-height:1.4; padding:7px 9px; background:var(--surface-2); text-align:justify; }
     .ch-edit:hover { background:transparent; }
     .sr-epi-col { cursor:default; }
     a[href]::after { content:none; }
