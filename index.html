@@ -3238,72 +3238,88 @@
   .sr-garde-src strong { color:var(--body); }
   .sr-garde-maj { text-align:right; white-space:nowrap; }
 
-  /* ====== MISE EN PAGE POUR IMPRESSION SUR TROIS PAGES ====== */
+  /* ====== MISE EN PAGE POUR IMPRESSION ====== */
+  /* Plancher typographique : aucun texte en dessous de 14px, pour rester
+     lisible sur papier. Les graphiques et tableaux sont dimensionnes en
+     consequence plutot que l'inverse. */
   @media print {
-    @page { size:A4 portrait; margin:12mm 11mm 14mm; }
-    body { background:#fff; font-size:10.5px; }
-
-    /* Page 1 : garde pleine hauteur, contenu reparti */
-    .sr-garde { page-break-after:always; box-shadow:none; border:1px solid var(--border);
-                display:flex; flex-direction:column; }
-    .sr-garde-haut { padding:16px 26px; }
-    .sr-garde-corps { padding:14mm 26px 10mm; }
-    .sr-garde-titre { font-size:28px; }
-    .sr-garde-resume { margin-top:20px; padding-top:18px; }
-    .sr-gr-v { font-size:26px; }
-    .sr-garde-milieu { padding:0 26px 16px; }
-    .sr-garde-bas { padding:12px 26px; }
-
-    /* Pages 2 et 3 : sauts maitrises, cartes solidaires */
-    .sr-page-3 { page-break-before:always; }
-    .grid-2 { page-break-inside:avoid; gap:8px; margin-bottom:8px; align-items:stretch; }
-    .sr-cles { page-break-inside:avoid; grid-template-columns:repeat(6,1fr); gap:7px; margin-bottom:9px; }
-    .card { page-break-inside:avoid; box-shadow:none; border:1px solid var(--border);
-            display:flex; flex-direction:column; padding:8px 11px; margin:0; }
-    .card > *:last-child { margin-bottom:0; }
-
-    /* Densite typographique */
-    .sr-chiffre { padding:7px 6px; }
-    .sr-val { font-size:19px; }
-    .sr-lib { font-size:9.5px; margin-top:3px; }
-    .sr-sous { font-size:8px; }
-    .card-title { font-size:12.5px; }
-    .tbl-s td, .tbl-s th { padding:3px 5px; font-size:9px; }
-    .chol-carte { max-height:124px; }
-    .chol-legende { font-size:8.5px; gap:9px; }
-    .sr-epi { height:86px; padding-top:11px; }
-    .sr-epi-lab, .sr-epi-v { font-size:8px; }
-    .sr-epi-leg { font-size:8.5px; margin-top:5px; }
-    .sr-rep { gap:4px; }
-    .sr-rep-l { grid-template-columns:96px 1fr 70px; }
-    .sr-rep-lib, .sr-rep-val { font-size:9.5px; }
-    .sr-rep-barre { height:9px; }
-    .pyr-ligne { grid-template-columns:1fr 78px 1fr; }
-    .pyr-bar { height:9px; }
-    .pyr-lab, .pyr-n, .pyr-entete { font-size:8.5px; }
-    .ed-bloc { margin-bottom:5px; }
-    .ed-titre { font-size:8.5px; margin-bottom:3px; }
-    .ed-zone { font-size:8.1px; line-height:1.34; padding:5px 8px; background:var(--surface-2); text-align:justify; }
-    .card-hdr { margin-bottom:7px; }
-    .card-sub { font-size:9px; }
-    .card-body { flex:1; }
-    .card-foot, .dd-test-note, .pl-note { font-size:8px; line-height:1.35; margin-top:5px; padding-top:5px; }
-
-    /* Elements d'interface retires du document */
+    @page { size:A4 portrait; margin:10mm 8mm 12mm; }
+    html, body { width:100% !important; max-width:100% !important; overflow:visible !important;
+                 background:#fff; font-size:14px; }
+    .main, .content { padding:0 !important; margin:0 !important;
+                      width:100% !important; max-width:100% !important; }
     .bc-barre, .sr-epi-aide, .header, .breadcrumbs, .crumb-bar, .ph { display:none !important; }
-    /* Surcharge des espacements herites du bloc d'impression general */
-    .grid-2 { gap:8px !important; margin-bottom:8px !important; }
-    .kpi-grid { gap:8px !important; }
-    .main, .content { padding:0 !important; margin:0 !important; width:100% !important; max-width:100% !important; }
-    html, body { width:100% !important; max-width:100% !important; overflow:visible !important; }
-    .card, .grid-2, .sr-cles, table, .tbl-s { max-width:100% !important; width:100% !important; box-sizing:border-box; }
-    .tbl-s { table-layout:auto !important; }
-    .tbl-s td, .tbl-s th { white-space:normal !important; word-break:normal; }
-    .tbl-dist td, .tbl-dist th { padding:3px 3px !important; font-size:8.4px !important; }
-    .tbl-dist td:first-child, .tbl-dist th:first-child { white-space:nowrap !important; }
-    .tbl-dist .pill { padding:1px 4px; font-size:7.8px; }
-    /* Les trois colonnes de la garde restent cote a cote */
-    .sr-garde-milieu { display:grid !important; grid-template-columns:1.2fr 1fr 1fr !important; gap:16px !important; }
+
+    /* Page de garde */
+    .sr-garde { page-break-after:always; box-shadow:none; border:1px solid var(--border); display:flex; flex-direction:column; }
+    .sr-garde-haut { padding:18px 26px; }
+    .sr-garde-armes { font-size:14px; }
+    .sr-garde-min { font-size:19px; }
+    .sr-garde-org { font-size:14px; }
+    .sr-garde-corps { padding:12mm 26px 8mm; }
+    .sr-garde-sur { font-size:14px; }
+    .sr-garde-titre { font-size:36px; }
+    .sr-garde-zone { font-size:18px; }
+    .sr-garde-periode { font-size:14px; }
+    .sr-gr-v { font-size:32px; }
+    .sr-gr-l { font-size:14px; }
+    .sr-garde-milieu { display:grid !important; grid-template-columns:1.25fr 1fr 1fr !important; gap:18px !important; padding:0 26px 16px; }
+    .sr-gm-t { font-size:14px; }
+    .sr-gm-liste li, .sr-gm-part { font-size:14px; line-height:1.5; }
+    .sr-garde-bas { padding:14px 26px; }
+    .sr-garde-src, .sr-garde-maj { font-size:14px; line-height:1.55; }
+
+    /* Structure des pages de contenu */
+    /* Le flux se repartit naturellement, sans saut force */
+    .grid-2 { display:grid !important; grid-template-columns:1fr 1fr !important;
+              gap:9px !important; margin-bottom:9px !important; align-items:stretch; }
+    .sr-cles { display:grid !important; grid-template-columns:repeat(6,1fr) !important;
+               gap:7px !important; margin-bottom:9px !important; page-break-inside:avoid; }
+    .card { page-break-inside:avoid; box-shadow:none; border:1px solid var(--border);
+            display:flex; flex-direction:column; padding:10px 12px; margin:0;
+            max-width:100% !important; width:100% !important; box-sizing:border-box; }
+
+    /* Chiffres cles */
+    .sr-chiffre { padding:8px 5px; }
+    .sr-val { font-size:22px; }
+    .sr-lib { font-size:14px; margin-top:4px; line-height:1.2; }
+    .sr-sous { font-size:14px; margin-top:2px; line-height:1.2; }
+
+    /* Cartes et tableaux */
+    .card-title { font-size:17px; }
+    .card-sub { font-size:14px; }
+    .card-hdr { margin-bottom:9px; }
+    .card-body { flex:1; }
+    .card-foot, .dd-test-note, .pl-note { font-size:14px; line-height:1.42; margin-top:7px; padding-top:6px; }
+    table, .tbl-s { max-width:100% !important; width:100% !important; table-layout:auto !important; }
+    .tbl-s td, .tbl-s th { padding:5px 3px !important; font-size:14px !important; white-space:normal !important; }
+    .tbl-dist td, .tbl-dist th { padding:5px 2px !important; }
+    .tbl-dist .pill { padding:1px 4px; font-size:14px; }
+    .card-body { flex:1; overflow:visible !important; min-width:0; }
+    .sr-epi { gap:4px; }
+    .sr-epi-col { min-width:0; }
+    .pill { font-size:14px; padding:2px 7px; }
+
+    /* Graphiques dimensionnes pour la lisibilite */
+    .sr-epi { height:118px; padding-top:19px; }
+    .sr-epi-lab { font-size:14px; }
+    .sr-epi-v { font-size:14px; top:-19px; }
+    .sr-epi-leg, .chol-legende { font-size:14px; gap:14px; }
+    .chol-carte { max-height:148px; }
+    .sr-rep { gap:7px; }
+    .sr-rep-l { grid-template-columns:150px 1fr 110px; }
+    .sr-rep-lib, .sr-rep-val { font-size:14px; }
+    .sr-rep-pct { font-size:14px; }
+    .sr-rep-barre { height:15px; }
+    .pyr-entete, .pyr-lab, .pyr-n { font-size:14px; }
+    .pyr-bar { height:14px; }
+    .pyr-ligne { grid-template-columns:1fr 110px 1fr; gap:8px; }
+
+    /* Blocs d'analyse */
+    .ed-bloc { margin-bottom:7px; }
+    .ed-titre { font-size:14px; margin-bottom:5px; }
+    .ed-zone { font-size:14px; line-height:1.45; padding:8px 10px; background:var(--surface-2); text-align:justify; }
+    .ch-edit:hover { background:transparent; }
     .sr-epi-col { cursor:default; }
     a[href]::after { content:none; }
   }
@@ -6460,7 +6476,7 @@ VIEWS["cousp-sitrep"] = () => {
         ${cles}
         <div class="grid-2">
           ${card("Répartition par district sanitaire", "Cas notifiés et décès, cumul et période",
-            `<table class="tbl-s tbl-dist"><tr><th>District</th><th class="num">Nouv.</th><th class="num">Cumul</th><th class="num">Décès</th><th class="num">Létalité</th></tr>${lignes}${tot}</table>`,
+            `<table class="tbl-s tbl-dist"><tr><th>District</th><th class="num">Nouv.</th><th class="num">Cumul</th><th class="num">Décès</th><th class="num">Létal.</th></tr>${lignes}${tot}</table>`,
             "Les nouveaux cas correspondent à la période sélectionnée dans la barre de contrôle.")}
           ${card("Profil des cas et confirmation biologique", "Caractéristiques démographiques et résultats de laboratoire",
             `<table class="tbl-s">
