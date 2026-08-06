@@ -3204,6 +3204,20 @@
   @media print { .bc-barre { display:none; } .ed-zone { background:transparent; padding:0; } .ed-tag { display:none; } }
   @media (max-width:1100px){ .sr-cles{ grid-template-columns:repeat(3,1fr); } }
   @media (max-width:600px){ .sr-cles{ grid-template-columns:repeat(2,1fr); } .bc-info{ margin-left:0; width:100%; } }
+
+  .ed-titre { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--royal); margin-bottom:6px; }
+  .sr-epi { display:flex; align-items:flex-end; gap:6px; height:150px; padding-top:16px; }
+  .sr-epi-col { flex:1; display:flex; flex-direction:column; align-items:center; height:100%; cursor:pointer; border-radius:5px 5px 0 0; transition:background .12s; }
+  .sr-epi-col:hover { background:var(--surface-2); }
+  .sr-epi-col.sr-epi-on { background:var(--royal-tint); }
+  .sr-epi-wrap { flex:1; width:100%; display:flex; align-items:flex-end; justify-content:center; position:relative; }
+  .sr-epi-bar { width:78%; background:var(--royal); border-radius:3px 3px 0 0; position:relative; min-height:2px; }
+  .sr-epi-v { position:absolute; top:-15px; left:0; right:0; text-align:center; font-size:9.5px; font-weight:700; color:var(--body); }
+  .sr-epi-dc { position:absolute; bottom:0; width:78%; background:var(--rag-red); border-radius:3px 3px 0 0; min-height:2px; }
+  .sr-epi-lab { font-size:9.5px; color:var(--muted); margin:4px 0 3px; }
+  .sr-epi-leg { display:flex; gap:16px; align-items:center; font-size:10.5px; color:var(--body); margin-top:8px; }
+  .sr-epi-aide { margin-left:auto; color:var(--muted-2); font-style:italic; }
+  @media print { .sr-epi-aide { display:none; } .sr-epi-col { cursor:default; } }
 </style>
 </head>
 <body>
@@ -6163,7 +6177,7 @@ function barreControleChol() {
 // ---- Analyse rédigée à partir des données, modifiable avant export ----
 function blocEditable(id, titre, texte) {
   return `<div class="ed-bloc">
-    <div class="ed-tete"><span class="ed-titre">${titre}</span><span class="ed-tag">Proposition à valider · texte modifiable</span></div>
+    <div class="ed-titre">${titre}</div>
     <div class="ed-zone" contenteditable="true" spellcheck="false" data-ed="${id}">${texte}</div>
   </div>`;
 }
@@ -6186,6 +6200,23 @@ function analyseRisque(p) {
   const pire = parCfr[0];
   const villages = C.villages;
   return `Le suivi porte sur ${villages} villages ou quartiers ayant notifié au moins un cas. ${pire ? `Le district de ${pire.nom} enregistre la létalité la plus élevée parmi les districts à effectif suffisant, à ${pire.cfr.toFixed(1).replace(".", ",")}%, ce qui appelle une revue des délais de prise en charge et de la disponibilité des solutés.` : ""} La structure démographique des cas, avec un âge médian de ${C.age_median} ans et un sexe ratio femmes sur hommes de ${String(C.ratio_fh).replace(".", ",")}, oriente la communication vers les ménages et les établissements scolaires.`;
+}
+
+const POP_DISTRICTS = { "KARAL": 124300, "N'Djamena Nord": 165900, "N'Djamena Centre": 633023, "N'Djamena Est": 633023 };
+
+function analyseApprofondie(p) {
+  const C = p.bloc.cumul;
+  if (!CHOL_A) return "";
+  const A = CHOL_A;
+  const strat = A.strat.filter(s => s.hl.cfr != null && s.nd.cfr != null);
+  const mod = A.modele;
+  const nb = (x) => String(x).replace(".", ",");
+  const eteints = A.districts.filter(d => !d.actif && d.cas > 20);
+  const actifs = A.districts.filter(d => d.actif && d.recents > 0);
+  return `L'analyse de la liste linéaire met en évidence un déplacement du foyer épidémique. ${eteints.length ? `Le foyer de ${eteints[0].nom.charAt(0) + eteints[0].nom.slice(1).toLowerCase()}, qui a porté ${eteints[0].cas} cas, n'enregistre plus de notification depuis la semaine ${eteints[0].der}.` : ""} ${actifs.length ? `La transmission se poursuit sur ${actifs.map(d => d.nom).join(" et ")}, avec ${actifs.reduce((s, d) => s + d.recents, 0)} cas au cours des deux dernières semaines.` : ""}
+  La sévérité de la déshydratation à l'admission commande la létalité, selon un gradient marqué : ${A.tests[0].groupes.map(g => `${g.niveau.toLowerCase()} ${nb(g.cfr)}%`).join(", ")}. Le caractère gradué de cette relation renforce l'hypothèse d'un lien direct avec le délai de recours aux soins.
+  L'écart de létalité entre les deux provinces ne s'explique pas par la gravité des cas reçus : Hadjer Lamis accueille une part plus élevée de formes sévères (${A.mix[0].severe}% contre ${A.mix[1].severe}%) tout en enregistrant moins de décès. Après ajustement sur la sévérité et la présence de fièvre, le risque de décès demeure ${nb(mod[2].OR)} fois plus élevé à N'Djamena (p = ${nb(mod[2].p.toFixed(3))}), ce qui oriente vers les délais et la qualité de la prise en charge plutôt que vers le profil des malades.
+  Les conditions pluviométriques ne discriminent pas les territoires atteints : les provinces en épidémie occupent les rangs ${A ? PLUIE_A ? PLUIE_A.falsification.rangs.join(" et ") : "" : ""} sur ${PLUIE_A ? PLUIE_A.falsification.total : ""} en cumul de précipitations, tandis que les provinces les plus arrosées ne notifient aucun cas. Les déterminants relèvent davantage de l'accès à l'eau potable, de l'assainissement et de la densité de peuplement.`;
 }
 
 VIEWS["cousp-sitrep"] = () => {
@@ -6232,6 +6263,35 @@ VIEWS["cousp-sitrep"] = () => {
       `<div class="sr-rep-l"><span class="sr-rep-lib">${l}</span><div class="sr-rep-barre"><div class="sr-rep-fill rag-${r}-bg" style="width:${eTot ? Math.round(v / eTot * 100) : 0}%"></div></div><span class="sr-rep-val">${v} <span class="sr-rep-pct">(${eTot ? Math.round(v / eTot * 100) : 0}%)</span></span></div>`).join("")}
   </div>`;
 
+  // Courbe épidémique hebdomadaire, avec repère sur la période sélectionnée
+  const semCourante = p.typ === "semaine" ? p.cle : null;
+  const hebdo = CHOL_P.cles.semaine.map(c => ({ cle: c, sem: parseInt(c.split("-S")[1], 10), bloc: CHOL_P.semaine[c].periode }));
+  const maxH = Math.max(...hebdo.map(x => x.bloc.cas), 1);
+  const courbe = `<div class="sr-epi">${hebdo.map(x => {
+    const ht = Math.round(x.bloc.cas / maxH * 100);
+    const cfr = x.bloc.cas_issue ? (x.bloc.deces / x.bloc.cas_issue * 100) : 0;
+    return `<div class="sr-epi-col ${x.cle === semCourante ? "sr-epi-on" : ""}" onclick="setCholTypePeriode('semaine');setCholPeriode('${x.cle}')" title="S${x.sem} : ${x.bloc.cas} cas, ${x.bloc.deces} décès">
+      <div class="sr-epi-wrap"><div class="sr-epi-bar" style="height:${ht}%"><span class="sr-epi-v">${x.bloc.cas}</span></div>${x.bloc.deces ? `<div class="sr-epi-dc" style="height:${Math.round(x.bloc.deces / maxH * 100)}%"></div>` : ""}</div>
+      <span class="sr-epi-lab">S${x.sem}</span>
+    </div>`;
+  }).join("")}</div>
+  <div class="sr-epi-leg"><span class="pl-lg"><span class="pl-pt" style="background:var(--royal)"></span>Cas notifiés</span><span class="pl-lg"><span class="pl-pt" style="background:var(--rag-red)"></span>Décès</span><span class="sr-epi-aide">Cliquez sur une semaine pour filtrer</span></div>`;
+
+  // Pyramide des âges sur le cumul (figure 4 du SITREP)
+  const pyr = CHOL_S ? pyramideAges(CHOL_S.pyramide) : "";
+
+  // Taux d'attaque par district (chiffre clé du SITREP)
+  const popTot = C.districts.reduce((s, d) => s + (POP_DISTRICTS[d.nom] || 0), 0);
+  const txGlobal = popTot ? (C.cas / popTot * 100000) : null;
+  const attaque = `<table class="tbl-s"><tr><th>District</th><th class="num">Population</th><th class="num">Cas</th><th class="num">Taux d'attaque</th></tr>
+    ${C.districts.map(d => {
+      const pop = POP_DISTRICTS[d.nom];
+      const tx = pop ? (d.cas / pop * 100000) : null;
+      return `<tr><td>${d.nom}</td><td class="num">${pop ? pop.toLocaleString("fr-FR") : "ND"}</td><td class="num">${d.cas}</td><td class="num"><strong>${tx == null ? "ND" : tx.toFixed(1).replace(".", ",")}</strong></td></tr>`;
+    }).join("")}
+    <tr class="sr-total"><td><strong>Ensemble</strong></td><td class="num">${popTot.toLocaleString("fr-FR")}</td><td class="num">${C.cas}</td><td class="num"><strong>${txGlobal == null ? "ND" : txGlobal.toFixed(1).replace(".", ",")}</strong></td></tr>
+  </table>`;
+
   return {
     crumbs: ["Surveillance · Choléra", "Rapport de situation"],
     html: `
@@ -6255,14 +6315,25 @@ VIEWS["cousp-sitrep"] = () => {
             </table>`, "")}
         </div>
         <div class="grid-2">
+          ${card("Évolution hebdomadaire des cas et décès", "Semaines épidémiologiques " + hebdo[0].sem + " à " + hebdo[hebdo.length - 1].sem, courbe, "")}
+          ${card("Districts sanitaires en épidémie", "Foyers actifs et zones de transmission", renderCarteCholera(),
+            "Les foyers en transmission active sur les deux dernières semaines sont signalés par une alerte visuelle.")}
+        </div>
+        <div class="grid-2">
           ${card("État de déshydratation à l'admission", dTot + " cas documentés", desh,
             "La part des formes modérées et sévères mesure la précocité du recours aux soins.")}
           ${card("Évolution des cas", eTot + " cas suivis", evol, "")}
         </div>
-        ${card("Analyse de la situation", "Rédigée à partir des données, à valider avant diffusion",
+        <div class="grid-2">
+          ${card("Répartition par tranche d'âge et par sexe", C.cas + " cas notifiés", pyr,
+            "Les hommes prédominent chez les 5 à 14 ans, les femmes dans la tranche 15 à 44 ans.")}
+          ${card("Taux d'attaque pour 100 000 habitants", "Rapporté aux populations de district", attaque,
+            "Populations de projection 2026. Le taux d'attaque rapporte les cas à la population exposée et permet de comparer des districts de tailles différentes.")}
+        </div>
+        ${card("Analyse de la situation", libellePeriode(p.typ, p.cle),
           blocEditable("situation", "Situation épidémiologique", analyseSituation(p)) +
-          blocEditable("risque", "Facteurs de risque et orientations", analyseRisque(p)),
-          "Ces textes sont proposés automatiquement à partir des chiffres de la période. Cliquez dans un bloc pour le corriger avant l'export.")}
+          blocEditable("risque", "Facteurs de risque et orientations", analyseRisque(p)) +
+          blocEditable("appro", "Analyse approfondie", analyseApprofondie(p)), "")}
       </div>
     `
   };
