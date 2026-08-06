@@ -3240,19 +3240,72 @@
 
   /* ====== MISE EN PAGE POUR IMPRESSION SUR TROIS PAGES ====== */
   @media print {
-    @page { size:A4 portrait; margin:11mm; }
-    body { background:#fff; }
-    .sr-garde { page-break-after:always; box-shadow:none; border:1px solid var(--border); min-height:245mm; justify-content:space-between; }
-    .sr-garde-corps { padding-top:26mm; padding-bottom:14mm; }
-    .sr-page-2 { page-break-before:always; }
+    @page { size:A4 portrait; margin:12mm 11mm 14mm; }
+    body { background:#fff; font-size:10.5px; }
+
+    /* Page 1 : garde pleine hauteur, contenu reparti */
+    .sr-garde { page-break-after:always; box-shadow:none; border:1px solid var(--border);
+                display:flex; flex-direction:column; }
+    .sr-garde-haut { padding:16px 26px; }
+    .sr-garde-corps { padding:14mm 26px 10mm; }
+    .sr-garde-titre { font-size:28px; }
+    .sr-garde-resume { margin-top:20px; padding-top:18px; }
+    .sr-gr-v { font-size:26px; }
+    .sr-garde-milieu { padding:0 26px 16px; }
+    .sr-garde-bas { padding:12px 26px; }
+
+    /* Pages 2 et 3 : sauts maitrises, cartes solidaires */
     .sr-page-3 { page-break-before:always; }
-    .grid-2, .sr-cles { page-break-inside:avoid; }
-    .card { page-break-inside:avoid; box-shadow:none; border:1px solid var(--border); }
-    .sr-cles { grid-template-columns:repeat(6,1fr); }
-    .sr-val { font-size:21px; }
-    .chol-carte { max-height:210px; }
-    .sr-epi { height:118px; }
-    .ed-zone { font-size:11px; line-height:1.5; }
+    .grid-2 { page-break-inside:avoid; gap:8px; margin-bottom:8px; align-items:stretch; }
+    .sr-cles { page-break-inside:avoid; grid-template-columns:repeat(6,1fr); gap:7px; margin-bottom:9px; }
+    .card { page-break-inside:avoid; box-shadow:none; border:1px solid var(--border);
+            display:flex; flex-direction:column; padding:8px 11px; margin:0; }
+    .card > *:last-child { margin-bottom:0; }
+
+    /* Densite typographique */
+    .sr-chiffre { padding:7px 6px; }
+    .sr-val { font-size:19px; }
+    .sr-lib { font-size:9.5px; margin-top:3px; }
+    .sr-sous { font-size:8px; }
+    .card-title { font-size:12.5px; }
+    .tbl-s td, .tbl-s th { padding:3px 5px; font-size:9px; }
+    .chol-carte { max-height:124px; }
+    .chol-legende { font-size:8.5px; gap:9px; }
+    .sr-epi { height:86px; padding-top:11px; }
+    .sr-epi-lab, .sr-epi-v { font-size:8px; }
+    .sr-epi-leg { font-size:8.5px; margin-top:5px; }
+    .sr-rep { gap:4px; }
+    .sr-rep-l { grid-template-columns:96px 1fr 70px; }
+    .sr-rep-lib, .sr-rep-val { font-size:9.5px; }
+    .sr-rep-barre { height:9px; }
+    .pyr-ligne { grid-template-columns:1fr 78px 1fr; }
+    .pyr-bar { height:9px; }
+    .pyr-lab, .pyr-n, .pyr-entete { font-size:8.5px; }
+    .ed-bloc { margin-bottom:5px; }
+    .ed-titre { font-size:8.5px; margin-bottom:3px; }
+    .ed-zone { font-size:8.1px; line-height:1.34; padding:5px 8px; background:var(--surface-2); text-align:justify; }
+    .card-hdr { margin-bottom:7px; }
+    .card-sub { font-size:9px; }
+    .card-body { flex:1; }
+    .card-foot, .dd-test-note, .pl-note { font-size:8px; line-height:1.35; margin-top:5px; padding-top:5px; }
+
+    /* Elements d'interface retires du document */
+    .bc-barre, .sr-epi-aide, .header, .breadcrumbs, .crumb-bar, .ph { display:none !important; }
+    /* Surcharge des espacements herites du bloc d'impression general */
+    .grid-2 { gap:8px !important; margin-bottom:8px !important; }
+    .kpi-grid { gap:8px !important; }
+    .main, .content { padding:0 !important; margin:0 !important; width:100% !important; max-width:100% !important; }
+    html, body { width:100% !important; max-width:100% !important; overflow:visible !important; }
+    .card, .grid-2, .sr-cles, table, .tbl-s { max-width:100% !important; width:100% !important; box-sizing:border-box; }
+    .tbl-s { table-layout:auto !important; }
+    .tbl-s td, .tbl-s th { white-space:normal !important; word-break:normal; }
+    .tbl-dist td, .tbl-dist th { padding:3px 3px !important; font-size:8.4px !important; }
+    .tbl-dist td:first-child, .tbl-dist th:first-child { white-space:nowrap !important; }
+    .tbl-dist .pill { padding:1px 4px; font-size:7.8px; }
+    /* Les trois colonnes de la garde restent cote a cote */
+    .sr-garde-milieu { display:grid !important; grid-template-columns:1.2fr 1fr 1fr !important; gap:16px !important; }
+    .sr-epi-col { cursor:default; }
+    a[href]::after { content:none; }
   }
   @media (max-width:700px){ .sr-garde-resume{ grid-template-columns:repeat(2,1fr); } .sr-garde-titre{ font-size:26px; } .sr-garde-bas{ flex-direction:column; } .sr-garde-maj{ text-align:left; } }
 
@@ -6407,7 +6460,7 @@ VIEWS["cousp-sitrep"] = () => {
         ${cles}
         <div class="grid-2">
           ${card("Répartition par district sanitaire", "Cas notifiés et décès, cumul et période",
-            `<table class="tbl-s"><tr><th>District</th><th class="num">Nouveaux</th><th class="num">Cumul</th><th class="num">Décès</th><th class="num">Létalité</th></tr>${lignes}${tot}</table>`,
+            `<table class="tbl-s tbl-dist"><tr><th>District</th><th class="num">Nouv.</th><th class="num">Cumul</th><th class="num">Décès</th><th class="num">Létalité</th></tr>${lignes}${tot}</table>`,
             "Les nouveaux cas correspondent à la période sélectionnée dans la barre de contrôle.")}
           ${card("Profil des cas et confirmation biologique", "Caractéristiques démographiques et résultats de laboratoire",
             `<table class="tbl-s">
@@ -6418,17 +6471,17 @@ VIEWS["cousp-sitrep"] = () => {
             </table>`,
             "Les résultats de laboratoire proviennent du rapport de situation n° " + CHOL_P.sitrep.numero + " arrêté au " + CHOL_P.sitrep.arrete.split("-").reverse().join("/") + ", le champ correspondant de la liste linéaire présentant un codage hétérogène.")}
         </div>
-        <div class="grid-2 sr-page-2">
+        <div class="grid-2">
           ${card("Évolution hebdomadaire des cas et décès", "Semaines épidémiologiques " + hebdo[0].sem + " à " + hebdo[hebdo.length - 1].sem, courbe, "")}
           ${card("Districts sanitaires en épidémie", "Foyers actifs et zones de transmission", renderCarteCholera(),
             "Les foyers en transmission active sur les deux dernières semaines sont signalés par une alerte visuelle.")}
         </div>
-        <div class="grid-2">
+        <div class="grid-2 sr-page-3">
           ${card("État de déshydratation à l'admission", dTot + " cas documentés", desh,
             "La part des formes modérées et sévères mesure la précocité du recours aux soins.")}
           ${card("Évolution des cas", eTot + " cas suivis", evol, "")}
         </div>
-        <div class="grid-2 sr-page-3">
+        <div class="grid-2">
           ${card("Répartition par tranche d'âge et par sexe", C.cas + " cas notifiés", pyr,
             "Les hommes prédominent chez les 5 à 14 ans, les femmes dans la tranche 15 à 44 ans.")}
           ${card("Taux d'attaque pour 100 000 habitants", "Rapporté aux populations de district", attaque,
