@@ -3218,6 +3218,43 @@
   .sr-epi-leg { display:flex; gap:16px; align-items:center; font-size:10.5px; color:var(--body); margin-top:8px; }
   .sr-epi-aide { margin-left:auto; color:var(--muted-2); font-style:italic; }
   @media print { .sr-epi-aide { display:none; } .sr-epi-col { cursor:default; } }
+
+  /* ====== PAGE DE GARDE DU RAPPORT ====== */
+  .sr-garde { background:var(--surface); border-radius:12px; padding:0; margin-bottom:14px; box-shadow:var(--shadow-sm); overflow:hidden; display:flex; flex-direction:column; }
+  .sr-garde-haut { background:linear-gradient(135deg,var(--royal-d),var(--royal)); padding:20px 30px; text-align:center; }
+  .sr-garde-armes { font-size:12px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold-l); }
+  .sr-garde-min { font-family:var(--font-h); font-size:15px; font-weight:700; color:#fff; margin-top:5px; }
+  .sr-garde-org { font-size:11.5px; color:#C7D2E4; margin-top:3px; }
+  .sr-garde-corps { padding:34px 30px 28px; text-align:center; }
+  .sr-garde-sur { font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold-d); }
+  .sr-garde-titre { font-family:var(--font-h); font-size:34px; font-weight:700; color:var(--ink); margin:8px 0 0; line-height:1.1; }
+  .sr-garde-zone { font-size:15px; color:var(--body); margin-top:7px; }
+  .sr-garde-periode { font-size:12.5px; color:var(--muted); margin-top:4px; font-style:italic; }
+  .sr-garde-resume { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:26px; padding-top:22px; border-top:1px solid var(--border); }
+  .sr-gr { display:flex; flex-direction:column; gap:3px; }
+  .sr-gr-v { font-family:var(--font-h); font-size:29px; font-weight:700; color:var(--royal); line-height:1; font-variant-numeric:tabular-nums; }
+  .sr-gr-l { font-size:11px; color:var(--muted); }
+  .sr-garde-bas { display:flex; justify-content:space-between; gap:20px; padding:14px 30px; background:var(--surface-2); font-size:10.5px; color:var(--muted); line-height:1.6; flex-wrap:wrap; }
+  .sr-garde-src strong { color:var(--body); }
+  .sr-garde-maj { text-align:right; white-space:nowrap; }
+
+  /* ====== MISE EN PAGE POUR IMPRESSION SUR TROIS PAGES ====== */
+  @media print {
+    @page { size:A4 portrait; margin:11mm; }
+    body { background:#fff; }
+    .sr-garde { page-break-after:always; box-shadow:none; border:1px solid var(--border); min-height:245mm; justify-content:space-between; }
+    .sr-garde-corps { padding-top:60mm; }
+    .sr-page-2 { page-break-before:always; }
+    .sr-page-3 { page-break-before:always; }
+    .grid-2, .sr-cles { page-break-inside:avoid; }
+    .card { page-break-inside:avoid; box-shadow:none; border:1px solid var(--border); }
+    .sr-cles { grid-template-columns:repeat(6,1fr); }
+    .sr-val { font-size:21px; }
+    .chol-carte { max-height:210px; }
+    .sr-epi { height:118px; }
+    .ed-zone { font-size:11px; line-height:1.5; }
+  }
+  @media (max-width:700px){ .sr-garde-resume{ grid-template-columns:repeat(2,1fr); } .sr-garde-titre{ font-size:26px; } .sr-garde-bas{ flex-direction:column; } .sr-garde-maj{ text-align:left; } }
 </style>
 </head>
 <body>
@@ -6306,6 +6343,32 @@ VIEWS["cousp-sitrep"] = () => {
       </div>
       ${barreControleChol()}
       <div class="content">
+        <section class="sr-page sr-garde">
+          <div class="sr-garde-haut">
+            <div class="sr-garde-armes">République du Tchad</div>
+            <div class="sr-garde-min">Ministère de la Santé Publique et de la Prévention</div>
+            <div class="sr-garde-org">Centre des Opérations d'Urgence de Santé Publique</div>
+          </div>
+          <div class="sr-garde-corps">
+            <div class="sr-garde-sur">Rapport de situation</div>
+            <h1 class="sr-garde-titre">Épidémie de choléra</h1>
+            <div class="sr-garde-zone">${C.provinces.map(p => p.nom).join(" et ")}</div>
+            <div class="sr-garde-periode">Situation arrêtée au ${libellePeriode(p.typ, p.cle)}</div>
+            <div class="sr-garde-resume">
+              <div class="sr-gr"><span class="sr-gr-v">${C.cas}</span><span class="sr-gr-l">cas notifiés</span></div>
+              <div class="sr-gr"><span class="sr-gr-v">${C.deces}</span><span class="sr-gr-l">décès</span></div>
+              <div class="sr-gr"><span class="sr-gr-v">${nb(C.letalite)} %</span><span class="sr-gr-l">létalité</span></div>
+              <div class="sr-gr"><span class="sr-gr-v">${C.districts.length}</span><span class="sr-gr-l">districts touchés</span></div>
+            </div>
+          </div>
+          <div class="sr-garde-bas">
+            <div class="sr-garde-src">
+              <strong>Source</strong> liste linéaire de surveillance, actualisée quotidiennement.<br>
+              <strong>Confirmations biologiques et populations de référence</strong> rapport de situation n° ${CHOL_P.sitrep.numero}.
+            </div>
+            <div class="sr-garde-maj">Données au ${CHOL_P.meta.fin.split("-").reverse().join("/")}${CHOL_P.meta.actualise ? "<br>Actualisation : " + CHOL_P.meta.actualise : ""}</div>
+          </div>
+        </section>
         ${cles}
         <div class="grid-2">
           ${card("Répartition par district sanitaire", "Cas notifiés et décès, cumul et période",
@@ -6320,7 +6383,7 @@ VIEWS["cousp-sitrep"] = () => {
             </table>`,
             "Les résultats de laboratoire proviennent du rapport de situation n° " + CHOL_P.sitrep.numero + " arrêté au " + CHOL_P.sitrep.arrete.split("-").reverse().join("/") + ", le champ correspondant de la liste linéaire présentant un codage hétérogène.")}
         </div>
-        <div class="grid-2">
+        <div class="grid-2 sr-page-2">
           ${card("Évolution hebdomadaire des cas et décès", "Semaines épidémiologiques " + hebdo[0].sem + " à " + hebdo[hebdo.length - 1].sem, courbe, "")}
           ${card("Districts sanitaires en épidémie", "Foyers actifs et zones de transmission", renderCarteCholera(),
             "Les foyers en transmission active sur les deux dernières semaines sont signalés par une alerte visuelle.")}
@@ -6330,7 +6393,7 @@ VIEWS["cousp-sitrep"] = () => {
             "La part des formes modérées et sévères mesure la précocité du recours aux soins.")}
           ${card("Évolution des cas", eTot + " cas suivis", evol, "")}
         </div>
-        <div class="grid-2">
+        <div class="grid-2 sr-page-3">
           ${card("Répartition par tranche d'âge et par sexe", C.cas + " cas notifiés", pyr,
             "Les hommes prédominent chez les 5 à 14 ans, les femmes dans la tranche 15 à 44 ans.")}
           ${card("Taux d'attaque pour 100 000 habitants", "Rapporté aux populations de district", attaque,

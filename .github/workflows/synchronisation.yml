@@ -30,11 +30,14 @@ jobs:
       - name: Normalisation
         run: python scripts/normaliser.py
 
+      - name: Actualisation des donnees cholera
+        run: python scripts/cholera_sync.py
+
       - name: Publication si changement
         run: |
           git config user.name "cid-sync"
           git config user.email "cid-sync@users.noreply.github.com"
-          git add data/
+          git add data/ cholera_data.json chol_periodes.json chol_series.json
           if git diff --cached --quiet; then
             echo "Aucun changement de donnees."
           else
