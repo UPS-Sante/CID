@@ -6202,7 +6202,10 @@ function analyseRisque(p) {
   return `Le suivi porte sur ${villages} villages ou quartiers ayant notifié au moins un cas. ${pire ? `Le district de ${pire.nom} enregistre la létalité la plus élevée parmi les districts à effectif suffisant, à ${pire.cfr.toFixed(1).replace(".", ",")}%, ce qui appelle une revue des délais de prise en charge et de la disponibilité des solutés.` : ""} La structure démographique des cas, avec un âge médian de ${C.age_median} ans et un sexe ratio femmes sur hommes de ${String(C.ratio_fh).replace(".", ",")}, oriente la communication vers les ménages et les établissements scolaires.`;
 }
 
-const POP_DISTRICTS = { "KARAL": 124300, "N'Djamena Nord": 165900, "N'Djamena Centre": 633023, "N'Djamena Est": 633023 };
+// Populations de district issues du rapport de situation. Celles de N'Djamena
+// Centre et Est y figurent à l'identique (633 023), ce qui traduit une reprise
+// involontaire : elles sont écartées tant que le COUSP ne les a pas confirmées.
+const POP_DISTRICTS = { "KARAL": 124300, "N'Djamena Nord": 165900 };
 
 function analyseApprofondie(p) {
   const C = p.bloc.cumul;
@@ -6238,7 +6241,7 @@ VIEWS["cousp-sitrep"] = () => {
     ${chiffre(nb(C.letalite) + " %", "Létalité globale", "seuil acceptable < 1 %", cfrRag)}
     ${chiffre(C.districts.length, "Districts touchés", C.provinces.length + " province" + (C.provinces.length > 1 ? "s" : ""), "orange")}
     ${chiffre(C.villages, "Villages ou quartiers", "ayant notifié au moins un cas", "na")}
-    ${chiffre(C.tdr_total ? Math.round(C.tdr_pos / C.tdr_total * 100) + " %" : "ND", "Positivité au test rapide", C.tdr_pos + " sur " + C.tdr_total + " prélèvements", "na")}
+    ${chiffre(Math.round(CHOL_P.sitrep.labo.culture_pos / CHOL_P.sitrep.labo.culture_total * 100) + " %", "Positivité en culture", CHOL_P.sitrep.labo.culture_pos + " sur " + CHOL_P.sitrep.labo.culture_total + " échantillons", "na")}
   </div>`;
 
   // Tableau de répartition, calqué sur le tableau I du rapport
@@ -6281,15 +6284,16 @@ VIEWS["cousp-sitrep"] = () => {
   const pyr = CHOL_S ? pyramideAges(CHOL_S.pyramide) : "";
 
   // Taux d'attaque par district (chiffre clé du SITREP)
-  const popTot = C.districts.reduce((s, d) => s + (POP_DISTRICTS[d.nom] || 0), 0);
-  const txGlobal = popTot ? (C.cas / popTot * 100000) : null;
+  const REF = CHOL_P.sitrep;
+  const popRef = REF.population_totale;
+  const txGlobal = popRef ? (C.cas / popRef * 100000) : null;
   const attaque = `<table class="tbl-s"><tr><th>District</th><th class="num">Population</th><th class="num">Cas</th><th class="num">Taux d'attaque</th></tr>
     ${C.districts.map(d => {
       const pop = POP_DISTRICTS[d.nom];
       const tx = pop ? (d.cas / pop * 100000) : null;
-      return `<tr><td>${d.nom}</td><td class="num">${pop ? pop.toLocaleString("fr-FR") : "ND"}</td><td class="num">${d.cas}</td><td class="num"><strong>${tx == null ? "ND" : tx.toFixed(1).replace(".", ",")}</strong></td></tr>`;
+      return `<tr><td>${d.nom}</td><td class="num">${pop ? pop.toLocaleString("fr-FR") : "à confirmer"}</td><td class="num">${d.cas}</td><td class="num">${tx == null ? "—" : "<strong>" + tx.toFixed(1).replace(".", ",") + "</strong>"}</td></tr>`;
     }).join("")}
-    <tr class="sr-total"><td><strong>Ensemble</strong></td><td class="num">${popTot.toLocaleString("fr-FR")}</td><td class="num">${C.cas}</td><td class="num"><strong>${txGlobal == null ? "ND" : txGlobal.toFixed(1).replace(".", ",")}</strong></td></tr>
+    <tr class="sr-total"><td><strong>Ensemble</strong></td><td class="num">${popRef.toLocaleString("fr-FR")}</td><td class="num">${C.cas}</td><td class="num"><strong>${txGlobal == null ? "ND" : txGlobal.toFixed(1).replace(".", ",")}</strong></td></tr>
   </table>`;
 
   return {
@@ -6307,12 +6311,14 @@ VIEWS["cousp-sitrep"] = () => {
           ${card("Répartition par district sanitaire", "Cas notifiés et décès, cumul et période",
             `<table class="tbl-s"><tr><th>District</th><th class="num">Nouveaux</th><th class="num">Cumul</th><th class="num">Décès</th><th class="num">Létalité</th></tr>${lignes}${tot}</table>`,
             "Les nouveaux cas correspondent à la période sélectionnée dans la barre de contrôle.")}
-          ${card("Profil des cas", "Caractéristiques démographiques",
+          ${card("Profil des cas et confirmation biologique", "Caractéristiques démographiques et résultats de laboratoire",
             `<table class="tbl-s">
               <tr><td>Âge médian</td><td class="num"><strong>${nb(C.age_median)} ans</strong></td><td class="num">de ${nb(C.age_min)} à ${nb(C.age_max)} ans</td></tr>
               <tr><td>Sexe ratio femmes sur hommes</td><td class="num"><strong>${nb(C.ratio_fh)}</strong></td><td class="num">${C.sexe.F} F · ${C.sexe.M} H</td></tr>
-              <tr><td>Prélèvements analysés</td><td class="num"><strong>${C.tdr_total}</strong></td><td class="num">${C.tdr_pos} positifs</td></tr>
-            </table>`, "")}
+              <tr><td>Tests de diagnostic rapide</td><td class="num"><strong>${CHOL_P.sitrep.labo.tdr_total}</strong></td><td class="num">${CHOL_P.sitrep.labo.tdr_pos} positifs</td></tr>
+              <tr><td>Cultures</td><td class="num"><strong>${CHOL_P.sitrep.labo.culture_total}</strong></td><td class="num">${CHOL_P.sitrep.labo.culture_pos} positifs (${Math.round(CHOL_P.sitrep.labo.culture_pos / CHOL_P.sitrep.labo.culture_total * 100)}%)</td></tr>
+            </table>`,
+            "Les résultats de laboratoire proviennent du rapport de situation n° " + CHOL_P.sitrep.numero + " arrêté au " + CHOL_P.sitrep.arrete.split("-").reverse().join("/") + ", le champ correspondant de la liste linéaire présentant un codage hétérogène.")}
         </div>
         <div class="grid-2">
           ${card("Évolution hebdomadaire des cas et décès", "Semaines épidémiologiques " + hebdo[0].sem + " à " + hebdo[hebdo.length - 1].sem, courbe, "")}
@@ -6328,7 +6334,7 @@ VIEWS["cousp-sitrep"] = () => {
           ${card("Répartition par tranche d'âge et par sexe", C.cas + " cas notifiés", pyr,
             "Les hommes prédominent chez les 5 à 14 ans, les femmes dans la tranche 15 à 44 ans.")}
           ${card("Taux d'attaque pour 100 000 habitants", "Rapporté aux populations de district", attaque,
-            "Populations de projection 2026. Le taux d'attaque rapporte les cas à la population exposée et permet de comparer des districts de tailles différentes.")}
+            "Populations de projection 2026 issues du rapport de situation. Celles de N'Djamena Centre et Est y étant reprises à l'identique, les taux de ces deux districts restent en attente de confirmation par le COUSP ; le taux d'ensemble est calculé sur la population totale de référence.")}
         </div>
         ${card("Analyse de la situation", libellePeriode(p.typ, p.cle),
           blocEditable("situation", "Situation épidémiologique", analyseSituation(p)) +
