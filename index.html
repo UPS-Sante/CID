@@ -3243,7 +3243,7 @@
     @page { size:A4 portrait; margin:11mm; }
     body { background:#fff; }
     .sr-garde { page-break-after:always; box-shadow:none; border:1px solid var(--border); min-height:245mm; justify-content:space-between; }
-    .sr-garde-corps { padding-top:60mm; }
+    .sr-garde-corps { padding-top:26mm; padding-bottom:14mm; }
     .sr-page-2 { page-break-before:always; }
     .sr-page-3 { page-break-before:always; }
     .grid-2, .sr-cles { page-break-inside:avoid; }
@@ -3255,6 +3255,21 @@
     .ed-zone { font-size:11px; line-height:1.5; }
   }
   @media (max-width:700px){ .sr-garde-resume{ grid-template-columns:repeat(2,1fr); } .sr-garde-titre{ font-size:26px; } .sr-garde-bas{ flex-direction:column; } .sr-garde-maj{ text-align:left; } }
+
+  .sr-garde-milieu { display:grid; grid-template-columns:1.25fr 1fr 1fr; gap:22px; padding:0 30px 20px; }
+  .sr-gm-t { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--royal); padding-bottom:5px; border-bottom:1px solid var(--border); margin-bottom:8px; }
+  .sr-gm-liste { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; }
+  .sr-gm-liste li { font-size:11px; color:var(--body); line-height:1.45; }
+  .sr-gm-d { display:inline-block; font-weight:700; color:var(--royal); margin-right:6px; font-variant-numeric:tabular-nums; }
+  .sr-gm-puces li { padding-left:11px; position:relative; }
+  .sr-gm-puces li::before { content:""; position:absolute; left:0; top:6px; width:4px; height:4px; border-radius:50%; background:var(--gold); }
+  .sr-gm-part { font-size:11px; color:var(--body); line-height:1.5; }
+  .ch-edit { border-radius:3px; transition:background .12s, box-shadow .12s; }
+  .ch-edit:hover { background:var(--surface-2); }
+  .ch-edit:focus { outline:none; background:var(--surface); box-shadow:0 0 0 2px var(--royal-l); }
+  .ch-inline { font-weight:inherit; }
+  @media print { .ch-edit:hover { background:transparent; } }
+  @media (max-width:900px){ .sr-garde-milieu{ grid-template-columns:1fr; gap:16px; } }
 </style>
 </head>
 <body>
@@ -6212,6 +6227,9 @@ function barreControleChol() {
 }
 
 // ---- Analyse rédigée à partir des données, modifiable avant export ----
+function champEditable(id, valeur, classe) {
+  return `<span class="ch-edit ${classe || ""}" contenteditable="true" spellcheck="false" data-ed="${id}">${valeur}</span>`;
+}
 function blocEditable(id, titre, texte) {
   return `<div class="ed-bloc">
     <div class="ed-titre">${titre}</div>
@@ -6265,6 +6283,7 @@ VIEWS["cousp-sitrep"] = () => {
   const P = p.bloc.periode, C = p.bloc.cumul;
   const nb = (x) => x == null ? "ND" : String(x).replace(".", ",");
   const cfrRag = C.letalite == null ? "na" : C.letalite >= 3 ? "red" : C.letalite >= 1 ? "orange" : "green";
+  const REF = CHOL_P.sitrep;
 
   // Chiffres clés, dans l'ordre du rapport de situation
   const chiffre = (val, lib, sous, rag) => `<div class="sr-chiffre">
@@ -6321,7 +6340,6 @@ VIEWS["cousp-sitrep"] = () => {
   const pyr = CHOL_S ? pyramideAges(CHOL_S.pyramide) : "";
 
   // Taux d'attaque par district (chiffre clé du SITREP)
-  const REF = CHOL_P.sitrep;
   const popRef = REF.population_totale;
   const txGlobal = popRef ? (C.cas / popRef * 100000) : null;
   const attaque = `<table class="tbl-s"><tr><th>District</th><th class="num">Population</th><th class="num">Cas</th><th class="num">Taux d'attaque</th></tr>
@@ -6350,9 +6368,9 @@ VIEWS["cousp-sitrep"] = () => {
             <div class="sr-garde-org">Centre des Opérations d'Urgence de Santé Publique</div>
           </div>
           <div class="sr-garde-corps">
-            <div class="sr-garde-sur">Rapport de situation</div>
+            <div class="sr-garde-sur">Rapport de situation n° ${champEditable("num", REF.numero, "ch-inline")}</div>
             <h1 class="sr-garde-titre">Épidémie de choléra</h1>
-            <div class="sr-garde-zone">${C.provinces.map(p => p.nom).join(" et ")}</div>
+            <div class="sr-garde-zone">${C.provinces.map(x => x.nom).join(" et ")}</div>
             <div class="sr-garde-periode">Situation arrêtée au ${libellePeriode(p.typ, p.cle)}</div>
             <div class="sr-garde-resume">
               <div class="sr-gr"><span class="sr-gr-v">${C.cas}</span><span class="sr-gr-l">cas notifiés</span></div>
@@ -6361,10 +6379,27 @@ VIEWS["cousp-sitrep"] = () => {
               <div class="sr-gr"><span class="sr-gr-v">${C.districts.length}</span><span class="sr-gr-l">districts touchés</span></div>
             </div>
           </div>
+          <div class="sr-garde-milieu">
+            <div class="sr-gm-col">
+              <div class="sr-gm-t">Chronologie de l'alerte</div>
+              <ul class="sr-gm-liste">${(REF.jalons || []).map(j => `<li><span class="sr-gm-d">${j.date}</span>${champEditable("jalon-" + j.date, j.fait)}</li>`).join("")}</ul>
+            </div>
+            <div class="sr-gm-col">
+              <div class="sr-gm-t">Sites de prise en charge</div>
+              <ul class="sr-gm-liste sr-gm-puces">${(REF.sites_prise_en_charge || []).map((s, k) => `<li>${champEditable("site-" + k, s)}</li>`).join("")}</ul>
+            </div>
+            <div class="sr-gm-col">
+              <div class="sr-gm-t">Défis identifiés</div>
+              <ul class="sr-gm-liste sr-gm-puces">${(REF.defis || []).map((s, k) => `<li>${champEditable("defi-" + k, s)}</li>`).join("")}</ul>
+              <div class="sr-gm-t" style="margin-top:12px;">Partenaires mobilisés</div>
+              <div class="sr-gm-part">${champEditable("partenaires", (REF.partenaires || []).join(" · "))}</div>
+            </div>
+          </div>
           <div class="sr-garde-bas">
             <div class="sr-garde-src">
-              <strong>Source</strong> liste linéaire de surveillance, actualisée quotidiennement.<br>
-              <strong>Confirmations biologiques et populations de référence</strong> rapport de situation n° ${CHOL_P.sitrep.numero}.
+              <strong>Source des cas</strong> liste linéaire de surveillance du COUSP, actualisée chaque nuit.<br>
+              <strong>Confirmations biologiques et populations</strong> rapport de situation n° ${REF.numero}.<br>
+              <strong>Contact</strong> ${champEditable("contact", "Coordination du COUSP, Ministère de la Santé Publique et de la Prévention")}
             </div>
             <div class="sr-garde-maj">Données au ${CHOL_P.meta.fin.split("-").reverse().join("/")}${CHOL_P.meta.actualise ? "<br>Actualisation : " + CHOL_P.meta.actualise : ""}</div>
           </div>

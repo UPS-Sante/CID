@@ -24,7 +24,9 @@ from datetime import date, datetime, timezone
 import openpyxl
 
 BRUT = os.environ.get("BRUT", "brut")
-MOTIFS = ("cholera", "choléra")
+# La liste lineaire est deposee par le COUSP dans le sous-dossier du meme nom.
+DOSSIER_COUSP = os.environ.get("DOSSIER_COUSP", "COUSP")
+MOTIFS = ("cholera", "choléra", "linear", "lineaire", "linelist")
 
 # Colonnes de la liste lineaire, reperees par position (1-indexe)
 COL = {
@@ -42,15 +44,37 @@ FUSION_VILLAGES = {"Djougouli-Adre": "Djougoulié-Adré", "Djougoulié": "Djougo
 
 
 def trouver_classeur():
-    """Retient le classeur le plus recent dont le nom evoque le cholera."""
-    candidats = []
-    for racine, _, fichiers in os.walk(BRUT):
-        for f in fichiers:
-            if not f.lower().endswith((".xlsx", ".xls")):
-                continue
-            if any(m in f.lower() for m in MOTIFS):
-                chemin = os.path.join(racine, f)
-                candidats.append((os.path.getmtime(chemin), chemin))
+    """Retient le classeur le plus recent depose par le COUSP.
+
+    La recherche porte d'abord sur le sous-dossier COUSP, ou le centre depose
+    la liste lineaire. Si ce dossier n'existe pas encore dans l'arborescence
+    synchronisee, la recherche s'elargit a l'ensemble des fichiers telecharges.
+    """
+    def collecter(base):
+        trouves = []
+        for racine, _, fichiers in os.walk(base):
+            for f in fichiers:
+                if not f.lower().endswith((".xlsx", ".xls")):
+                    continue
+                if any(m in f.lower() for m in MOTIFS):
+                    chemin = os.path.join(racine, f)
+                    trouves.append((os.path.getmtime(chemin), chemin))
+        return trouves
+
+    cousp = None
+    for racine, dossiers, _ in os.walk(BRUT):
+        for d in dossiers:
+            if d.upper() == DOSSIER_COUSP.upper():
+                cousp = os.path.join(racine, d)
+                break
+        if cousp:
+            break
+
+    candidats = collecter(cousp) if cousp else []
+    if not candidats:
+        if cousp:
+            print(f"Aucun classeur cholera dans {cousp}, recherche elargie.")
+        candidats = collecter(BRUT)
     if not candidats:
         return None
     return sorted(candidats)[-1][1]
