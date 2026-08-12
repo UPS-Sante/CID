@@ -3937,6 +3937,78 @@ let PLUIE_A = null;
 let CHOL_P = null;
 function cholDispo() { return CHOLERA && CHOLERA.global; }
 function pevDispo() { return PEV && PEV.provinces && PEV.provinces.length; }
+
+/* ---- Borne de disponibilite des donnees PEV (mode strict) ----
+   Le releve PEV est un cumul mensuel. Toute periode posterieure a la
+   derniere periode couverte doit s'afficher en ND, jamais avec les
+   chiffres de la derniere periode connue. */
+function pevMoisMax() {
+  if (PEV && PEV.meta && PEV.meta.mois_max) return PEV.meta.mois_max;
+  const M = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  const p = (PEV && PEV.meta ? String(PEV.meta.periode || "") : "").toLowerCase();
+  const an = (p.match(/(\d{4})/) || [])[1];
+  let mi = -1;
+  M.forEach((nm, idx) => { if (p.includes(nm)) mi = idx; });
+  if (an && mi >= 0) return `${an}-${String(mi + 1).padStart(2, "0")}`;
+  return "2026-06";
+}
+function pevMoisMin() {
+  if (PEV && PEV.meta && PEV.meta.mois_min) return PEV.meta.mois_min;
+  return pevMoisMax().split("-")[0] + "-01";
+}
+function pevPeriodeCle() {
+  if (state.periodMode === "quarter") {
+    return `${state.periodYear}-${String(state.periodQuarter * 3).padStart(2, "0")}`;
+  }
+  return `${state.periodYear}-${String(state.periodMonth).padStart(2, "0")}`;
+}
+function pevPeriodeCouverte() {
+  const cle = pevPeriodeCle();
+  return cle >= pevMoisMin() && cle <= pevMoisMax();
+}
+function pevLibelleDispo() {
+  const [a, m] = pevMoisMax().split("-").map(Number);
+  return `${(MOIS_NOMS[m - 1] || "").toLowerCase()} ${a}`;
+}
+/* Vue ND generique pour une sous-vue PEV hors periode couverte */
+function pevVueNonDisponible(crumbs, tag, titre) {
+  const per = periodLabel();
+  const dispo = pevLibelleDispo();
+  const carte = (l, t) => kpi(l, null, "", t, "—", "flat", "na");
+  const ligne1 = [
+    ["Penta 3", "Cible 90% · calendrier complet"],
+    ["Rougeole (VAR1)", "Cible 90%"],
+    ["Rotavirus (Rota3)", "Antigène récent"],
+    ["Abandon Penta1-3", "Seuil ≤ 10%"],
+  ].map(([l, t]) => carte(l, t)).join("");
+  const ligne2 = [
+    ["Complétude du rapportage", "Cible 100%"],
+    ["Promptitude", "Cible 80%"],
+    ["Provinces sous la cible", "sur 24 · Penta3"],
+    ["Districts sous la cible", "sur 199 · Penta3"],
+  ].map(([l, t]) => carte(l, t)).join("");
+  return {
+    crumbs,
+    html: `
+      <div class="ph">
+        <div class="ph-tag">${tag}</div>
+        <div class="ph-title">${titre}</div>
+        <div class="ph-sub">Aucun relevé consolidé pour ${per}. La dernière période couverte par les données PEV est ${dispo}.</div>
+      </div>
+      <div class="content">
+        <div class="kpi-grid">${ligne1}</div>
+        <div class="kpi-grid">${ligne2}</div>
+        ${card("Période sélectionnée hors couverture des données",
+          `${per} · relevé non disponible`,
+          `<div style="padding:4px 2px;line-height:1.7;color:var(--body);">
+            Les couvertures affichées dans ce module proviennent du relevé PEV consolidé, disponible jusqu'à ${dispo}.
+            La période <strong>${per}</strong> n'a pas encore de relevé transmis et validé, conformément au cycle de données M+5.
+            Aucune valeur n'est reconduite d'une période antérieure : les indicateurs restent en ND jusqu'à réception du relevé correspondant.
+          </div>`,
+          "Source : RIM PEV, DLMVSE. Mode strict : les périodes non couvertes sont signalées en ND et non estimées.")}
+      </div>`,
+  };
+}
 function pevNatCouv(code) { return (PEV && PEV.national.couvertures[code]) || null; }
 function pevProvCV(code) {
   if (!PEV) return [];
@@ -6680,6 +6752,10 @@ VIEWS["vacc-overview"] = (s) => {
   if (!pevDispo()) {
     return { crumbs: ["Vaccination · PEV", "Vue d'ensemble"], html: `<div class="ph"><div class="ph-title">Vaccination</div><div class="ph-sub">Données PEV en cours de chargement.</div></div>` };
   }
+  if (!pevPeriodeCouverte()) {
+    return pevVueNonDisponible(["Vaccination · PEV", "Vue d'ensemble"],
+      "Programme Élargi de Vaccination · DLMVSE", "Vaccination — Vue d'ensemble");
+  }
   const CIBLE = PEV.meta.cible_couverture;
   const rag90 = (v) => v == null ? "na" : v >= CIBLE ? "green" : v >= 80 ? "yellow" : v >= 60 ? "orange" : "red";
   const nat = (c) => pevNatCouv(c);
@@ -6836,6 +6912,10 @@ VIEWS["vacc-couv"] = (s) => {
 // =================================================================
 VIEWS["vacc-zd"] = () => {
   if (!pevDispo()) return { crumbs: ["Vaccination · PEV", "Zéro-dose"], html: `<div class="ph"><div class="ph-title">Zéro-dose</div></div>` };
+  if (!pevPeriodeCouverte()) {
+    return pevVueNonDisponible(["Vaccination · PEV", "Zéro-dose"],
+      "Programme Élargi de Vaccination · DLMVSE", "Zéro-dose");
+  }
   const nomPr = (s) => s.charAt(0) + s.slice(1).toLowerCase();
   // Le zero-dose se lit la ou la 1re dose de Penta n'atteint pas tous les enfants
   const sc = pevSousCible("Penta1", 90);
