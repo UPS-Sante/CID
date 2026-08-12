@@ -1,0 +1,44 @@
+name: Synchronisation des sources Drive
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 3 * * *"
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Telechargement des fichiers sources
+        run: |
+          pip -q install gdown
+          mkdir -p data_sources
+          set +e
+          declare -A F=(
+            [pev_supervision.csv]=1p34r3xpto-ASxGmMYZGhgQSltWmiR7Dk
+            [pev_rim_juin.xls]=1bCxAxyf3CCyHJvr0hSGhBLlQyO8GJQFQ
+            [dsr_provinces_source.csv]=12uFrt0-e9iWSl-L6N4gSZXtplCA7BHi5
+            [dsr_smi.csv]=1VquFa_2gkWvfdbotz7NLG9_5rKVdawi0
+            [dpsis_promptitude_completude.xls]=1jueo9_LrQjeEXpqBKe3fO_5kVLT4BBpR
+          )
+          echo "fichier,statut,octets" > data_sources/rapport_sync.csv
+          for n in "${!F[@]}"; do
+            gdown -q --id "${F[$n]}" -O "data_sources/$n"
+            if [ -s "data_sources/$n" ]; then
+              echo "$n,ok,$(wc -c <data_sources/$n)" >> data_sources/rapport_sync.csv
+            else
+              echo "$n,echec_acces,0" >> data_sources/rapport_sync.csv
+              rm -f "data_sources/$n"
+            fi
+          done
+          cat data_sources/rapport_sync.csv
+      - name: Commit si changement
+        run: |
+          git config user.name "cid-sync"
+          git config user.email "cid-sync@users.noreply.github.com"
+          git add data_sources
+          git diff --cached --quiet && echo "aucun changement" || git commit -m "Synchronisation des fichiers sources depuis le depot Drive"
+          git push
