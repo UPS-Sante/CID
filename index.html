@@ -3585,7 +3585,7 @@ const PROGRAMS = [
       { id:"vacc-zd",        i18n_key:"sub_vacc_zd",       label:"Zéro-dose",           status:"orange" },
       { id:"vacc-palu",      i18n_key:"sub_vacc_palu",     label:"Vaccin antipaludique",status:"yellow" },
       { id:"vacc-surv",      i18n_key:"sub_vacc_surv",     label:"Surveillance épidémio.", status:"na", attente:"Surveillance" },
-      { id:"vacc-intrants",  i18n_key:"sub_vacc_intrants", label:"Vaccins & intrants",  status:"na", attente:"SIGL" },
+      { id:"vacc-intrants",  i18n_key:"sub_vacc_intrants", label:"Vaccins & intrants",  status:"ok" },
       { id:"vacc-cold",      i18n_key:"sub_vacc_cold",     label:"Chaîne du froid",     status:"na", attente:"eSMT" },
       { id:"vacc-pda",       i18n_key:"sub_vacc_pda",      label:"PDA — Protocole d'Accord", status:"yellow", pda:true },
       { id:"vacc-coord",     status:"na", attente:"Coordination", i18n_key:"sub_vacc_coord",    label:"Coordination",        status:"green" },
@@ -3795,6 +3795,10 @@ async function chargerDonneesReelles(essai) {
       if (dsj) DSRN = dsj;
     } catch (e) {}
     try {
+      const pm = await fetch("pev_mensuel.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (pm) PEVM = pm;
+    } catch (e) {}
+    try {
       const cj = await fetch("cholera_data.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (cj) CHOLERA = cj;
     } catch (e) {}
@@ -3934,6 +3938,7 @@ let SEUILS_DEPOT = null;
 let DISTRICTS = [];
 let PEV = null;
 let DSRN = null;
+let PEVM = null;
 let CHOLERA = null;
 let CHOL_A = null;
 let CHOL_S = null;
@@ -6019,7 +6024,34 @@ function vueEnAttente(titre, crumb, source, desc) {
   };
 }
 VIEWS["vacc-surv"] = () => vueEnAttente("Surveillance épidémiologique", "Surveillance épidémio.", "<strong>la surveillance des maladies évitables par la vaccination</strong>, poliomyélite et rougeole notamment", "Cas notifiés, complétude et promptitude de la surveillance.");
-VIEWS["vacc-intrants"] = () => vueEnAttente("Vaccins et intrants", "Vaccins & intrants", "<strong>le SIGL</strong>, système d'information pour la gestion logistique", "Stocks de vaccins, consommation et disponibilité des intrants.");
+VIEWS["vacc-intrants"] = () => {
+  const crumbs=["Vaccination · PEV","Vaccins & intrants"];
+  const et=`<div class="ph"><div class="ph-tag">Programme Élargi de Vaccination · DLMVSE</div><div class="ph-title">Vaccins & intrants</div>`;
+  if(!PEVM) return {crumbs,html:et+`<div class="ph-sub">Données en cours de chargement.</div></div>`};
+  const per = state.periodMode==="quarter" ? `${state.periodYear}-${String(state.periodQuarter*3).padStart(2,"0")}` : `${state.periodYear}-${String(state.periodMonth).padStart(2,"0")}`;
+  const mf=(p)=>{const[a,mo]=p.split("-").map(Number);return MOIS_NOMS[mo-1]+" "+a;};
+  if(per<PEVM.meta.mois_min||per>PEVM.meta.mois_max){
+    return {crumbs,html:et+`<div class="ph-sub">Aucun relevé pour ${periodLabel()}. Série disponible de ${mf(PEVM.meta.mois_min)} à ${mf(PEVM.meta.mois_max)}.</div></div>
+      <div class="content">${card("Période hors couverture des données",periodLabel()+" · relevé non disponible",
+      `<div style="padding:4px 2px;line-height:1.7;color:var(--body);">Les doses administrées et stocks proviennent du relevé mensuel de supervision PEV (dépôt Drive). Aucune valeur n'est reconduite hors période couverte.</div>`,
+      "Source : "+PEVM.meta.source)}</div>`};
+  }
+  const prev=(()=>{const[a,mo]=per.split("-").map(Number);return mo>1?`${a}-${String(mo-1).padStart(2,"0")}`:`${a-1}-12`;})();
+  const kv=(t,k)=>{const v=PEVM.vaccines[k][per],w=PEVM.vaccines[k][prev];
+    const d=(v!=null&&w!=null)?Math.round((v-w)/w*1000)/10:null;
+    return kpi(t,v==null?null:v.toLocaleString("fr-FR"),"", "Enfants vaccinés · "+periodLabel(), d==null?"":(d>0?"+":"")+d+"% vs mois préc.", d==null?"flat":d>1?"up":d<-1?"down":"flat", v==null?"na":"green");};
+  const rows=Object.keys(PEVM.stock_fin).map(k=>{const v=PEVM.stock_fin[k][per],w=PEVM.stock_fin[k][prev];
+    const evo=(v!=null&&w!=null)?Math.round((v-w)/w*1000)/10:null;
+    return `<tr><td class="l">${k}</td><td class="num">${v==null?"ND":v.toLocaleString("fr-FR")}</td><td class="num">${w==null?"ND":w.toLocaleString("fr-FR")}</td><td class="num">${evo==null?"—":(evo>0?"+":"")+evo+"%"}</td></tr>`;}).join("");
+  return {crumbs,html:et+`<div class="ph-sub">Relevé mensuel national · ${periodLabel()} · série non cumulée, ${mf(PEVM.meta.mois_min)} à ${mf(PEVM.meta.mois_max)}.</div></div>
+    <div class="content">
+      <div class="kpi-grid">${kv("Pentavalent","Penta")}${kv("VPO","VPO")}${kv("Rougeole (VAR)","VAR")}${kv("BCG","BCG")}</div>
+      ${card("Stocks de fin de mois par vaccin — "+periodLabel(),"Comparaison au mois précédent",
+        `<table class="dt"><thead><tr><th>Vaccin</th><th style="text-align:right">${periodLabel()}</th><th style="text-align:right">Mois préc.</th><th style="text-align:right">Évolution</th></tr></thead><tbody>${rows}</tbody></table>`,
+        "Source : "+PEVM.meta.source+" · Le stock TD passe de 107 097 en janvier à 29 381 en juin puis remonte à 59 829 en juillet, trajectoire à surveiller avec la DLMVSE.")}
+    </div>`};
+};
+
 VIEWS["vacc-cold"] = () => vueEnAttente("Chaîne du froid", "Chaîne du froid", "<strong>eSMT</strong>, suivi des stocks de vaccins et de la chaîne du froid", "Fonctionnalité des équipements et température des points de stockage.");
 VIEWS["vacc-coord"] = () => vueEnAttente("Coordination", "Coordination", "<strong>les instances de coordination du PEV</strong>", "Réunions de coordination, financement et engagements des partenaires.");
 
