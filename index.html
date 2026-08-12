@@ -3799,6 +3799,10 @@ async function chargerDonneesReelles(essai) {
       if (pm) PEVM = pm;
     } catch (e) {}
     try {
+      const pp = await fetch("pev_mensuel_prov.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (pp) PEVP = pp;
+    } catch (e) {}
+    try {
       const cj = await fetch("cholera_data.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (cj) CHOLERA = cj;
     } catch (e) {}
@@ -3939,6 +3943,7 @@ let DISTRICTS = [];
 let PEV = null;
 let DSRN = null;
 let PEVM = null;
+let PEVP = null;
 let CHOLERA = null;
 let CHOL_A = null;
 let CHOL_S = null;
@@ -6799,6 +6804,12 @@ VIEWS["vacc-overview"] = (s) => {
   const nat = (c) => pevNatCouv(c);
   const ab = PEV.national.abandon.specifique, comp = PEV.national.qualite.completude, prom = PEV.national.qualite.promptitude;
   const p3 = nat("Penta3"), var1 = nat("VAR1"), rota3 = nat("ROTA3");
+  let modeMensuel = false, per3 = null;
+  if (PEVP && state.periodMode === "month") {
+    per3 = `${state.periodYear}-${String(state.periodMonth).padStart(2,"0")}`;
+    if (per3 >= PEVP.meta.mois_min && per3 <= PEVP.meta.mois_max) modeMensuel = true;
+  }
+  const mCouv = (a) => modeMensuel ? (PEVP.national.couv[a] || {})[per3] ?? null : null;
   const deltaTxt = (a) => (a && a.v2025 != null) ? ((a.v2026 - a.v2025 >= 0 ? "+" : "") + Math.round((a.v2026 - a.v2025) * 10) / 10 + " pts") : "";
   const deltaDir = (a) => (a && a.v2025 != null) ? (a.v2026 - a.v2025 > 0.2 ? "up" : a.v2026 - a.v2025 < -0.2 ? "down" : "flat") : "flat";
 
@@ -6833,8 +6844,8 @@ VIEWS["vacc-overview"] = (s) => {
       </div>
       <div class="content">
         <div class="kpi-grid">
-          ${kpi("Penta 3", p3 ? p3.v2026 : null, "%", "Cible 90% · calendrier complet", deltaTxt(p3), deltaDir(p3), rag90(p3 ? p3.v2026 : null))}
-          ${kpi("Rougeole (VAR1)", var1 ? var1.v2026 : null, "%", "Cible 90%", deltaTxt(var1), deltaDir(var1), rag90(var1 ? var1.v2026 : null))}
+          ${kpi("Penta 3" + (modeMensuel ? " · " + MOIS_NOMS[state.periodMonth-1] : ""), modeMensuel ? mCouv("Penta3") : (p3 ? p3.v2026 : null), "%", modeMensuel ? "Cible 90% · doses du mois / cible mensuelle" : "Cible 90% · calendrier complet", modeMensuel ? "" : deltaTxt(p3), modeMensuel ? "flat" : deltaDir(p3), rag90(modeMensuel ? mCouv("Penta3") : (p3 ? p3.v2026 : null)))}
+          ${kpi("Rougeole (VAR1)" + (modeMensuel ? " · " + MOIS_NOMS[state.periodMonth-1] : ""), modeMensuel ? mCouv("VAR1") : (var1 ? var1.v2026 : null), "%", "Cible 90%", modeMensuel ? "" : deltaTxt(var1), modeMensuel ? "flat" : deltaDir(var1), rag90(modeMensuel ? mCouv("VAR1") : (var1 ? var1.v2026 : null)))}
           ${kpi("Rotavirus (Rota3)", rota3 ? rota3.v2026 : null, "%", "Antigène récent, en montée", deltaTxt(rota3), deltaDir(rota3), rag90(rota3 ? rota3.v2026 : null))}
           ${kpi("Abandon Penta1-3", ab ? ab.v2026 : null, "%", "Seuil ≤ 10%", deltaTxt(ab), deltaDir(ab) === "up" ? "down" : "up", ab && ab.v2026 <= 10 ? "green" : "red", true)}
         </div>
