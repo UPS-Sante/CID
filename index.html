@@ -3435,12 +3435,13 @@ const PROVINCES = [
 ];
 
 // 3 PROVINCES PDA — Protocole d'Accord (Gates/GAVI immunisation)
-// 13 PROVINCES PDA — Protocole d'Accord (Gates Foundation × MSPP)
+// 16 PROVINCES PDA — Protocole d'Accord (Gates Foundation × MSPP)
 // Batha, Chari-Baguirmi, Guéra, Hadjer-Lamis, Kanem, Lac, Logone-Occidental,
-// Logone-Oriental, Mayo-Kebbi-Est, N'Djamena, Ouaddaï, Sila, Wadi-Fira
+// Logone-Oriental, Mayo-Kebbi-Est, N'Djamena, Ouaddaï, Sila, Wadi-Fira, Salamat, Mandoul, Tandjilé
 const PDA_PROVINCES = [
   "BAT", "CBG", "GUE", "HDL", "KAN", "LAC",
-  "LOO", "LOE", "MKE", "NDJ", "OUA", "SIL", "WAD"
+  "LOO", "LOE", "MKE", "NDJ", "OUA", "SIL", "WAD",
+  "SAL", "MAN", "TAN"
 ];
 
 // ==============================================================
@@ -3790,6 +3791,10 @@ async function chargerDonneesReelles(essai) {
       if (pj) PEV = pj;
     } catch (e) {}
     try {
+      const dsj = await fetch("dsr_national.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (dsj) DSRN = dsj;
+    } catch (e) {}
+    try {
       const cj = await fetch("cholera_data.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (cj) CHOLERA = cj;
     } catch (e) {}
@@ -3928,6 +3933,7 @@ function rag(val, target, inverse = false) {
 let SEUILS_DEPOT = null;
 let DISTRICTS = [];
 let PEV = null;
+let DSRN = null;
 let CHOLERA = null;
 let CHOL_A = null;
 let CHOL_S = null;
@@ -4243,7 +4249,7 @@ const I18N = {
     mode_quarter: "Trimestre",
     mode_year: "Année",
     national_view: "National · 23 provinces",
-    pda_aggregate: "13 Provinces PDA (agrégat)",
+    pda_aggregate: "16 Provinces PDA (agrégat)",
     pda_group: "── Provinces PDA ──",
     other_provinces: "── Autres provinces ──",
     rag_green: "Bon",
@@ -4324,7 +4330,7 @@ const I18N = {
     kpi_prom_tloh: "Promptitude notification TLOH hebdo",
     kpi_rep_alertes: "Délai de réponse aux alertes < 48h",
     kpi_comp_rma: "Complétude RMA mensuel — DHIS2",
-    kpi_score_pda: "Score global PDA — 13 provinces pilotes",
+    kpi_score_pda: "Score global PDA — 16 provinces pilotes",
     kpi_exec_budget: "Taux d'exécution budgétaire MSPP",
     cat_vacc_dlmvse: "Vaccination · DLMVSE",
     cat_mat_dsr: "Santé maternelle · DSR",
@@ -4343,7 +4349,7 @@ const I18N = {
     act_alertes: "2 alertes critiques en cours : Choléra (Lac), Pic rougeole (Ouaddaï) · Activation cellule de crise",
     act_prom_tloh: "Connexion V-SAT à renforcer sur Tibesti, Borkou, Ennedi · Cadre PRSS-II",
     act_rep_alertes: "Pré-positionner stocks de réponse (CTC, vaccins méningite) en zone sahélienne T2-T3",
-    act_comp_rma: "Plan de renforcement SIGL T2-T3 (PRSS-II) · Extension DHIS2 Tracker aux 13 provinces PDA",
+    act_comp_rma: "Plan de renforcement SIGL T2-T3 (PRSS-II) · Extension DHIS2 Tracker aux 16 provinces PDA",
     act_score_pda: "Débloquer tranche T2 du PDA (820 M FCFA) · Priorité D5 (Logistique) et D7 (Capacités)",
     act_exec_budget: "Accélération T2 : décaissements OEV + Gates · Suivi mensuel par le Cabinet",
     santex_a_title: "Couverture & Impact — Lecture exécutive",
@@ -4362,9 +4368,9 @@ const I18N = {
     vacc_k_strat: "Stratégies avancées T1",
     pda_ph_tag: "Sous-composante Immunisation · PDA",
     pda_ph_title: "PDA — Protocole d'Accord (Immunisation)",
-    pda_ph_sub: "Cadre d'engagement Gates Foundation × MSPP · 13 provinces pilotes · 7 domaines thématiques · 42 indicateurs traceurs.",
+    pda_ph_sub: "Cadre d'engagement Gates Foundation × MSPP · 16 provinces pilotes · 7 domaines thématiques · 42 indicateurs traceurs.",
     pda_perimeter: "Périmètre d'analyse PDA",
-    pda_scope_default: "Le PDA s'applique exclusivement aux <strong>13 provinces pilotes</strong>",
+    pda_scope_default: "Le PDA s'applique exclusivement aux <strong>16 provinces pilotes</strong>",
     pda_scope_focus: "Focus province",
     pda_active: "Provinces pilotes",
     surv_ph_tag: "Surveillance · DLMVSE · COUSP",
@@ -4388,12 +4394,12 @@ const I18N = {
     si_qual_ph_title: "Qualité des données — DQS / LQAS / Triangulation SIGL",
     si_qual_ph_sub: "Concordance terrain ↔ agrégé · cohérence inter-systèmes (DHIS2 × SIGL × SMT × Tracker × IHRIS) · sauvegardes et continuité.",
     pda_fb_label: "Périmètre d'analyse PDA",
-    pda_scope_default: "Le PDA s'applique exclusivement aux <strong>13 provinces pilotes</strong>",
+    pda_scope_default: "Le PDA s'applique exclusivement aux <strong>16 provinces pilotes</strong>",
     pda_scope_focus: "Focus province",
-    pda_one_of_thirteen: "1 des 13 provinces pilotes PDA",
+    pda_one_of_thirteen: "1 des 16 provinces pilotes PDA",
     pda_pilot: "Provinces pilotes",
-    pda_actives_13: "13/13 actives",
-    pda_actives_1_13: "1/13 actives",
+    pda_actives_13: "16/16 actives",
+    pda_actives_1_13: "1/16 actives",
     pda_kpi_score: "Score global PDA",
     pda_kpi_score_focus: "Score PDA",
     pda_kpi_provinces: "Provinces pilotes PDA",
@@ -4401,15 +4407,15 @@ const I18N = {
     pda_kpi_indicators: "Indicateurs PDA",
     pda_score_composite: "Score composite (7 domaines)",
     pda_card_perf: "Performance par domaine PDA",
-    pda_card_perf_sub: "Score moyen — 13 provinces pilotes PDA",
+    pda_card_perf_sub: "Score moyen — 16 provinces pilotes PDA",
     pda_card_perf_sub_focus: "Score moyen — Focus",
     pda_card_map: "Cartographie d'intervention PDA",
-    pda_card_map_sub: "13 provinces pilotes en surbrillance",
-    pda_target_footer: "Cible : 80% par domaine · 13 provinces PDA",
+    pda_card_map_sub: "16 provinces pilotes en surbrillance",
+    pda_target_footer: "Cible : 80% par domaine · 16 provinces PDA",
     pda_trend_title: "Tendance score global PDA — Année courante vs N-1",
-    pda_trend_sub: "Comparaison 2026 vs 2025 · 13 provinces PDA · Janvier–Décembre",
+    pda_trend_sub: "Comparaison 2026 vs 2025 · 16 provinces PDA · Janvier–Décembre",
     pda_alerts_title: "Alertes PDA — T1 2026",
-    pda_alerts_sub: "Anomalies sur les 13 provinces PDA",
+    pda_alerts_sub: "Anomalies sur les 16 provinces PDA",
     pda_tabs_overview: "Vue d'ensemble",
     all_activated: "Tous activés",
     monthly_update: "Mis à jour mensuel",
@@ -4437,7 +4443,7 @@ const I18N = {
     mode_quarter: "Quarter",
     mode_year: "Year",
     national_view: "National · 23 provinces",
-    pda_aggregate: "13 PDA Provinces (aggregate)",
+    pda_aggregate: "16 PDA Provinces (aggregate)",
     pda_group: "── PDA Provinces ──",
     other_provinces: "── Other provinces ──",
     rag_green: "Good",
@@ -4518,7 +4524,7 @@ const I18N = {
     kpi_prom_tloh: "Weekly disease notification timeliness",
     kpi_rep_alertes: "Alert response time < 48h",
     kpi_comp_rma: "Monthly RMA completeness — DHIS2",
-    kpi_score_pda: "Overall PDA score — 13 pilot provinces",
+    kpi_score_pda: "Overall PDA score — 16 pilot provinces",
     kpi_exec_budget: "MSPP budget execution rate",
     cat_vacc_dlmvse: "Immunization · DLMVSE",
     cat_mat_dsr: "Maternal health · DSR",
@@ -4537,7 +4543,7 @@ const I18N = {
     act_alertes: "2 active critical alerts: Cholera (Lac), Measles spike (Ouaddaï) · Crisis cell activation",
     act_prom_tloh: "V-SAT connectivity to strengthen in Tibesti, Borkou, Ennedi · PRSS-II framework",
     act_rep_alertes: "Pre-position response stocks (CTC, meningitis vaccines) in Sahelian zone Q2-Q3",
-    act_comp_rma: "SIGL strengthening plan Q2-Q3 (PRSS-II) · DHIS2 Tracker extension to 13 PDA provinces",
+    act_comp_rma: "SIGL strengthening plan Q2-Q3 (PRSS-II) · DHIS2 Tracker extension to 16 PDA provinces",
     act_score_pda: "Unlock PDA Q2 tranche (820 M FCFA) · Priority D5 (Logistics) and D7 (Capacities)",
     act_exec_budget: "Q2 acceleration: OEV + Gates disbursements · Monthly Cabinet monitoring",
     santex_a_title: "Coverage & Impact — Executive analysis",
@@ -4556,9 +4562,9 @@ const I18N = {
     vacc_k_strat: "Q1 outreach strategies",
     pda_ph_tag: "Immunization sub-component · PDA",
     pda_ph_title: "PDA — Agreement Protocol (Immunization)",
-    pda_ph_sub: "Gates Foundation × MSPP engagement framework · 13 pilot provinces · 7 thematic domains · 42 tracer indicators.",
+    pda_ph_sub: "Gates Foundation × MSPP engagement framework · 16 pilot provinces · 7 thematic domains · 42 tracer indicators.",
     pda_perimeter: "PDA analytical scope",
-    pda_scope_default: "PDA applies exclusively to <strong>13 pilot provinces</strong>",
+    pda_scope_default: "PDA applies exclusively to <strong>16 pilot provinces</strong>",
     pda_scope_focus: "Province focus",
     pda_active: "Pilot provinces",
     surv_ph_tag: "Surveillance · DLMVSE · COUSP",
@@ -4582,12 +4588,12 @@ const I18N = {
     si_qual_ph_title: "Data quality — DQS / LQAS / SIGL Triangulation",
     si_qual_ph_sub: "Field ↔ aggregate concordance · cross-system consistency (DHIS2 × SIGL × SMT × Tracker × IHRIS) · backups and continuity.",
     pda_fb_label: "PDA analytical scope",
-    pda_scope_default: "PDA applies exclusively to <strong>13 pilot provinces</strong>",
+    pda_scope_default: "PDA applies exclusively to <strong>16 pilot provinces</strong>",
     pda_scope_focus: "Province focus",
-    pda_one_of_thirteen: "1 of the 13 PDA pilot provinces",
+    pda_one_of_thirteen: "1 of the 16 PDA pilot provinces",
     pda_pilot: "Pilot provinces",
-    pda_actives_13: "13/13 active",
-    pda_actives_1_13: "1/13 active",
+    pda_actives_13: "16/16 active",
+    pda_actives_1_13: "1/16 active",
     pda_kpi_score: "Overall PDA score",
     pda_kpi_score_focus: "PDA score",
     pda_kpi_provinces: "PDA pilot provinces",
@@ -4595,15 +4601,15 @@ const I18N = {
     pda_kpi_indicators: "PDA indicators",
     pda_score_composite: "Composite score (7 domains)",
     pda_card_perf: "Performance by PDA domain",
-    pda_card_perf_sub: "Average score — 13 PDA pilot provinces",
+    pda_card_perf_sub: "Average score — 16 PDA pilot provinces",
     pda_card_perf_sub_focus: "Average score — Focus",
     pda_card_map: "PDA intervention map",
-    pda_card_map_sub: "13 pilot provinces highlighted",
-    pda_target_footer: "Target: 80% per domain · 13 PDA provinces",
+    pda_card_map_sub: "16 pilot provinces highlighted",
+    pda_target_footer: "Target: 80% per domain · 16 PDA provinces",
     pda_trend_title: "PDA overall score trend — Current year vs Y-1",
-    pda_trend_sub: "Comparison 2026 vs 2025 · 13 PDA provinces · Rolling 12 months",
+    pda_trend_sub: "Comparison 2026 vs 2025 · 16 PDA provinces · Rolling 12 months",
     pda_alerts_title: "PDA Alerts — Q1 2026",
-    pda_alerts_sub: "Anomalies across the 13 PDA provinces",
+    pda_alerts_sub: "Anomalies across the 16 PDA provinces",
     pda_tabs_overview: "Overview",
     all_activated: "All activated",
     monthly_update: "Monthly update",
@@ -4631,7 +4637,7 @@ const I18N = {
     mode_quarter: "ربع سنوي",
     mode_year: "سنة",
     national_view: "وطني · 23 إقليم",
-    pda_aggregate: "13 إقليم PDA (إجمالي)",
+    pda_aggregate: "16 إقليم PDA (إجمالي)",
     pda_group: "── أقاليم PDA ──",
     other_provinces: "── أقاليم أخرى ──",
     rag_green: "جيد",
@@ -4712,7 +4718,7 @@ const I18N = {
     kpi_prom_tloh: "سرعة الإبلاغ الأسبوعي للأمراض",
     kpi_rep_alertes: "زمن الاستجابة للتنبيهات < 48 ساعة",
     kpi_comp_rma: "اكتمال التقارير الشهرية — DHIS2",
-    kpi_score_pda: "النتيجة الإجمالية لـ PDA — 13 إقليم تجريبي",
+    kpi_score_pda: "النتيجة الإجمالية لـ PDA — 16 إقليم تجريبي",
     kpi_exec_budget: "معدل تنفيذ ميزانية وزارة الصحة",
     cat_vacc_dlmvse: "التحصين · DLMVSE",
     cat_mat_dsr: "صحة الأم · DSR",
@@ -4731,7 +4737,7 @@ const I18N = {
     act_alertes: "تنبيهان حرجان نشطان: الكوليرا (لاك)، تفشي الحصبة (وداي) · تفعيل خلية الأزمات",
     act_prom_tloh: "تعزيز اتصال V-SAT في تيبستي، بوركو، إنيدي · إطار PRSS-II",
     act_rep_alertes: "تخزين مسبق لمخزونات الاستجابة (CTC، لقاحات التهاب السحايا) في المنطقة الساحلية ربع 2-3",
-    act_comp_rma: "خطة تعزيز SIGL ربع 2-3 (PRSS-II) · توسيع DHIS2 Tracker إلى 13 إقليم PDA",
+    act_comp_rma: "خطة تعزيز SIGL ربع 2-3 (PRSS-II) · توسيع DHIS2 Tracker إلى 16 إقليم PDA",
     act_score_pda: "الإفراج عن شريحة PDA الربع 2 (820 مليون فرنك) · الأولوية D5 (اللوجستيات) و D7 (القدرات)",
     act_exec_budget: "تسريع الربع 2: صرف OEV + Gates · المتابعة الشهرية من قبل الديوان",
     santex_a_title: "التغطية والأثر — قراءة تنفيذية",
@@ -4750,9 +4756,9 @@ const I18N = {
     vacc_k_strat: "الاستراتيجيات المتقدمة ربع 1",
     pda_ph_tag: "المكون الفرعي للتحصين · PDA",
     pda_ph_title: "PDA — بروتوكول الاتفاق (التحصين)",
-    pda_ph_sub: "إطار التزام مؤسسة غيتس × وزارة الصحة · 13 إقليم تجريبي · 7 مجالات موضوعية · 42 مؤشر تتبع.",
+    pda_ph_sub: "إطار التزام مؤسسة غيتس × وزارة الصحة · 16 إقليم تجريبي · 7 مجالات موضوعية · 42 مؤشر تتبع.",
     pda_perimeter: "نطاق تحليل PDA",
-    pda_scope_default: "ينطبق PDA حصريًا على <strong>13 إقليم تجريبي</strong>",
+    pda_scope_default: "ينطبق PDA حصريًا على <strong>16 إقليم تجريبي</strong>",
     pda_scope_focus: "تركيز إقليم",
     pda_active: "الأقاليم التجريبية",
     surv_ph_tag: "المراقبة · DLMVSE · COUSP",
@@ -4776,12 +4782,12 @@ const I18N = {
     si_qual_ph_title: "جودة البيانات — DQS / LQAS / التثليث SIGL",
     si_qual_ph_sub: "التطابق بين الميدان والإجمالي · الاتساق بين الأنظمة · النسخ الاحتياطي والاستمرارية.",
     pda_fb_label: "نطاق تحليل PDA",
-    pda_scope_default: "ينطبق PDA حصريًا على <strong>13 إقليم تجريبي</strong>",
+    pda_scope_default: "ينطبق PDA حصريًا على <strong>16 إقليم تجريبي</strong>",
     pda_scope_focus: "تركيز إقليم",
-    pda_one_of_thirteen: "1 من أصل 13 إقليم تجريبي PDA",
+    pda_one_of_thirteen: "1 من أصل 16 إقليم تجريبي PDA",
     pda_pilot: "الأقاليم التجريبية",
-    pda_actives_13: "13/13 نشط",
-    pda_actives_1_13: "1/13 نشط",
+    pda_actives_13: "16/16 نشط",
+    pda_actives_1_13: "1/16 نشط",
     pda_kpi_score: "النتيجة الإجمالية لـ PDA",
     pda_kpi_score_focus: "نتيجة PDA",
     pda_kpi_provinces: "الأقاليم التجريبية PDA",
@@ -4789,13 +4795,13 @@ const I18N = {
     pda_kpi_indicators: "مؤشرات PDA",
     pda_score_composite: "النتيجة المركبة (7 مجالات)",
     pda_card_perf: "الأداء حسب مجال PDA",
-    pda_card_perf_sub: "متوسط النتيجة — 13 إقليم تجريبي PDA",
+    pda_card_perf_sub: "متوسط النتيجة — 16 إقليم تجريبي PDA",
     pda_card_perf_sub_focus: "متوسط النتيجة — تركيز",
     pda_card_map: "خريطة تدخلات PDA",
-    pda_card_map_sub: "13 إقليم تجريبي مميز",
-    pda_target_footer: "الهدف: 80% لكل مجال · 13 إقليم PDA",
+    pda_card_map_sub: "16 إقليم تجريبي مميز",
+    pda_target_footer: "الهدف: 80% لكل مجال · 16 إقليم PDA",
     pda_trend_title: "اتجاه نتيجة PDA الإجمالية — السنة الحالية مقابل السنة الماضية",
-    pda_trend_sub: "مقارنة 2026 مقابل 2025 · 13 إقليم PDA · آخر 12 شهرًا",
+    pda_trend_sub: "مقارنة 2026 مقابل 2025 · 16 إقليم PDA · آخر 12 شهرًا",
     pda_alerts_title: "تنبيهات PDA — ربع 1 2026",
     pda_alerts_sub: "الانحرافات في الأقاليم الثلاثة عشر PDA",
     pda_tabs_overview: "نظرة عامة",
@@ -6840,7 +6846,7 @@ VIEWS["vacc-couv"] = (s) => {
       <div class="ph">
         <div class="ph-tag">Antigènes traceurs · DLMVSE</div>
         <div class="ph-title">Couverture vaccinale — Antigènes traceurs</div>
-        <div class="ph-sub">Performance vaccinale par antigène et par province · ${state.scope === "pda" ? "13 provinces PDA" : "23 provinces nationales"}.</div>
+        <div class="ph-sub">Performance vaccinale par antigène et par province · ${state.scope === "pda" ? "16 provinces PDA" : "23 provinces nationales"}.</div>
       </div>
 
       <div class="content">
@@ -6967,7 +6973,7 @@ VIEWS["vacc-pda"] = (s) => {
           <div class="fb-text">
             ${state.provinceFilter && PDA_PROVINCES.includes(state.provinceFilter)
               ? `${t("pda_scope_focus")} : <strong>${PROVINCES.find(p => p.id === state.provinceFilter).name}</strong> · ${t("pda_one_of_thirteen")}`
-              : `${t("pda_scope_default")} · Batha, Chari-Baguirmi, Guéra, Hadjer-Lamis, Kanem, Lac, Logone-Occidental, Logone-Oriental, Mayo-Kebbi-Est, N'Djamena, Ouaddaï, Sila, Wadi-Fira`
+              : `${t("pda_scope_default")} · ${PDA_PROVINCES.map(id => (PROVINCES.find(p => p.id === id) || {}).name).filter(Boolean).join(", ")}`
             }
           </div>
         </div>
@@ -7032,12 +7038,12 @@ function renderPdaOverview() {
 
   const contextLabel = focusedProv
     ? `Focus : ${PROVINCES.find(p => p.id === focusedProv).name}`
-    : "13 provinces pilotes PDA";
+    : "16 provinces pilotes PDA";
 
   return `
     <div class="kpi-grid">
       ${kpi(focusedProv ? `${t("pda_kpi_score_focus")} · ${PROVINCES.find(p=>p.id===focusedProv).short}` : t("pda_kpi_score"), avgPda, "%", "Cible : 80%", "", "flat", rag(avgPda, 80))}
-      ${kpi(t("pda_kpi_provinces"), focusedProv ? "1" : "13", "/13", t("wave_1"), t("stable"), "flat", "yellow")}
+      ${kpi(t("pda_kpi_provinces"), focusedProv ? "1" : "16", "/16", t("wave_1"), t("stable"), "flat", "yellow")}
       ${kpi(t("pda_kpi_domains"), null, "/7", t("all_activated"), t("stable"), "flat", "green")}
       ${kpi(t("pda_kpi_indicators"), String(indicCount), "", t("monthly_update"), t("stable"), "flat", "green")}
     </div>
@@ -7070,7 +7076,7 @@ function renderPdaOverview() {
       ${card(t("pda_card_perf"), (focusedProv ? `${t("pda_card_perf_sub_focus")} : ${PROVINCES.find(p=>p.id===focusedProv).name}` : t("pda_card_perf_sub")), renderBars(domScores.map(d => ({
         label: d.code + " · " + d.label.substring(0,18),
         val: d.score, target: 80, rag: rag(d.score, 80),
-      }))), "Cible : 80% par domaine · 13 provinces PDA")}
+      }))), "Cible : 80% par domaine · 16 provinces PDA")}
 
       ${card(t("pda_card_map"), focusedProv ? `${PROVINCES.find(p=>p.id===focusedProv).name}` : t("pda_card_map_sub"), renderMap("pda-D1", { pdaFocus: true }), "")}
     </div>
@@ -7081,8 +7087,8 @@ function renderPdaOverview() {
         : "Domaine D2 (Offres de Services) en tête, D5 (Logistique) à renforcer",
       focusedProv
         ? `La province de <strong>${PROVINCES.find(p=>p.id===focusedProv).name}</strong> affiche un score composite PDA de <strong>${avgPda}%</strong> (cible 80%). Domaines en retrait : <strong>${domScores.slice().sort((a,b)=>a.score-b.score).slice(0,2).map(d=>d.code+' ('+d.score+'%)').join(', ')}</strong>. Recommandation : <strong>renforcer ces deux axes</strong> via le plan d'action provincial PDA T2-T3 et débloquer les tranches financières correspondantes (cadre Gates Foundation).`
-        : `Sur les 13 provinces pilotes PDA, le domaine <strong>D2 — Offres de Services</strong> atteint <strong>${domScores.find(d=>d.id==='D2').score}%</strong> grâce aux stratégies avancées mobiles. Le domaine <strong>D5 — Logistique & Chaîne du froid</strong> reste critique à <strong>${domScores.find(d=>d.id==='D5').score}%</strong>. Recommandation : <strong>débloquer la tranche T2 du PDA (820 M FCFA)</strong> en priorité sur D5 et D7 (Capacités).`,
-      "Source : DHIS2 + SIGL · Cross-check : SMT · 13 provinces PDA · Confiance : 91%"
+        : `Sur les 16 provinces pilotes PDA, le domaine <strong>D2 — Offres de Services</strong> atteint <strong>${domScores.find(d=>d.id==='D2').score}%</strong> grâce aux stratégies avancées mobiles. Le domaine <strong>D5 — Logistique & Chaîne du froid</strong> reste critique à <strong>${domScores.find(d=>d.id==='D5').score}%</strong>. Recommandation : <strong>débloquer la tranche T2 du PDA (820 M FCFA)</strong> en priorité sur D5 et D7 (Capacités).`,
+      "Source : DHIS2 + SIGL · Cross-check : SMT · 16 provinces PDA · Confiance : 91%"
     )}
 
     <div class="g-1-1">
@@ -7149,13 +7155,13 @@ function renderPdaDomain(domId) {
 
   const scopeLabel = focusedProv
     ? `Focus ${PROVINCES.find(p => p.id === focusedProv).name}`
-    : `Moyenne 13 provinces pilotes PDA`;
+    : `Moyenne 16 provinces pilotes PDA`;
 
   return `
     <div class="kpi-grid">
       ${kpi(`Score ${domId}${focusedProv ? ' · ' + PROVINCES.find(p=>p.id===focusedProv).short : ''}`, domAvg, "%", "Cible : 80%", "", "flat", rag(domAvg, 80))}
       ${kpi("Indicateurs suivis", String(indicators.length), "", "Tous mis à jour", "", "flat", "green")}
-      ${kpi("Provinces couvertes", focusedProv ? "1" : "13", "/13 PDA", "Pilote · Vague 1", "", "flat", "yellow")}
+      ${kpi("Provinces couvertes", focusedProv ? "1" : "16", "/16 PDA", "Pilote · Vague 1", "", "flat", "yellow")}
       ${kpi("Indicateurs ≥ cible", String(meetTarget) + "/" + indicators.length, "", "Performance T1", "", "flat", meetRag)}
     </div>
 
@@ -7176,11 +7182,11 @@ function renderPdaDomain(domId) {
           max: 100
         })))}
       </div>
-      <div class="card-foot">Cible : variable selon indicateur · Source : DHIS2 / Rapports DSP / SIGL · 13 provinces PDA uniquement</div>
+      <div class="card-foot">Cible : variable selon indicateur · Source : DHIS2 / Rapports DSP / SIGL · 16 provinces PDA uniquement</div>
     </div>
 
     <div class="g-2-1">
-      ${card(`Comparaison 13 provinces PDA — ${domId}`, focusedProv ? `${PROVINCES.find(p=>p.id===focusedProv).name} mise en évidence` : "Score domaine par province", `
+      ${card(`Comparaison 16 provinces PDA — ${domId}`, focusedProv ? `${PROVINCES.find(p=>p.id===focusedProv).name} mise en évidence` : "Score domaine par province", `
         <table class="dt">
           <thead><tr><th>Indicateur</th>${PDA_PROVINCES.map(p => {
             const isFocus = focusedProv === p;
@@ -7205,13 +7211,13 @@ function renderPdaDomain(domId) {
         </table>
       `, "")}
 
-      ${card("Cartographie " + domId, focusedProv ? `${PROVINCES.find(p=>p.id===focusedProv).name} sélectionnée` : "13 provinces pilotes PDA", renderMap("pda-" + domId, { pdaFocus: true }), "")}
+      ${card("Cartographie " + domId, focusedProv ? `${PROVINCES.find(p=>p.id===focusedProv).name} sélectionnée` : "16 provinces pilotes PDA", renderMap("pda-" + domId, { pdaFocus: true }), "")}
     </div>
 
     ${aiBox(
       `Analyse du domaine ${domId} — ${dom.label}`,
       domainNarrative(domId, domAvg, indAverages),
-      "Source : DHIS2 + DSP · Triangulation J+5 · 13 provinces PDA · Période : " + periodLabel()
+      "Source : DHIS2 + DSP · Triangulation J+5 · 16 provinces PDA · Période : " + periodLabel()
     )}
   `;
 }
@@ -7219,7 +7225,7 @@ function renderPdaDomain(domId) {
 function domainNarrative(domId, avg, inds) {
   const narratives = {
     D1: `La <strong>gouvernance financière du PDA</strong> atteint ${avg}% sur la période. Les revues semestrielles et trimestrielles sont en bonne voie, mais les <strong>pièces justificatives validées</strong> restent un goulet d'étranglement (impact sur tranches T2). Recommandation : <strong>renforcer la cellule de gestion financière au niveau DLMVSE</strong>.`,
-    D2: `Les <strong>offres de services PEV</strong> progressent (${avg}%). La <strong>couverture Penta 3</strong> reste sous-optimale en zone sahélienne. Les <strong>stratégies avancées mobiles</strong> ont prouvé leur efficacité. Recommandation : <strong>passer de 16 à 32 équipes mobiles dès T2</strong> sur les 13 provinces.`,
+    D2: `Les <strong>offres de services PEV</strong> progressent (${avg}%). La <strong>couverture Penta 3</strong> reste sous-optimale en zone sahélienne. Les <strong>stratégies avancées mobiles</strong> ont prouvé leur efficacité. Recommandation : <strong>passer de 16 à 32 équipes mobiles dès T2</strong> sur les 16 provinces.`,
     D3: `La <strong>surveillance épidémiologique</strong> est globalement fonctionnelle (${avg}%). Le suivi PFA reste perfectible. <strong>Notification méningite à temps</strong> à risque sur Tibesti. Action : <strong>renforcer le COUSP provincial</strong>.`,
     D4: `Les <strong>causeries éducatives</strong> sont sous-réalisées (${avg}%). Le levier communautaire reste le maillon faible. Recommandation : <strong>intégrer la communication PEV dans le plan annuel des ASC</strong>.`,
     D5: `La <strong>chaîne du froid et la logistique</strong> reste un point d'attention majeur (${avg}%). Ruptures d'antigènes persistantes au Lac. <strong>43% des pannes liées aux équipements à gaz</strong>. Recommandation : <strong>accélérer la transition solaire</strong> (PRSS-II / Banque Mondiale).`,
@@ -7230,43 +7236,94 @@ function domainNarrative(domId, avg, inds) {
 }
 
 VIEWS["dsr-overview"] = () => {
-  const cpn1 = nationalAggregate("couv-cpn1");
-  const cpn4 = nationalAggregate("couv-cpn4");
-  const acc  = nationalAggregate("couv-acc");
-  const mcpr = nationalAggregate("mcpr");
-  return {
-    crumbs:["Santé Reproductive", "Vue d'ensemble"],
-    html: `
-      <div class="ph">
-        <div class="ph-tag">♀ Direction de la Santé de la Reproduction</div>
-        <div class="ph-title">Santé Reproductive — Vue d'ensemble</div>
-        <div class="ph-sub">Indicateurs traceurs DSR · Santé maternelle, néonatale, planification familiale.</div>
+  const crumbs = ["Santé Reproductive", "Vue d'ensemble"];
+  const per = state.periodMode === "quarter"
+    ? `${state.periodYear}-${String(state.periodQuarter * 3).padStart(2, "0")}`
+    : `${state.periodYear}-${String(state.periodMonth).padStart(2, "0")}`;
+  const enTete = `
+    <div class="ph">
+      <div class="ph-tag">Direction de la Santé de la Reproduction</div>
+      <div class="ph-title">Santé Reproductive — Vue d'ensemble</div>`;
+  if (!DSRN) {
+    return { crumbs, html: enTete + `<div class="ph-sub">Données DSR en cours de chargement.</div></div>` };
+  }
+  const mmin = DSRN.meta.mois_min, mmax = DSRN.meta.mois_max;
+  const lit = (k, p) => { const d = DSRN.indicateurs[k]; return d ? d.serie[p] : null; };
+  const moisFr = (p) => { const [a, mo] = p.split("-").map(Number); return MOIS_NOMS[mo - 1] + " " + a; };
+  if (per < mmin || per > mmax) {
+    const carte = (l, t) => kpi(l, null, "", t, "—", "flat", "na");
+    return { crumbs, html: enTete + `
+        <div class="ph-sub">Aucun relevé mensuel pour ${periodLabel()}. Série DSR disponible de ${moisFr(mmin)} à ${moisFr(mmax)}.</div>
       </div>
       <div class="content">
         <div class="kpi-grid">
-          ${kpi("Couverture CPN 1", cpn1, "%", "Cible : 95%", "", "flat", rag(cpn1,95))}
-          ${kpi("Couverture CPN 4", cpn4, "%", "Cible : 65%", "", "flat", rag(cpn4,65))}
-          ${kpi("Accouchements assistés", acc, "%", "Cible : 70%", "", "flat", rag(acc,70))}
-          ${kpi("mCPR (prévalence contraceptive)", mcpr, "%", "Cible : 30%", "", "flat", "red")}
+          ${carte("Couverture CPN 1", "Cible : 95%")}${carte("Accouchements assistés", "Cible : 70%")}${carte("Utilisation du partogramme", "Qualité intrapartum")}${carte("GATPA", "Prévention HPP")}
         </div>
-        <div class="g-2-1">
-          ${card("CPN 4 par province", "Couverture consultations prénatales 4+", renderMap("couv-cpn4"), "Source : DHIS2 — Données mensuelles")}
-          ${card("Indicateurs DSR — Top 5", "Performance comparée", renderBars([
-            { label:"CPN 1",   val:cpn1, target:95, rag:rag(cpn1,95) },
-            { label:"CPN 4",   val:cpn4, target:65, rag:rag(cpn4,65) },
-            { label:"Acc. assistés", val:acc, target:70, rag:rag(acc,70) },
-            { label:"CPoN",    val:null, target:60 },
-            { label:"mCPR",    val:mcpr, target:30, rag:"red" },
-          ]), "")}
-        </div>
-        ${aiBox(
-          "Mortalité maternelle — focus zone sahélienne",
-          `Le taux national de mortalité maternelle reste élevé (<strong>498/100k</strong>) avec un pic au <strong>Lac (724/100k)</strong>, 2,4× la moyenne. Trois facteurs : accès SONU limité, prévalence PF à 12% (vs 18% national), ruptures kits accouchement. Recommandation : <strong>mobiliser le pool d'experts CIFF dès T2</strong>, réhabilitation 2 centres SONU-C au Lac.`,
-          "Source : DHIS2 + Audits décès maternels · DSR"
-        )}
-      </div>
-    `
+        ${card("Période hors couverture des données", periodLabel() + " · relevé non disponible",
+          `<div style="padding:4px 2px;line-height:1.7;color:var(--body);">La série mensuelle DSR provient du dépôt Drive (export DHIS2 national), couverte de ${moisFr(mmin)} à ${moisFr(mmax)}. Aucune valeur n'est reconduite : les périodes sans relevé restent en ND.</div>`,
+          "Source : " + DSRN.meta.source)}
+      </div>` };
+  }
+  const prev = (() => { const [a, mo] = per.split("-").map(Number); return mo > 1 ? `${a}-${String(mo - 1).padStart(2, "0")}` : `${a - 1}-12`; })();
+  const n1 = String(Number(per.slice(0, 4)) - 1) + per.slice(4);
+  const delta = (k) => {
+    const v = lit(k, per), w = lit(k, prev);
+    if (v == null || w == null) return ["", "flat"];
+    const d = Math.round((v - w) * 10) / 10;
+    return [(d > 0 ? "+" : "") + d + " pts vs " + moisFr(prev).split(" ")[0], d > 0.5 ? "up" : d < -0.5 ? "down" : "flat"];
   };
+  const K = (titre, k, cible, inverse) => {
+    const v = lit(k, per);
+    const [dTxt, dDir] = delta(k);
+    const r = v == null ? "na" : inverse ? (v <= cible ? "green" : v <= cible * 1.5 ? "yellow" : "red")
+      : (v >= cible ? "green" : v >= cible * 0.85 ? "yellow" : v >= cible * 0.6 ? "orange" : "red");
+    return kpi(titre, v == null ? null : Math.round(v * 10) / 10, v == null ? "" : "%", "Cible : " + cible + "%", dTxt, dDir, r);
+  };
+  const serieDe = (k) => {
+    const s = DSRN.indicateurs[k].serie;
+    return Object.keys(s).filter(p => p >= mmin && p <= mmax).sort().map(p => ({ p, v: s[p] }));
+  };
+  const lignes = (ks) => ks.map(([k, lab, cible]) => {
+    const v = lit(k, per), vN1 = lit(k, n1);
+    const evo = (v != null && vN1 != null) ? (Math.round((v - vN1) * 10) / 10) : null;
+    return `<tr><td class="l">${lab}</td>
+      <td class="num">${v == null ? "ND" : (Math.round(v * 10) / 10) + (DSRN.indicateurs[k].unite === "%" ? "%" : "")}</td>
+      <td class="num">${vN1 == null ? "ND" : Math.round(vN1 * 10) / 10}</td>
+      <td class="num">${evo == null ? "—" : (evo > 0 ? "+" : "") + evo + " pts"}</td>
+      <td>${v == null ? '<span class="pill na">ND</span>' : v >= cible ? '<span class="pill green">atteint</span>' : '<span class="pill orange">sous cible</span>'}</td></tr>`;
+  }).join("");
+  const barres = serieDe("cpn1").map(x => ({ label: MOIS_NOMS[Number(x.p.slice(5)) - 1].slice(0, 4), val: x.v == null ? null : Math.round(x.v), target: 95, rag: x.v == null ? "na" : x.v >= 95 ? "green" : x.v >= 80 ? "yellow" : "orange" }));
+  const anomaliesPer = (DSRN.anomalies || []).filter(a => a.periode === per);
+  const noteAnom = anomaliesPer.length ? card("Signalements qualité — " + periodLabel(),
+      anomaliesPer.length + " valeur(s) hors plage attendue, affichée(s) sans correction",
+      `<div style="padding:4px 2px;line-height:1.7;color:var(--body);">` + anomaliesPer.map(a =>
+        `<div>· <strong>${DSRN.indicateurs[a.indicateur].libelle}</strong> : ${a.valeur}${DSRN.indicateurs[a.indicateur].unite === "%" ? "%" : ""} — ${a.type === "superieur_100" ? "valeur supérieure à 100%, dénominateur à vérifier avec la DSR" : "incohérence de cascade CPN1→CPN4, définition d'indicateur à vérifier"}</div>`).join("") + `</div>`,
+      "Mode strict : les anomalies sont signalées à la source, jamais masquées ni corrigées.") : "";
+  return { crumbs, html: enTete + `
+      <div class="ph-sub">Relevé mensuel national · ${periodLabel()} · série non cumulée, ${moisFr(mmin)} à ${moisFr(mmax)}.</div>
+    </div>
+    <div class="content">
+      <div class="kpi-grid">
+        ${K("Couverture CPN 1", "cpn1", 95)}
+        ${K("Accouchements assistés", "acc_qualifie", 70)}
+        ${K("Utilisation du partogramme", "partogramme", 80)}
+        ${K("GATPA", "gatpa", 90)}
+      </div>
+      <div class="kpi-grid">
+        ${K("CPoN (2e contact)", "cpon", 60)}
+        ${K("Prévalence contraceptive", "prev_contra", 30)}
+        ${K("Césarienne", "cesarienne", 5)}
+        ${K("Faible poids de naissance", "faible_poids", 10, true)}
+      </div>
+      <div class="g-2-1">
+        ${card("CPN 1 — évolution mensuelle 2026", "Relevé mensuel national, non cumulé · cible 95%", renderBars(barres), "Source : " + DSRN.meta.source)}
+        ${card("Indicateurs traceurs — " + periodLabel(), "Comparaison au même mois de 2025", `
+          <table class="dt"><thead><tr><th>Indicateur</th><th style="text-align:right">${per.slice(0, 4)}</th><th style="text-align:right">${n1.slice(0, 4)}</th><th style="text-align:right">Évolution</th><th>Écart cible</th></tr></thead><tbody>
+          ${lignes([["cpn1", "CPN 1", 95], ["acc_qualifie", "Accouchements assistés", 70], ["partogramme", "Partogramme", 80], ["gatpa", "GATPA", 90], ["cpon", "CPoN 2e contact", 60], ["prev_contra", "Prévalence contraceptive", 30]])}
+          </tbody></table>`, n1 < "2025-01" || n1 > "2025-06" ? "Comparaison N-1 disponible de janvier à juin 2025 uniquement." : "")}
+      </div>
+      ${noteAnom}
+    </div>` };
 };
 
 VIEWS["dsr-mat"] = () => ({
@@ -7642,7 +7699,7 @@ VIEWS["dpsis-comp"] = () => {
 
         ${aiBox(
           "IHRIS et DHIS2 en bonne voie, SIGL et Tracker à renforcer",
-          `Les systèmes <strong>IHRIS (${systems[3].complet}%)</strong> et <strong>DHIS2 (${systems[0].complet}%)</strong> atteignent les seuils opérationnels. <strong>SIGL (${systems[2].complet}%)</strong> reste fragile, particulièrement en zone sahélienne. <strong>DHIS2 Tracker</strong> peine à se déployer au-delà des sites pilotes PEV. Recommandation : <strong>plan de renforcement SIGL en T2-T3</strong> (financement Banque Mondiale via PRSS-II), accélération de l'extension Tracker aux 13 provinces PDA.`,
+          `Les systèmes <strong>IHRIS (${systems[3].complet}%)</strong> et <strong>DHIS2 (${systems[0].complet}%)</strong> atteignent les seuils opérationnels. <strong>SIGL (${systems[2].complet}%)</strong> reste fragile, particulièrement en zone sahélienne. <strong>DHIS2 Tracker</strong> peine à se déployer au-delà des sites pilotes PEV. Recommandation : <strong>plan de renforcement SIGL en T2-T3</strong> (financement Banque Mondiale via PRSS-II), accélération de l'extension Tracker aux 16 provinces PDA.`,
           "Source : Logs administrateurs SI · DPSIS · Mise à jour : J+1"
         )}
 
@@ -7786,7 +7843,7 @@ VIEWS["dpsis-qual"] = () => {
 
         ${aiBox(
           "SIGL × DHIS2 : trois actions structurantes",
-          `La triangulation SIGL atteint <strong>${siglAvg}%</strong> (cible 85%). Trois leviers prioritaires : <strong>(1)</strong> Finaliser la configuration <strong>Sayana-Press dans DHIS2</strong> pour combler le gap PF (+10 pts attendus). <strong>(2)</strong> Étendre <strong>DHIS2 Tracker aux 13 provinces PDA</strong> (T3-T4) pour renforcer le croisement SIGL ↔ Tracker (+15 pts attendus). <strong>(3)</strong> Lancer un <strong>plan SIGL CS-CdF</strong> en zone sahélienne (Tibesti, Borkou, Ennedi) pour la complétude pyramidale (+12 pts attendus). Cible 2027 : 90% de cohérence sur l'ensemble des croisements.`,
+          `La triangulation SIGL atteint <strong>${siglAvg}%</strong> (cible 85%). Trois leviers prioritaires : <strong>(1)</strong> Finaliser la configuration <strong>Sayana-Press dans DHIS2</strong> pour combler le gap PF (+10 pts attendus). <strong>(2)</strong> Étendre <strong>DHIS2 Tracker aux 16 provinces PDA</strong> (T3-T4) pour renforcer le croisement SIGL ↔ Tracker (+15 pts attendus). <strong>(3)</strong> Lancer un <strong>plan SIGL CS-CdF</strong> en zone sahélienne (Tibesti, Borkou, Ennedi) pour la complétude pyramidale (+12 pts attendus). Cible 2027 : 90% de cohérence sur l'ensemble des croisements.`,
           "Source : Triangulation automatisée DPSIS · Confiance : 88%"
         )}
       </div>
