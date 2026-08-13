@@ -6051,6 +6051,13 @@ VIEWS["vacc-intrants"] = () => {
   return {crumbs,html:et+`<div class="ph-sub">Relevé mensuel national · ${periodLabel()} · série non cumulée, ${mf(PEVM.meta.mois_min)} à ${mf(PEVM.meta.mois_max)}.</div></div>
     <div class="content">
       <div class="kpi-grid">${kv("Pentavalent","Penta")}${kv("VPO","VPO")}${kv("Rougeole (VAR)","VAR")}${kv("BCG","BCG")}</div>
+      ${(PEVM.provinces ? card("Détail provincial — enfants vaccinés Pentavalent · "+periodLabel(),"Vingt-deux provinces rapportantes · Wadi-Fira absent du relevé (ND)",
+        `<table class="dt"><thead><tr><th>Province</th><th style="text-align:right">Penta</th><th style="text-align:right">VAR</th><th style="text-align:right">Stock Penta fin de mois</th></tr></thead><tbody>`+
+        Object.keys(PEVM.provinces).sort((a,b)=>(PEVM.provinces[b].vac_Penta?.[per]||0)-(PEVM.provinces[a].vac_Penta?.[per]||0)).map(c=>{
+          const p=PEVM.provinces[c], nm=(PROVINCES.find(x=>x.id===c)||{}).name||c;
+          const f=(o)=>{const v=o?.[per];return v==null?"ND":v.toLocaleString("fr-FR");};
+          return `<tr><td class="l">${nm}</td><td class="num">${f(p.vac_Penta)}</td><td class="num">${f(p.vac_VAR)}</td><td class="num">${f(p.st_Penta)}</td></tr>`;}).join("")+`</tbody></table>`,
+        "Source : "+PEVM.meta.source) : "")}
       ${card("Stocks de fin de mois par vaccin — "+periodLabel(),"Comparaison au mois précédent",
         `<table class="dt"><thead><tr><th>Vaccin</th><th style="text-align:right">${periodLabel()}</th><th style="text-align:right">Mois préc.</th><th style="text-align:right">Évolution</th></tr></thead><tbody>${rows}</tbody></table>`,
         "Source : "+PEVM.meta.source+" · Le stock TD passe de 107 097 en janvier à 29 381 en juin puis remonte à 59 829 en juillet, trajectoire à surveiller avec la DLMVSE.")}
@@ -6810,6 +6817,19 @@ VIEWS["vacc-overview"] = (s) => {
     if (per3 >= PEVP.meta.mois_min && per3 <= PEVP.meta.mois_max) modeMensuel = true;
   }
   const mCouv = (a) => modeMensuel ? (PEVP.national.couv[a] || {})[per3] ?? null : null;
+  if (PEVP && state.periodMode === "quarter" && state.periodYear === 2026 && state.periodQuarter <= 2) {
+    modeMensuel = true;
+    const mois = state.periodQuarter === 1 ? ["2026-01","2026-02","2026-03"] : ["2026-04","2026-05","2026-06"];
+    window.__qCouv = (a) => {
+      const D = PEVP.national.doses[a] || {}, K = PEVP.national.couv[a] || {};
+      const m0 = mois.find(m => D[m] != null && K[m]);
+      if (!m0) return null;
+      const cibleMens = D[m0] / (K[m0] / 100);
+      const sd = mois.reduce((t, m) => t + (D[m] || 0), 0);
+      return Math.round(sd / (cibleMens * 3) * 1000) / 10;
+    };
+  } else { window.__qCouv = null; }
+  const mCouvQ = (a) => window.__qCouv ? window.__qCouv(a) : mCouv(a);
   const deltaTxt = (a) => (a && a.v2025 != null) ? ((a.v2026 - a.v2025 >= 0 ? "+" : "") + Math.round((a.v2026 - a.v2025) * 10) / 10 + " pts") : "";
   const deltaDir = (a) => (a && a.v2025 != null) ? (a.v2026 - a.v2025 > 0.2 ? "up" : a.v2026 - a.v2025 < -0.2 ? "down" : "flat") : "flat";
 
@@ -6844,8 +6864,8 @@ VIEWS["vacc-overview"] = (s) => {
       </div>
       <div class="content">
         <div class="kpi-grid">
-          ${kpi("Penta 3" + (modeMensuel ? " · " + MOIS_NOMS[state.periodMonth-1] : ""), modeMensuel ? mCouv("Penta3") : (p3 ? p3.v2026 : null), "%", modeMensuel ? "Cible 90% · doses du mois / cible mensuelle" : "Cible 90% · calendrier complet", modeMensuel ? "" : deltaTxt(p3), modeMensuel ? "flat" : deltaDir(p3), rag90(modeMensuel ? mCouv("Penta3") : (p3 ? p3.v2026 : null)))}
-          ${kpi("Rougeole (VAR1)" + (modeMensuel ? " · " + MOIS_NOMS[state.periodMonth-1] : ""), modeMensuel ? mCouv("VAR1") : (var1 ? var1.v2026 : null), "%", "Cible 90%", modeMensuel ? "" : deltaTxt(var1), modeMensuel ? "flat" : deltaDir(var1), rag90(modeMensuel ? mCouv("VAR1") : (var1 ? var1.v2026 : null)))}
+          ${kpi("Penta 3" + (modeMensuel ? (state.periodMode==="quarter" ? " · T"+state.periodQuarter+" (somme des doses)" : " · " + MOIS_NOMS[state.periodMonth-1]) : ""), modeMensuel ? mCouvQ("Penta3") : (p3 ? p3.v2026 : null), "%", modeMensuel ? "Cible 90% · doses du mois / cible mensuelle" : "Cible 90% · calendrier complet", modeMensuel ? "" : deltaTxt(p3), modeMensuel ? "flat" : deltaDir(p3), rag90(modeMensuel ? mCouvQ("Penta3") : (p3 ? p3.v2026 : null)))}
+          ${kpi("Rougeole (VAR1)" + (modeMensuel ? (state.periodMode==="quarter" ? " · T"+state.periodQuarter+" (somme des doses)" : " · " + MOIS_NOMS[state.periodMonth-1]) : ""), modeMensuel ? mCouvQ("VAR1") : (var1 ? var1.v2026 : null), "%", "Cible 90%", modeMensuel ? "" : deltaTxt(var1), modeMensuel ? "flat" : deltaDir(var1), rag90(modeMensuel ? mCouvQ("VAR1") : (var1 ? var1.v2026 : null)))}
           ${kpi("Rotavirus (Rota3)", rota3 ? rota3.v2026 : null, "%", "Antigène récent, en montée", deltaTxt(rota3), deltaDir(rota3), rag90(rota3 ? rota3.v2026 : null))}
           ${kpi("Abandon Penta1-3", ab ? ab.v2026 : null, "%", "Seuil ≤ 10%", deltaTxt(ab), deltaDir(ab) === "up" ? "down" : "up", ab && ab.v2026 <= 10 ? "green" : "red", true)}
         </div>
