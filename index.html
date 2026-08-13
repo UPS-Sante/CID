@@ -2684,6 +2684,11 @@
   .dq-vide { padding:14px 4px; font-size:12.5px; color:var(--muted); }
 
   /* ---- Veille toutes maladies (surveillance integree) ---- */
+  .bc-modes { display:inline-flex; border:1px solid var(--border); border-radius:7px; overflow:hidden; margin-left:8px; }
+  .bc-mode { font:inherit; font-size:11.5px; font-weight:600; padding:4px 10px; background:var(--surface); border:0; cursor:pointer; color:var(--muted); }
+  .bc-mode.on { background:var(--royal); color:#fff; }
+  .bc-a { font-size:11.5px; color:var(--muted); padding:0 2px; }
+  [dir="rtl"] .bc-modes { margin-left:0; margin-right:8px; }
   .mdo-board { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 14px 10px; margin-bottom:14px; }
   .mdo-board-titre { font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin-bottom:9px; }
   .mdo-board-grille { display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:7px; }
@@ -4284,8 +4289,12 @@ const state = {
   periodValue: "2026-04",
   provinceFilter: null,
   survPeriode: null,
+  survFin: null,
+  survMode: "mois",
   survMaladie: "cholera",
   dpsisPeriode: null,
+  dpsisFin: null,
+  dpsisMode: "mois",
   dpsisSys: "rma_global",
   dpsisStdAnnee: null,
   mapMode: "performance",
@@ -5038,7 +5047,14 @@ function setPdaDomain(d) {
 }
 
 function renderMain() {
-  try { renderMainNoyau(); }
+  try {
+    renderMainNoyau();
+    const chip = document.getElementById("h-period");
+    if (chip) {
+      const local = VUES_PERIODE_LOCALE.has(state.sub) ? libellePeriodeLocale() : null;
+      chip.textContent = local || periodLabel();
+    }
+  }
   catch (e) {
     console.error("Erreur de rendu :", e);
     const zone = document.getElementById("main") || document.querySelector(".main");
@@ -5096,6 +5112,37 @@ function renderProvinceBanner() {
       <button class="prov-banner-clear" onclick="setProvinceFilter(null)">${t("prov_banner_clear")}</button>
     </div>
   `;
+}
+
+/* Vues pilotees par le selecteur de section : le selecteur global de
+   periode se retire de la barre pour ne laisser qu'un seul selecteur a
+   l'ecran, et la puce d'en-tete reflete la selection de la section. */
+const VUES_PERIODE_LOCALE = new Set(["dpsis-comp","dpsis-sys","dpsis-qual","dpsis-tri","dpsis-carte","cousp-mdo"]);
+
+function libellePeriodeLocale() {
+  if (state.sub === "cousp-mdo" && typeof survPeriodeCourante === "function") {
+    const p = survPeriodeCourante();
+    if (!p) return null;
+    if (state.survMode === "plage" && state.survFin && state.survFin !== p.code) {
+      const f = survPeriodesCouvertes().find(x => x.code === state.survFin);
+      return f ? p.libelle + " – " + f.libelle : p.libelle;
+    }
+    return p.libelle;
+  }
+  if (state.sub && state.sub.startsWith("dpsis") && typeof dpsisPeriodeCourante === "function") {
+    if (state.sub === "dpsis-carte" && typeof stdAnneeCourante === "function") {
+      const a = stdAnneeCourante();
+      return a ? "Standards " + a : null;
+    }
+    const p = dpsisPeriodeCourante();
+    if (!p) return null;
+    if (state.dpsisMode === "plage" && state.dpsisFin && state.dpsisFin !== p.code) {
+      const f = dpsisPeriodesCouvertes().find(x => x.code === state.dpsisFin);
+      return f ? p.libelle + " – " + f.libelle : p.libelle;
+    }
+    return p.libelle;
+  }
+  return null;
 }
 
 function renderTopbar(v) {
@@ -5181,7 +5228,7 @@ function renderTopbar(v) {
         }).join("")}
       </div>
 
-      <div class="time-block">
+      ${VUES_PERIODE_LOCALE.has(state.sub) ? "" : `<div class="time-block">
         <span class="time-label">${t("period_label")}</span>
         <div class="period-pills">
           ${modes.map(m => `
@@ -5196,7 +5243,7 @@ function renderTopbar(v) {
             ? TRIMESTRES.map(o => `<option value="${o.v}" ${state.periodQuarter === o.v ? 'selected' : ''}>${o.l}</option>`).join("")
             : MOIS_NOMS.map((l, i) => `<option value="${i + 1}" ${state.periodMonth === i + 1 ? 'selected' : ''}>${l}</option>`).join("")}
         </select>
-      </div>
+      </div>`}
 
       <div class="tb-actions">
         <button class="tb-btn" onclick="ouvrirSeuils()" title="Définir les seuils vert / jaune / orange / rouge">⚙ Seuils</button>
@@ -6333,6 +6380,58 @@ function decalerSurvPeriode(pas) {
   const i = cles.findIndex(x => x.code === p.code) + pas;
   if (i >= 0 && i < cles.length) { state.survPeriode = cles[i].code; renderMain(); }
 }
+function setSurvAnnee(a) {
+  const cles = survPeriodesCouvertes().filter(x => x.code.startsWith(a));
+  if (cles.length) { state.survPeriode = cles[cles.length - 1].code; renderMain(); }
+}
+function setSurvMois(m) {
+  const p = survPeriodeCourante();
+  const cible = (p ? p.code.slice(0, 4) : "") + "-" + m;
+  if (survPeriodesCouvertes().some(x => x.code === cible)) { state.survPeriode = cible; renderMain(); }
+}
+function setSurvMode(mode) {
+  state.survMode = mode;
+  if (mode === "plage" && !state.survFin) {
+    const p = survPeriodeCourante();
+    if (p) state.survFin = p.code;
+  }
+  renderMain();
+}
+function setSurvFinAnnee(a) {
+  const cles = survPeriodesCouvertes().filter(x => x.code.startsWith(a));
+  if (cles.length) { state.survFin = cles[cles.length - 1].code; renderMain(); }
+}
+function setSurvFinMois(m) {
+  const f = state.survFin || (survPeriodeCourante() || {}).code || "";
+  const cible = f.slice(0, 4) + "-" + m;
+  if (survPeriodesCouvertes().some(x => x.code === cible)) { state.survFin = cible; renderMain(); }
+}
+function survPeriodesActives() {
+  const p = survPeriodeCourante();
+  if (!p) return [];
+  if (state.survMode !== "plage" || !state.survFin) return [p];
+  let de = p.code, a = state.survFin;
+  if (a < de) a = de;
+  return survPeriodesCouvertes().filter(x => x.code >= de && x.code <= a);
+}
+function survLibellePlage() {
+  const act = survPeriodesActives();
+  if (!act.length) return "";
+  return act.length === 1 ? act[0].libelle : act[0].libelle + " – " + act[act.length - 1].libelle + ", " + act.length + " mois couverts";
+}
+/* Cumul de plage : les taux mensuels d'attaque ou d'incidence s'additionnent
+   en approximation du cumul de la plage. La letalite ne se combine pas sans
+   effectifs, elle rend null des que la plage depasse un mois. */
+function survIncidenceAgg(actives, prov, m) {
+  const vals = actives.map(x => survIncidence(x.code, prov, m)).filter(v => v != null);
+  if (!vals.length) return null;
+  return Math.round(vals.reduce((a, b) => a + b, 0) * 100) / 100;
+}
+function survLetaliteAgg(actives, prov, m) {
+  if (!m.letalite) return null;
+  if (actives.length === 1) return survValeur(actives[0].code, prov, m.code, "let");
+  return null;
+}
 
 function survValeur(periode, province, maladie, metrique) {
   const v = SURV.valeurs[periode];
@@ -6354,16 +6453,24 @@ function barreControleSurv() {
   const p = survPeriodeCourante(), m = survMaladieCourante();
   if (!p || !m) return "";
   const cles = survPeriodesCouvertes(), i = cles.findIndex(x => x.code === p.code);
-  const optP = cles.map(x => `<option value="${x.code}"${x.code === p.code ? " selected" : ""}>${x.libelle}</option>`).join("");
+  const plage = state.survMode === "plage";
+  const fin = plage ? (survPeriodesActives().slice(-1)[0] || p) : null;
   const optM = SURV.maladies.map(x => `<option value="${x.code}"${x.code === m.code ? " selected" : ""}>${x.libelle}</option>`).join("");
   return `<div class="bc-barre">
-    <div class="bc-groupe"><select class="bc-select" onchange="setSurvMaladie(this.value)">${optM}</select></div>
-    <div class="bc-nav">
-      <button class="bc-fleche" onclick="decalerSurvPeriode(-1)" ${i <= 0 ? "disabled" : ""} aria-label="Période précédente">‹</button>
-      <select class="bc-select" onchange="setSurvPeriode(this.value)">${optP}</select>
-      <button class="bc-fleche" onclick="decalerSurvPeriode(1)" ${i >= cles.length - 1 ? "disabled" : ""} aria-label="Période suivante">›</button>
+    <div class="bc-groupe">
+      <select class="bc-select" onchange="setSurvMaladie(this.value)">${optM}</select>
+      <div class="bc-modes">
+        <button class="bc-mode${plage ? "" : " on"}" onclick="setSurvMode('mois')">Mois</button>
+        <button class="bc-mode${plage ? " on" : ""}" onclick="setSurvMode('plage')">Plage</button>
+      </div>
     </div>
-    <div class="bc-info">${p.taux}% des cellules renseignées${p.partielle ? " · mois en cours, période partielle" : ""}</div>
+    <div class="bc-nav">
+      ${plage ? "" : `<button class="bc-fleche" onclick="decalerSurvPeriode(-1)" ${i <= 0 ? "disabled" : ""} aria-label="Période précédente">‹</button>`}
+      ${selecteurAnneeMois(cles, p.code, "setSurvAnnee", "setSurvMois")}
+      ${plage ? `<span class="bc-a">à</span>${selecteurAnneeMois(cles, fin.code, "setSurvFinAnnee", "setSurvFinMois")}` :
+        `<button class="bc-fleche" onclick="decalerSurvPeriode(1)" ${i >= cles.length - 1 ? "disabled" : ""} aria-label="Période suivante">›</button>`}
+    </div>
+    <div class="bc-info">${plage ? survLibellePlage() : `${p.taux}% des cellules renseignées${p.partielle ? " · mois en cours, période partielle" : ""}`}</div>
   </div>`;
 }
 
@@ -6385,11 +6492,14 @@ VIEWS["cousp-mdo"] = () => {
      nul. La tuile est le point d'entree de l'analyse : un clic selectionne la
      maladie. Aucun seuil epidemiologique n'est applique ici, le tableau rend
      compte du signal tel qu'exporte. */
+  const activesS = survPeriodesActives();
+  const enPlageS = activesS.length > 1;
+  const libPerS = survLibellePlage();
   const veille = SURV.maladies.map(x => {
-    const nat = survIncidence(p.code, "National", x);
-    const let_ = x.letalite ? survValeur(p.code, "National", x.code, "let") : null;
-    const provSig = SURV.provinces.filter(pr => (survIncidence(p.code, pr, x) || 0) > 0).length;
-    const provRens = SURV.provinces.filter(pr => survIncidence(p.code, pr, x) != null).length;
+    const nat = survIncidenceAgg(activesS, "National", x);
+    const let_ = survLetaliteAgg(activesS, "National", x);
+    const provSig = SURV.provinces.filter(pr => (survIncidenceAgg(activesS, pr, x) || 0) > 0).length;
+    const provRens = SURV.provinces.filter(pr => survIncidenceAgg(activesS, pr, x) != null).length;
     return { x, nat, let_, provSig, provRens };
   });
   const tuiles = veille.map(v => {
@@ -6405,20 +6515,20 @@ VIEWS["cousp-mdo"] = () => {
   }).join("");
   const enSignal = veille.filter(v => v.provRens > 0 && ((v.nat || 0) > 0 || v.provSig > 0)).length;
   const bandeauVeille = `<div class="mdo-board">
-    <div class="mdo-board-titre">Veille toutes maladies · ${p.libelle} · ${enSignal} maladie${enSignal > 1 ? "s" : ""} à signal sur ${veille.filter(v => v.provRens > 0).length} renseignées</div>
+    <div class="mdo-board-titre">Veille toutes maladies · ${libPerS} · ${enSignal} maladie${enSignal > 1 ? "s" : ""} à signal sur ${veille.filter(v => v.provRens > 0).length} renseignées</div>
     <div class="mdo-board-grille">${tuiles}</div>
-    <div class="mdo-board-note">Taux national tel qu'exporté, sans seuil d'alerte appliqué. Le point suit les maladies hors déclaration obligatoire. Un clic ouvre l'analyse de la maladie.</div>
+    <div class="mdo-board-note">${enPlageS ? "Cumul des taux mensuels sur la plage, la létalité ne se combine pas sans effectifs et reste au mois. " : "Taux national tel qu'exporté, sans seuil d'alerte appliqué. "}Le point suit les maladies hors déclaration obligatoire. Un clic ouvre l'analyse de la maladie.</div>
   </div>`;
 
   // ---- Lecture nationale de la maladie sélectionnée
-  const incNat = survIncidence(p.code, "National", mal);
-  const letNat = mal.letalite ? survValeur(p.code, "National", mal.code, "let") : null;
-  const renseignees = SURV.provinces.filter(pr => survIncidence(p.code, pr, mal) != null).length;
+  const incNat = survIncidenceAgg(activesS, "National", mal);
+  const letNat = survLetaliteAgg(activesS, "National", mal);
+  const renseignees = SURV.provinces.filter(pr => survIncidenceAgg(activesS, pr, mal) != null).length;
 
   // ---- Tableau provincial de la période sélectionnée
   const lignes = SURV.provinces.map(pr => {
-    const inc = survIncidence(p.code, pr, mal);
-    const let_ = mal.letalite ? survValeur(p.code, pr, mal.code, "let") : null;
+    const inc = survIncidenceAgg(activesS, pr, mal);
+    const let_ = survLetaliteAgg(activesS, pr, mal);
     const hb = let_ != null && let_ > 100;
     const cls = inc == null && let_ == null ? " class=\"surv-nd\"" : "";
     return { pr, inc, let_, hb, html:
@@ -6438,7 +6548,7 @@ VIEWS["cousp-mdo"] = () => {
   const enTete = mdo.map(x => `<th class="num surv-rot">${x.libelle}</th>`).join("");
   const corps = SURV.provinces.map(pr => {
     const cells = mdo.map(x => {
-      const v = survIncidence(p.code, pr, x);
+      const v = survIncidenceAgg(activesS, pr, x);
       return `<td class="num${v == null ? " surv-nd-cell" : ""}">${survNombre(v)}</td>`;
     }).join("");
     return `<tr><td class="surv-prov">${pr}</td>${cells}</tr>`;
@@ -6465,6 +6575,7 @@ VIEWS["cousp-mdo"] = () => {
   if (M.provinces_absentes.length) reserves.push(`${M.provinces_absentes.join(", ")} ${M.provinces_absentes.length > 1 ? "sont absentes" : "est absente"} de l'export, la province s'affiche en ND sur toutes les périodes.`);
   if (horsBornes.length) reserves.push(`Létalité supérieure à 100% sur ${horsBornes.length} province${horsBornes.length > 1 ? "s" : ""} de la période : ${horsBornes.map(l => l.pr).join(", ")}. Valeur conservée telle qu'exportée et signalée.`);
   if (p.partielle) reserves.push("Le mois sélectionné est en cours, les taux ne sont pas comparables aux mois achevés.");
+  if (enPlageS) reserves.push("La plage cumule les taux mensuels en approximation d'un cumul de période. La létalité, qui ne se combine pas sans effectifs de cas et de décès, reste affichée au mois seulement.");
   if (C.isoles) reserves.push(`La série continue débute en ${C.debut.libelle.toLowerCase()}. ${C.isoles} mois antérieur${C.isoles > 1 ? "s sont renseignés de façon isolée et ne constituent pas" : " est renseigné de façon isolée et ne constitue pas"} un historique exploitable.`);
   reserves.push("L'export ne documente ni les dénominateurs ni la base de calcul des taux. Les ordres de grandeur diffèrent d'une maladie à l'autre et interdisent toute comparaison entre maladies.");
   reserves.push("Aucun effectif de cas ni de décès n'est porté par l'export. Les taux ne permettent pas de reconstituer les notifications.");
@@ -6481,20 +6592,20 @@ VIEWS["cousp-mdo"] = () => {
         ${barreControleSurv()}
         ${bandeauVeille}
         <div class="kpi-grid">
-          ${kpi(libInc + " national", incNat == null ? null : survNombre(incNat), "", mal.libelle + ", " + p.libelle, "", "flat", "orange", true)}
-          ${kpi("Létalité nationale", letNat == null ? null : survNombre(letNat) + "%", "", mal.letalite ? "seuil d'alerte 1%" : "non exporté pour cette maladie", "", "flat", letNat != null && letNat >= 1 ? "red" : "green", true)}
+          ${kpi(libInc + " national" + (enPlageS ? ", cumul" : ""), incNat == null ? null : survNombre(incNat), "", mal.libelle + ", " + libPerS.split(",")[0], "", "flat", "orange", true)}
+          ${kpi("Létalité nationale", letNat == null ? null : survNombre(letNat) + "%", "", enPlageS ? "au mois seulement, ND en plage" : mal.letalite ? "seuil d'alerte 1%" : "non exporté pour cette maladie", "", "flat", letNat != null && letNat >= 1 ? "red" : "green", true)}
           ${kpi("Provinces renseignées", renseignees, "", "sur " + M.provinces_attendues + " attendues", "", "flat", renseignees >= 20 ? "green" : renseignees >= 12 ? "orange" : "red", true)}
           ${kpi("Maladies suivies", SURV.maladies.length, "", mdo.length + " à déclaration obligatoire", "", "flat", "green", true)}
         </div>
         <div class="grid-2">
-          ${card("Situation provinciale", mal.libelle + ", " + p.libelle, tableauProvincial,
+          ${card("Situation provinciale", mal.libelle + ", " + libPerS + (enPlageS ? ", taux cumulés" : ""), tableauProvincial,
             renseignees === 0 ? "Aucune province ne renseigne cette maladie sur la période sélectionnée." :
             "Les provinces sans valeur exportée s'affichent en ND. Le tableau ne distingue pas l'absence de notification de l'absence de rapportage.")}
           ${card("Série nationale", libInc.toLowerCase() + ", périodes couvertes", `<div class="epi-chart">${barres}</div>`,
             dispo.length < serie.length ? `${serie.length - dispo.length} période${serie.length - dispo.length > 1 ? "s" : ""} sans valeur nationale sur ${serie.length} couvertes, marquée${serie.length - dispo.length > 1 ? "s" : ""} en ND.` :
             "Toutes les périodes couvertes portent une valeur nationale.")}
         </div>
-        ${card("Maladies à déclaration obligatoire", "Taux d'attaque ou d'incidence par province, " + p.libelle, matrice,
+        ${card("Maladies à déclaration obligatoire", "Taux d'attaque ou d'incidence par province, " + libPerS + (enPlageS ? ", cumuls de plage" : ""), matrice,
           "Lecture par colonne uniquement. Les taux relèvent de dénominateurs distincts selon la maladie et ne se comparent pas entre eux.")}
         ${card("Réserves de lecture", "Contrôles appliqués à l'export du " + M.actualise,
           `<ul class="surv-reserves">${reserves.map(r => `<li>${r}</li>`).join("")}</ul>`,
@@ -7979,6 +8090,66 @@ function decalerDpsisPeriode(pas) {
   if (i >= 0 && i < cles.length) { state.dpsisPeriode = cles[i].code; renderMain(); }
 }
 
+/* Selection composee : annee et mois separes, avec un mode plage qui borne
+   un intervalle de mois couverts. La fin de plage se cale sur le debut
+   lorsqu'elle le precede. */
+function setDpsisAnnee(a) {
+  const cles = dpsisPeriodesCouvertes().filter(x => x.code.startsWith(a));
+  if (cles.length) { state.dpsisPeriode = cles[cles.length - 1].code; renderMain(); }
+}
+function setDpsisMois(m) {
+  const p = dpsisPeriodeCourante();
+  const cible = (p ? p.code.slice(0, 4) : "") + "-" + m;
+  if (dpsisPeriodesCouvertes().some(x => x.code === cible)) { state.dpsisPeriode = cible; renderMain(); }
+}
+function setDpsisMode(mode) {
+  state.dpsisMode = mode;
+  if (mode === "plage" && !state.dpsisFin) {
+    const p = dpsisPeriodeCourante();
+    if (p) state.dpsisFin = p.code;
+  }
+  renderMain();
+}
+function setDpsisFinAnnee(a) {
+  const cles = dpsisPeriodesCouvertes().filter(x => x.code.startsWith(a));
+  if (cles.length) { state.dpsisFin = cles[cles.length - 1].code; renderMain(); }
+}
+function setDpsisFinMois(m) {
+  const f = state.dpsisFin || (dpsisPeriodeCourante() || {}).code || "";
+  const cible = f.slice(0, 4) + "-" + m;
+  if (dpsisPeriodesCouvertes().some(x => x.code === cible)) { state.dpsisFin = cible; renderMain(); }
+}
+
+/* Periodes actives : une seule en mode mois, l'intervalle couvert en mode
+   plage. La borne de fin remontee avant le debut est ramenee au debut. */
+function dpsisPeriodesActives() {
+  const p = dpsisPeriodeCourante();
+  if (!p) return [];
+  if (state.dpsisMode !== "plage" || !state.dpsisFin) return [p];
+  let de = p.code, a = state.dpsisFin;
+  if (a < de) a = de;
+  return dpsisPeriodesCouvertes().filter(x => x.code >= de && x.code <= a);
+}
+
+function dpsisLibellePlage() {
+  const act = dpsisPeriodesActives();
+  if (!act.length) return "";
+  return act.length === 1 ? act[0].libelle : act[0].libelle + " – " + act[act.length - 1].libelle + ", " + act.length + " mois couverts";
+}
+
+/* Agregat de plage : moyenne simple des valeurs mensuelles presentes, ou
+   somme pour les volumes. Rend null quand aucun mois n'est renseigne. */
+function dpsisValeurAgg(periodes, unite, systeme, metrique) {
+  const vals = periodes.map(x => dpsisValeur(x.code, unite, systeme, metrique)).filter(v => v != null);
+  if (!vals.length) return null;
+  return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 100) / 100;
+}
+function dpsisVolumeAgg(periodes, unite, cle) {
+  const vals = periodes.map(x => dpsisVolume(x.code, unite, cle)).filter(v => v != null);
+  if (!vals.length) return null;
+  return vals.reduce((a, b) => a + b, 0);
+}
+
 function dpsisSysteme(code) {
   return DPSISQ.systemes.find(s => s.code === code) || null;
 }
@@ -8006,17 +8177,36 @@ function dpsisAnomaliesPeriode(code) {
   return DPSISQ.anomalies.filter(a => a.periode === code);
 }
 
+function selecteurAnneeMois(cles, code, fnAnnee, fnMois) {
+  const annees = [...new Set(cles.map(x => x.code.slice(0, 4)))];
+  const annee = code.slice(0, 4);
+  const mois = cles.filter(x => x.code.startsWith(annee));
+  return `<select class="bc-select" onchange="${fnAnnee}(this.value)">
+      ${annees.map(a => `<option value="${a}"${a === annee ? " selected" : ""}>${a}</option>`).join("")}
+    </select>
+    <select class="bc-select" onchange="${fnMois}(this.value)">
+      ${mois.map(x => `<option value="${x.code.slice(5)}"${x.code === code ? " selected" : ""}>${x.libelle.split(" ")[0]}</option>`).join("")}
+    </select>`;
+}
+
 function barreControleDpsis(info) {
   const p = dpsisPeriodeCourante();
   if (!p) return "";
   const cles = dpsisPeriodesCouvertes(), i = cles.findIndex(x => x.code === p.code);
-  const opts = cles.map(x => `<option value="${x.code}"${x.code === p.code ? " selected" : ""}>${x.libelle}</option>`).join("");
+  const plage = state.dpsisMode === "plage";
+  const fin = plage ? (dpsisPeriodesActives().slice(-1)[0] || p) : null;
   return `<div class="bc-barre">
-    <div class="bc-groupe"><span class="dq-src">${DPSISQ.meta.source}</span></div>
+    <div class="bc-groupe">
+      <div class="bc-modes">
+        <button class="bc-mode${plage ? "" : " on"}" onclick="setDpsisMode('mois')">Mois</button>
+        <button class="bc-mode${plage ? " on" : ""}" onclick="setDpsisMode('plage')">Plage</button>
+      </div>
+    </div>
     <div class="bc-nav">
-      <button class="bc-fleche" onclick="decalerDpsisPeriode(-1)" ${i <= 0 ? "disabled" : ""} aria-label="Période précédente">‹</button>
-      <select class="bc-select" onchange="setDpsisPeriode(this.value)">${opts}</select>
-      <button class="bc-fleche" onclick="decalerDpsisPeriode(1)" ${i >= cles.length - 1 ? "disabled" : ""} aria-label="Période suivante">›</button>
+      ${plage ? "" : `<button class="bc-fleche" onclick="decalerDpsisPeriode(-1)" ${i <= 0 ? "disabled" : ""} aria-label="Période précédente">‹</button>`}
+      ${selecteurAnneeMois(cles, p.code, "setDpsisAnnee", "setDpsisMois")}
+      ${plage ? `<span class="bc-a">à</span>${selecteurAnneeMois(cles, fin.code, "setDpsisFinAnnee", "setDpsisFinMois")}` :
+        `<button class="bc-fleche" onclick="decalerDpsisPeriode(1)" ${i >= cles.length - 1 ? "disabled" : ""} aria-label="Période suivante">›</button>`}
     </div>
     <div class="bc-info">${info}</div>
   </div>`;
@@ -8042,17 +8232,20 @@ VIEWS["dpsis-comp"] = () => {
     return { crumbs, html: `<div class="ph"><div class="ph-title">Complétude et promptitude</div><div class="ph-sub">Aucune période couverte dans le relevé.</div></div>` };
   }
   const renseignes = DPSISQ.systemes.filter(s => s.renseigne > 0);
+  const actives = dpsisPeriodesActives();
+  const enPlage = actives.length > 1;
+  const libPer = dpsisLibellePlage();
 
-  // ---- Lecture nationale
-  const compNat = dpsisValeur(p.code, "National", "rma_global", "comp");
-  const prompNat = dpsisValeur(p.code, "National", "rma_global", "promp");
-  const attendus = (dpsisVolume(p.code, "National", "cs_attendus") || 0) + (dpsisVolume(p.code, "National", "hdhp_attendus") || 0);
-  const saisis = (dpsisVolume(p.code, "National", "cs_saisis") || 0) + (dpsisVolume(p.code, "National", "hdhp_saisis") || 0);
+  // ---- Lecture nationale : valeur du mois, ou moyenne mensuelle de la plage
+  const compNat = dpsisValeurAgg(actives, "National", "rma_global", "comp");
+  const prompNat = dpsisValeurAgg(actives, "National", "rma_global", "promp");
+  const attendus = (dpsisVolumeAgg(actives, "National", "cs_attendus") || 0) + (dpsisVolumeAgg(actives, "National", "hdhp_attendus") || 0);
+  const saisis = (dpsisVolumeAgg(actives, "National", "cs_saisis") || 0) + (dpsisVolumeAgg(actives, "National", "hdhp_saisis") || 0);
 
   // ---- Systemes
   const cartes = DPSISQ.systemes.map(s => {
-    const c = s.renseigne ? dpsisValeur(p.code, "National", s.code, "comp") : null;
-    const pr = s.renseigne && s.promptitude ? dpsisValeur(p.code, "National", s.code, "promp") : null;
+    const c = s.renseigne ? dpsisValeurAgg(actives, "National", s.code, "comp") : null;
+    const pr = s.renseigne && s.promptitude ? dpsisValeurAgg(actives, "National", s.code, "promp") : null;
     const hbC = c != null && c > 100, hbP = pr != null && pr > 100;
     const rC = c == null ? "na" : hbC ? "red" : rag(c, 95);
     const rP = pr == null ? "na" : hbP ? "red" : rag(pr, 90);
@@ -8091,10 +8284,10 @@ VIEWS["dpsis-comp"] = () => {
 
   // ---- Tableau provincial
   const rows = DPSISQ.provinces.map(pr => {
-    const c = dpsisValeur(p.code, pr, "rma_global", "comp");
-    const q = dpsisValeur(p.code, pr, "rma_global", "promp");
-    const att = dpsisVolume(p.code, pr, "cs_attendus");
-    const sai = dpsisVolume(p.code, pr, "cs_saisis");
+    const c = dpsisValeurAgg(actives, pr, "rma_global", "comp");
+    const q = dpsisValeurAgg(actives, pr, "rma_global", "promp");
+    const att = dpsisVolumeAgg(actives, pr, "cs_attendus");
+    const sai = dpsisVolumeAgg(actives, pr, "cs_saisis");
     const vide = c == null && q == null;
     return `<tr${vide ? ' class="dq-nd"' : ""}>
       <td><strong>${pr}</strong></td>
@@ -8115,7 +8308,7 @@ VIEWS["dpsis-comp"] = () => {
     </div>`;
   }).join("");
 
-  const manquantes = DPSISQ.provinces.filter(pr => dpsisValeur(p.code, pr, "rma_global", "comp") == null);
+  const manquantes = DPSISQ.provinces.filter(pr => dpsisValeurAgg(actives, pr, "rma_global", "comp") == null);
 
   return {
     crumbs,
@@ -8126,16 +8319,16 @@ VIEWS["dpsis-comp"] = () => {
         <div class="ph-sub">${M.source}. Relevé mensuel provincial, ${dpsisPeriodesCouvertes()[0].libelle.toLowerCase()} à ${dpsisPeriodesCouvertes().slice(-1)[0].libelle.toLowerCase()}. ${renseignes.length} systèmes renseignés sur ${DPSISQ.systemes.length} exportés.</div>
       </div>
       <div class="content">
-        ${barreControleDpsis(`${p.unites} unités rapportent sur ${M.provinces_attendues + 1}`)}
+        ${barreControleDpsis(enPlage ? libPer : `${p.unites} unités rapportent sur ${M.provinces_attendues + 1}`)}
         <div class="kpi-grid">
-          ${kpi("Complétude nationale", compNat == null ? null : dpsisNombre(compNat, "%"), "", "RMA global, cible 95%", "", "flat", compNat == null ? "na" : rag(compNat, 95))}
+          ${kpi("Complétude nationale", compNat == null ? null : dpsisNombre(compNat, "%"), "", (enPlage ? "moyenne mensuelle de la plage" : "RMA global") + ", cible 95%", "", "flat", compNat == null ? "na" : rag(compNat, 95))}
           ${kpi("Promptitude nationale", prompNat == null ? null : dpsisNombre(prompNat, "%"), "", "saisie dans le délai, cible 90%", "", "flat", prompNat == null ? "na" : rag(prompNat, 90))}
-          ${kpi("Rapports saisis", saisis || null, "", "sur " + (attendus || "ND") + " attendus", "", "flat", "green", true)}
+          ${kpi("Rapports saisis", saisis || null, "", "sur " + (attendus || "ND") + " attendus" + (enPlage ? ", cumul de la plage" : ""), "", "flat", "green", true)}
           ${kpi("Provinces sans valeur", manquantes.length, "", "sur " + M.provinces_attendues + " du référentiel", "", "flat", manquantes.length === 0 ? "green" : manquantes.length <= 3 ? "orange" : "red", true)}
         </div>
         <div class="si-grid">${cartes}</div>
         <div class="grid-2">
-          ${card("Situation provinciale", "RMA global, " + p.libelle,
+          ${card("Situation provinciale", "RMA global, " + libPer + (enPlage ? ", moyennes mensuelles et volumes cumulés" : ""),
             `<table class="tbl-s"><tr><th>Province</th><th class="num">Rapports CS saisis / attendus</th><th class="num">Complétude</th><th class="num">Promptitude</th></tr>${rows}</table>`,
             manquantes.length ? `${manquantes.length} province${manquantes.length > 1 ? "s ne portent" : " ne porte"} aucune valeur sur la période : ${manquantes.join(", ")}.` :
             "Les volumes de rapports attendus proviennent de la carte sanitaire courante, identique sur toutes les périodes du relevé.")}
@@ -8185,15 +8378,21 @@ VIEWS["dpsis-sys"] = () => {
     </div>`;
   })();
 
-  const compNat = dpsisValeur(p.code, "National", sys.code, "comp");
-  const prompNat = sys.promptitude ? dpsisValeur(p.code, "National", sys.code, "promp") : null;
-  const provRens = DPSISQ.provinces.filter(pr => dpsisValeur(p.code, pr, sys.code, "comp") != null);
-  const moyProv = dpsisMoyenneProvinces(p.code, sys.code, "comp");
+  const actives = dpsisPeriodesActives();
+  const enPlage = actives.length > 1;
+  const libPer = dpsisLibellePlage();
+  const compNat = dpsisValeurAgg(actives, "National", sys.code, "comp");
+  const prompNat = sys.promptitude ? dpsisValeurAgg(actives, "National", sys.code, "promp") : null;
+  const provRens = DPSISQ.provinces.filter(pr => dpsisValeurAgg(actives, pr, sys.code, "comp") != null);
+  const moyProv = (() => {
+    const vals = DPSISQ.provinces.map(pr => dpsisValeurAgg(actives, pr, sys.code, "comp")).filter(v => v != null);
+    return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 10) / 10 : null;
+  })();
 
   // ---- Tableau provincial du systeme, trie par completude croissante
   const lignes = DPSISQ.provinces.map(pr => {
-    const c = dpsisValeur(p.code, pr, sys.code, "comp");
-    const q = sys.promptitude ? dpsisValeur(p.code, pr, sys.code, "promp") : null;
+    const c = dpsisValeurAgg(actives, pr, sys.code, "comp");
+    const q = sys.promptitude ? dpsisValeurAgg(actives, pr, sys.code, "promp") : null;
     return { pr, c, q };
   }).sort((a, b) => (a.c == null) - (b.c == null) || (a.c || 0) - (b.c || 0));
   const rensLignes = lignes.filter(x => x.c != null && x.q != null);
@@ -8251,13 +8450,13 @@ VIEWS["dpsis-sys"] = () => {
       <div class="content">
         ${barre}
         <div class="kpi-grid">
-          ${kpi("Complétude nationale", compNat == null ? null : dpsisNombre(compNat, "%"), "", p.libelle + ", cible 95%", "", "flat", compNat == null ? "na" : compNat > 100 ? "red" : rag(compNat, 95))}
+          ${kpi("Complétude nationale", compNat == null ? null : dpsisNombre(compNat, "%"), "", (enPlage ? "moyenne mensuelle, " : "") + libPer.split(",")[0] + ", cible 95%", "", "flat", compNat == null ? "na" : compNat > 100 ? "red" : rag(compNat, 95))}
           ${kpi("Promptitude nationale", prompNat == null ? null : dpsisNombre(prompNat, "%"), "", sys.promptitude ? "cible 90%" : "non exportée pour ce système", "", "flat", prompNat == null ? "na" : prompNat > 100 ? "red" : rag(prompNat, 90))}
           ${kpi("Provinces renseignées", provRens.length, "", "sur " + DPSISQ.meta.provinces_attendues + " du référentiel", "", "flat", provRens.length >= 20 ? "green" : provRens.length >= 12 ? "orange" : "red", true)}
           ${kpi("Moyenne des provinces", moyProv == null ? null : dpsisNombre(moyProv, "%"), "", "hors agrégat national", "", "flat", moyProv == null ? "na" : rag(moyProv, 95))}
         </div>
         <div class="grid-2">
-          ${card("Situation provinciale", sys.libelle + ", " + p.libelle + ", tri par complétude croissante",
+          ${card("Situation provinciale", sys.libelle + ", " + libPer + ", tri par complétude croissante",
             `<table class="tbl-s"><tr><th>Province</th><th class="num">Complétude</th><th class="num">Promptitude</th></tr>${rows}</table>`,
             (recopie ? "La promptitude est égale à la complétude sur toutes les unités renseignées de la période, elle ne mesure rien ici. " : "") +
             (provRens.length < DPSISQ.meta.provinces_attendues ? `${DPSISQ.meta.provinces_attendues - provRens.length} province${DPSISQ.meta.provinces_attendues - provRens.length > 1 ? "s" : ""} sans valeur sur la période, affichée${DPSISQ.meta.provinces_attendues - provRens.length > 1 ? "s" : ""} en ND.` :
@@ -8323,13 +8522,21 @@ VIEWS["dpsis-tri"] = () => {
     return { crumbs, html: `<div class="ph"><div class="ph-title">Triangulation inter-sources</div><div class="ph-sub">Aucune période couverte dans le relevé.</div></div>` };
   }
   const provinces = DPSISQ.provinces;
+  const activesT = dpsisPeriodesActives();
+  const enPlageT = activesT.length > 1;
+  const libPerT = dpsisLibellePlage();
   let concordances = 0, ecarts = 0;
 
   /* Croisement A : signal cholera, liste lineaire COUSP contre export IDS. */
   const survDispoIci = typeof SURV !== "undefined" && SURV && SURV.valeurs;
   const lignesA = provinces.map(pr => {
-    const lin = triCholeraLineaire(p.code, pr);
-    const att = survDispoIci ? survValeur(p.code, pr, "cholera", "att") : null;
+    let lin = null, att = null;
+    activesT.forEach(x => {
+      const l = triCholeraLineaire(x.code, pr);
+      if (l) lin = { cas: (lin ? lin.cas : 0) + l.cas, couvert: true };
+      const a = survDispoIci ? survValeur(x.code, pr, "cholera", "att") : null;
+      if (a != null) att = (att || 0) + a;
+    });
     if (lin == null && att == null) return null;
     const casLin = lin ? lin.cas : null;
     let verdict = "nd";
@@ -8354,10 +8561,11 @@ VIEWS["dpsis-tri"] = () => {
 
   /* Croisement B : completude IDS declaree contre cellules renseignees. */
   const lignesB = provinces.map(pr => {
-    const dec = dpsisValeur(p.code, pr, "ids", "comp");
-    const cell = survDispoIci ? triCellulesIDS(p.code, pr) : null;
-    const e = (dec != null && cell != null) ? Math.round((dec - cell.pct) * 10) / 10 : null;
-    return { pr, dec, cell: cell ? cell.pct : null, e };
+    const dec = dpsisValeurAgg(activesT, pr, "ids", "comp");
+    const cells = activesT.map(x => survDispoIci ? triCellulesIDS(x.code, pr) : null).filter(c => c != null);
+    const cell = cells.length ? Math.round(10 * cells.reduce((a, b) => a + b.pct, 0) / cells.length) / 10 : null;
+    const e = (dec != null && cell != null) ? Math.round((dec - cell) * 10) / 10 : null;
+    return { pr, dec, cell, e };
   });
   const examinerB = lignesB.filter(x => x.e != null && Math.abs(x.e) > 20);
   ecarts += examinerB.length;
@@ -8375,7 +8583,8 @@ VIEWS["dpsis-tri"] = () => {
   const stdMillesime = stdDispo() ? stdAnnees()[stdAnnees().length - 1] : null;
   const lignesC = provinces.map(pr => {
     const std = stdMillesime ? (stdProv(stdMillesime, pr) || {}).cible : null;
-    const rim = triCibleRim(p.code, pr);
+    const rims = activesT.map(x => triCibleRim(x.code, pr)).filter(v => v != null);
+    const rim = rims.length ? Math.round(rims.reduce((a, b) => a + b, 0) / rims.length) : null;
     const e = (std && rim) ? Math.round(1000 * (rim - std) / std) / 10 : null;
     return { pr, std, rim, e };
   });
@@ -8425,16 +8634,16 @@ VIEWS["dpsis-tri"] = () => {
         <div class="ph-sub">Confrontation des sources indépendantes du tableau de bord sur la période sélectionnée. Les écarts sont affichés tels quels et restent à instruire par les directions concernées, aucune source ne corrige l'autre.</div>
       </div>
       <div class="content">
-        ${barreControleDpsis(`${concordances} concordances, ${ecarts} écarts à examiner`)}
+        ${barreControleDpsis(`${concordances} concordances, ${ecarts} écarts à examiner${enPlageT ? " · " + libPerT : ""}`)}
         <div class="kpi-grid">
           ${kpi("Croisements actifs", 4, "", "sur la période sélectionnée", "", "flat", "green", true)}
           ${kpi("Sources mobilisées", 5, "", "relevé DPSIS, export IDS, liste linéaire, RIM, standards", "", "flat", "green", true)}
           ${kpi("Concordances", concordances, "", "selon les conventions de chaque croisement", "", "flat", "green", true)}
           ${kpi("Écarts à examiner", ecarts, "", "aucune correction automatique", "", "flat", ecarts === 0 ? "green" : "orange", true)}
         </div>
-        ${card("Signal choléra", "liste linéaire COUSP et export IDS, " + p.libelle, carteA,
+        ${card("Signal choléra", "liste linéaire COUSP et export IDS, " + libPerT + (enPlageT ? ", cumuls de plage" : ""), carteA,
           "Le croisement porte sur la présence du signal, cas notifiés d'un côté, taux d'attaque non nul de l'autre. Les taux de l'export IDS sont sans dénominateur documenté et ne permettent pas de reconstituer des effectifs, la comparaison reste directionnelle.")}
-        ${card("Rapportage de la surveillance intégrée", "complétude déclarée et contenu effectif de l'export, " + p.libelle, carteB,
+        ${card("Rapportage de la surveillance intégrée", "complétude déclarée et contenu effectif de l'export, " + libPerT + (enPlageT ? ", moyennes mensuelles" : ""), carteB,
           "Convention de lecture : un écart de plus de 20 points entre la complétude déclarée au relevé DPSIS et la part des cellules effectivement renseignées dans l'export IDS est marqué à examiner. Les deux mesures n'ont pas le même périmètre, l'une compte des rapports attendus, l'autre des valeurs présentes.")}
         ${card("Population cible du PEV", "standards ZR et cible implicite du RIM", carteC,
           "La cible implicite du RIM est reconstituée depuis les doses Penta 3 et la couverture du mois. Convention de lecture : un écart de plus de 10 pour cent avec la cible des standards " + (stdMillesime || "") + " est marqué à examiner. Le millésime " + (stdMillesime || "") + " est un projet corrigé en attente de validation.")}
@@ -8564,7 +8773,10 @@ VIEWS["dpsis-qual"] = () => {
     return { crumbs, html: `<div class="ph"><div class="ph-title">Qualité des données</div><div class="ph-sub">Aucune période couverte dans le relevé.</div></div>` };
   }
 
-  const anos = dpsisAnomaliesPeriode(p.code);
+  const activesQ = dpsisPeriodesActives();
+  const enPlageQ = activesQ.length > 1;
+  const codesQ = new Set(activesQ.map(x => x.code));
+  const anos = DPSISQ.anomalies.filter(a => codesQ.has(a.periode));
   /* Regroupement par controle et par systeme : un meme controle qui se
      declenche sur plusieurs systemes ne se lit pas dans une liste unique. */
   const parType = {};
@@ -8583,11 +8795,11 @@ VIEWS["dpsis-qual"] = () => {
 
   // ---- Contrôle de cohérence : recalcul de la complétude CS depuis les volumes
   const controle = DPSISQ.provinces.map(pr => {
-    const att = dpsisVolume(p.code, pr, "cs_attendus");
-    const sai = dpsisVolume(p.code, pr, "cs_saisis");
-    const del = dpsisVolume(p.code, pr, "cs_delai");
-    const dec = dpsisValeur(p.code, pr, "rma_cs", "comp");
-    const dep = dpsisValeur(p.code, pr, "rma_cs", "promp");
+    const att = dpsisVolumeAgg(activesQ, pr, "cs_attendus");
+    const sai = dpsisVolumeAgg(activesQ, pr, "cs_saisis");
+    const del = dpsisVolumeAgg(activesQ, pr, "cs_delai");
+    const dec = dpsisValeurAgg(activesQ, pr, "rma_cs", "comp");
+    const dep = dpsisValeurAgg(activesQ, pr, "rma_cs", "promp");
     const recalc = (att && sai != null) ? Math.round(1000 * sai / att) / 10 : null;
     const ecart = (recalc != null && dec != null) ? Math.round((dec - recalc) * 10) / 10 : null;
     const surSaisie = (att && sai != null && sai > att);
@@ -8600,7 +8812,7 @@ VIEWS["dpsis-qual"] = () => {
      particulier. Elle est alors enoncee une fois plutot que reportee ligne a
      ligne, ou le signalement perdrait tout pouvoir de discrimination. */
   const couverts = controle.filter(x => x.dec != null);
-  const promptitudeNonMesuree = couverts.length > 1 && couverts.every(x => x.nonMesuree);
+  const promptitudeNonMesuree = !enPlageQ && couverts.length > 1 && couverts.every(x => x.nonMesuree);
   const flag = (x) => x.surSaisie || x.promSup || (!promptitudeNonMesuree && x.nonMesuree) ||
     (x.ecart != null && Math.abs(x.ecart) > 0.5) || (x.dec != null && x.dec > 100);
   const signales = controle.filter(flag);
@@ -8620,8 +8832,8 @@ VIEWS["dpsis-qual"] = () => {
 
   // ---- Écart entre les deux séries globales
   const doubles = DPSISQ.provinces.map(pr => {
-    const a = dpsisValeur(p.code, pr, "rma_global", "comp");
-    const b = dpsisValeur(p.code, pr, "rma_global_2025", "comp");
+    const a = dpsisValeurAgg(activesQ, pr, "rma_global", "comp");
+    const b = dpsisValeurAgg(activesQ, pr, "rma_global_2025", "comp");
     return { pr, a, b, d: (a != null && b != null) ? Math.round((b - a) * 100) / 100 : null };
   }).filter(x => x.d != null && Math.abs(x.d) > 0.01);
 
@@ -8660,16 +8872,16 @@ VIEWS["dpsis-qual"] = () => {
         <div class="ph-sub">Contrôles appliqués au relevé de complétude et de promptitude. Les incohérences sont signalées et conservées en l'état, aucune correction n'est appliquée à la source.</div>
       </div>
       <div class="content">
-        ${barreControleDpsis(`${anos.length} signalement${anos.length > 1 ? "s" : ""} sur la période`)}
+        ${barreControleDpsis(`${anos.length} signalement${anos.length > 1 ? "s" : ""} sur ${enPlageQ ? "la plage, " + activesQ.length + " mois" : "la période"}`)}
         <div class="kpi-grid">
           ${kpi("Unités signalées", signales.length, "", "sur " + M.provinces_attendues + " provinces", "", "flat", signales.length === 0 ? "green" : signales.length <= 3 ? "orange" : "red", true)}
           ${kpi("Signalements de la période", anos.length, "", "tous systèmes confondus", "", "flat", anos.length === 0 ? "green" : "orange", true)}
           ${kpi("Signalements cumulés", DPSISQ.anomalies.filter(a => a.periode).length, "", "sur les " + dpsisPeriodesCouvertes().length + " périodes couvertes", "", "flat", "orange", true)}
           ${kpi("Écart entre séries globales", doubles.length, "", "provinces où les deux séries divergent", "", "flat", doubles.length ? "orange" : "green", true)}
         </div>
-        ${card("Contrôles de la période", p.libelle, banniere + blocAnomalies,
+        ${card("Contrôles de la période", dpsisLibellePlage(), banniere + blocAnomalies,
           "Le contrôle porte sur les bornes des taux, la relation entre promptitude et complétude, et la concordance entre les taux déclarés et les volumes exportés.")}
-        ${card("Recalcul de la complétude depuis les volumes", "Centres de santé, " + p.libelle,
+        ${card("Recalcul de la complétude depuis les volumes", "Centres de santé, " + dpsisLibellePlage() + (enPlageQ ? ", volumes cumulés et taux déclarés moyens" : ""),
           `<table class="tbl-s"><tr><th>Province</th><th class="num">Saisis</th><th class="num">Attendus</th><th class="num">Dans le délai</th><th class="num">Taux déclaré</th><th class="num">Taux recalculé</th><th class="num">Contrôle</th></tr>${rowsCtrl}</table>`,
           "Le taux recalculé est le rapport des rapports saisis aux rapports attendus tel qu'exporté. Un écart supérieur à un demi-point signale une divergence entre le taux déclaré et ses composantes.")}
         ${doubles.length ? card("Divergence des deux séries globales", "Complétude globale et complétude globale référentiel 2025, " + p.libelle,
