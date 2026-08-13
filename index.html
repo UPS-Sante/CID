@@ -2671,6 +2671,26 @@
   .seuils-table th { position:sticky; top:0; background:var(--surface-2); text-align:left; padding:5px 8px; color:var(--royal); border-bottom:1px solid var(--border); }
   .seuils-table td { padding:3px 8px; border-bottom:1px solid var(--bg); }
   .seuils-table input { width:64px; padding:2px 5px; border:1px solid var(--border-2); border-radius:4px; font-size:11.5px; }
+
+
+  /* ---- Qualite du systeme d'information (DPSIS) ---- */
+  .dq-src { font-size:11.5px; color:var(--muted); font-weight:600; }
+  .dq-nd td { color:var(--muted); opacity:.62; }
+  .dq-reserve { margin-top:8px; font-size:11px; line-height:1.45; color:var(--muted); border-top:1px solid var(--border); padding-top:7px; }
+  .epi-dense .epi-col { min-width:7px; } .epi-dense .epi-lab { font-size:8px; }
+  .dq-liste { font-size:11.5px; line-height:1.45; color:var(--body); }
+  .dq-banniere { padding:11px 13px; margin-bottom:12px; border-left:3px solid var(--gold, #B4913C); background:var(--surface-2, #FAF8F4); font-size:12px; line-height:1.5; }
+  .dq-hb { margin-left:3px; font-size:10px; color:var(--rag-red, #B02418); }
+  .dq-vide { padding:14px 4px; font-size:12.5px; color:var(--muted); }
+  /* ---- Surveillance integree (MDO) ---- */
+  .surv-scroll { overflow-x:auto; max-width:100%; }
+  .surv-mat { min-width:900px; font-size:11px; }
+  .surv-mat th.surv-rot { font-size:10px; line-height:1.15; vertical-align:bottom; white-space:normal; max-width:64px; }
+  .surv-mat td.surv-prov { white-space:nowrap; font-weight:600; position:sticky; left:0; background:var(--surface); }
+  .surv-nd-cell, .surv-nd td { color:var(--muted); opacity:.62; }
+  .surv-bar-nd { height:3px; width:100%; background:repeating-linear-gradient(90deg,var(--border) 0 3px,transparent 3px 6px); align-self:flex-end; }
+  .surv-reserves { margin:0; padding-left:18px; }
+  .surv-reserves li { margin-bottom:6px; line-height:1.5; }
   .seuils-table select { padding:2px 4px; border:1px solid var(--border-2); border-radius:4px; font-size:11.5px; }
   .seuils-table code { font-size:11px; color:var(--body); }
   .tbl-s { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
@@ -3635,16 +3655,19 @@ const PROGRAMS = [
     sub:[
       { id:"cousp-sitrep",  i18n_key:"sub_cousp_sitrep", label:"Rapport de situation", status:"red" },
       { id:"cousp-surv",    i18n_key:"sub_cousp_surv",   label:"Riposte au choléra",  status:"red" },
+      { id:"cousp-mdo",     i18n_key:"sub_cousp_mdo",    label:"Surveillance intégrée", status:"orange" },
       { id:"cousp-alert",   i18n_key:"sub_cousp_alerts", label:"Foyers actifs",       status:"orange" },
       { id:"cousp-deepdive", i18n_key:"sub_cousp_dd",    label:"Analyse approfondie", status:"red" },
     ]
   },
   {
-    id:"dpsis", c:"dpsis", masque:true, icon:"SI", label:"Système d'Information",
+    id:"dpsis", c:"dpsis", icon:"SI", label:"Promptitude · Complétude",
     dir:"DPSIS",
     sub:[
-      { id:"dpsis-comp",    i18n_key:"sub_dpsis_comp", label:"Complétude & promptitude",  status:"yellow" },
-      { id:"dpsis-qual",    i18n_key:"sub_dpsis_qual", label:"Qualité des données",  status:"orange" },
+      { id:"dpsis-comp",    i18n_key:"sub_dpsis_comp",  label:"Vue d'ensemble",  status:"yellow" },
+      { id:"dpsis-sys",     i18n_key:"sub_dpsis_sys",   label:"Analyse par système",  status:"yellow" },
+      { id:"dpsis-qual",    i18n_key:"sub_dpsis_qual",  label:"Qualité des données",  status:"orange" },
+      { id:"dpsis-carte",   i18n_key:"sub_dpsis_carte", label:"Carte sanitaire · Standards",  status:"orange" },
     ]
   },
 ];
@@ -3827,6 +3850,18 @@ async function chargerDonneesReelles(essai) {
       if (pa) PLUIE_A = pa;
     } catch (e) {}
     try {
+      const sv = await fetch("surveillance.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (sv) SURV = sv;
+    } catch (e) {}
+    try {
+      const dq = await fetch("dpsis_qualite.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (dq) DPSISQ = dq;
+    } catch (e) {}
+    try {
+      const st = await fetch("standards.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (st) STD = st;
+    } catch (e) {}
+    try {
       const cp = await fetch("chol_periodes.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (cp) CHOL_P = cp;
     } catch (e) {}
@@ -3951,6 +3986,9 @@ let METEO = null;
 let CARTE_FOCUS = null;
 let PLUIE_A = null;
 let CHOL_P = null;
+let SURV = null;
+let DPSISQ = null;
+let STD = null;
 function cholDispo() { return CHOLERA && CHOLERA.global; }
 function pevDispo() { return PEV && PEV.provinces && PEV.provinces.length; }
 
@@ -4228,6 +4266,11 @@ const state = {
   periodQuarter: 2,
   periodValue: "2026-04",
   provinceFilter: null,
+  survPeriode: null,
+  survMaladie: "cholera",
+  dpsisPeriode: null,
+  dpsisSys: "rma_global",
+  dpsisStdAnnee: null,
   mapMode: "performance",
   minSection: "A",
   lang: "fr",                  // 'fr' | 'en' | 'ar'
@@ -4280,7 +4323,9 @@ const I18N = {
     prog_log: "Logistique · Intrants",
     prog_rh: "Ressources Humaines",
     prog_cousp: "Urgences · Surveillance",
-    prog_dpsis: "Système d'Information",
+    prog_dpsis: "Promptitude · Complétude",
+    sub_dpsis_sys: "Analyse par système",
+    sub_dpsis_carte: "Carte sanitaire · Standards",
     sub_min_overview: "Aperçu ministériel",
     sub_sao_league: "Classement des provinces",
     sub_vacc_palu: "Vaccin antipaludique",
@@ -4310,7 +4355,8 @@ const I18N = {
     sub_cousp_dd: "Analyse approfondie",
     sub_cousp_alerts: "Foyers actifs",
     sub_cousp_surv: "Riposte au choléra",
-    sub_dpsis_comp: "Complétude & promptitude",
+    sub_cousp_mdo: "Surveillance intégrée",
+    sub_dpsis_comp: "Vue d'ensemble",
     sub_dpsis_qual: "Qualité des données",
     santex_tag: "Santex",
     min_tag: "Cabinet du Ministre · Aperçu stratégique",
@@ -4474,7 +4520,9 @@ const I18N = {
     prog_log: "Logistics · Supplies",
     prog_rh: "Human Resources",
     prog_cousp: "Emergencies · Surveillance",
-    prog_dpsis: "Information System",
+    prog_dpsis: "Timeliness · Completeness",
+    sub_dpsis_sys: "Analysis by system",
+    sub_dpsis_carte: "Health map · Standards",
     sub_min_overview: "Ministerial overview",
     sub_sao_league: "Provincial ranking",
     sub_vacc_palu: "Malaria vaccine",
@@ -4503,8 +4551,9 @@ const I18N = {
     sub_cousp_sitrep: "Situation report",
     sub_cousp_dd: "In-depth analysis",
     sub_cousp_alerts: "Active clusters",
-    sub_cousp_surv: "Epi surveillance",
-    sub_dpsis_comp: "Completeness & timeliness",
+    sub_cousp_surv: "Cholera response",
+    sub_cousp_mdo: "Integrated disease surveillance",
+    sub_dpsis_comp: "Overview",
     sub_dpsis_qual: "Data quality",
     santex_tag: "Santex",
     min_tag: "Office of the Minister · Strategic Overview",
@@ -4668,7 +4717,9 @@ const I18N = {
     prog_log: "اللوجستيات · المدخلات",
     prog_rh: "الموارد البشرية",
     prog_cousp: "الطوارئ · المراقبة",
-    prog_dpsis: "نظام المعلومات",
+    prog_dpsis: "الاكتمال والالتزام بالمواعيد",
+    sub_dpsis_sys: "تحليل حسب النظام",
+    sub_dpsis_carte: "الخريطة الصحية والمعايير",
     sub_min_overview: "نظرة عامة وزارية",
     sub_sao_league: "ترتيب المقاطعات",
     sub_vacc_palu: "لقاح الملاريا",
@@ -4697,8 +4748,9 @@ const I18N = {
     sub_cousp_sitrep: "تقرير الوضع",
     sub_cousp_dd: "تحليل معمق",
     sub_cousp_alerts: "البؤر النشطة",
-    sub_cousp_surv: "المراقبة الوبائية",
-    sub_dpsis_comp: "الاكتمال والسرعة",
+    sub_cousp_surv: "الاستجابة للكوليرا",
+    sub_cousp_mdo: "المراقبة المتكاملة للأمراض",
+    sub_dpsis_comp: "نظرة عامة",
     sub_dpsis_qual: "جودة البيانات",
     santex_tag: "سانتكس",
     min_tag: "ديوان الوزير · النظرة الاستراتيجية",
@@ -5065,7 +5117,7 @@ function renderTopbar(v) {
     "Logistique · Intrants": "prog_log",
     "Ressources Humaines": "prog_rh",
     "Urgences · Surveillance": "prog_cousp",
-    "Système d'Information": "prog_dpsis",
+    "Promptitude · Complétude": "prog_dpsis",
     "Vue d'ensemble": "sub_vacc_overview",
     "Couverture vaccinale": "sub_vacc_couv",
     "Zéro-dose": "sub_vacc_zd",
@@ -6212,6 +6264,190 @@ VIEWS["cousp-surv"] = () => {
         </div>
       </div>
     `
+  };
+};
+
+/* ============================ Surveillance intégrée (MDO) ============================
+   Source : export DHIS2 de la surveillance intégrée des maladies. L'export ne porte
+   que des taux mensuels par province, aucun effectif de cas ni de décès. Mode strict :
+   toute cellule non renseignée par l'export s'affiche ND, aucune valeur n'est reprise
+   de la période précédente ni reconstituée. */
+function survDispo() { return SURV && SURV.periodes && SURV.periodes.length; }
+
+function survPeriodesCouvertes() {
+  return survDispo() ? SURV.periodes.filter(p => p.couverte) : [];
+}
+
+/* Debut de la serie continue : la couverture anterieure est faite de mois
+   isoles, la lecture de tendance ne commence qu'au premier mois d'une suite
+   ininterrompue jusqu'a la derniere periode couverte. */
+function survDebutContinu() {
+  const codes = SURV.periodes.map(p => p.code);
+  const couv = SURV.periodes.map(p => p.couverte);
+  let i = codes.length - 1;
+  while (i >= 0 && !couv[i]) i--;
+  let j = i;
+  while (j > 0 && couv[j - 1]) j--;
+  return { debut: SURV.periodes[j], fin: SURV.periodes[i], isoles: couv.slice(0, j).filter(Boolean).length };
+}
+
+function survPeriodeCourante() {
+  const cles = survPeriodesCouvertes();
+  if (!cles.length) return null;
+  let cle = state.survPeriode;
+  if (!cle || !cles.some(p => p.code === cle)) cle = cles[cles.length - 1].code;
+  return cles.find(p => p.code === cle);
+}
+
+function survMaladieCourante() {
+  if (!survDispo()) return null;
+  const m = SURV.maladies;
+  return m.find(x => x.code === state.survMaladie) || m.find(x => x.code === "cholera") || m[0];
+}
+
+function setSurvPeriode(cle) { state.survPeriode = cle; renderMain(); }
+function setSurvMaladie(cle) { state.survMaladie = cle; renderMain(); }
+function decalerSurvPeriode(pas) {
+  const cles = survPeriodesCouvertes(), p = survPeriodeCourante();
+  if (!p) return;
+  const i = cles.findIndex(x => x.code === p.code) + pas;
+  if (i >= 0 && i < cles.length) { state.survPeriode = cles[i].code; renderMain(); }
+}
+
+function survValeur(periode, province, maladie, metrique) {
+  const v = SURV.valeurs[periode];
+  if (!v || !v[province] || !v[province][maladie]) return null;
+  const x = v[province][maladie][metrique];
+  return (x === undefined || x === null) ? null : x;
+}
+
+/* Taux d'incidence : la métrique porte le nom 'att' ou 'inc' selon la maladie. */
+function survIncidence(periode, province, m) {
+  return survValeur(periode, province, m.code, m.incidence === "incidence" ? "inc" : "att");
+}
+
+function survNombre(v) {
+  return v == null ? "ND" : String(v).replace(".", ",");
+}
+
+function barreControleSurv() {
+  const p = survPeriodeCourante(), m = survMaladieCourante();
+  if (!p || !m) return "";
+  const cles = survPeriodesCouvertes(), i = cles.findIndex(x => x.code === p.code);
+  const optP = cles.map(x => `<option value="${x.code}"${x.code === p.code ? " selected" : ""}>${x.libelle}</option>`).join("");
+  const optM = SURV.maladies.map(x => `<option value="${x.code}"${x.code === m.code ? " selected" : ""}>${x.libelle}</option>`).join("");
+  return `<div class="bc-barre">
+    <div class="bc-groupe"><select class="bc-select" onchange="setSurvMaladie(this.value)">${optM}</select></div>
+    <div class="bc-nav">
+      <button class="bc-fleche" onclick="decalerSurvPeriode(-1)" ${i <= 0 ? "disabled" : ""} aria-label="Période précédente">‹</button>
+      <select class="bc-select" onchange="setSurvPeriode(this.value)">${optP}</select>
+      <button class="bc-fleche" onclick="decalerSurvPeriode(1)" ${i >= cles.length - 1 ? "disabled" : ""} aria-label="Période suivante">›</button>
+    </div>
+    <div class="bc-info">${p.taux}% des cellules renseignées${p.partielle ? " · mois en cours, période partielle" : ""}</div>
+  </div>`;
+}
+
+VIEWS["cousp-mdo"] = () => {
+  const crumbs = ["Surveillance · Choléra", "Surveillance intégrée"];
+  if (!survDispo()) {
+    return { crumbs, html: `<div class="ph"><div class="ph-title">Surveillance intégrée des maladies</div><div class="ph-sub">Données en cours de chargement.</div></div>` };
+  }
+  const M = SURV.meta, p = survPeriodeCourante(), mal = survMaladieCourante();
+  if (!p) {
+    return { crumbs, html: `<div class="ph"><div class="ph-title">Surveillance intégrée des maladies</div><div class="ph-sub">Aucune période couverte dans l'export.</div></div>` };
+  }
+  const libInc = mal.incidence === "incidence" ? "Taux d'incidence" : "Taux d'attaque";
+  const C = survDebutContinu();
+
+  // ---- Lecture nationale de la maladie sélectionnée
+  const incNat = survIncidence(p.code, "National", mal);
+  const letNat = mal.letalite ? survValeur(p.code, "National", mal.code, "let") : null;
+  const renseignees = SURV.provinces.filter(pr => survIncidence(p.code, pr, mal) != null).length;
+
+  // ---- Tableau provincial de la période sélectionnée
+  const lignes = SURV.provinces.map(pr => {
+    const inc = survIncidence(p.code, pr, mal);
+    const let_ = mal.letalite ? survValeur(p.code, pr, mal.code, "let") : null;
+    const hb = let_ != null && let_ > 100;
+    const cls = inc == null && let_ == null ? " class=\"surv-nd\"" : "";
+    return { pr, inc, let_, hb, html:
+      `<tr${cls}>
+        <td><strong>${pr}</strong></td>
+        <td class="num">${survNombre(inc)}</td>
+        <td class="num">${let_ == null ? "ND" : `<span class="pill ${hb ? "red" : let_ >= 5 ? "red" : let_ >= 1 ? "orange" : "green"}">${survNombre(let_)}%${hb ? " ⚠" : ""}</span>`}</td>
+      </tr>` };
+  });
+  const tableauProvincial = `<table class="tbl-s">
+    <tr><th>Province</th><th class="num">${libInc}</th><th class="num">Taux de létalité</th></tr>
+    ${lignes.map(l => l.html).join("")}
+  </table>`;
+
+  // ---- Matrice des maladies à déclaration obligatoire
+  const mdo = SURV.maladies.filter(x => x.mdo);
+  const enTete = mdo.map(x => `<th class="num surv-rot">${x.libelle}</th>`).join("");
+  const corps = SURV.provinces.map(pr => {
+    const cells = mdo.map(x => {
+      const v = survIncidence(p.code, pr, x);
+      return `<td class="num${v == null ? " surv-nd-cell" : ""}">${survNombre(v)}</td>`;
+    }).join("");
+    return `<tr><td class="surv-prov">${pr}</td>${cells}</tr>`;
+  }).join("");
+  const matrice = `<div class="surv-scroll"><table class="tbl-s surv-mat">
+    <tr><th>Province</th>${enTete}</tr>${corps}
+  </table></div>`;
+
+  // ---- Série nationale de la maladie sélectionnée
+  const serie = survPeriodesCouvertes().map(x => ({ code: x.code, lib: x.libelle, v: survIncidence(x.code, "National", mal) }));
+  const dispo = serie.filter(x => x.v != null);
+  const maxS = dispo.length ? Math.max(...dispo.map(x => x.v)) : 0;
+  const barres = serie.map(x => {
+    const ht = x.v == null || maxS === 0 ? 0 : Math.round((x.v / maxS) * 100);
+    return `<div class="epi-col" title="${x.lib} : ${survNombre(x.v)}">
+      <div class="epi-bar-wrap">${x.v == null ? `<div class="surv-bar-nd"></div>` : `<div class="epi-bar" style="height:${Math.max(ht, 2)}%"><span class="epi-val">${survNombre(x.v)}</span></div>`}</div>
+      <div class="epi-lab">${x.code.slice(2).replace("-", "/")}</div>
+    </div>`;
+  }).join("");
+
+  // ---- Réserves de lecture
+  const horsBornes = lignes.filter(l => l.hb);
+  const reserves = [];
+  if (M.provinces_absentes.length) reserves.push(`${M.provinces_absentes.join(", ")} ${M.provinces_absentes.length > 1 ? "sont absentes" : "est absente"} de l'export, la province s'affiche en ND sur toutes les périodes.`);
+  if (horsBornes.length) reserves.push(`Létalité supérieure à 100% sur ${horsBornes.length} province${horsBornes.length > 1 ? "s" : ""} de la période : ${horsBornes.map(l => l.pr).join(", ")}. Valeur conservée telle qu'exportée et signalée.`);
+  if (p.partielle) reserves.push("Le mois sélectionné est en cours, les taux ne sont pas comparables aux mois achevés.");
+  if (C.isoles) reserves.push(`La série continue débute en ${C.debut.libelle.toLowerCase()}. ${C.isoles} mois antérieur${C.isoles > 1 ? "s sont renseignés de façon isolée et ne constituent pas" : " est renseigné de façon isolée et ne constitue pas"} un historique exploitable.`);
+  reserves.push("L'export ne documente ni les dénominateurs ni la base de calcul des taux. Les ordres de grandeur diffèrent d'une maladie à l'autre et interdisent toute comparaison entre maladies.");
+  reserves.push("Aucun effectif de cas ni de décès n'est porté par l'export. Les taux ne permettent pas de reconstituer les notifications.");
+
+  return {
+    crumbs,
+    html: `
+      <div class="ph">
+        <div class="ph-tag">◆ Surveillance intégrée · COUSP</div>
+        <div class="ph-title">Surveillance intégrée des maladies</div>
+        <div class="ph-sub">${M.source}. Relevé mensuel provincial, série continue de ${C.debut.libelle.toLowerCase()} à ${C.fin.libelle.toLowerCase()}. ${M.provinces_presentes} provinces renseignées sur ${M.provinces_attendues}.</div>
+      </div>
+      <div class="content">
+        ${barreControleSurv()}
+        <div class="kpi-grid">
+          ${kpi(libInc + " national", incNat == null ? null : survNombre(incNat), "", mal.libelle + ", " + p.libelle, "", "flat", "orange", true)}
+          ${kpi("Létalité nationale", letNat == null ? null : survNombre(letNat) + "%", "", mal.letalite ? "seuil d'alerte 1%" : "non exporté pour cette maladie", "", "flat", letNat != null && letNat >= 1 ? "red" : "green", true)}
+          ${kpi("Provinces renseignées", renseignees, "", "sur " + M.provinces_attendues + " attendues", "", "flat", renseignees >= 20 ? "green" : renseignees >= 12 ? "orange" : "red", true)}
+          ${kpi("Maladies suivies", SURV.maladies.length, "", mdo.length + " à déclaration obligatoire", "", "flat", "green", true)}
+        </div>
+        <div class="grid-2">
+          ${card("Situation provinciale", mal.libelle + ", " + p.libelle, tableauProvincial,
+            renseignees === 0 ? "Aucune province ne renseigne cette maladie sur la période sélectionnée." :
+            "Les provinces sans valeur exportée s'affichent en ND. Le tableau ne distingue pas l'absence de notification de l'absence de rapportage.")}
+          ${card("Série nationale", libInc.toLowerCase() + ", périodes couvertes", `<div class="epi-chart">${barres}</div>`,
+            dispo.length < serie.length ? `${serie.length - dispo.length} période${serie.length - dispo.length > 1 ? "s" : ""} sans valeur nationale sur ${serie.length} couvertes, marquée${serie.length - dispo.length > 1 ? "s" : ""} en ND.` :
+            "Toutes les périodes couvertes portent une valeur nationale.")}
+        </div>
+        ${card("Maladies à déclaration obligatoire", "Taux d'attaque ou d'incidence par province, " + p.libelle, matrice,
+          "Lecture par colonne uniquement. Les taux relèvent de dénominateurs distincts selon la maladie et ne se comparent pas entre eux.")}
+        ${card("Réserves de lecture", "Contrôles appliqués à l'export du " + M.actualise,
+          `<ul class="surv-reserves">${reserves.map(r => `<li>${r}</li>`).join("")}</ul>`,
+          "Les anomalies sont signalées et conservées en l'état. Aucune correction n'est appliquée à la source.")}
+      </div>`
   };
 };
 
@@ -7664,255 +7900,566 @@ VIEWS["drh-vacance"] = () => ({
   `
 });
 
-VIEWS["dpsis-comp"] = () => {
-  // Multi-system completeness data
-  const systems = [
-    { id:"dhis2",   l:"DHIS2",         desc:"Reporting agrégé mensuel — RMA",   pf:"DPSIS",  freq:"Mensuel",   complet:89, promp:76, valid:82 },
-    { id:"tracker", l:"DHIS2 Tracker", desc:"Supervision PEV + suivi nominatif", pf:"DLMVSE", freq:"Mensuel",   complet:76, promp:68, valid:71 },
-    { id:"sigl",    l:"SIGL",          desc:"Logistique médicaments",            pf:"DGPML",   freq:"Mensuel",   complet:71, promp:62, valid:75 },
-    { id:"ihris",   l:"IHRIS",         desc:"Ressources humaines",                pf:"DRH",    freq:"Trimestriel",complet:95, promp:88, valid:91 },
-    { id:"smt",     l:"SMT / eSMT",    desc:"Stocks vaccins & chaîne du froid",  pf:"DLMVSE", freq:"Mensuel",   complet:82, promp:74, valid:79 },
-  ];
+/* ==================== Qualité du système d'information (DPSIS) ====================
+   Source : relevé mensuel de complétude et de promptitude de la DPSIS, une ligne
+   par province et par mois. Mode strict : les périodes sans rapportage portent
+   zéro dans le relevé, elles sont écartées à l'ingestion et affichées ND.
+   Aucune valeur n'est reprise d'une période voisine. */
+function dpsisDispo() { return DPSISQ && DPSISQ.periodes && DPSISQ.periodes.length; }
 
-  // Average completeness
-  const avgComp = Math.round(systems.reduce((a, s) => a + s.complet, 0) / systems.length);
-  const avgPromp = Math.round(systems.reduce((a, s) => a + s.promp, 0) / systems.length);
-  const avgValid = Math.round(systems.reduce((a, s) => a + s.valid, 0) / systems.length);
+function dpsisPeriodesCouvertes() {
+  return dpsisDispo() ? DPSISQ.periodes.filter(p => p.couverte) : [];
+}
+
+function dpsisPeriodeCourante() {
+  const cles = dpsisPeriodesCouvertes();
+  if (!cles.length) return null;
+  let cle = state.dpsisPeriode;
+  if (!cle || !cles.some(p => p.code === cle)) cle = cles[cles.length - 1].code;
+  return cles.find(p => p.code === cle);
+}
+
+function setDpsisPeriode(cle) { state.dpsisPeriode = cle; renderMain(); }
+function decalerDpsisPeriode(pas) {
+  const cles = dpsisPeriodesCouvertes(), p = dpsisPeriodeCourante();
+  if (!p) return;
+  const i = cles.findIndex(x => x.code === p.code) + pas;
+  if (i >= 0 && i < cles.length) { state.dpsisPeriode = cles[i].code; renderMain(); }
+}
+
+function dpsisSysteme(code) {
+  return DPSISQ.systemes.find(s => s.code === code) || null;
+}
+
+function dpsisValeur(periode, unite, systeme, metrique) {
+  const v = DPSISQ.valeurs[periode];
+  if (!v || !v[unite] || !v[unite][systeme]) return null;
+  const x = v[unite][systeme][metrique];
+  return (x === undefined || x === null) ? null : x;
+}
+
+function dpsisVolume(periode, unite, cle) {
+  const v = DPSISQ.volumes[periode];
+  if (!v || !v[unite]) return null;
+  const x = v[unite][cle];
+  return (x === undefined || x === null) ? null : x;
+}
+
+function dpsisNombre(v, unite) {
+  return v == null ? "ND" : String(v).replace(".", ",") + (unite || "");
+}
+
+/* Anomalies rattachees a une periode, tous systemes confondus. */
+function dpsisAnomaliesPeriode(code) {
+  return DPSISQ.anomalies.filter(a => a.periode === code);
+}
+
+function barreControleDpsis(info) {
+  const p = dpsisPeriodeCourante();
+  if (!p) return "";
+  const cles = dpsisPeriodesCouvertes(), i = cles.findIndex(x => x.code === p.code);
+  const opts = cles.map(x => `<option value="${x.code}"${x.code === p.code ? " selected" : ""}>${x.libelle}</option>`).join("");
+  return `<div class="bc-barre">
+    <div class="bc-groupe"><span class="dq-src">${DPSISQ.meta.source}</span></div>
+    <div class="bc-nav">
+      <button class="bc-fleche" onclick="decalerDpsisPeriode(-1)" ${i <= 0 ? "disabled" : ""} aria-label="Période précédente">‹</button>
+      <select class="bc-select" onchange="setDpsisPeriode(this.value)">${opts}</select>
+      <button class="bc-fleche" onclick="decalerDpsisPeriode(1)" ${i >= cles.length - 1 ? "disabled" : ""} aria-label="Période suivante">›</button>
+    </div>
+    <div class="bc-info">${info}</div>
+  </div>`;
+}
+
+/* Moyenne des provinces renseignees, hors agregat national. Rend null si
+   aucune province ne porte de valeur : la vue affiche alors ND. */
+function dpsisMoyenneProvinces(periode, systeme, metrique) {
+  const vals = DPSISQ.provinces
+    .map(pr => dpsisValeur(periode, pr, systeme, metrique))
+    .filter(v => v != null);
+  if (!vals.length) return null;
+  return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 10) / 10;
+}
+
+VIEWS["dpsis-comp"] = () => {
+  const crumbs = ["Promptitude · Complétude", "Vue d'ensemble"];
+  if (!dpsisDispo()) {
+    return { crumbs, html: `<div class="ph"><div class="ph-title">Complétude et promptitude</div><div class="ph-sub">Données en cours de chargement.</div></div>` };
+  }
+  const M = DPSISQ.meta, p = dpsisPeriodeCourante();
+  if (!p) {
+    return { crumbs, html: `<div class="ph"><div class="ph-title">Complétude et promptitude</div><div class="ph-sub">Aucune période couverte dans le relevé.</div></div>` };
+  }
+  const renseignes = DPSISQ.systemes.filter(s => s.renseigne > 0);
+
+  // ---- Lecture nationale
+  const compNat = dpsisValeur(p.code, "National", "rma_global", "comp");
+  const prompNat = dpsisValeur(p.code, "National", "rma_global", "promp");
+  const attendus = (dpsisVolume(p.code, "National", "cs_attendus") || 0) + (dpsisVolume(p.code, "National", "hdhp_attendus") || 0);
+  const saisis = (dpsisVolume(p.code, "National", "cs_saisis") || 0) + (dpsisVolume(p.code, "National", "hdhp_saisis") || 0);
+
+  // ---- Systemes
+  const cartes = DPSISQ.systemes.map(s => {
+    const c = s.renseigne ? dpsisValeur(p.code, "National", s.code, "comp") : null;
+    const pr = s.renseigne && s.promptitude ? dpsisValeur(p.code, "National", s.code, "promp") : null;
+    const hbC = c != null && c > 100, hbP = pr != null && pr > 100;
+    const rC = c == null ? "na" : hbC ? "red" : rag(c, 95);
+    const rP = pr == null ? "na" : hbP ? "red" : rag(pr, 90);
+    return `
+      <div class="si-card rag-${c == null ? "na" : rC}">
+        <div class="si-card-hdr">
+          <div class="si-card-icon">${s.libelle.substring(0, 2).toUpperCase()}</div>
+          <div class="si-card-title">
+            <div class="si-card-name">${s.libelle}</div>
+            <div class="si-card-desc">${s.perimetre}</div>
+          </div>
+          <div class="si-card-status pill ${c == null ? "na" : rC}">${c == null ? "ND" : dpsisNombre(c, "%") + (hbC ? " ⚠" : "")}</div>
+        </div>
+        <div class="si-card-meta">
+          <span class="si-meta-pf">${s.source}</span>
+          <span class="si-meta-dot">•</span>
+          <span class="si-meta-freq">${s.renseigne ? s.renseigne + " relevés" : "jamais renseigné"}</span>
+        </div>
+        <div class="si-card-metrics">
+          <div class="si-metric">
+            <div class="si-metric-label">Complétude</div>
+            <div class="si-metric-bar"><div class="si-metric-fill ${rC}" style="width:${c == null ? 0 : Math.min(c, 100)}%"></div></div>
+            <div class="si-metric-val ${rC}">${c == null ? "ND" : dpsisNombre(c)}<span>${c == null ? "" : "%"}</span>${hbC ? '<span class="dq-hb" title="valeur hors bornes, conservée telle qu\'exportée">⚠</span>' : ""}</div>
+            <div class="si-metric-target">Cible 95%</div>
+          </div>
+          <div class="si-metric">
+            <div class="si-metric-label">Promptitude</div>
+            <div class="si-metric-bar"><div class="si-metric-fill ${rP}" style="width:${pr == null ? 0 : Math.min(pr, 100)}%"></div></div>
+            <div class="si-metric-val ${rP}">${pr == null ? "ND" : dpsisNombre(pr)}<span>${pr == null ? "" : "%"}</span>${hbP ? '<span class="dq-hb" title="valeur hors bornes, conservée telle qu\'exportée">⚠</span>' : ""}</div>
+            <div class="si-metric-target">${s.promptitude ? "Cible 90%" : "non exportée"}</div>
+          </div>
+        </div>
+        ${s.reserve ? `<div class="dq-reserve">${s.reserve}</div>` : ""}
+      </div>`;
+  }).join("");
+
+  // ---- Tableau provincial
+  const rows = DPSISQ.provinces.map(pr => {
+    const c = dpsisValeur(p.code, pr, "rma_global", "comp");
+    const q = dpsisValeur(p.code, pr, "rma_global", "promp");
+    const att = dpsisVolume(p.code, pr, "cs_attendus");
+    const sai = dpsisVolume(p.code, pr, "cs_saisis");
+    const vide = c == null && q == null;
+    return `<tr${vide ? ' class="dq-nd"' : ""}>
+      <td><strong>${pr}</strong></td>
+      <td class="num">${sai == null ? "ND" : sai} / ${att == null ? "ND" : att}</td>
+      <td class="num">${c == null ? "ND" : `<span class="pill ${c > 100 ? "red" : rag(c, 95)}">${dpsisNombre(c, "%")}${c > 100 ? " ⚠" : ""}</span>`}</td>
+      <td class="num">${q == null ? "ND" : `<span class="pill ${q > 100 ? "red" : rag(q, 90)}">${dpsisNombre(q, "%")}${q > 100 ? " ⚠" : ""}</span>`}</td>
+    </tr>`;
+  }).join("");
+
+  // ---- Serie nationale de la completude globale
+  const serie = dpsisPeriodesCouvertes().slice(-24);
+  const barres = serie.map(x => {
+    const v = dpsisValeur(x.code, "National", "rma_global", "comp");
+    const ht = v == null ? 0 : Math.round(Math.min(v, 100));
+    return `<div class="epi-col" title="${x.libelle} : ${dpsisNombre(v, "%")}">
+      <div class="epi-bar-wrap">${v == null ? `<div class="surv-bar-nd"></div>` : `<div class="epi-bar ${rag(v, 95) === "green" ? "" : ""}" style="height:${Math.max(ht, 2)}%"><span class="epi-val">${Math.round(v)}</span></div>`}</div>
+      <div class="epi-lab">${x.code.slice(2).replace("-", "/")}</div>
+    </div>`;
+  }).join("");
+
+  const manquantes = DPSISQ.provinces.filter(pr => dpsisValeur(p.code, pr, "rma_global", "comp") == null);
 
   return {
-    crumbs:["Système d'Information", "Complétude & promptitude"],
+    crumbs,
     html: `
       <div class="ph">
-        <div class="ph-tag">${t("si_ph_tag")}</div>
-        <div class="ph-title">${t("si_comp_ph_title")}</div>
-        <div class="ph-sub">${t("si_comp_ph_sub")}</div>
+        <div class="ph-tag">◆ Complétude et promptitude · DPSIS</div>
+        <div class="ph-title">Complétude et promptitude du rapportage</div>
+        <div class="ph-sub">${M.source}. Relevé mensuel provincial, ${dpsisPeriodesCouvertes()[0].libelle.toLowerCase()} à ${dpsisPeriodesCouvertes().slice(-1)[0].libelle.toLowerCase()}. ${renseignes.length} systèmes renseignés sur ${DPSISQ.systemes.length} exportés.</div>
       </div>
       <div class="content">
-
+        ${barreControleDpsis(`${p.unites} unités rapportent sur ${M.provinces_attendues + 1}`)}
         <div class="kpi-grid">
-          ${kpi("Complétude moyenne", avgComp, "%", "5 systèmes · Cible : 95%", "", "flat", rag(avgComp, 95))}
-          ${kpi("Promptitude moyenne", avgPromp, "%", "Saisie ≤ J+5 · Cible : 90%", "", "flat", rag(avgPromp, 90))}
-          ${kpi("Validation district", avgValid, "%", "RMA validés · Cible : 95%", "", "flat", rag(avgValid, 95))}
-          ${kpi("SI actifs / opérationnels", nationalAggregate("si-actifs"), "/5", "DHIS2, Tracker, SIGL, IHRIS, SMT", "", "flat", "green")}
+          ${kpi("Complétude nationale", compNat == null ? null : dpsisNombre(compNat, "%"), "", "RMA global, cible 95%", "", "flat", compNat == null ? "na" : rag(compNat, 95))}
+          ${kpi("Promptitude nationale", prompNat == null ? null : dpsisNombre(prompNat, "%"), "", "saisie dans le délai, cible 90%", "", "flat", prompNat == null ? "na" : rag(prompNat, 90))}
+          ${kpi("Rapports saisis", saisis || null, "", "sur " + (attendus || "ND") + " attendus", "", "flat", "green", true)}
+          ${kpi("Provinces sans valeur", manquantes.length, "", "sur " + M.provinces_attendues + " du référentiel", "", "flat", manquantes.length === 0 ? "green" : manquantes.length <= 3 ? "orange" : "red", true)}
         </div>
-
-        <div class="si-grid">
-          ${systems.map(s => {
-            const avg = Math.round((s.complet + s.promp + s.valid) / 3);
-            const rOverall = rag(avg, 90);
-            const rComp = rag(s.complet, 95);
-            const rProm = rag(s.promp, 90);
-            const rVal = rag(s.valid, 95);
-            return `
-              <div class="si-card rag-${rOverall}">
-                <div class="si-card-hdr">
-                  <div class="si-card-icon">${s.l.substring(0,2)}</div>
-                  <div class="si-card-title">
-                    <div class="si-card-name">${s.l}</div>
-                    <div class="si-card-desc">${s.desc}</div>
-                  </div>
-                  <div class="si-card-status pill ${rOverall}">${avg}%</div>
-                </div>
-                <div class="si-card-meta">
-                  <span class="si-meta-pf">${s.pf}</span>
-                  <span class="si-meta-dot">•</span>
-                  <span class="si-meta-freq">${s.freq}</span>
-                </div>
-                <div class="si-card-metrics">
-                  <div class="si-metric">
-                    <div class="si-metric-label">Complétude</div>
-                    <div class="si-metric-bar"><div class="si-metric-fill ${rComp}" style="width:${s.complet}%"></div></div>
-                    <div class="si-metric-val ${rComp}">${s.complet}<span>%</span></div>
-                    <div class="si-metric-target">Cible 95%</div>
-                  </div>
-                  <div class="si-metric">
-                    <div class="si-metric-label">Promptitude</div>
-                    <div class="si-metric-bar"><div class="si-metric-fill ${rProm}" style="width:${s.promp}%"></div></div>
-                    <div class="si-metric-val ${rProm}">${s.promp}<span>%</span></div>
-                    <div class="si-metric-target">Cible 90%</div>
-                  </div>
-                  <div class="si-metric">
-                    <div class="si-metric-label">Validation</div>
-                    <div class="si-metric-bar"><div class="si-metric-fill ${rVal}" style="width:${s.valid}%"></div></div>
-                    <div class="si-metric-val ${rVal}">${s.valid}<span>%</span></div>
-                    <div class="si-metric-target">Cible 95%</div>
-                  </div>
-                </div>
-              </div>
-            `;
-          }).join("")}
+        <div class="si-grid">${cartes}</div>
+        <div class="grid-2">
+          ${card("Situation provinciale", "RMA global, " + p.libelle,
+            `<table class="tbl-s"><tr><th>Province</th><th class="num">Rapports CS saisis / attendus</th><th class="num">Complétude</th><th class="num">Promptitude</th></tr>${rows}</table>`,
+            manquantes.length ? `${manquantes.length} province${manquantes.length > 1 ? "s ne portent" : " ne porte"} aucune valeur sur la période : ${manquantes.join(", ")}.` :
+            "Les volumes de rapports attendus proviennent de la carte sanitaire courante, identique sur toutes les périodes du relevé.")}
+          ${card("Complétude nationale", "RMA global, 24 dernières périodes couvertes", `<div class="epi-chart">${barres}</div>`,
+            "Les périodes sans rapportage sont écartées du relevé et n'apparaissent pas dans la série.")}
         </div>
+      </div>`
+  };
+};
 
-        <div class="g-2-1">
-          ${card("Complétude par système — Évolution N vs N-1", "Tendance annuelle des 5 SI · Janvier–Décembre", renderLineChart([
-            { name:"DHIS2",          data: sparklineData("comp-dhis2"),   color:"#1F3864", style:"solid" },
-            { name:"SIGL",           data: sparklineData("comp-sigl"),    color:"#AF4E10", style:"solid" },
-            { name:"DHIS2 Tracker",  data: sparklineData("comp-tracker"), color:"#3E6E78", style:"solid" },
-            { name:"IHRIS",          data: sparklineData("comp-ihris"),   color:"#7C3AED", style:"solid" },
-            { name:"SMT / eSMT",     data: sparklineData("comp-smt"),     color:"#059669", style:"solid" },
-          ]), "")}
+/* ==================== Analyse par système ====================
+   Chaque système de rapportage du relevé DPSIS est analysé isolément :
+   situation provinciale de la période, série nationale sur l'ensemble des
+   périodes couvertes, contrôles propres au système. Même règle stricte que
+   le reste de la famille : ND hors couverture, anomalies affichées telles
+   qu'exportées. */
+function setDpsisSys(code) { state.dpsisSys = code; renderMain(); }
 
-          ${card("Performance comparée des SI", "Complétude (%) — Cible : 95%", renderBars(systems.map(s => ({
-            label: s.l,
-            val: s.complet, target: 95,
-            rag: rag(s.complet, 95),
-            showVal: s.complet + "%"
-          }))), "")}
-        </div>
+function dpsisSysCourant() {
+  if (!dpsisDispo()) return null;
+  const rens = DPSISQ.systemes.filter(s => s.renseigne > 0);
+  return rens.find(s => s.code === state.dpsisSys) || rens[0] || null;
+}
 
-        ${aiBox(
-          "IHRIS et DHIS2 en bonne voie, SIGL et Tracker à renforcer",
-          `Les systèmes <strong>IHRIS (${systems[3].complet}%)</strong> et <strong>DHIS2 (${systems[0].complet}%)</strong> atteignent les seuils opérationnels. <strong>SIGL (${systems[2].complet}%)</strong> reste fragile, particulièrement en zone sahélienne. <strong>DHIS2 Tracker</strong> peine à se déployer au-delà des sites pilotes PEV. Recommandation : <strong>plan de renforcement SIGL en T2-T3</strong> (financement Banque Mondiale via PRSS-II), accélération de l'extension Tracker aux 16 provinces PDA.`,
-          "Source : Logs administrateurs SI · DPSIS · Mise à jour : J+1"
-        )}
-
-        <div class="g-1-1">
-          ${card("Complétude DHIS2 par province", "% RMA soumis dans les délais", renderMap("comp-dhis2"), "")}
-          ${card("Complétude SIGL par province", "% rapports logistiques soumis", renderMap("comp-sigl"), "")}
-        </div>
+VIEWS["dpsis-sys"] = () => {
+  const crumbs = ["Promptitude · Complétude", "Analyse par système"];
+  if (!dpsisDispo()) {
+    return { crumbs, html: `<div class="ph"><div class="ph-title">Analyse par système</div><div class="ph-sub">Données en cours de chargement.</div></div>` };
+  }
+  const M = DPSISQ.meta, p = dpsisPeriodeCourante(), sys = dpsisSysCourant();
+  if (!p || !sys) {
+    return { crumbs, html: `<div class="ph"><div class="ph-title">Analyse par système</div><div class="ph-sub">Aucune période couverte dans le relevé.</div></div>` };
+  }
+  const rens = DPSISQ.systemes.filter(s => s.renseigne > 0);
+  const optS = rens.map(x => `<option value="${x.code}"${x.code === sys.code ? " selected" : ""}>${x.libelle}</option>`).join("");
+  const barre = (() => {
+    const cles = dpsisPeriodesCouvertes(), i = cles.findIndex(x => x.code === p.code);
+    const optP = cles.map(x => `<option value="${x.code}"${x.code === p.code ? " selected" : ""}>${x.libelle}</option>`).join("");
+    return `<div class="bc-barre">
+      <div class="bc-groupe"><select class="bc-select" onchange="setDpsisSys(this.value)">${optS}</select></div>
+      <div class="bc-nav">
+        <button class="bc-fleche" onclick="decalerDpsisPeriode(-1)" ${i <= 0 ? "disabled" : ""} aria-label="Période précédente">‹</button>
+        <select class="bc-select" onchange="setDpsisPeriode(this.value)">${optP}</select>
+        <button class="bc-fleche" onclick="decalerDpsisPeriode(1)" ${i >= cles.length - 1 ? "disabled" : ""} aria-label="Période suivante">›</button>
       </div>
-    `
+      <div class="bc-info">${sys.source} · ${sys.renseigne} relevés</div>
+    </div>`;
+  })();
+
+  const compNat = dpsisValeur(p.code, "National", sys.code, "comp");
+  const prompNat = sys.promptitude ? dpsisValeur(p.code, "National", sys.code, "promp") : null;
+  const provRens = DPSISQ.provinces.filter(pr => dpsisValeur(p.code, pr, sys.code, "comp") != null);
+  const moyProv = dpsisMoyenneProvinces(p.code, sys.code, "comp");
+
+  // ---- Tableau provincial du systeme, trie par completude croissante
+  const lignes = DPSISQ.provinces.map(pr => {
+    const c = dpsisValeur(p.code, pr, sys.code, "comp");
+    const q = sys.promptitude ? dpsisValeur(p.code, pr, sys.code, "promp") : null;
+    return { pr, c, q };
+  }).sort((a, b) => (a.c == null) - (b.c == null) || (a.c || 0) - (b.c || 0));
+  const rensLignes = lignes.filter(x => x.c != null && x.q != null);
+  const recopie = sys.promptitude && rensLignes.length > 1 && rensLignes.every(x => x.c === x.q);
+  const rows = lignes.map(x => `<tr${x.c == null && x.q == null ? ' class="dq-nd"' : ""}>
+      <td><strong>${x.pr}</strong></td>
+      <td class="num">${x.c == null ? "ND" : `<span class="pill ${x.c > 100 ? "red" : rag(x.c, 95)}">${dpsisNombre(x.c, "%")}${x.c > 100 ? " ⚠" : ""}</span>`}</td>
+      <td class="num">${!sys.promptitude ? "non exportée" : x.q == null ? "ND" : `<span class="pill ${x.q > 100 ? "red" : rag(x.q, 90)}">${dpsisNombre(x.q, "%")}${x.q > 100 ? " ⚠" : ""}</span>`}</td>
+    </tr>`).join("");
+
+  // ---- Serie nationale complete du systeme
+  const serie = dpsisPeriodesCouvertes();
+  const barres = serie.map(x => {
+    const v = dpsisValeur(x.code, "National", sys.code, "comp");
+    const ht = v == null ? 0 : Math.round(Math.min(v, 100));
+    return `<div class="epi-col" title="${x.libelle} : ${dpsisNombre(v, "%")}">
+      <div class="epi-bar-wrap">${v == null ? `<div class="surv-bar-nd"></div>` : `<div class="epi-bar" style="height:${Math.max(ht, 2)}%"></div>`}</div>
+      <div class="epi-lab">${x.code.endsWith("-01") || x === serie[0] ? x.code.slice(2, 4) : ""}</div>
+    </div>`;
+  }).join("");
+  const dispo = serie.filter(x => dpsisValeur(x.code, "National", sys.code, "comp") != null).length;
+
+  // ---- Controles propres au systeme, toutes periodes
+  const anosSys = DPSISQ.anomalies.filter(a => a.systeme === sys.code && a.periode);
+  const parT = {};
+  anosSys.forEach(a => { (parT[a.type] = parT[a.type] || []).push(a); });
+  const LIB = {
+    completude_hors_bornes: "Complétude supérieure à 100%",
+    promptitude_hors_bornes: "Promptitude supérieure à 100%",
+    promptitude_superieure_completude: "Promptitude supérieure à la complétude",
+    promptitude_non_mesuree: "Promptitude non mesurée, recopie de la complétude",
+    taux_non_recalculable: "Taux déclaré non retrouvé depuis les volumes",
+  };
+  const blocAnos = Object.keys(parT).length
+    ? `<table class="tbl-s"><tr><th>Contrôle</th><th class="num">Relevés</th><th>Répartition</th></tr>
+        ${Object.entries(parT).sort((a, b) => b[1].length - a[1].length).map(([k, v]) => {
+          const unites = {};
+          v.forEach(a => { unites[a.unite] = (unites[a.unite] || 0) + 1; });
+          const tri = Object.entries(unites).sort((a, b) => b[1] - a[1]);
+          const liste = tri.slice(0, 6).map(([u, n]) => n > 1 ? `${u} (${n})` : u).join(", ")
+            + (tri.length > 6 ? ` et ${tri.length - 6} autres` : "");
+          return `<tr><td><strong>${LIB[k] || k}</strong></td><td class="num">${v.length}</td><td class="dq-liste">${liste}</td></tr>`;
+        }).join("")}
+      </table>`
+    : `<div class="dq-vide">Aucun signalement sur ce système, toutes périodes confondues.</div>`;
+
+  return {
+    crumbs,
+    html: `
+      <div class="ph">
+        <div class="ph-tag">◆ Promptitude et complétude · DPSIS</div>
+        <div class="ph-title">${sys.libelle}</div>
+        <div class="ph-sub">${sys.perimetre}. ${sys.renseigne} relevés province par mois sur ${dpsisPeriodesCouvertes().length} périodes couvertes du relevé DPSIS.</div>
+      </div>
+      <div class="content">
+        ${barre}
+        <div class="kpi-grid">
+          ${kpi("Complétude nationale", compNat == null ? null : dpsisNombre(compNat, "%"), "", p.libelle + ", cible 95%", "", "flat", compNat == null ? "na" : compNat > 100 ? "red" : rag(compNat, 95))}
+          ${kpi("Promptitude nationale", prompNat == null ? null : dpsisNombre(prompNat, "%"), "", sys.promptitude ? "cible 90%" : "non exportée pour ce système", "", "flat", prompNat == null ? "na" : prompNat > 100 ? "red" : rag(prompNat, 90))}
+          ${kpi("Provinces renseignées", provRens.length, "", "sur " + DPSISQ.meta.provinces_attendues + " du référentiel", "", "flat", provRens.length >= 20 ? "green" : provRens.length >= 12 ? "orange" : "red", true)}
+          ${kpi("Moyenne des provinces", moyProv == null ? null : dpsisNombre(moyProv, "%"), "", "hors agrégat national", "", "flat", moyProv == null ? "na" : rag(moyProv, 95))}
+        </div>
+        <div class="grid-2">
+          ${card("Situation provinciale", sys.libelle + ", " + p.libelle + ", tri par complétude croissante",
+            `<table class="tbl-s"><tr><th>Province</th><th class="num">Complétude</th><th class="num">Promptitude</th></tr>${rows}</table>`,
+            (recopie ? "La promptitude est égale à la complétude sur toutes les unités renseignées de la période, elle ne mesure rien ici. " : "") +
+            (provRens.length < DPSISQ.meta.provinces_attendues ? `${DPSISQ.meta.provinces_attendues - provRens.length} province${DPSISQ.meta.provinces_attendues - provRens.length > 1 ? "s" : ""} sans valeur sur la période, affichée${DPSISQ.meta.provinces_attendues - provRens.length > 1 ? "s" : ""} en ND.` :
+            "Toutes les provinces du référentiel portent une valeur sur la période."))}
+          ${card("Série nationale", "complétude, " + serie.length + " périodes couvertes", `<div class="epi-chart epi-dense">${barres}</div>`,
+            dispo < serie.length ? `${serie.length - dispo} période${serie.length - dispo > 1 ? "s" : ""} sans valeur nationale pour ce système, en ND.` :
+            "Toutes les périodes couvertes portent une valeur nationale pour ce système.")}
+        </div>
+        ${card("Contrôles du système", "cumul des " + dpsisPeriodesCouvertes().length + " périodes couvertes", blocAnos,
+          sys.reserve ? sys.reserve : "Les valeurs hors bornes sont conservées telles qu'exportées et signalées, aucune correction n'est appliquée à la source.")}
+      </div>`
+  };
+};
+
+/* ==================== Carte sanitaire et standards ====================
+   Couche de référence des dénominateurs : effectifs de districts, de zones
+   de responsabilité, populations et populations cibles issus des standards
+   ZR, millésime par millésime. Le projet de standards le plus récent n'entre
+   dans cette couche qu'après validation contre le référentiel antérieur ;
+   les corrections appliquées et les écarts restants sont affichés ici.
+   Toute vue qui a besoin d'un dénominateur de population ou d'un effectif
+   de structures doit interroger cette couche via stdProv et nommer le
+   millésime employé, plutôt que de porter ses propres constantes. */
+function stdDispo() { return STD && STD.annees && Object.keys(STD.annees).length; }
+function stdAnnees() { return stdDispo() ? Object.keys(STD.annees).sort() : []; }
+function stdAnneeCourante() {
+  const a = stdAnnees();
+  if (!a.length) return null;
+  let cle = state.dpsisStdAnnee;
+  if (!cle || !a.includes(cle)) cle = a[a.length - 1];
+  return cle;
+}
+function setStdAnnee(a) { state.dpsisStdAnnee = a; renderMain(); }
+function stdProv(annee, prov) {
+  if (!stdDispo()) return null;
+  const bloc = STD.annees[String(annee)];
+  if (!bloc) return null;
+  return prov === "National" ? bloc.national : (bloc.provinces[prov] || null);
+}
+
+VIEWS["dpsis-carte"] = () => {
+  const crumbs = ["Promptitude · Complétude", "Carte sanitaire · Standards"];
+  if (!stdDispo()) {
+    return { crumbs, html: `<div class="ph"><div class="ph-title">Carte sanitaire et standards</div><div class="ph-sub">Données en cours de chargement.</div></div>` };
+  }
+  const a = stdAnneeCourante(), bloc = STD.annees[a], M = STD.meta;
+  const opts = stdAnnees().map(x => `<option value="${x}"${x === a ? " selected" : ""}>Standards ${x}</option>`).join("");
+  const projet = bloc.statut !== "référentiel";
+
+  // ---- comparaison avec la carte sanitaire du releve DPSIS
+  const releve = (typeof DPSISQ !== "undefined" && DPSISQ && DPSISQ.carte_sanitaire) ? DPSISQ.carte_sanitaire : null;
+  const rows = Object.keys(bloc.provinces).map(pr => {
+    const x = bloc.provinces[pr];
+    const dsRel = releve && releve[pr] ? releve[pr].districts : null;
+    const ecart = dsRel != null ? x.ds - dsRel : null;
+    return `<tr>
+      <td><strong>${pr}</strong></td>
+      <td class="num">${x.ds}</td>
+      <td class="num">${dsRel == null ? "ND" : dsRel}</td>
+      <td class="num">${ecart == null ? "ND" : ecart === 0 ? `<span class="pill green">concordant</span>` : `<span class="pill orange">${ecart > 0 ? "+" : ""}${ecart}</span>`}</td>
+      <td class="num">${x.zr}</td>
+      <td class="num">${x.pop.toLocaleString("fr-FR")}</td>
+      <td class="num">${x.cible.toLocaleString("fr-FR")}</td>
+    </tr>`;
+  }).join("");
+  const nbEcarts = Object.keys(bloc.provinces).filter(pr => releve && releve[pr] && releve[pr].districts != null && bloc.provinces[pr].ds !== releve[pr].districts).length;
+
+  // ---- corrections et signalements du projet
+  let blocProjet = "";
+  if (projet && STD.corrections) {
+    const parR = {};
+    STD.corrections.forEach(c => { parR[c.regle] = (parR[c.regle] || 0) + 1; });
+    const LIBC = { propagation_libelle: "Rattachement rétabli après propagation de libellé",
+                   province_alignee_sur_district: "Province alignée sur le district",
+                   doublon_ecarte: "Doublon écarté, valeur en trajectoire conservée" };
+    const corr = `<table class="tbl-s"><tr><th>Correction appliquée</th><th class="num">Lignes</th></tr>
+      ${Object.entries(parR).map(([k, n]) => `<tr><td>${LIBC[k] || k}</td><td class="num">${n}</td></tr>`).join("")}
+    </table>`;
+    const LIBA = { rattachement_divergent: "Changements de rattachement à confirmer par le programme",
+                   transfert_provincial_a_confirmer: "Transferts provinciaux à confirmer",
+                   doublon_population_divergente: "Doublons à populations divergentes",
+                   population_en_rupture: "Centres en rupture de trajectoire démographique",
+                   centres_nouveaux: "Centres nouveaux absents du référentiel",
+                   centres_du_referentiel_absents: "Centres du référentiel absents du projet",
+                   besoins_vaccinaux_absents: "Centres sans besoins vaccinaux calculés",
+                   convention_cible_modifiee: "Convention de population cible modifiée",
+                   libelle_population_perime: "Intitulé de colonne de population périmé" };
+    const restes = STD.anomalies.filter(x => LIBA[x.type]).map(x =>
+      `<li><strong>${LIBA[x.type]}</strong> : ${x.centres != null ? x.centres + " centres. " : ""}${x.detail}.</li>`).join("");
+    blocProjet = card("Validation du projet " + M.annee_projet, "contrôle contre le référentiel " + M.annee_referentiel + ", " + M.corrections + " corrections journalisées",
+      corr + `<ul class="surv-reserves" style="margin-top:12px;">${restes}</ul>`,
+      "Le détail ligne à ligne des corrections figure dans le fichier corrigé remis au programme. Les signalements restent à trancher avant validation du millésime.");
+  }
+
+  const n = bloc.national;
+  return {
+    crumbs,
+    html: `
+      <div class="ph">
+        <div class="ph-tag">◆ Dénominateurs de référence · Standards ZR</div>
+        <div class="ph-title">Carte sanitaire et standards</div>
+        <div class="ph-sub">Effectifs de districts et de zones de responsabilité, populations et populations cibles par millésime de standards. ${projet ? "Le millésime " + a + " est un " + bloc.statut + "." : "Millésime " + a + " du référentiel."}</div>
+      </div>
+      <div class="content">
+        <div class="bc-barre">
+          <div class="bc-groupe"><select class="bc-select" onchange="setStdAnnee(this.value)">${opts}</select></div>
+          <div class="bc-info">${projet ? "projet corrigé, en attente de validation" : "millésime du référentiel"}</div>
+        </div>
+        <div class="kpi-grid">
+          ${kpi("Districts sanitaires", n.ds, "", "standards " + a, "", "flat", "green", true)}
+          ${kpi("Zones de responsabilité", n.zr, "", "centres de santé actifs", "", "flat", "green", true)}
+          ${kpi("Population", n.pop.toLocaleString("fr-FR"), "", "projection " + a, "", "flat", "green", true)}
+          ${kpi("Population cible 0 à 11 mois", n.cible.toLocaleString("fr-FR"), "", (100 * n.cible / n.pop).toFixed(2).replace(".", ",") + "% de la population", "", "flat", "green", true)}
+        </div>
+        ${card("Situation provinciale", "standards " + a + " et carte sanitaire du relevé DPSIS",
+          `<table class="tbl-s"><tr><th>Province</th><th class="num">DS standards</th><th class="num">DS relevé</th><th class="num">Écart</th><th class="num">ZR</th><th class="num">Population</th><th class="num">Cible 0-11</th></tr>${rows}</table>`,
+          releve ? (nbEcarts ? nbEcarts + " province" + (nbEcarts > 1 ? "s présentent" : " présente") + " un écart entre les standards et la carte sanitaire portée par le relevé DPSIS. Les deux sources coexistent tant que le programme n'a pas tranché." :
+          "Les effectifs de districts des standards concordent avec la carte sanitaire du relevé DPSIS.") :
+          "La carte sanitaire du relevé DPSIS n'est pas chargée, la comparaison s'affiche en ND.")}
+        ${blocProjet}
+      </div>`
   };
 };
 
 VIEWS["dpsis-qual"] = () => {
-  // Internal quality indicators (per system)
-  const qualSystems = [
-    { id:"coherence", l:"Cohérence DHIS2 ↔ Registre CS",      val:nationalAggregate("si-coherence"), target:90, freq:"DQS · Semestriel" },
-    { id:"dqs",       l:"DQS réalisés (Self-assessment)",       val:nationalAggregate("si-dqs"), target:80, freq:"Trimestriel" },
-    { id:"lqas",      l:"LQAS réalisés (Lot Quality)",           val:nationalAggregate("si-lqas"), target:80, freq:"Annuel" },
-    { id:"backup",    l:"Sauvegardes serveurs J+0",              val:null, target:95, freq:"Quotidien" },
-  ];
+  const crumbs = ["Promptitude · Complétude", "Qualité des données"];
+  if (!dpsisDispo()) {
+    return { crumbs, html: `<div class="ph"><div class="ph-title">Qualité des données</div><div class="ph-sub">Données en cours de chargement.</div></div>` };
+  }
+  const M = DPSISQ.meta, p = dpsisPeriodeCourante();
+  if (!p) {
+    return { crumbs, html: `<div class="ph"><div class="ph-title">Qualité des données</div><div class="ph-sub">Aucune période couverte dans le relevé.</div></div>` };
+  }
 
-  // SIGL cross-checks — triangulation between systems
-  const siglCross = [
-    {
-      pair: "DHIS2 ↔ SIGL",
-      label: "Consommation déclarée DHIS2 vs stocks sortis SIGL",
-      val: null, target: 85,
-      gap: "",
-      cause: "",
-    },
-    {
-      pair: "DHIS2 ↔ SIGL",
-      label: "Disponibilité produits PF DHIS2 vs stocks SIGL",
-      val: null, target: 85,
-      gap: "",
-      cause: "",
-    },
-    {
-      pair: "SMT ↔ DHIS2",
-      label: "Couverture vaccinale DHIS2 vs stocks vaccins SMT",
-      val: null, target: 90,
-      gap: "",
-      cause: "",
-    },
-    {
-      pair: "SIGL ↔ Tracker",
-      label: "Distribution antigènes SIGL vs supervision Tracker",
-      val: null, target: 85,
-      gap: "",
-      cause: "",
-    },
-    {
-      pair: "SIGL ↔ IHRIS",
-      label: "Personnel formé logistique IHRIS vs gestionnaires SIGL",
-      val: null, target: 90,
-      gap: "",
-      cause: "",
-    },
-    {
-      pair: "SIGL ↔ SIGL",
-      label: "Complétude SIGL pyramidale (CPA→PPA→HD→CS)",
-      val: null, target: 95,
-      gap: "",
-      cause: "",
-    },
-  ];
+  const anos = dpsisAnomaliesPeriode(p.code);
+  /* Regroupement par controle et par systeme : un meme controle qui se
+     declenche sur plusieurs systemes ne se lit pas dans une liste unique. */
+  const parType = {};
+  anos.forEach(a => {
+    const cle = a.type + "|" + (a.systeme || "");
+    (parType[cle] = parType[cle] || []).push(a);
+  });
+  const LIB = {
+    completude_hors_bornes: "Complétude supérieure à 100%",
+    promptitude_hors_bornes: "Promptitude supérieure à 100%",
+    promptitude_superieure_completude: "Promptitude supérieure à la complétude",
+    taux_non_recalculable: "Taux déclaré non retrouvé depuis les volumes",
+    saisis_superieurs_attendus: "Rapports saisis supérieurs aux rapports attendus",
+    promptitude_non_mesuree: "Promptitude non mesurée, recopie de la complétude",
+  };
 
-  const siglVals = siglCross.map(c => c.val).filter(Number.isFinite);
-  const siglAvg = siglVals.length ? Math.round(siglVals.reduce((a, b) => a + b, 0) / siglVals.length) : null;
+  // ---- Contrôle de cohérence : recalcul de la complétude CS depuis les volumes
+  const controle = DPSISQ.provinces.map(pr => {
+    const att = dpsisVolume(p.code, pr, "cs_attendus");
+    const sai = dpsisVolume(p.code, pr, "cs_saisis");
+    const del = dpsisVolume(p.code, pr, "cs_delai");
+    const dec = dpsisValeur(p.code, pr, "rma_cs", "comp");
+    const dep = dpsisValeur(p.code, pr, "rma_cs", "promp");
+    const recalc = (att && sai != null) ? Math.round(1000 * sai / att) / 10 : null;
+    const ecart = (recalc != null && dec != null) ? Math.round((dec - recalc) * 10) / 10 : null;
+    const surSaisie = (att && sai != null && sai > att);
+    const nonMesuree = (att && sai && del != null && del === sai);
+    const promSup = (dec != null && dep != null && dep > dec);
+    return { pr, att, sai, del, dec, dep, recalc, ecart, surSaisie, promSup, nonMesuree };
+  });
+  /* Lorsqu'une anomalie touche toutes les provinces couvertes, elle releve de
+     la construction du releve sur la periode et non d'une province en
+     particulier. Elle est alors enoncee une fois plutot que reportee ligne a
+     ligne, ou le signalement perdrait tout pouvoir de discrimination. */
+  const couverts = controle.filter(x => x.dec != null);
+  const promptitudeNonMesuree = couverts.length > 1 && couverts.every(x => x.nonMesuree);
+  const flag = (x) => x.surSaisie || x.promSup || (!promptitudeNonMesuree && x.nonMesuree) ||
+    (x.ecart != null && Math.abs(x.ecart) > 0.5) || (x.dec != null && x.dec > 100);
+  const signales = controle.filter(flag);
+
+  const rowsCtrl = controle.map(x => {
+    const alerte = flag(x);
+    return `<tr${x.dec == null && x.recalc == null ? ' class="dq-nd"' : ""}>
+      <td><strong>${x.pr}</strong></td>
+      <td class="num">${x.sai == null ? "ND" : x.sai}</td>
+      <td class="num">${x.att == null ? "ND" : x.att}</td>
+      <td class="num">${x.del == null ? "ND" : x.del}</td>
+      <td class="num">${x.dec == null ? "ND" : dpsisNombre(x.dec, "%")}</td>
+      <td class="num">${x.recalc == null ? "ND" : dpsisNombre(x.recalc, "%")}</td>
+      <td class="num">${alerte ? `<span class="pill red">signalé</span>` : x.dec == null ? "ND" : `<span class="pill green">cohérent</span>`}</td>
+    </tr>`;
+  }).join("");
+
+  // ---- Écart entre les deux séries globales
+  const doubles = DPSISQ.provinces.map(pr => {
+    const a = dpsisValeur(p.code, pr, "rma_global", "comp");
+    const b = dpsisValeur(p.code, pr, "rma_global_2025", "comp");
+    return { pr, a, b, d: (a != null && b != null) ? Math.round((b - a) * 100) / 100 : null };
+  }).filter(x => x.d != null && Math.abs(x.d) > 0.01);
+
+  const banniere = promptitudeNonMesuree
+    ? `<div class="dq-banniere">Sur cette période, le nombre de rapports saisis dans le délai est égal au nombre de rapports saisis pour l'ensemble des ${couverts.length} unités couvertes. La promptitude recopie la complétude et ne mesure rien. Le contrôle par province est neutralisé pour ce motif.</div>`
+    : "";
+
+  const blocAnomalies = Object.keys(parType).length
+    ? `<table class="tbl-s"><tr><th>Contrôle</th><th>Système</th><th class="num">Unités</th><th>Provinces concernées</th></tr>
+        ${Object.entries(parType).sort((a, b) => b[1].length - a[1].length).map(([k, v]) => {
+          const [typ, sys] = k.split("|");
+          const nom = sys ? (dpsisSysteme(sys) ? dpsisSysteme(sys).libelle : sys) : "—";
+          const unites = [...new Set(v.map(a => a.unite))];
+          const total = unites.length;
+          const liste = total > 8
+            ? unites.slice(0, 8).join(", ") + " et " + (total - 8) + " autre" + (total - 8 > 1 ? "s" : "")
+            : unites.join(", ");
+          return `<tr>
+            <td><strong>${LIB[typ] || typ}</strong></td>
+            <td>${nom}</td>
+            <td class="num">${total}</td>
+            <td class="dq-liste">${liste}</td>
+          </tr>`;
+        }).join("")}
+      </table>`
+    : `<div class="dq-vide">Aucune incohérence relevée sur la période sélectionnée.</div>`;
+
+  const structurelles = DPSISQ.anomalies.filter(a => !a.periode && !a.unite);
 
   return {
-    crumbs:["Système d'Information","Qualité des données"],
+    crumbs,
     html: `
       <div class="ph">
-        <div class="ph-tag">🔍 Qualité · DPSIS</div>
-        <div class="ph-title">${t("si_qual_ph_title")}</div>
-        <div class="ph-sub">${t("si_qual_ph_sub")}</div>
+        <div class="ph-tag">◆ Qualité des données · DPSIS</div>
+        <div class="ph-title">Qualité du rapportage</div>
+        <div class="ph-sub">Contrôles appliqués au relevé de complétude et de promptitude. Les incohérences sont signalées et conservées en l'état, aucune correction n'est appliquée à la source.</div>
       </div>
       <div class="content">
-
+        ${barreControleDpsis(`${anos.length} signalement${anos.length > 1 ? "s" : ""} sur la période`)}
         <div class="kpi-grid">
-          ${kpi("Cohérence DHIS2 ↔ Registre", nationalAggregate("si-coherence"), "%", "Cible : 90%", "", "flat", "yellow")}
-          ${kpi("Triangulation SIGL", siglAvg, "%", "Cible : 85%", "", "flat", rag(siglAvg, 85))}
-          ${kpi("DQS réalisés", nationalAggregate("si-dqs"), "/89 DS", "Cible : 80%", "", "flat", "orange")}
-          ${kpi("LQAS réalisés", nationalAggregate("si-lqas"), "%", "Cible : 80%", "", "flat", "red")}
+          ${kpi("Unités signalées", signales.length, "", "sur " + M.provinces_attendues + " provinces", "", "flat", signales.length === 0 ? "green" : signales.length <= 3 ? "orange" : "red", true)}
+          ${kpi("Signalements de la période", anos.length, "", "tous systèmes confondus", "", "flat", anos.length === 0 ? "green" : "orange", true)}
+          ${kpi("Signalements cumulés", DPSISQ.anomalies.filter(a => a.periode).length, "", "sur les " + dpsisPeriodesCouvertes().length + " périodes couvertes", "", "flat", "orange", true)}
+          ${kpi("Écart entre séries globales", doubles.length, "", "provinces où les deux séries divergent", "", "flat", doubles.length ? "orange" : "green", true)}
         </div>
-
-        <div class="card" style="margin-bottom:14px;">
-          <div class="card-hdr">
-            <div>
-              <div class="card-title">🔗 Triangulation inter-systèmes — Croisements SIGL</div>
-              <div class="card-sub">Cohérence DHIS2 × SIGL × SMT × Tracker × IHRIS · ${siglCross.length} croisements actifs</div>
-            </div>
-          </div>
-          <div class="card-body" style="padding:0;">
-            <table class="dt si-table">
-              <thead>
-                <tr>
-                  <th style="width:14%">Croisement</th>
-                  <th style="width:34%">Indicateur de cohérence</th>
-                  <th style="text-align:right">Score</th>
-                  <th style="text-align:right">Cible</th>
-                  <th style="text-align:right">Statut</th>
-                  <th>Écart constaté</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${siglCross.map(c => {
-                  const r = rag(c.val, c.target);
-                  return `<tr>
-                    <td><span class="pill" style="background:var(--royal-tint);color:var(--royal-d);font-family:var(--font-mono);">${c.pair}</span></td>
-                    <td class="l">
-                      ${c.label}
-                      <div style="font-size:10.5px;color:var(--muted);margin-top:2px;font-weight:400;">${c.cause}</div>
-                    </td>
-                    <td class="num" style="font-size:13px;">${c.val == null ? "ND" : c.val + "%"}</td>
-                    <td class="num" style="color:var(--muted);">${c.target}%</td>
-                    <td class="num"><span class="pill ${r}">${ragLabel(r)}</span></td>
-                    <td style="font-size:11px;color:var(--body);">${c.gap}</td>
-                  </tr>`;
-                }).join("")}
-              </tbody>
-            </table>
-          </div>
-          <div class="card-foot">Croisements automatisés via API DHIS2 + extracts SIGL/SMT/Tracker · Recalcul mensuel J+7</div>
-        </div>
-
-        <div class="g-2-1">
-          ${card("Indicateurs de qualité interne", "DQS, LQAS, sauvegardes, cohérence registre", renderBars(qualSystems.map(s => ({
-            label: s.l.substring(0, 30),
-            val: s.val,
-            target: s.target,
-            rag: rag(s.val, s.target),
-            showVal: s.val + "%"
-          }))), "Source : DQS, LQAS, audits triangulation")}
-
-          ${card("Cohérence inter-systèmes — N vs N-1", "Triangulation moyenne · Janvier–Décembre", renderLineChart(
-            yoySeriesData("couv-comp")
-          ), "")}
-        </div>
-
-        ${aiBox(
-          "SIGL × DHIS2 : trois actions structurantes",
-          `La triangulation SIGL atteint <strong>${siglAvg}%</strong> (cible 85%). Trois leviers prioritaires : <strong>(1)</strong> Finaliser la configuration <strong>Sayana-Press dans DHIS2</strong> pour combler le gap PF (+10 pts attendus). <strong>(2)</strong> Étendre <strong>DHIS2 Tracker aux 16 provinces PDA</strong> (T3-T4) pour renforcer le croisement SIGL ↔ Tracker (+15 pts attendus). <strong>(3)</strong> Lancer un <strong>plan SIGL CS-CdF</strong> en zone sahélienne (Tibesti, Borkou, Ennedi) pour la complétude pyramidale (+12 pts attendus). Cible 2027 : 90% de cohérence sur l'ensemble des croisements.`,
-          "Source : Triangulation automatisée DPSIS · Confiance : 88%"
-        )}
-      </div>
-    `
+        ${card("Contrôles de la période", p.libelle, banniere + blocAnomalies,
+          "Le contrôle porte sur les bornes des taux, la relation entre promptitude et complétude, et la concordance entre les taux déclarés et les volumes exportés.")}
+        ${card("Recalcul de la complétude depuis les volumes", "Centres de santé, " + p.libelle,
+          `<table class="tbl-s"><tr><th>Province</th><th class="num">Saisis</th><th class="num">Attendus</th><th class="num">Dans le délai</th><th class="num">Taux déclaré</th><th class="num">Taux recalculé</th><th class="num">Contrôle</th></tr>${rowsCtrl}</table>`,
+          "Le taux recalculé est le rapport des rapports saisis aux rapports attendus tel qu'exporté. Un écart supérieur à un demi-point signale une divergence entre le taux déclaré et ses composantes.")}
+        ${doubles.length ? card("Divergence des deux séries globales", "Complétude globale et complétude globale référentiel 2025, " + p.libelle,
+          `<table class="tbl-s"><tr><th>Province</th><th class="num">Série globale</th><th class="num">Série 2025</th><th class="num">Écart</th></tr>
+            ${doubles.map(x => `<tr><td><strong>${x.pr}</strong></td><td class="num">${dpsisNombre(x.a, "%")}</td><td class="num">${dpsisNombre(x.b, "%")}</td><td class="num"><span class="pill orange">${x.d > 0 ? "+" : ""}${dpsisNombre(x.d)} pts</span></td></tr>`).join("")}
+          </table>`,
+          "Les deux séries reposent sur des dénominateurs distincts. Elles ne sont pas substituables et ne doivent pas être moyennées ensemble.") : ""}
+        ${card("Réserves structurelles", "Contrôles appliqués au relevé du " + M.actualise,
+          `<ul class="surv-reserves">${structurelles.map(a => `<li>${a.detail.charAt(0).toUpperCase() + a.detail.slice(1)}.</li>`).join("")}</ul>`,
+          "Ces réserves portent sur la construction du relevé et valent pour toutes les périodes.")}
+      </div>`
   };
 };
+
 
 // =================================================================
 // Default
