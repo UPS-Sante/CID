@@ -755,33 +755,8 @@
     overflow: hidden;
     transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   }
-  .kpi::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
-  }
-  .kpi::after {
-    content: '';
-    position: absolute;
-    top: 4px; bottom: 0; left: 0;
-    width: 3px;
-    opacity: 0.85;
-  }
-  .kpi.green::before  { background: var(--rag-green); }
-  .kpi.yellow::before { background: var(--rag-yellow); }
-  .kpi.orange::before { background: var(--rag-orange); }
-  .kpi.red::before    { background: var(--rag-red); }
-  .kpi.na::before     { background: var(--rag-na); }
-  .kpi.green::after  { background: var(--rag-green); }
-  .kpi.yellow::after { background: var(--rag-yellow); }
-  .kpi.orange::after { background: var(--rag-orange); }
-  .kpi.red::after    { background: var(--rag-red); }
-  .kpi.na::after     { background: var(--rag-na); }
-  .kpi.green  { border-color: rgba(21,128,61,0.25); }
-  .kpi.yellow { border-color: rgba(202,138,4,0.30); }
-  .kpi.orange { border-color: rgba(194,65,12,0.30); }
-  .kpi.red    { border-color: rgba(153,27,27,0.30); }
+  /* Les etats se lisent dans la valeur et les pastilles : pas de bandes de
+     couleur rapportees sur les cadres. */
   .kpi.green  .kpi-value { color: var(--rag-green); }
   .kpi.yellow .kpi-value { color: var(--rag-yellow); }
   .kpi.orange .kpi-value { color: var(--rag-orange); }
@@ -1840,16 +1815,7 @@
     overflow: hidden;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
-  .si-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-  }
-  .si-card.rag-green::before { background: var(--rag-green); }
-  .si-card.rag-yellow::before { background: var(--rag-yellow); }
-  .si-card.rag-orange::before { background: var(--rag-orange); }
-  .si-card.rag-red::before { background: var(--rag-red); }
+  /* Etat porte par la pastille de statut, cadre neutre. */
   .si-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
@@ -2684,6 +2650,29 @@
   .dq-vide { padding:14px 4px; font-size:12.5px; color:var(--muted); }
 
   /* ---- Veille toutes maladies (surveillance integree) ---- */
+
+  /* ---- Puce de periode cliquable et panneau ancre ---- */
+  .h-pill-btn { cursor:pointer; border:0; font:inherit; }
+  .h-pill-btn:hover { background:#fff; }
+  .h-caret { font-size:9px; opacity:.7; }
+  .h-pop[hidden] { display:none; }
+  .h-pop { position:fixed; top:60px; right:14px; z-index:900; background:var(--surface); border:1px solid var(--border); border-radius:10px; box-shadow:var(--shadow-md); padding:12px 14px; min-width:250px; display:flex; flex-direction:column; gap:9px; }
+  .h-pop-ligne { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .h-pop-lab { font-size:11px; color:var(--muted); font-weight:600; }
+  .bc-periode { font:inherit; font-size:12.5px; font-weight:600; color:var(--royal-d); background:var(--surface-2, #FAF8F4); border:1px solid var(--border); border-radius:7px; padding:6px 11px; cursor:pointer; }
+  .bc-periode:hover { border-color:var(--royal); }
+  .bc-fleches { display:inline-flex; gap:4px; margin-left:6px; }
+  [dir="rtl"] .bc-fleches { margin-left:0; margin-right:6px; }
+  @media (max-width: 760px) {
+    .h-pop { position:fixed; top:auto; bottom:0; left:0; right:0; border-radius:14px 14px 0 0; box-shadow:0 -6px 24px rgba(0,0,0,.18); padding:16px 18px calc(16px + env(safe-area-inset-bottom)); z-index:900; }
+    .h-pop[hidden] { display:none; }
+    .bc-barre { flex-wrap:wrap; gap:8px; }
+    .bc-info { width:100%; text-align:left; }
+    .kpi-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .si-grid { grid-template-columns:1fr; }
+    .mdo-board-grille { grid-template-columns:repeat(auto-fill,minmax(126px,1fr)); }
+    .grid-2 { grid-template-columns:1fr; }
+  }
   .bc-modes { display:inline-flex; border:1px solid var(--border); border-radius:7px; overflow:hidden; margin-left:8px; }
   .bc-mode { font:inherit; font-size:11.5px; font-weight:600; padding:4px 10px; background:var(--surface); border:0; cursor:pointer; color:var(--muted); }
   .bc-mode.on { background:var(--royal); color:#fff; }
@@ -2692,17 +2681,19 @@
   .mdo-board { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 14px 10px; margin-bottom:14px; }
   .mdo-board-titre { font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin-bottom:9px; }
   .mdo-board-grille { display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:7px; }
-  .mdo-tuile { text-align:left; border:1px solid var(--border); border-left-width:3px; border-radius:7px; background:var(--surface); padding:7px 9px 6px; cursor:pointer; display:flex; flex-direction:column; gap:1px; font:inherit; }
+  .mdo-tuile { text-align:left; border:1px solid var(--border); border-radius:7px; background:var(--surface); padding:7px 9px 6px; cursor:pointer; display:flex; flex-direction:column; gap:1px; font:inherit; }
+  .mdo-tuile-nom::before { content:''; display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:5px; background:var(--border); vertical-align:1px; }
+  .mdo-rouge .mdo-tuile-nom::before { background:var(--rag-red); }
+  .mdo-orange .mdo-tuile-nom::before { background:#C87A2B; }
+  .mdo-calme .mdo-tuile-nom::before { background:#5E8C6A; }
   .mdo-tuile:hover { border-color:var(--royal); }
   .mdo-tuile-active { outline:2px solid var(--royal); outline-offset:-1px; }
   .mdo-tuile-nom { font-size:11px; font-weight:600; color:var(--body); line-height:1.25; }
   .mdo-tuile-val { font-size:16px; font-weight:700; font-family:var(--font-h); color:var(--royal-d); }
   .mdo-tuile-sub { font-size:9.5px; color:var(--muted); line-height:1.3; }
-  .mdo-rouge { border-left-color:var(--rag-red); }
-  .mdo-orange { border-left-color:#C87A2B; }
-  .mdo-calme { border-left-color:#5E8C6A; }
-  .mdo-nd { border-left-color:var(--border); opacity:.62; }
-  [dir="rtl"] .mdo-tuile { text-align:right; border-left-width:1px; border-right-width:3px; }
+  .mdo-nd { opacity:.62; }
+  [dir="rtl"] .mdo-tuile { text-align:right; }
+  [dir="rtl"] .mdo-tuile-nom::before { margin-right:0; margin-left:5px; }
   /* ---- Surveillance integree (MDO) ---- */
   .surv-scroll { overflow-x:auto; max-width:100%; }
   .surv-mat { min-width:900px; font-size:11px; }
@@ -3401,11 +3392,12 @@
     </div>
   </div>
   <div class="h-right">
-    <div class="h-pill"><span id="h-period">Avril 2026</span></div>
+    <button class="h-pill h-pill-btn" id="h-period-btn" onclick="basculerPanneauPeriode(event)"><span id="h-period">Avril 2026</span><span class="h-caret">▾</span></button>
     <div class="h-pill"><span id="h-scope">National</span></div>
     <img class="h-ups" src="data:image/png;base64,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" alt="UPS-Santé">
   </div>
 </header>
+<div class="h-pop" id="h-period-pop" hidden></div>
 
 <!-- ============================ LAYOUT ============================ -->
 <div class="layout">
@@ -5047,13 +5039,10 @@ function setPdaDomain(d) {
 }
 
 function renderMain() {
+  if (state.lang === "ar") state.lang = "fr";
   try {
     renderMainNoyau();
-    const chip = document.getElementById("h-period");
-    if (chip) {
-      const local = VUES_PERIODE_LOCALE.has(state.sub) ? libellePeriodeLocale() : null;
-      chip.textContent = local || periodLabel();
-    }
+    rafraichirPanneauPeriode();
   }
   catch (e) {
     console.error("Erreur de rendu :", e);
@@ -5145,6 +5134,83 @@ function libellePeriodeLocale() {
   return null;
 }
 
+/* Panneau de periode ancre a la puce d'en-tete : le meme point de choix
+   pour toutes les vues. Les vues a selecteur de section y retrouvent leur
+   annee, leur mois et la plage ; les autres y retrouvent le mois ou le
+   trimestre du selecteur global. */
+function basculerPanneauPeriode(ev) {
+  if (ev) ev.stopPropagation();
+  const pop = document.getElementById("h-period-pop");
+  if (!pop) return;
+  if (pop.hidden) { pop.innerHTML = contenuPanneauPeriode(); pop.hidden = false; }
+  else pop.hidden = true;
+}
+function fermerPanneauPeriode() {
+  const pop = document.getElementById("h-period-pop");
+  if (pop) pop.hidden = true;
+}
+function rafraichirPanneauPeriode() {
+  const pop = document.getElementById("h-period-pop");
+  if (pop && !pop.hidden) pop.innerHTML = contenuPanneauPeriode();
+  const chip = document.getElementById("h-period");
+  if (chip) {
+    const local = VUES_PERIODE_LOCALE.has(state.sub) ? libellePeriodeLocale() : null;
+    chip.textContent = local || periodLabel();
+  }
+}
+document.addEventListener("click", (e) => {
+  const pop = document.getElementById("h-period-pop");
+  if (pop && !pop.hidden && !pop.contains(e.target) && e.target.id !== "h-period-btn" && !e.target.closest("#h-period-btn")) pop.hidden = true;
+});
+
+function contenuPanneauPeriode() {
+  if (state.sub === "dpsis-carte" && typeof stdDispo === "function" && stdDispo()) {
+    const a = stdAnneeCourante();
+    return `<div class="h-pop-ligne"><span class="h-pop-lab">Millésime</span>
+      <select class="bc-select" onchange="setStdAnnee(this.value); rafraichirPanneauPeriode();">
+        ${stdAnnees().map(x => `<option value="${x}"${x === a ? " selected" : ""}>Standards ${x}</option>`).join("")}
+      </select></div>`;
+  }
+  if (state.sub === "cousp-mdo" && typeof survPeriodeCourante === "function" && survDispo()) {
+    return panneauLocal(survPeriodesCouvertes(), survPeriodeCourante(), state.survMode, survPeriodesActives(),
+      "setSurvMode", "setSurvAnnee", "setSurvMois", "setSurvFinAnnee", "setSurvFinMois");
+  }
+  if (state.sub && state.sub.startsWith("dpsis") && typeof dpsisPeriodeCourante === "function" && dpsisDispo()) {
+    return panneauLocal(dpsisPeriodesCouvertes(), dpsisPeriodeCourante(), state.dpsisMode, dpsisPeriodesActives(),
+      "setDpsisMode", "setDpsisAnnee", "setDpsisMois", "setDpsisFinAnnee", "setDpsisFinMois");
+  }
+  // selecteur global : mois ou trimestre, annee, partie
+  const modes = [{ v: "month", l: t("mode_month") || "Mois" }, { v: "quarter", l: t("mode_quarter") || "Trimestre" }];
+  return `<div class="h-pop-ligne">
+      <div class="bc-modes">${modes.map(m => `<button class="bc-mode${state.periodMode === m.v ? " on" : ""}" onclick="setPeriodMode('${m.v}'); rafraichirPanneauPeriode();">${m.l}</button>`).join("")}</div>
+    </div>
+    <div class="h-pop-ligne">
+      <select class="bc-select" onchange="setPeriodYear(this.value); rafraichirPanneauPeriode();">
+        ${ANNEES.map(a => `<option value="${a}"${state.periodYear === a ? " selected" : ""}>${a}</option>`).join("")}
+      </select>
+      <select class="bc-select" onchange="setPeriodPart(this.value); rafraichirPanneauPeriode();">
+        ${state.periodMode === "quarter"
+          ? TRIMESTRES.map(o => `<option value="${o.v}"${state.periodQuarter === o.v ? " selected" : ""}>${o.l}</option>`).join("")
+          : MOIS_NOMS.map((l, i) => `<option value="${i + 1}"${state.periodMonth === i + 1 ? " selected" : ""}>${l}</option>`).join("")}
+      </select>
+    </div>`;
+}
+
+function panneauLocal(cles, p, mode, actives, fMode, fAn, fMois, fFinAn, fFinMois) {
+  if (!p) return `<div class="h-pop-ligne">Aucune période couverte.</div>`;
+  const plage = mode === "plage";
+  const fin = plage ? (actives.slice(-1)[0] || p) : null;
+  const sel = (code, fnA, fnM) => selecteurAnneeMois(cles, code, fnA, fnM).replace(/onchange="(set[A-Za-z]+)\(this\.value\)"/g, 'onchange="$1(this.value); rafraichirPanneauPeriode();"');
+  return `<div class="h-pop-ligne">
+      <div class="bc-modes">
+        <button class="bc-mode${plage ? "" : " on"}" onclick="${fMode}('mois'); rafraichirPanneauPeriode();">Mois</button>
+        <button class="bc-mode${plage ? " on" : ""}" onclick="${fMode}('plage'); rafraichirPanneauPeriode();">Plage</button>
+      </div>
+    </div>
+    <div class="h-pop-ligne">${sel(p.code, fAn, fMois)}</div>
+    ${plage ? `<div class="h-pop-ligne"><span class="h-pop-lab">à</span>${sel(fin.code, fFinAn, fFinMois)}</div>` : ""}`;
+}
+
 function renderTopbar(v) {
   const modes = [
     {v:"month",   l:t("mode_month")},
@@ -5171,7 +5237,6 @@ function renderTopbar(v) {
   const langs = [
     {v:"fr", l:"FR", full:"Français"},
     {v:"en", l:"EN", full:"English"},
-    {v:"ar", l:"AR",  full:"العربية"},
   ];
 
   // Translate known crumbs (FR keys → i18n key)
@@ -5228,22 +5293,7 @@ function renderTopbar(v) {
         }).join("")}
       </div>
 
-      ${VUES_PERIODE_LOCALE.has(state.sub) ? "" : `<div class="time-block">
-        <span class="time-label">${t("period_label")}</span>
-        <div class="period-pills">
-          ${modes.map(m => `
-            <button class="pp ${state.periodMode === m.v ? 'on' : ''}" onclick="setPeriodMode('${m.v}')">${m.l}</button>
-          `).join("")}
-        </div>
-        <select class="period-sel" onchange="setPeriodYear(this.value)">
-          ${ANNEES.map(a => `<option value="${a}" ${state.periodYear === a ? 'selected' : ''}>${a}</option>`).join("")}
-        </select>
-        <select class="period-sel" onchange="setPeriodPart(this.value)">
-          ${state.periodMode === "quarter"
-            ? TRIMESTRES.map(o => `<option value="${o.v}" ${state.periodQuarter === o.v ? 'selected' : ''}>${o.l}</option>`).join("")
-            : MOIS_NOMS.map((l, i) => `<option value="${i + 1}" ${state.periodMonth === i + 1 ? 'selected' : ''}>${l}</option>`).join("")}
-        </select>
-      </div>`}
+      <!-- La periode se choisit sur la puce d'en-tete, la barre reste aux actions. -->
 
       <div class="tb-actions">
         <button class="tb-btn" onclick="ouvrirSeuils()" title="Définir les seuils vert / jaune / orange / rouge">⚙ Seuils</button>
@@ -6454,23 +6504,14 @@ function barreControleSurv() {
   if (!p || !m) return "";
   const cles = survPeriodesCouvertes(), i = cles.findIndex(x => x.code === p.code);
   const plage = state.survMode === "plage";
-  const fin = plage ? (survPeriodesActives().slice(-1)[0] || p) : null;
   const optM = SURV.maladies.map(x => `<option value="${x.code}"${x.code === m.code ? " selected" : ""}>${x.libelle}</option>`).join("");
   return `<div class="bc-barre">
     <div class="bc-groupe">
       <select class="bc-select" onchange="setSurvMaladie(this.value)">${optM}</select>
-      <div class="bc-modes">
-        <button class="bc-mode${plage ? "" : " on"}" onclick="setSurvMode('mois')">Mois</button>
-        <button class="bc-mode${plage ? " on" : ""}" onclick="setSurvMode('plage')">Plage</button>
-      </div>
+      <button class="bc-periode" onclick="basculerPanneauPeriode(event)" title="Changer la période depuis l'en-tête">${plage ? survLibellePlage() : p.libelle} ▾</button>
+      ${plage ? "" : `<span class="bc-fleches"><button class="bc-fleche" onclick="decalerSurvPeriode(-1)" ${i <= 0 ? "disabled" : ""} aria-label="Période précédente">‹</button><button class="bc-fleche" onclick="decalerSurvPeriode(1)" ${i >= cles.length - 1 ? "disabled" : ""} aria-label="Période suivante">›</button></span>`}
     </div>
-    <div class="bc-nav">
-      ${plage ? "" : `<button class="bc-fleche" onclick="decalerSurvPeriode(-1)" ${i <= 0 ? "disabled" : ""} aria-label="Période précédente">‹</button>`}
-      ${selecteurAnneeMois(cles, p.code, "setSurvAnnee", "setSurvMois")}
-      ${plage ? `<span class="bc-a">à</span>${selecteurAnneeMois(cles, fin.code, "setSurvFinAnnee", "setSurvFinMois")}` :
-        `<button class="bc-fleche" onclick="decalerSurvPeriode(1)" ${i >= cles.length - 1 ? "disabled" : ""} aria-label="Période suivante">›</button>`}
-    </div>
-    <div class="bc-info">${plage ? survLibellePlage() : `${p.taux}% des cellules renseignées${p.partielle ? " · mois en cours, période partielle" : ""}`}</div>
+    <div class="bc-info">${plage ? "" : `${p.taux}% des cellules renseignées${p.partielle ? " · mois en cours, période partielle" : ""}`}</div>
   </div>`;
 }
 
@@ -8194,19 +8235,10 @@ function barreControleDpsis(info) {
   if (!p) return "";
   const cles = dpsisPeriodesCouvertes(), i = cles.findIndex(x => x.code === p.code);
   const plage = state.dpsisMode === "plage";
-  const fin = plage ? (dpsisPeriodesActives().slice(-1)[0] || p) : null;
   return `<div class="bc-barre">
     <div class="bc-groupe">
-      <div class="bc-modes">
-        <button class="bc-mode${plage ? "" : " on"}" onclick="setDpsisMode('mois')">Mois</button>
-        <button class="bc-mode${plage ? " on" : ""}" onclick="setDpsisMode('plage')">Plage</button>
-      </div>
-    </div>
-    <div class="bc-nav">
-      ${plage ? "" : `<button class="bc-fleche" onclick="decalerDpsisPeriode(-1)" ${i <= 0 ? "disabled" : ""} aria-label="Période précédente">‹</button>`}
-      ${selecteurAnneeMois(cles, p.code, "setDpsisAnnee", "setDpsisMois")}
-      ${plage ? `<span class="bc-a">à</span>${selecteurAnneeMois(cles, fin.code, "setDpsisFinAnnee", "setDpsisFinMois")}` :
-        `<button class="bc-fleche" onclick="decalerDpsisPeriode(1)" ${i >= cles.length - 1 ? "disabled" : ""} aria-label="Période suivante">›</button>`}
+      <button class="bc-periode" onclick="basculerPanneauPeriode(event)" title="Changer la période depuis l'en-tête">${plage ? dpsisLibellePlage() : p.libelle} ▾</button>
+      ${plage ? "" : `<span class="bc-fleches"><button class="bc-fleche" onclick="decalerDpsisPeriode(-1)" ${i <= 0 ? "disabled" : ""} aria-label="Période précédente">‹</button><button class="bc-fleche" onclick="decalerDpsisPeriode(1)" ${i >= cles.length - 1 ? "disabled" : ""} aria-label="Période suivante">›</button></span>`}
     </div>
     <div class="bc-info">${info}</div>
   </div>`;
@@ -8744,7 +8776,7 @@ VIEWS["dpsis-carte"] = () => {
       </div>
       <div class="content">
         <div class="bc-barre">
-          <div class="bc-groupe"><select class="bc-select" onchange="setStdAnnee(this.value)">${opts}</select></div>
+          <div class="bc-groupe"><button class="bc-periode" onclick="basculerPanneauPeriode(event)" title="Changer de millésime depuis l'en-tête">Standards ${a} ▾</button></div>
           <div class="bc-info">${projet ? "projet corrigé, en attente de validation" : "millésime du référentiel"}</div>
         </div>
         <div class="kpi-grid">
