@@ -3661,12 +3661,13 @@ const PROGRAMS = [
     ]
   },
   {
-    id:"dpsis", c:"dpsis", icon:"SI", label:"Promptitude · Complétude",
+    id:"dpsis", c:"dpsis", icon:"QD", label:"Qualité des Données",
     dir:"DPSIS",
     sub:[
       { id:"dpsis-comp",    i18n_key:"sub_dpsis_comp",  label:"Vue d'ensemble",  status:"yellow" },
       { id:"dpsis-sys",     i18n_key:"sub_dpsis_sys",   label:"Analyse par système",  status:"yellow" },
-      { id:"dpsis-qual",    i18n_key:"sub_dpsis_qual",  label:"Qualité des données",  status:"orange" },
+      { id:"dpsis-qual",    i18n_key:"sub_dpsis_qual",  label:"Contrôles de cohérence",  status:"orange" },
+      { id:"dpsis-tri",     i18n_key:"sub_dpsis_tri",   label:"Triangulation",  status:"orange" },
       { id:"dpsis-carte",   i18n_key:"sub_dpsis_carte", label:"Carte sanitaire · Standards",  status:"orange" },
     ]
   },
@@ -4323,7 +4324,8 @@ const I18N = {
     prog_log: "Logistique · Intrants",
     prog_rh: "Ressources Humaines",
     prog_cousp: "Urgences · Surveillance",
-    prog_dpsis: "Promptitude · Complétude",
+    prog_dpsis: "Qualité des Données",
+    sub_dpsis_tri: "Triangulation",
     sub_dpsis_sys: "Analyse par système",
     sub_dpsis_carte: "Carte sanitaire · Standards",
     sub_min_overview: "Aperçu ministériel",
@@ -4357,7 +4359,7 @@ const I18N = {
     sub_cousp_surv: "Riposte au choléra",
     sub_cousp_mdo: "Surveillance intégrée",
     sub_dpsis_comp: "Vue d'ensemble",
-    sub_dpsis_qual: "Qualité des données",
+    sub_dpsis_qual: "Contrôles de cohérence",
     santex_tag: "Santex",
     min_tag: "Cabinet du Ministre · Aperçu stratégique",
     min_title: "Tableau de bord du Ministre — 10 indicateurs clés",
@@ -4520,7 +4522,8 @@ const I18N = {
     prog_log: "Logistics · Supplies",
     prog_rh: "Human Resources",
     prog_cousp: "Emergencies · Surveillance",
-    prog_dpsis: "Timeliness · Completeness",
+    prog_dpsis: "Data Quality",
+    sub_dpsis_tri: "Triangulation",
     sub_dpsis_sys: "Analysis by system",
     sub_dpsis_carte: "Health map · Standards",
     sub_min_overview: "Ministerial overview",
@@ -4554,7 +4557,7 @@ const I18N = {
     sub_cousp_surv: "Cholera response",
     sub_cousp_mdo: "Integrated disease surveillance",
     sub_dpsis_comp: "Overview",
-    sub_dpsis_qual: "Data quality",
+    sub_dpsis_qual: "Consistency checks",
     santex_tag: "Santex",
     min_tag: "Office of the Minister · Strategic Overview",
     min_title: "Minister's Dashboard — 10 key indicators",
@@ -4717,7 +4720,8 @@ const I18N = {
     prog_log: "اللوجستيات · المدخلات",
     prog_rh: "الموارد البشرية",
     prog_cousp: "الطوارئ · المراقبة",
-    prog_dpsis: "الاكتمال والالتزام بالمواعيد",
+    prog_dpsis: "جودة البيانات",
+    sub_dpsis_tri: "تثليث المصادر",
     sub_dpsis_sys: "تحليل حسب النظام",
     sub_dpsis_carte: "الخريطة الصحية والمعايير",
     sub_min_overview: "نظرة عامة وزارية",
@@ -4751,7 +4755,7 @@ const I18N = {
     sub_cousp_surv: "الاستجابة للكوليرا",
     sub_cousp_mdo: "المراقبة المتكاملة للأمراض",
     sub_dpsis_comp: "نظرة عامة",
-    sub_dpsis_qual: "جودة البيانات",
+    sub_dpsis_qual: "فحوصات الاتساق",
     santex_tag: "سانتكس",
     min_tag: "ديوان الوزير · النظرة الاستراتيجية",
     min_title: "لوحة معلومات الوزير — 10 مؤشرات رئيسية",
@@ -5117,7 +5121,7 @@ function renderTopbar(v) {
     "Logistique · Intrants": "prog_log",
     "Ressources Humaines": "prog_rh",
     "Urgences · Surveillance": "prog_cousp",
-    "Promptitude · Complétude": "prog_dpsis",
+    "Qualité des Données": "prog_dpsis",
     "Vue d'ensemble": "sub_vacc_overview",
     "Couverture vaccinale": "sub_vacc_couv",
     "Zéro-dose": "sub_vacc_zd",
@@ -7981,7 +7985,7 @@ function dpsisMoyenneProvinces(periode, systeme, metrique) {
 }
 
 VIEWS["dpsis-comp"] = () => {
-  const crumbs = ["Promptitude · Complétude", "Vue d'ensemble"];
+  const crumbs = ["Qualité des Données", "Vue d'ensemble"];
   if (!dpsisDispo()) {
     return { crumbs, html: `<div class="ph"><div class="ph-title">Complétude et promptitude</div><div class="ph-sub">Données en cours de chargement.</div></div>` };
   }
@@ -8109,7 +8113,7 @@ function dpsisSysCourant() {
 }
 
 VIEWS["dpsis-sys"] = () => {
-  const crumbs = ["Promptitude · Complétude", "Analyse par système"];
+  const crumbs = ["Qualité des Données", "Analyse par système"];
   if (!dpsisDispo()) {
     return { crumbs, html: `<div class="ph"><div class="ph-title">Analyse par système</div><div class="ph-sub">Données en cours de chargement.</div></div>` };
   }
@@ -8220,6 +8224,178 @@ VIEWS["dpsis-sys"] = () => {
   };
 };
 
+/* ==================== Triangulation inter-sources ====================
+   Confrontation des sources indépendantes du tableau de bord, croisement
+   par croisement. Chaque croisement affiche les deux valeurs telles que
+   portées par leurs sources, l'écart, et un verdict de concordance dont la
+   convention est énoncée en pied de carte. Aucun croisement n'est simulé :
+   quand une source ne couvre pas la période, la ligne s'affiche ND. */
+function triCellulesIDS(periode, prov) {
+  if (typeof SURV === "undefined" || !SURV || !SURV.valeurs) return null;
+  const total = SURV.maladies.reduce((n, m) => n + (m.incidence ? 1 : 0) + (m.letalite ? 1 : 0), 0);
+  const v = SURV.valeurs[periode];
+  if (!total) return null;
+  if (!v || !v[prov]) return { pct: 0, total };
+  let n = 0;
+  Object.values(v[prov]).forEach(m => { n += Object.keys(m).length; });
+  return { pct: Math.round(1000 * n / total) / 10, total };
+}
+
+function triCholeraLineaire(periode, prov) {
+  if (typeof CHOL_P === "undefined" || !CHOL_P || !CHOL_P.mois) return null;
+  const m = CHOL_P.mois[periode];
+  if (!m) return null;
+  const e = (m.periode.provinces || []).find(x => x.nom === prov);
+  return { cas: e ? e.cas : 0, couvert: true };
+}
+
+function triCodeProvince(nom) {
+  const s = t => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const e = (typeof PROVINCES !== "undefined" ? PROVINCES : []).find(x => s(x.name) === s(nom));
+  return e ? e.id : null;
+}
+
+function triCibleRim(periode, prov) {
+  const code = triCodeProvince(prov);
+  if (!code || typeof PEVP === "undefined" || !PEVP || !PEVP.provinces || !PEVP.provinces[code]) return null;
+  const b = PEVP.provinces[code];
+  const d = b.doses && b.doses.Penta3 ? b.doses.Penta3[periode] : null;
+  const c = b.couv && b.couv.Penta3 ? b.couv.Penta3[periode] : null;
+  if (d == null || c == null || c === 0) return null;
+  return Math.round(d * 1200 / c);
+}
+
+VIEWS["dpsis-tri"] = () => {
+  const crumbs = ["Qualité des Données", "Triangulation"];
+  if (!dpsisDispo()) {
+    return { crumbs, html: `<div class="ph"><div class="ph-title">Triangulation inter-sources</div><div class="ph-sub">Données en cours de chargement.</div></div>` };
+  }
+  const p = dpsisPeriodeCourante();
+  if (!p) {
+    return { crumbs, html: `<div class="ph"><div class="ph-title">Triangulation inter-sources</div><div class="ph-sub">Aucune période couverte dans le relevé.</div></div>` };
+  }
+  const provinces = DPSISQ.provinces;
+  let concordances = 0, ecarts = 0;
+
+  /* Croisement A : signal cholera, liste lineaire COUSP contre export IDS. */
+  const survDispoIci = typeof SURV !== "undefined" && SURV && SURV.valeurs;
+  const lignesA = provinces.map(pr => {
+    const lin = triCholeraLineaire(p.code, pr);
+    const att = survDispoIci ? survValeur(p.code, pr, "cholera", "att") : null;
+    if (lin == null && att == null) return null;
+    const casLin = lin ? lin.cas : null;
+    let verdict = "nd";
+    if (casLin != null && att != null) {
+      verdict = ((casLin > 0) === (att > 0)) ? "concordant" : "discordant";
+      if (casLin === 0 && att === 0) verdict = "silence";
+    }
+    if (verdict === "concordant") concordances++;
+    if (verdict === "discordant") ecarts++;
+    return { pr, casLin, att, verdict };
+  }).filter(Boolean).filter(x => (x.casLin || 0) > 0 || (x.att || 0) > 0);
+  const carteA = lignesA.length
+    ? `<table class="tbl-s"><tr><th>Province</th><th class="num">Cas, liste linéaire</th><th class="num">Taux d'attaque, export IDS</th><th class="num">Concordance</th></tr>
+        ${lignesA.map(x => `<tr>
+          <td><strong>${x.pr}</strong></td>
+          <td class="num">${x.casLin == null ? "ND" : x.casLin}</td>
+          <td class="num">${x.att == null ? "ND" : String(x.att).replace(".", ",")}</td>
+          <td class="num">${x.verdict === "nd" ? "ND" : `<span class="pill ${x.verdict === "concordant" ? "green" : "red"}">${x.verdict === "concordant" ? "signaux concordants" : "signaux discordants"}</span>`}</td>
+        </tr>`).join("")}
+      </table>`
+    : `<div class="dq-vide">Aucun signal choléra dans l'une ou l'autre source sur la période, ou période hors couverture de la liste linéaire.</div>`;
+
+  /* Croisement B : completude IDS declaree contre cellules renseignees. */
+  const lignesB = provinces.map(pr => {
+    const dec = dpsisValeur(p.code, pr, "ids", "comp");
+    const cell = survDispoIci ? triCellulesIDS(p.code, pr) : null;
+    const e = (dec != null && cell != null) ? Math.round((dec - cell.pct) * 10) / 10 : null;
+    return { pr, dec, cell: cell ? cell.pct : null, e };
+  });
+  const examinerB = lignesB.filter(x => x.e != null && Math.abs(x.e) > 20);
+  ecarts += examinerB.length;
+  concordances += lignesB.filter(x => x.e != null && Math.abs(x.e) <= 20).length;
+  const carteB = `<table class="tbl-s"><tr><th>Province</th><th class="num">Complétude déclarée, relevé DPSIS</th><th class="num">Cellules renseignées, export IDS</th><th class="num">Écart</th></tr>
+    ${lignesB.map(x => `<tr${x.dec == null && x.cell == null ? ' class="dq-nd"' : ""}>
+      <td><strong>${x.pr}</strong></td>
+      <td class="num">${x.dec == null ? "ND" : dpsisNombre(x.dec, "%")}</td>
+      <td class="num">${x.cell == null ? "ND" : dpsisNombre(x.cell, "%")}</td>
+      <td class="num">${x.e == null ? "ND" : `<span class="pill ${Math.abs(x.e) > 20 ? "orange" : "green"}">${x.e > 0 ? "+" : ""}${dpsisNombre(x.e)} pts</span>`}</td>
+    </tr>`).join("")}
+  </table>`;
+
+  /* Croisement C : population cible, standards contre RIM implicite. */
+  const stdMillesime = stdDispo() ? stdAnnees()[stdAnnees().length - 1] : null;
+  const lignesC = provinces.map(pr => {
+    const std = stdMillesime ? (stdProv(stdMillesime, pr) || {}).cible : null;
+    const rim = triCibleRim(p.code, pr);
+    const e = (std && rim) ? Math.round(1000 * (rim - std) / std) / 10 : null;
+    return { pr, std, rim, e };
+  });
+  const dispoC = lignesC.some(x => x.rim != null);
+  const examinerC = lignesC.filter(x => x.e != null && Math.abs(x.e) > 10);
+  if (dispoC) { ecarts += examinerC.length; concordances += lignesC.filter(x => x.e != null && Math.abs(x.e) <= 10).length; }
+  const carteC = dispoC
+    ? `<table class="tbl-s"><tr><th>Province</th><th class="num">Cible 0-11, standards ${stdMillesime}</th><th class="num">Cible annuelle implicite, RIM</th><th class="num">Écart</th></tr>
+        ${lignesC.map(x => `<tr${x.std == null && x.rim == null ? ' class="dq-nd"' : ""}>
+          <td><strong>${x.pr}</strong></td>
+          <td class="num">${x.std == null ? "ND" : x.std.toLocaleString("fr-FR")}</td>
+          <td class="num">${x.rim == null ? "ND" : x.rim.toLocaleString("fr-FR")}</td>
+          <td class="num">${x.e == null ? "ND" : `<span class="pill ${Math.abs(x.e) > 10 ? "orange" : "green"}">${x.e > 0 ? "+" : ""}${dpsisNombre(x.e)}%</span>`}</td>
+        </tr>`).join("")}
+      </table>`
+    : `<div class="dq-vide">Le RIM ne couvre pas la période sélectionnée, croisement ND. Série RIM disponible de janvier à juin 2026.</div>`;
+
+  /* Croisement D : carte sanitaire, standards contre releve. */
+  const releve = DPSISQ.carte_sanitaire || null;
+  const lignesD = stdMillesime && releve ? provinces.map(pr => {
+    const std = (stdProv(stdMillesime, pr) || {}).ds;
+    const rel = releve[pr] ? releve[pr].districts : null;
+    const e = (std != null && rel != null) ? std - rel : null;
+    return { pr, std, rel, e };
+  }) : [];
+  const ecartsD = lignesD.filter(x => x.e != null && x.e !== 0);
+  ecarts += ecartsD.length;
+  concordances += lignesD.filter(x => x.e === 0).length;
+  const carteD = lignesD.length
+    ? `<table class="tbl-s"><tr><th>Province</th><th class="num">DS, standards ${stdMillesime}</th><th class="num">DS, relevé DPSIS</th><th class="num">Écart</th></tr>
+        ${lignesD.filter(x => x.e !== 0 || x.e == null).map(x => `<tr>
+          <td><strong>${x.pr}</strong></td>
+          <td class="num">${x.std == null ? "ND" : x.std}</td>
+          <td class="num">${x.rel == null ? "ND" : x.rel}</td>
+          <td class="num">${x.e == null ? "ND" : `<span class="pill orange">${x.e > 0 ? "+" : ""}${x.e}</span>`}</td>
+        </tr>`).join("")}
+      </table>
+      <div class="dq-reserve">${lignesD.filter(x => x.e === 0).length} provinces concordantes non listées.</div>`
+    : `<div class="dq-vide">Standards ou carte sanitaire du relevé non chargés, croisement ND.</div>`;
+
+  return {
+    crumbs,
+    html: `
+      <div class="ph">
+        <div class="ph-tag">◆ Cohérence externe · Qualité des Données</div>
+        <div class="ph-title">Triangulation inter-sources</div>
+        <div class="ph-sub">Confrontation des sources indépendantes du tableau de bord sur la période sélectionnée. Les écarts sont affichés tels quels et restent à instruire par les directions concernées, aucune source ne corrige l'autre.</div>
+      </div>
+      <div class="content">
+        ${barreControleDpsis(`${concordances} concordances, ${ecarts} écarts à examiner`)}
+        <div class="kpi-grid">
+          ${kpi("Croisements actifs", 4, "", "sur la période sélectionnée", "", "flat", "green", true)}
+          ${kpi("Sources mobilisées", 5, "", "relevé DPSIS, export IDS, liste linéaire, RIM, standards", "", "flat", "green", true)}
+          ${kpi("Concordances", concordances, "", "selon les conventions de chaque croisement", "", "flat", "green", true)}
+          ${kpi("Écarts à examiner", ecarts, "", "aucune correction automatique", "", "flat", ecarts === 0 ? "green" : "orange", true)}
+        </div>
+        ${card("Signal choléra", "liste linéaire COUSP et export IDS, " + p.libelle, carteA,
+          "Le croisement porte sur la présence du signal, cas notifiés d'un côté, taux d'attaque non nul de l'autre. Les taux de l'export IDS sont sans dénominateur documenté et ne permettent pas de reconstituer des effectifs, la comparaison reste directionnelle.")}
+        ${card("Rapportage de la surveillance intégrée", "complétude déclarée et contenu effectif de l'export, " + p.libelle, carteB,
+          "Convention de lecture : un écart de plus de 20 points entre la complétude déclarée au relevé DPSIS et la part des cellules effectivement renseignées dans l'export IDS est marqué à examiner. Les deux mesures n'ont pas le même périmètre, l'une compte des rapports attendus, l'autre des valeurs présentes.")}
+        ${card("Population cible du PEV", "standards ZR et cible implicite du RIM", carteC,
+          "La cible implicite du RIM est reconstituée depuis les doses Penta 3 et la couverture du mois. Convention de lecture : un écart de plus de 10 pour cent avec la cible des standards " + (stdMillesime || "") + " est marqué à examiner. Le millésime " + (stdMillesime || "") + " est un projet corrigé en attente de validation.")}
+        ${card("Carte sanitaire", "effectifs de districts, standards et relevé DPSIS", carteD,
+          "Les deux sources coexistent tant que le programme n'a pas tranché. Le détail par millésime figure dans la sous-vue Carte sanitaire · Standards.")}
+      </div>`
+  };
+};
+
 /* ==================== Carte sanitaire et standards ====================
    Couche de référence des dénominateurs : effectifs de districts, de zones
    de responsabilité, populations et populations cibles issus des standards
@@ -8247,7 +8423,7 @@ function stdProv(annee, prov) {
 }
 
 VIEWS["dpsis-carte"] = () => {
-  const crumbs = ["Promptitude · Complétude", "Carte sanitaire · Standards"];
+  const crumbs = ["Qualité des Données", "Carte sanitaire · Standards"];
   if (!stdDispo()) {
     return { crumbs, html: `<div class="ph"><div class="ph-title">Carte sanitaire et standards</div><div class="ph-sub">Données en cours de chargement.</div></div>` };
   }
@@ -8331,7 +8507,7 @@ VIEWS["dpsis-carte"] = () => {
 };
 
 VIEWS["dpsis-qual"] = () => {
-  const crumbs = ["Promptitude · Complétude", "Qualité des données"];
+  const crumbs = ["Qualité des Données", "Contrôles de cohérence"];
   if (!dpsisDispo()) {
     return { crumbs, html: `<div class="ph"><div class="ph-title">Qualité des données</div><div class="ph-sub">Données en cours de chargement.</div></div>` };
   }

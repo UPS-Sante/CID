@@ -69,6 +69,30 @@ def nombre(v):
         return None
 
 
+REF_PROVINCES = None
+def canoniser_province(nom):
+    """Rattache un libelle de province au nom canonique du referentiel du
+    tableau de bord, pour que les jointures inter-sources ne dependent pas
+    des graphies du classeur source."""
+    global REF_PROVINCES
+    if REF_PROVINCES is None:
+        try:
+            ref = json.load(open(os.environ.get("REFERENTIEL", "referentiel.json"),
+                                 encoding="utf-8"))
+            cles = {simplifier(x): x for x in ref["provinces"]}
+            cles.update(ref.get("variantes", {}))
+            REF_PROVINCES = cles
+        except Exception:
+            REF_PROVINCES = {}
+    cle = simplifier(nom)
+    if cle in REF_PROVINCES:
+        return REF_PROVINCES[cle]
+    for k, canonique in REF_PROVINCES.items():
+        if k and (k in cle or cle in k):
+            return canonique
+    return str(nom).strip()
+
+
 def lire_csv(chemin):
     with open(chemin, encoding="utf-8-sig", newline="") as fh:
         return list(csv.reader(fh))
@@ -117,7 +141,7 @@ def charger_referentiel(chemin):
             illisibles += 1
         donnees.append({
             "annee": int(annee),
-            "province": l[ix["province"]].strip(),
+            "province": canoniser_province(l[ix["province"]]),
             "district": l[ix["district"]].strip(),
             "zr": zr, "nom": re.sub(r"^[A-Za-z]{2,3}_", "", zr),
             "pop": nombre(l[ix["pop"]]), "cible": cible,
@@ -152,7 +176,8 @@ def charger_projet(chemin):
             continue
         donnees.append({
             "ligne": depart + pos + 1,
-            "province": v("province"), "district": v("district"),
+            "province": canoniser_province(v("province")) if v("province") else None,
+            "district": v("district"),
             "cs": cs, "unique": v("unique"), "type": v("type"),
             "pop": nombre(v("pop")), "cible": nombre(v("cible")),
             "vaccins": v("bcg") is not None,
