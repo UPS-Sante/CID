@@ -47,7 +47,7 @@
     --dir-dsr: #8C4A5E;
     --dir-dsc: #3F6B52;
     --dir-dpml: #8C5A2E;
-    --dir-dpsis: #5C6470;
+    --dir-dpsis: #2E6B5E;
     --dir-drh: #5F5286;
     --dir-cousp: #8C4038;
     --dir-prog: #3E6E78;
@@ -2682,6 +2682,22 @@
   .dq-banniere { padding:11px 13px; margin-bottom:12px; border-left:3px solid var(--gold, #B4913C); background:var(--surface-2, #FAF8F4); font-size:12px; line-height:1.5; }
   .dq-hb { margin-left:3px; font-size:10px; color:var(--rag-red, #B02418); }
   .dq-vide { padding:14px 4px; font-size:12.5px; color:var(--muted); }
+
+  /* ---- Veille toutes maladies (surveillance integree) ---- */
+  .mdo-board { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 14px 10px; margin-bottom:14px; }
+  .mdo-board-titre { font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted); margin-bottom:9px; }
+  .mdo-board-grille { display:grid; grid-template-columns:repeat(auto-fill,minmax(148px,1fr)); gap:7px; }
+  .mdo-tuile { text-align:left; border:1px solid var(--border); border-left-width:3px; border-radius:7px; background:var(--surface); padding:7px 9px 6px; cursor:pointer; display:flex; flex-direction:column; gap:1px; font:inherit; }
+  .mdo-tuile:hover { border-color:var(--royal); }
+  .mdo-tuile-active { outline:2px solid var(--royal); outline-offset:-1px; }
+  .mdo-tuile-nom { font-size:11px; font-weight:600; color:var(--body); line-height:1.25; }
+  .mdo-tuile-val { font-size:16px; font-weight:700; font-family:var(--font-h); color:var(--royal-d); }
+  .mdo-tuile-sub { font-size:9.5px; color:var(--muted); line-height:1.3; }
+  .mdo-rouge { border-left-color:var(--rag-red); }
+  .mdo-orange { border-left-color:#C87A2B; }
+  .mdo-calme { border-left-color:#5E8C6A; }
+  .mdo-nd { border-left-color:var(--border); opacity:.62; }
+  [dir="rtl"] .mdo-tuile { text-align:right; border-left-width:1px; border-right-width:3px; }
   /* ---- Surveillance integree (MDO) ---- */
   .surv-scroll { overflow-x:auto; max-width:100%; }
   .surv-mat { min-width:900px; font-size:11px; }
@@ -3654,8 +3670,8 @@ const PROGRAMS = [
     dir:"COUSP",
     sub:[
       { id:"cousp-sitrep",  i18n_key:"sub_cousp_sitrep", label:"Rapport de situation", status:"red" },
-      { id:"cousp-surv",    i18n_key:"sub_cousp_surv",   label:"Riposte au choléra",  status:"red" },
       { id:"cousp-mdo",     i18n_key:"sub_cousp_mdo",    label:"Surveillance intégrée", status:"orange" },
+      { id:"cousp-surv",    i18n_key:"sub_cousp_surv",   label:"Riposte au choléra",  status:"red" },
       { id:"cousp-alert",   i18n_key:"sub_cousp_alerts", label:"Foyers actifs",       status:"orange" },
       { id:"cousp-deepdive", i18n_key:"sub_cousp_dd",    label:"Analyse approfondie", status:"red" },
     ]
@@ -6363,6 +6379,37 @@ VIEWS["cousp-mdo"] = () => {
   const libInc = mal.incidence === "incidence" ? "Taux d'incidence" : "Taux d'attaque";
   const C = survDebutContinu();
 
+  /* Tableau de veille : chaque maladie de l'export, d'un coup d'oeil, pour la
+     periode selectionnee. Une tuile porte le taux national, la letalite
+     nationale quand elle est exportee, et le nombre de provinces a signal non
+     nul. La tuile est le point d'entree de l'analyse : un clic selectionne la
+     maladie. Aucun seuil epidemiologique n'est applique ici, le tableau rend
+     compte du signal tel qu'exporte. */
+  const veille = SURV.maladies.map(x => {
+    const nat = survIncidence(p.code, "National", x);
+    const let_ = x.letalite ? survValeur(p.code, "National", x.code, "let") : null;
+    const provSig = SURV.provinces.filter(pr => (survIncidence(p.code, pr, x) || 0) > 0).length;
+    const provRens = SURV.provinces.filter(pr => survIncidence(p.code, pr, x) != null).length;
+    return { x, nat, let_, provSig, provRens };
+  });
+  const tuiles = veille.map(v => {
+    const actif = v.x.code === mal.code;
+    const signal = (v.nat || 0) > 0 || v.provSig > 0;
+    const cls = actif ? " mdo-tuile-active" : "";
+    const etat = v.provRens === 0 ? "nd" : signal ? (v.let_ > 0 ? "rouge" : "orange") : "calme";
+    return `<button class="mdo-tuile mdo-${etat}${cls}" onclick="setSurvMaladie('${v.x.code}')" title="${v.x.libelle}">
+      <span class="mdo-tuile-nom">${v.x.libelle}${v.x.mdo ? "" : " ·"}</span>
+      <span class="mdo-tuile-val">${v.provRens === 0 ? "ND" : survNombre(v.nat)}</span>
+      <span class="mdo-tuile-sub">${v.provRens === 0 ? "non renseignée" : v.provSig > 0 ? v.provSig + " prov. à signal" + (v.let_ > 0 ? " · lét. " + survNombre(v.let_) + "%" : "") : (v.nat || 0) > 0 ? "signal national seul" : "aucun signal"}</span>
+    </button>`;
+  }).join("");
+  const enSignal = veille.filter(v => v.provRens > 0 && ((v.nat || 0) > 0 || v.provSig > 0)).length;
+  const bandeauVeille = `<div class="mdo-board">
+    <div class="mdo-board-titre">Veille toutes maladies · ${p.libelle} · ${enSignal} maladie${enSignal > 1 ? "s" : ""} à signal sur ${veille.filter(v => v.provRens > 0).length} renseignées</div>
+    <div class="mdo-board-grille">${tuiles}</div>
+    <div class="mdo-board-note">Taux national tel qu'exporté, sans seuil d'alerte appliqué. Le point suit les maladies hors déclaration obligatoire. Un clic ouvre l'analyse de la maladie.</div>
+  </div>`;
+
   // ---- Lecture nationale de la maladie sélectionnée
   const incNat = survIncidence(p.code, "National", mal);
   const letNat = mal.letalite ? survValeur(p.code, "National", mal.code, "let") : null;
@@ -6432,6 +6479,7 @@ VIEWS["cousp-mdo"] = () => {
       </div>
       <div class="content">
         ${barreControleSurv()}
+        ${bandeauVeille}
         <div class="kpi-grid">
           ${kpi(libInc + " national", incNat == null ? null : survNombre(incNat), "", mal.libelle + ", " + p.libelle, "", "flat", "orange", true)}
           ${kpi("Létalité nationale", letNat == null ? null : survNombre(letNat) + "%", "", mal.letalite ? "seuil d'alerte 1%" : "non exporté pour cette maladie", "", "flat", letNat != null && letNat >= 1 ? "red" : "green", true)}
