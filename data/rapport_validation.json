@@ -1,8 +1,12 @@
 {
- "genere": "2026-08-13T04:50:15Z",
+ "genere": "2026-08-14T04:47:42Z",
  "anomalies": [
   {
    "fichier": "brut/ID_FOSA_DS_DPSP.csv",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/ZR_standards 2024 - Standards.csv",
    "type": "periode_indetectable"
   },
   {
