@@ -3608,6 +3608,9 @@ const PROGRAMS = [
     sub:[
       { id:"prog-palu",     i18n_key:"sub_prg_palu", label:"PNLP — Paludisme",     status:"orange" },
       { id:"prog-vih",      i18n_key:"sub_prg_vih",  label:"PSLS — VIH/Sida",      status:"yellow" },
+      { id:"prog-nut",      label:"Nutrition",              status:"ok" },
+      { id:"prog-soins",    label:"Soins curatifs",         status:"ok" },
+      { id:"prog-recouv",   label:"Recouvrement des coûts", status:"ok" },
       { id:"prog-tb",       i18n_key:"sub_prg_tb",   label:"PNLT — Tuberculose",   status:"orange" },
     ]
   },
@@ -6911,15 +6914,15 @@ VIEWS["vacc-couv"] = () => {
   const col=(v)=>v==null?"#CBC7BE":v>=90?"#2E7D32":v>=80?"#C9A227":v>=60?"#D97B29":"#B3372F";
   const selA=PEVP.meta.antigenes.map(a=>`<button onclick="window.__antSel='${a}';renderMain()" style="padding:5px 11px;border-radius:16px;border:1px solid var(--line);cursor:pointer;background:${a===ant?'#1F3864':'#fff'};color:${a===ant?'#fff':'var(--body)'};font:600 12px/1 inherit;">${a}</button>`).join(" ");
   const paths=Object.keys(PROVINCE_PATHS).map(c=>{const v=val(c);const nm=(PROVINCES.find(p=>p.id===c)||{}).name||c;
-    return `<path d="${PROVINCE_PATHS[c].d}" fill="${col(v)}" stroke="#F1EFEA" stroke-width="1.4" style="cursor:pointer" onclick="window.__provSel='${c}';renderMain()"><title>${nm} · ${v==null?"ND":v+"%"}</title></path>`;}).join("");
+    return `<path d="${PROVINCE_PATHS[c].d}" fill="${col(v)}" stroke="#F1EFEA" stroke-width="1.4" style="cursor:pointer" onclick="window.__provSel='${c}';renderMain()"><title>${nm} · ${v==null?"ND":fcfa?v.toLocaleString("fr-FR")+" FCFA":v+"%"}</title></path>`;}).join("");
   const sel=window.__provSel;
   let panneau="";
   if(sel){
     const nm=(PROVINCES.find(p=>p.id===sel)||{}).name||sel;
     const serie=(PEVP.provinces[sel]||{}).couv?.[ant]||{};
     const moisAff=["2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07"];
-    const barres=moisAff.map(m=>{const v=serie[m];const h2=v==null?4:Math.min(120,v*1.1);
-      return `<div style="text-align:center;flex:1"><div style="height:130px;display:flex;align-items:flex-end;justify-content:center"><div style="width:70%;height:${h2}px;background:${v==null?"#CBC7BE":col(v)};border-radius:3px 3px 0 0"></div></div><div style="font-size:11px;margin-top:4px">${MOIS_NOMS[Number(m.slice(5))-1].slice(0,3)}</div><div style="font-size:11px;font-weight:700">${v==null?"ND":Math.round(v)}</div></div>`;}).join("");
+    const barres=moisAff.map(m=>{const v=serie[m];const h2=v==null?4:fcfa?Math.max(6,Math.min(120,Math.abs(v)/maxV*120)):Math.min(120,v*1.1);
+      return `<div style="text-align:center;flex:1"><div style="height:130px;display:flex;align-items:flex-end;justify-content:center"><div style="width:70%;height:${h2}px;background:${v==null?"#CBC7BE":col(v)};border-radius:3px 3px 0 0"></div></div><div style="font-size:11px;margin-top:4px">${MOIS_NOMS[Number(m.slice(5))-1].slice(0,3)}</div><div style="font-size:11px;font-weight:700">${v==null?"ND":fcfa?(Math.round(v/1000)/1000).toFixed(1)+"M":Math.round(v)}</div></div>`;}).join("");
     const doses=(PEVP.provinces[sel]||{}).doses?.[ant]||null;
     const dosesTxt=doses?Object.entries(doses).map(([m,v])=>`${MOIS_NOMS[Number(m.slice(5))-1].slice(0,3)} ${v.toLocaleString("fr-FR")}`).join(" · "):"non disponibles pour cet antigène (séries RIM : Penta3, VAR1, BCG)";
     const pop=(PEVP.population_0_11||{})[sel]?.[per] ?? (PEVP.population_0_11||{})[sel]?.[mmax];
@@ -6933,7 +6936,7 @@ VIEWS["vacc-couv"] = () => {
   <div class="content">
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">${selA}</div>
     <div class="g-2-1">
-      ${card("Carte des provinces — "+ant+" · "+periodLabel(),"Vert ≥90 · jaune ≥80 · orange ≥60 · rouge <60 · gris ND",
+      ${card("Carte des provinces — "+ant+" · "+periodLabel(),fcfa?"Bleu positif · rouge négatif · gris ND":"Vert ≥90 · jaune ≥80 · orange ≥60 · rouge <60 · gris ND",
         `<svg viewBox="${MAP_VIEWBOX}" style="width:100%;max-height:560px">${paths}</svg>`,"")}
       ${panneau||card("Détail province","Sélection","<div style='padding:10px 2px;color:var(--body)'>Cliquer une province sur la carte pour afficher sa série mensuelle, ses doses RIM et son dénominateur population.</div>","")}
     </div>
@@ -7484,17 +7487,19 @@ function carteDomaine(dom, crumbs, tag, titre) {
   const mf=(p)=>{const[a,mo]=p.split("-").map(Number);return MOIS_NOMS[mo-1]+" "+a;};
   const hors=state.periodMode!=="month"||per<D.mois_min||per>D.mois_max;
   const val=(c)=>hors?null:((D.provinces[c]||{})[ind]?.[per]??null);
-  const col=(v)=>v==null?"#CBC7BE":v>=90?"#2E7D32":v>=80?"#C9A227":v>=60?"#D97B29":"#B3372F";
+  const fcfa=D.unite==="fcfa";
+  const maxV=fcfa?Math.max(1,...Object.values(D.provinces).map(p=>Math.abs(p[ind]?.[per]??0))):100;
+  const col=(v)=>v==null?"#CBC7BE":fcfa?(v<0?"#B3372F":"#1F3864"):v>=90?"#2E7D32":v>=80?"#C9A227":v>=60?"#D97B29":"#B3372F";
   const selI=D.indicateurs.map(a=>`<button onclick="window['${selKey}']='${a.replace(/'/g,"\\'")}';renderMain()" style="padding:5px 11px;border-radius:16px;border:1px solid var(--line);cursor:pointer;background:${a===ind?'#1F3864':'#fff'};color:${a===ind?'#fff':'var(--body)'};font:600 12px/1 inherit;">${a}</button>`).join(" ");
   const paths=Object.keys(PROVINCE_PATHS).map(c=>{const v=val(c);const nm=(PROVINCES.find(p=>p.id===c)||{}).name||c;
-    return `<path d="${PROVINCE_PATHS[c].d}" fill="${col(v)}" stroke="#F1EFEA" stroke-width="1.4" style="cursor:pointer" onclick="window.__provSel='${c}';renderMain()"><title>${nm} · ${v==null?"ND":v+"%"}</title></path>`;}).join("");
+    return `<path d="${PROVINCE_PATHS[c].d}" fill="${col(v)}" stroke="#F1EFEA" stroke-width="1.4" style="cursor:pointer" onclick="window.__provSel='${c}';renderMain()"><title>${nm} · ${v==null?"ND":fcfa?v.toLocaleString("fr-FR")+" FCFA":v+"%"}</title></path>`;}).join("");
   let pan="";
   const sel=window.__provSel;
   if(sel){
     const nm=(PROVINCES.find(p=>p.id===sel)||{}).name||sel;
     const serie=(D.provinces[sel]||{})[ind]||{};
     const MA=["2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07"];
-    const barres=MA.map(m=>{const v=serie[m];const h2=v==null?4:Math.min(120,v*1.1);
+    const barres=MA.map(m=>{const v=serie[m];const h2=v==null?4:fcfa?Math.max(6,Math.min(120,Math.abs(v)/maxV*120)):Math.min(120,v*1.1);
       return `<div style="text-align:center;flex:1"><div style="height:130px;display:flex;align-items:flex-end;justify-content:center"><div style="width:70%;height:${h2}px;background:${v==null?"#CBC7BE":col(v)};border-radius:3px 3px 0 0"></div></div><div style="font-size:11px;margin-top:4px">${MOIS_NOMS[Number(m.slice(5))-1].slice(0,3)}</div><div style="font-size:11px;font-weight:700">${v==null?"ND":Math.round(v)}</div></div>`;}).join("");
     pan=card(nm+" — "+ind,"Série mensuelle 2026 · "+(D.libelles[ind]||""),
       `<div style="display:flex;gap:4px;padding:6px 2px">${barres}</div>`,
@@ -7504,14 +7509,18 @@ function carteDomaine(dom, crumbs, tag, titre) {
   <div class="content">
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">${selI}</div>
     <div class="g-2-1">
-      ${card("Carte des provinces — "+periodLabel(),"Vert ≥90 · jaune ≥80 · orange ≥60 · rouge <60 · gris ND",
+      ${card("Carte des provinces — "+periodLabel(),fcfa?"Bleu positif · rouge négatif · gris ND":"Vert ≥90 · jaune ≥80 · orange ≥60 · rouge <60 · gris ND",
         `<svg viewBox="${MAP_VIEWBOX}" style="width:100%;max-height:560px">${paths}</svg>`,"")}
       ${pan||card("Détail province","Sélection","<div style='padding:10px 2px;color:var(--body)'>Cliquer une province sur la carte.</div>","")}
     </div>
   </div>`};
 }
 VIEWS["prog-palu"] = () => carteDomaine("palu",["Programmes","Paludisme"],"Programme National de Lutte contre le Paludisme","Paludisme — carte provinciale");
-VIEWS["prog-vih"] = () => carteDomaine("ptme",["Programmes","VIH · PTME"],"PSLS · PTME","PTME — carte provinciale");
+VIEWS["prog-vih"] = () => carteDomaine("vih",["Programmes","VIH · Sida"],"Programme Sectoriel de Lutte contre le Sida","VIH — carte provinciale");
+VIEWS["prog-ptme"] = () => carteDomaine("ptme",["Programmes","PTME"],"PSLS · PTME","PTME — carte provinciale");
+VIEWS["prog-nut"] = () => carteDomaine("nutrition",["Programmes","Nutrition"],"Direction de la Nutrition","Nutrition — carte provinciale");
+VIEWS["prog-soins"] = () => carteDomaine("soins",["Programmes","Soins curatifs"],"Soins curatifs — DHIS2","Soins curatifs — carte provinciale");
+VIEWS["prog-recouv"] = () => carteDomaine("recouvrement",["Programmes","Recouvrement des coûts"],"Recouvrement des coûts — DHIS2","Recouvrement — carte provinciale");
 VIEWS["prog-tb"] = () => ({
   crumbs:["Programmes verticaux", "PNLT — Tuberculose"],
   html: `
