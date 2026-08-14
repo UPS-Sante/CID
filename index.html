@@ -3769,12 +3769,17 @@ function drActualiserPeriodes() {
 
 async function chargerDonneesReelles(essai) {
   try {
+    /* Couche historique optionnelle : son absence ne doit pas interrompre
+       le chargement des jeux de donnees mensuels qui suivent. */
     const [consolide, catalogue, correspondance, referentiel] = await Promise.all(
       ["data/consolide.json", "data/catalogue.json",
        "correspondance_indicateurs.json", "referentiel.json"]
-      .map(u => fetch(u, { cache: "no-cache" }).then(r => { if (!r.ok) throw new Error(u); return r.json(); })));
-    if (!drConstruire(consolide, catalogue, correspondance, referentiel)) throw new Error("base vide");
-    drActualiserPeriodes();
+      .map(u => fetch(u, { cache: "no-cache" }).then(r => r.ok ? r.json() : null).catch(() => null)));
+    if (consolide && catalogue && correspondance && referentiel) {
+      try {
+        if (drConstruire(consolide, catalogue, correspondance, referentiel)) drActualiserPeriodes();
+      } catch (e) {}
+    }
     try {
       const sj = await fetch("seuils_rag.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (sj) { SEUILS.normal = sj.normal || SEUILS.normal; SEUILS.inverse = sj.inverse || SEUILS.inverse; SEUILS.par_metrique = sj.par_metrique || {}; }
@@ -6914,15 +6919,15 @@ VIEWS["vacc-couv"] = () => {
   const col=(v)=>v==null?"#CBC7BE":v>=90?"#2E7D32":v>=80?"#C9A227":v>=60?"#D97B29":"#B3372F";
   const selA=PEVP.meta.antigenes.map(a=>`<button onclick="window.__antSel='${a}';renderMain()" style="padding:5px 11px;border-radius:16px;border:1px solid var(--line);cursor:pointer;background:${a===ant?'#1F3864':'#fff'};color:${a===ant?'#fff':'var(--body)'};font:600 12px/1 inherit;">${a}</button>`).join(" ");
   const paths=Object.keys(PROVINCE_PATHS).map(c=>{const v=val(c);const nm=(PROVINCES.find(p=>p.id===c)||{}).name||c;
-    return `<path d="${PROVINCE_PATHS[c].d}" fill="${col(v)}" stroke="#F1EFEA" stroke-width="1.4" style="cursor:pointer" onclick="window.__provSel='${c}';renderMain()"><title>${nm} · ${v==null?"ND":fcfa?v.toLocaleString("fr-FR")+" FCFA":v+"%"}</title></path>`;}).join("");
+    return `<path d="${PROVINCE_PATHS[c].d}" fill="${col(v)}" stroke="#F1EFEA" stroke-width="1.4" style="cursor:pointer" onclick="window.__provSel='${c}';renderMain()"><title>${nm} · ${v==null?"ND":v+"%"}</title></path>`;}).join("");
   const sel=window.__provSel;
   let panneau="";
   if(sel){
     const nm=(PROVINCES.find(p=>p.id===sel)||{}).name||sel;
     const serie=(PEVP.provinces[sel]||{}).couv?.[ant]||{};
     const moisAff=["2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07"];
-    const barres=moisAff.map(m=>{const v=serie[m];const h2=v==null?4:fcfa?Math.max(6,Math.min(120,Math.abs(v)/maxV*120)):Math.min(120,v*1.1);
-      return `<div style="text-align:center;flex:1"><div style="height:130px;display:flex;align-items:flex-end;justify-content:center"><div style="width:70%;height:${h2}px;background:${v==null?"#CBC7BE":col(v)};border-radius:3px 3px 0 0"></div></div><div style="font-size:11px;margin-top:4px">${MOIS_NOMS[Number(m.slice(5))-1].slice(0,3)}</div><div style="font-size:11px;font-weight:700">${v==null?"ND":fcfa?(Math.round(v/1000)/1000).toFixed(1)+"M":Math.round(v)}</div></div>`;}).join("");
+    const barres=moisAff.map(m=>{const v=serie[m];const h2=v==null?4:Math.min(120,v*1.1);
+      return `<div style="text-align:center;flex:1"><div style="height:130px;display:flex;align-items:flex-end;justify-content:center"><div style="width:70%;height:${h2}px;background:${v==null?"#CBC7BE":col(v)};border-radius:3px 3px 0 0"></div></div><div style="font-size:11px;margin-top:4px">${MOIS_NOMS[Number(m.slice(5))-1].slice(0,3)}</div><div style="font-size:11px;font-weight:700">${v==null?"ND":Math.round(v)}</div></div>`;}).join("");
     const doses=(PEVP.provinces[sel]||{}).doses?.[ant]||null;
     const dosesTxt=doses?Object.entries(doses).map(([m,v])=>`${MOIS_NOMS[Number(m.slice(5))-1].slice(0,3)} ${v.toLocaleString("fr-FR")}`).join(" · "):"non disponibles pour cet antigène (séries RIM : Penta3, VAR1, BCG)";
     const pop=(PEVP.population_0_11||{})[sel]?.[per] ?? (PEVP.population_0_11||{})[sel]?.[mmax];
@@ -6936,7 +6941,7 @@ VIEWS["vacc-couv"] = () => {
   <div class="content">
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">${selA}</div>
     <div class="g-2-1">
-      ${card("Carte des provinces — "+ant+" · "+periodLabel(),fcfa?"Bleu positif · rouge négatif · gris ND":"Vert ≥90 · jaune ≥80 · orange ≥60 · rouge <60 · gris ND",
+      ${card("Carte des provinces — "+ant+" · "+periodLabel(),"Vert ≥90 · jaune ≥80 · orange ≥60 · rouge <60 · gris ND",
         `<svg viewBox="${MAP_VIEWBOX}" style="width:100%;max-height:560px">${paths}</svg>`,"")}
       ${panneau||card("Détail province","Sélection","<div style='padding:10px 2px;color:var(--body)'>Cliquer une province sur la carte pour afficher sa série mensuelle, ses doses RIM et son dénominateur population.</div>","")}
     </div>
