@@ -3803,6 +3803,10 @@ async function chargerDonneesReelles(essai) {
       if (pp) PEVP = pp;
     } catch (e) {}
     try {
+      const pg2 = await fetch("prog_mensuel.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (pg2) PROGM = pg2;
+    } catch (e) {}
+    try {
       const cj = await fetch("cholera_data.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (cj) CHOLERA = cj;
     } catch (e) {}
@@ -3944,6 +3948,7 @@ let PEV = null;
 let DSRN = null;
 let PEVM = null;
 let PEVP = null;
+let PROGM = null;
 let CHOLERA = null;
 let CHOL_A = null;
 let CHOL_S = null;
@@ -7468,44 +7473,45 @@ VIEWS["dsr-stock"] = () => ({
 // =================================================================
 // Programs verticaux (PNLP, PSLS, PNLT)
 // =================================================================
-VIEWS["prog-palu"] = () => ({
-  crumbs:["Programmes verticaux", "PNLP — Paludisme"],
-  html: `
-    <div class="ph">
-      <div class="ph-tag">🦟 Paludisme · PNLP</div>
-      <div class="ph-title">Paludisme — Lutte intégrée</div>
-      <div class="ph-sub">Incidence, prise en charge, prévention. Cadre Fonds Mondial NFM4.</div>
+function carteDomaine(dom, crumbs, tag, titre) {
+  const et=`<div class="ph"><div class="ph-tag">${tag}</div><div class="ph-title">${titre}</div>`;
+  if(!PROGM||!PROGM.domaines[dom]) return {crumbs,html:et+`<div class="ph-sub">Données en cours de chargement.</div></div>`};
+  const D=PROGM.domaines[dom];
+  const selKey="__ind_"+dom;
+  if(!window[selKey]||!D.indicateurs.includes(window[selKey])) window[selKey]=D.indicateurs[0];
+  const ind=window[selKey];
+  const per=`${state.periodYear}-${String(state.periodMonth).padStart(2,"0")}`;
+  const mf=(p)=>{const[a,mo]=p.split("-").map(Number);return MOIS_NOMS[mo-1]+" "+a;};
+  const hors=state.periodMode!=="month"||per<D.mois_min||per>D.mois_max;
+  const val=(c)=>hors?null:((D.provinces[c]||{})[ind]?.[per]??null);
+  const col=(v)=>v==null?"#CBC7BE":v>=90?"#2E7D32":v>=80?"#C9A227":v>=60?"#D97B29":"#B3372F";
+  const selI=D.indicateurs.map(a=>`<button onclick="window['${selKey}']='${a.replace(/'/g,"\\'")}';renderMain()" style="padding:5px 11px;border-radius:16px;border:1px solid var(--line);cursor:pointer;background:${a===ind?'#1F3864':'#fff'};color:${a===ind?'#fff':'var(--body)'};font:600 12px/1 inherit;">${a}</button>`).join(" ");
+  const paths=Object.keys(PROVINCE_PATHS).map(c=>{const v=val(c);const nm=(PROVINCES.find(p=>p.id===c)||{}).name||c;
+    return `<path d="${PROVINCE_PATHS[c].d}" fill="${col(v)}" stroke="#F1EFEA" stroke-width="1.4" style="cursor:pointer" onclick="window.__provSel='${c}';renderMain()"><title>${nm} · ${v==null?"ND":v+"%"}</title></path>`;}).join("");
+  let pan="";
+  const sel=window.__provSel;
+  if(sel){
+    const nm=(PROVINCES.find(p=>p.id===sel)||{}).name||sel;
+    const serie=(D.provinces[sel]||{})[ind]||{};
+    const MA=["2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07"];
+    const barres=MA.map(m=>{const v=serie[m];const h2=v==null?4:Math.min(120,v*1.1);
+      return `<div style="text-align:center;flex:1"><div style="height:130px;display:flex;align-items:flex-end;justify-content:center"><div style="width:70%;height:${h2}px;background:${v==null?"#CBC7BE":col(v)};border-radius:3px 3px 0 0"></div></div><div style="font-size:11px;margin-top:4px">${MOIS_NOMS[Number(m.slice(5))-1].slice(0,3)}</div><div style="font-size:11px;font-weight:700">${v==null?"ND":Math.round(v)}</div></div>`;}).join("");
+    pan=card(nm+" — "+ind,"Série mensuelle 2026 · "+(D.libelles[ind]||""),
+      `<div style="display:flex;gap:4px;padding:6px 2px">${barres}</div>`,
+      "Source : "+PROGM.meta.source+". ND affiché pour toute valeur absente, aucune interpolation.");
+  }
+  return {crumbs,html:et+`<div class="ph-sub">${hors?`Aucun relevé pour ${periodLabel()}. Série disponible de ${mf(D.mois_min)} à ${mf(D.mois_max)} : la carte s'affiche en ND.`:`${ind} · ${periodLabel()} · cliquer une province pour le détail.`}</div></div>
+  <div class="content">
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">${selI}</div>
+    <div class="g-2-1">
+      ${card("Carte des provinces — "+periodLabel(),"Vert ≥90 · jaune ≥80 · orange ≥60 · rouge <60 · gris ND",
+        `<svg viewBox="${MAP_VIEWBOX}" style="width:100%;max-height:560px">${paths}</svg>`,"")}
+      ${pan||card("Détail province","Sélection","<div style='padding:10px 2px;color:var(--body)'>Cliquer une province sur la carte.</div>","")}
     </div>
-    <div class="content">
-      <div class="kpi-grid">
-        ${kpi("Incidence palu", nationalAggregate("palu-incidence"), "‰", "Cible : < 100‰", "", "flat", "orange", true)}
-        ${kpi("Cas traités par CTA <24h", nationalAggregate("palu-cta"), "%", "Cible : 95%", "", "flat", "orange")}
-        ${kpi("Couverture MILD", nationalAggregate("palu-mild"), "%", "Cible : 90%", "", "flat", "yellow")}
-        ${kpi("TDR positifs", nationalAggregate("palu-tdr"), "%", "Sur dépistages", "", "flat", "yellow")}
-      </div>
-    </div>
-  `
-});
-
-VIEWS["prog-vih"] = () => ({
-  crumbs:["Programmes verticaux", "PSLS — VIH/Sida"],
-  html: `
-    <div class="ph">
-      <div class="ph-tag">🎗 VIH/Sida · PSLS</div>
-      <div class="ph-title">VIH/Sida — Cascade 95-95-95</div>
-      <div class="ph-sub">Dépistage, mise sous ARV, charge virale supprimée.</div>
-    </div>
-    <div class="content">
-      <div class="kpi-grid">
-        ${kpi("PVVIH dépistés", nationalAggregate("vih-depistage"), "%", "Cible : 95%", "", "flat", "orange")}
-        ${kpi("PVVIH sous ARV", nationalAggregate("vih-arv"), "%", "Cible : 95%", "", "flat", "yellow")}
-        ${kpi("Charge virale supprimée", nationalAggregate("vih-cv"), "%", "Cible : 95%", "", "flat", "yellow")}
-        ${kpi("PTME (couverture)", nationalAggregate("vih-ptme"), "%", "Cible : 95%", "", "flat", "orange")}
-      </div>
-    </div>
-  `
-});
-
+  </div>`};
+}
+VIEWS["prog-palu"] = () => carteDomaine("palu",["Programmes","Paludisme"],"Programme National de Lutte contre le Paludisme","Paludisme — carte provinciale");
+VIEWS["prog-vih"] = () => carteDomaine("ptme",["Programmes","VIH · PTME"],"PSLS · PTME","PTME — carte provinciale");
 VIEWS["prog-tb"] = () => ({
   crumbs:["Programmes verticaux", "PNLT — Tuberculose"],
   html: `
