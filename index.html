@@ -2220,7 +2220,7 @@
 
   /* Hamburger button · hidden by default, shown on mobile */
   .sb-hamburger {
-    display: none;
+    display: flex;
     width: 38px; height: 38px;
     border-radius: 6px;
     background: rgba(255,255,255,0.15);
@@ -3501,13 +3501,23 @@
   @media (max-width:1400px){ .ck2-grid { grid-template-columns:repeat(4,1fr); } }
   @media (max-width:1080px){ .ck2-grid { grid-template-columns:repeat(3,1fr); } }
   @media (max-width:720px){ .ck2-grid { grid-template-columns:repeat(2,1fr); } .ck2-hero { flex-direction:column; align-items:flex-start; } .ck2-counts { gap:18px; } }
+  /* ====== Barre laterale repliable · cockpit epure sur grand ecran ====== */
+  .sb { transition: width .28s ease, opacity .18s ease, border-color .28s ease; }
+  body.sb-hidden .sb {
+    width: 0; opacity: 0; border-right-color: transparent;
+    overflow: hidden; pointer-events: none;
+  }
+  /* sur mobile le repli desktop ne s'applique pas : le tiroir garde son comportement */
+  @media (max-width: 900px) {
+    body.sb-hidden .sb { width: var(--sb-w); opacity: 1; pointer-events: auto; }
+  }
 </style>
 </head>
 <body>
 
 <!-- ============================ HEADER ============================ -->
 <header class="header">
-  <button class="sb-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+  <button class="sb-hamburger" onclick="toggleSidebar()" aria-label="Afficher ou masquer le menu" title="Afficher ou masquer le menu">
     <span></span><span></span><span></span>
   </button>
   <div class="header-left">
@@ -5182,6 +5192,7 @@ function selectSub(progId, subId) {
     el.classList.toggle("active", el.dataset.sub === subId);
   });
   renderMain();
+  majBarreCockpit();
   closeSidebarOnMobile();
 }
 
@@ -5940,7 +5951,16 @@ function setupMapInteractions() {
 }
 
 function toggleSidebar() {
-  document.body.classList.toggle("sb-open");
+  if (window.innerWidth <= 900) document.body.classList.toggle("sb-open");
+  else document.body.classList.toggle("sb-hidden");
+}
+
+/* Sur grand ecran, la barre se replie sur le cockpit du Ministre pour une vue epuree,
+   et reapparait sur les autres vues ; un clic sur le menu la rappelle a tout moment. */
+function majBarreCockpit() {
+  if (window.innerWidth <= 900) return;
+  if (state.sub === "min-overview") document.body.classList.add("sb-hidden");
+  else document.body.classList.remove("sb-hidden");
 }
 
 function closeSidebarOnMobile() {
@@ -8083,6 +8103,7 @@ function init() {
     document.querySelector('.prog[data-prog="min"]').classList.add("open", "active");
     document.querySelector('.subprog[data-sub="min-overview"]').classList.add("active");
     renderMain();
+    majBarreCockpit();
   }, 30);
 }
 
