@@ -1,5 +1,5 @@
 {
-  "_aide": "Sao Health Challenge — moteur de classement des provinces inspire de l'Immunization League Table (OMS AFRO, edition subnationale). Chaque indicateur est score de 1 a 3 selon les seuils ci-dessous. L'indice IPI = (somme des scores / (nombre d'indicateurs renseignes x 3)) x 100, conforme a la formule OMS a N variable : une province n'est notee que sur ce qu'elle rapporte, jamais penalisee pour un indicateur sans source. Paliers : eleve >= 80, modere 60-79, faible < 60. Ajouter un indicateur ici quand sa source est branchee (ex. risque rougeole, ecart d'immunite fievre jaune) suffit a l'integrer au classement, sans modification du code.",
+  "_aide": "Sao Health Challenge · moteur de classement des provinces inspire de l'Immunization League Table (OMS AFRO, edition subnationale). Chaque indicateur est score de 1 a 3 selon les seuils ci-dessous. L'indice IPI = (somme des scores / (nombre d'indicateurs renseignes x 3)) x 100, conforme a la formule OMS a N variable : une province n'est notee que sur ce qu'elle rapporte, jamais penalisee pour un indicateur sans source. Paliers : eleve >= 80, modere 60-79, faible < 60. Ajouter un indicateur ici quand sa source est branchee (ex. risque rougeole, ecart d'immunite fievre jaune) suffit a l'integrer au classement, sans modification du code.",
 
   "indicateurs": [
     {

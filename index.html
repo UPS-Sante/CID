@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Centre d'Intelligence des Données — Situation Room MSPP</title>
+<title>Centre d'Intelligence des Données · Situation Room MSPP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* PPTX palette — bleu royal */
+    /* PPTX palette · bleu royal */
     --royal: #1F3864;
     --royal-d: #16294A;
     --royal-l: #46628F;
@@ -31,7 +31,7 @@
     --body: #44403A;
     --muted: #75706B;
     --muted-2: #A09A93;
-    /* RAG (4 colors — saturated) */
+    /* RAG (4 colors · saturated) */
     --rag-green: #2E6B3F;
     --rag-green-l: #D8EBDD;
     --rag-yellow: #7D5C07;
@@ -84,7 +84,7 @@
   }
 
   /* ============================================================
-     HEADER (bandeau bleu royal — fidèle PPTX)
+     HEADER (bandeau bleu royal · fidèle PPTX)
   ============================================================ */
   .header {
     position: fixed;
@@ -432,7 +432,7 @@
   .main::-webkit-scrollbar-track { background: transparent; }
   .main::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 4px; }
 
-  /* Topbar — sticky controls */
+  /* Topbar · sticky controls */
   .topbar {
     position: sticky;
     top: 0;
@@ -679,7 +679,7 @@
     padding-bottom: 1px;
     position: relative;
   }
-  /* Edge-fade affordance — appears only when tabs overflow horizontally */
+  /* Edge-fade affordance · appears only when tabs overflow horizontally */
   .pda-tabs[data-overflow-right="true"] {
     -webkit-mask-image: linear-gradient(to right, black 0, black calc(100% - 32px), rgba(0,0,0,0.15) 100%);
             mask-image: linear-gradient(to right, black 0, black calc(100% - 32px), rgba(0,0,0,0.15) 100%);
@@ -909,7 +909,7 @@
   .g-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
 
   /* ============================================================
-     MAP — Grille structurée 5 colonnes × 6 rangées
+     MAP · Grille structurée 5 colonnes × 6 rangées
   ============================================================ */
   .map-wrap {
     position: relative;
@@ -996,7 +996,7 @@
   }
 
   /* ============================================================
-     MAP — Carte géographique SVG (vraies frontières TCD-ADM1)
+     MAP · Carte géographique SVG (vraies frontières TCD-ADM1)
   ============================================================ */
   .map-wrap {
     position: relative;
@@ -1179,7 +1179,7 @@
   }
 
   /* ============================================================
-     APERÇU MINISTÉRIEL — Executive dashboard
+     APERÇU MINISTÉRIEL · Executive dashboard
   ============================================================ */
   .ph-exec {
     background: linear-gradient(135deg, var(--gold-tint) 0%, var(--gold-tint) 100%);
@@ -1743,7 +1743,7 @@
   .pill.orange { background: var(--rag-orange-l); color: var(--rag-orange); }
   .pill.red { background: var(--rag-red-l); color: var(--rag-red); }
 
-  /* Province context banner — shown when single province selected */
+  /* Province context banner · shown when single province selected */
   .prov-banner {
     margin: 14px 22px 0;
     padding: 11px 14px;
@@ -1807,7 +1807,7 @@
     background: var(--royal-tint);
   }
 
-  /* SI table — system icon */
+  /* SI table · system icon */
   .si-icon {
     width: 32px; height: 32px;
     border-radius: 6px;
@@ -1824,7 +1824,7 @@
   }
   .si-table td { padding: 11px 12px; }
 
-  /* SI grid — airy cards layout (replaces dense table) */
+  /* SI grid · airy cards layout (replaces dense table) */
   .si-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
@@ -1970,7 +1970,7 @@
     font-family: var(--font-mono);
   }
 
-  /* AI Box — Santex (lecture algorithmique) */
+  /* AI Box · Santex (lecture algorithmique) */
   .ai-box {
     background: linear-gradient(135deg, var(--royal-d) 0%, var(--royal) 60%, var(--royal-l) 130%);
     border-radius: var(--radius);
@@ -2215,10 +2215,10 @@
     .g-2-1, .g-1-2 { grid-template-columns: 1fr; }
   }
   /* ============================================================
-     RESPONSIVE — Mobile-first hamburger drawer + stacked layouts
+     RESPONSIVE · Mobile-first hamburger drawer + stacked layouts
   ============================================================ */
 
-  /* Hamburger button — hidden by default, shown on mobile */
+  /* Hamburger button · hidden by default, shown on mobile */
   .sb-hamburger {
     display: none;
     width: 38px; height: 38px;
@@ -2275,12 +2275,12 @@
     .sb-hamburger { display: flex; }
     .sb-backdrop { display: block; }
 
-    /* Universal grid stacking — applies to ALL pages */
+    /* Universal grid stacking · applies to ALL pages */
     .g-1-1, .g-3 { grid-template-columns: 1fr !important; gap: 10px !important; }
     .g-2-1, .g-1-2 { grid-template-columns: 1fr !important; }
     .pda-prov-grid { grid-template-columns: 1fr !important; }
 
-    /* Tables — make any large table horizontally scrollable */
+    /* Tables · make any large table horizontally scrollable */
     .card-body { min-width: 0; }
     .card-body table {
       display: block;
@@ -2293,7 +2293,7 @@
       font-size: 11px;
       padding: 7px 8px;
     }
-    /* Edge-fade affordance — appears only when the table overflows horizontally */
+    /* Edge-fade affordance · appears only when the table overflows horizontally */
     .card-body table[data-overflow-right="true"] {
       -webkit-mask-image: linear-gradient(to right, black 0, black calc(100% - 32px), rgba(0,0,0,0.18) 100%);
               mask-image: linear-gradient(to right, black 0, black calc(100% - 32px), rgba(0,0,0,0.18) 100%);
@@ -2307,7 +2307,7 @@
               mask-image: linear-gradient(to right, rgba(0,0,0,0.18) 0, black 32px, black 100%);
     }
 
-    /* ai-box — clip decorative ::after to prevent phantom horizontal overflow */
+    /* ai-box · clip decorative ::after to prevent phantom horizontal overflow */
     .ai-box {
       overflow-wrap: anywhere;
       word-break: break-word;
@@ -2498,7 +2498,7 @@
     .ef-label { font-size: 9px; }
     .ef-val { font-size: 11.5px; }
 
-    /* Map — keep grid but shrink */
+    /* Map · keep grid but shrink */
     .map-wrap {
       padding: 14px 12px;
       display: flex;
@@ -2539,7 +2539,7 @@
       box-sizing: border-box;
       order: 4;
     }
-    /* Toolbar — switch from absolute overlay to normal flow above the SVG
+    /* Toolbar · switch from absolute overlay to normal flow above the SVG
        so it is never hidden by the fixed header on small screens */
     .map-toolbar {
       position: static;
@@ -2627,7 +2627,7 @@
     .mc-val { font-size: 10.5px; }
     .mc-pda { font-size: 6.5px; letter-spacing: 0.4px; }
 
-    /* Toolbar — keep static + compact, hide labels */
+    /* Toolbar · keep static + compact, hide labels */
     .map-toolbar { gap: 5px; margin-bottom: 6px; }
     .map-tb-label { display: none; }
     .map-tb-group { height: 28px; }
@@ -2636,7 +2636,7 @@
     .map-mode-toggle { padding: 2px; margin-bottom: 8px; }
     .mm-btn { padding: 4px 8px; font-size: 10px; }
 
-    /* Smaller lang switcher on phone — initials only */
+    /* Smaller lang switcher on phone · initials only */
     .lang-btn { padding: 4px 6px; font-size: 10px; min-width: 28px; }
   }
   .pill.na { background:var(--border); color:var(--muted); }
@@ -2778,7 +2778,7 @@
   }
 
   /* ============================================================
-     REFONTE VISUELLE — SURCHARGES (note de design)
+     REFONTE VISUELLE · SURCHARGES (note de design)
      Additives : aucune regle existante supprimee, la cascade tranche.
   ============================================================ */
   :focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 4px; }
@@ -2866,7 +2866,7 @@
   .map-grain-toggle { margin-bottom: 6px; }
   .map-legend-note { font-size:10px; color:var(--muted); margin-top:5px; line-height:1.45; max-width:200px; }
 
-  /* ====== VUE DELIVERY UNIT — Priorité vaccination ====== */
+  /* ====== VUE DELIVERY UNIT · Priorité vaccination ====== */
   .du-piliers { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:16px; }
   .du-pilier { background:var(--surface); border-radius:var(--radius); padding:16px 16px 14px; box-shadow:var(--shadow-sm); }
   .du-pilier-tete { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; min-height:56px; }
@@ -3405,6 +3405,12 @@
 .cid-src em{font-style:normal;font-weight:500;opacity:.75;margin-left:5px}
 .cid-src.off{opacity:.45}
 @media (max-width:760px){.cid-kpi10{grid-template-columns:1fr}.cid-al-grille{grid-template-columns:1fr}}
+
+  /* En-tete de bloc dans la barre laterale (refonte hierarchie) */
+  .sb-bloc { padding: 15px 14px 6px; font-size: 9.5px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted-2);
+    border-top: 1px solid var(--border); margin-top: 4px; }
+  #prog-list > .sb-bloc:first-child { border-top: none; margin-top: 0; }
 </style>
 </head>
 <body>
@@ -3440,11 +3446,11 @@
         <input class="sb-search-box" id="search-input" placeholder="Rechercher un indicateur..." />
       </div>
     </div>
-    <div class="sb-section" id="lbl-programs">Programmes</div>
+    <div class="sb-section" id="lbl-programs" style="display:none">Programmes</div>
     <div id="prog-list"></div>
     <div class="sb-footer">
       <div class="sb-footer-title" id="lbl-cycle-title">Cycle de données</div>
-      <span id="lbl-cycle-desc">M+5 — Données transmises J+1 à J+5 · Extraction J+5 · Production rapports J+7</span><br>
+      <span id="lbl-cycle-desc">M+5 · Données transmises J+1 à J+5 · Extraction J+5 · Production rapports J+7</span><br>
       <span id="lbl-next-review">Prochaine revue : Mer. 20 mai · 12h00</span>
     </div>
   </aside>
@@ -3460,44 +3466,44 @@
 "use strict";
 
 /* ==============================================================
-   DATA — Provinces, Programs, Indicators
+   DATA · Provinces, Programs, Indicators
 ============================================================== */
 
-// 23 PROVINCES TCHAD — Grille 5 colonnes × 6 rangées (W→E, N→S)
+// 23 PROVINCES TCHAD · Grille 5 colonnes × 6 rangées (W→E, N→S)
 const PROVINCES = [
-  // Row 1 — Sahara (nord)
+  // Row 1 · Sahara (nord)
   { id:"TIB", name:"Tibesti",            short:"Tibesti",    gR:1, gC:1 },
   { id:"BRK", name:"Borkou",             short:"Borkou",     gR:1, gC:2 },
   { id:"EOU", name:"Ennedi-Ouest",       short:"Ennedi-O.",  gR:1, gC:3 },
   { id:"EES", name:"Ennedi-Est",         short:"Ennedi-E.",  gR:1, gC:4 },
-  // Row 2 — Sahel
+  // Row 2 · Sahel
   { id:"KAN", name:"Kanem",              short:"Kanem",      gR:2, gC:1 },
   { id:"BAR", name:"Bahr-el-Gazel",      short:"BeG",        gR:2, gC:2 },
   { id:"BAT", name:"Batha",              short:"Batha",      gR:2, gC:3 },
   { id:"WAD", name:"Wadi-Fira",          short:"Wadi-Fira",  gR:2, gC:4 },
-  // Row 3 — Centre-Nord
+  // Row 3 · Centre-Nord
   { id:"LAC", name:"Lac",                short:"Lac",        gR:3, gC:1 },
   { id:"HDL", name:"Hadjer-Lamis",       short:"Hadjer-L.",  gR:3, gC:2 },
   { id:"GUE", name:"Guéra",              short:"Guéra",      gR:3, gC:3 },
   { id:"OUA", name:"Ouaddaï",            short:"Ouaddaï",    gR:3, gC:4 },
-  // Row 4 — Centre
+  // Row 4 · Centre
   { id:"NDJ", name:"N'Djamena",          short:"N'Djamena",  gR:4, gC:1 },
   { id:"CBG", name:"Chari-Baguirmi",     short:"Chari-B.",   gR:4, gC:2 },
   { id:"SAL", name:"Salamat",            short:"Salamat",    gR:4, gC:3 },
   { id:"SIL", name:"Sila",               short:"Sila",       gR:4, gC:4 },
-  // Row 5 — Sud-Centre
+  // Row 5 · Sud-Centre
   { id:"MKO", name:"Mayo-Kebbi-Ouest",   short:"M-Kebbi-O",  gR:5, gC:1 },
   { id:"MKE", name:"Mayo-Kebbi-Est",     short:"M-Kebbi-E",  gR:5, gC:2 },
   { id:"TAN", name:"Tandjilé",           short:"Tandjilé",   gR:5, gC:3 },
   { id:"MAN", name:"Mandoul",            short:"Mandoul",    gR:5, gC:4 },
   { id:"MCH", name:"Moyen-Chari",        short:"Moyen-C.",   gR:5, gC:5 },
-  // Row 6 — Extrême Sud
+  // Row 6 · Extrême Sud
   { id:"LOO", name:"Logone-Occidental",  short:"Logone-O",   gR:6, gC:2 },
   { id:"LOE", name:"Logone-Oriental",    short:"Logone-Or",  gR:6, gC:3 },
 ];
 
-// 3 PROVINCES PDA — Protocole d'Accord (Gates/GAVI immunisation)
-// 16 PROVINCES PDA — Protocole d'Accord (Gates Foundation × MSPP)
+// 3 PROVINCES PDA · Protocole d'Accord (Gates/GAVI immunisation)
+// 16 PROVINCES PDA · Protocole d'Accord (Gates Foundation × MSPP)
 // Batha, Chari-Baguirmi, Guéra, Hadjer-Lamis, Kanem, Lac, Logone-Occidental,
 // Logone-Oriental, Mayo-Kebbi-Est, N'Djamena, Ouaddaï, Sila, Wadi-Fira, Salamat, Mandoul, Tandjilé
 const PDA_PROVINCES = [
@@ -3507,13 +3513,13 @@ const PDA_PROVINCES = [
 ];
 
 // ==============================================================
-// ZONES AGROCLIMATIQUES — Classification écologique du Tchad
+// ZONES AGROCLIMATIQUES · Classification écologique du Tchad
 // ==============================================================
 const ZONES = {
   SAH: {
     id:"SAH",
     name:"Saharienne",
-    desc:"Zone désertique nord — pluviométrie < 200 mm/an",
+    desc:"Zone désertique nord · pluviométrie < 200 mm/an",
     color:"#E8D9B5",
     textDark:true,
     count:4,
@@ -3521,7 +3527,7 @@ const ZONES = {
   SHL: {
     id:"SHL",
     name:"Sahélienne",
-    desc:"Zone semi-aride centre — 200 à 800 mm/an",
+    desc:"Zone semi-aride centre · 200 à 800 mm/an",
     color:"#A36A2D",
     textDark:false,
     count:12,
@@ -3529,7 +3535,7 @@ const ZONES = {
   SDN: {
     id:"SDN",
     name:"Soudanienne",
-    desc:"Zone humide sud — 800 à 1 200 mm/an",
+    desc:"Zone humide sud · 800 à 1 200 mm/an",
     color:"#1E3A5F",
     textDark:false,
     count:7,
@@ -3538,13 +3544,13 @@ const ZONES = {
 
 // Mapping province → zone (référence : classification agroclimatique nationale)
 const PROV_ZONE = {
-  // Saharienne (4) — extrême nord
+  // Saharienne (4) · extrême nord
   TIB:"SAH", BRK:"SAH", EOU:"SAH", EES:"SAH",
-  // Sahélienne (12) — bande centrale
+  // Sahélienne (12) · bande centrale
   KAN:"SHL", BAR:"SHL", BAT:"SHL", WAD:"SHL",
   LAC:"SHL", HDL:"SHL", GUE:"SHL", OUA:"SHL",
   NDJ:"SHL", CBG:"SHL", SAL:"SHL", SIL:"SHL",
-  // Soudanienne (7) — sud
+  // Soudanienne (7) · sud
   MKO:"SDN", MKE:"SDN", TAN:"SDN", MAN:"SDN",
   MCH:"SDN", LOO:"SDN", LOE:"SDN",
 };
@@ -3624,70 +3630,68 @@ const PDA_IND = {
    PROGRAMS structure
 ============================================================== */
 const PROGRAMS = [
+  // ===== PILOTAGE =====
   {
     id:"min", c:"min", icon:"MIN", label:"Aperçu ministériel",
-    dir:"CABINET", priority:true,
+    dir:"CABINET", priority:true, groupe:"Pilotage",
     sub:[
       { id:"min-overview", i18n_key:"sub_min_overview", label:"Tableau de bord 10 KPI", status:"yellow" },
     ]
   },
+  // ===== VEILLE ET RIPOSTE =====
   {
-    id:"sao", c:"vacc", icon:"SAO", label:"Sao Health Challenge",
-    dir:"UPS-SANTÉ", priority:true,
+    id:"cousp", c:"cousp", icon:"CHO", label:"Surveillance · Choléra",
+    dir:"COUSP", groupe:"Veille et riposte",
     sub:[
-      { id:"sao-league", i18n_key:"sub_sao_league", label:"Classement des provinces", status:"green" },
+      { id:"cousp-sitrep",  i18n_key:"sub_cousp_sitrep", label:"Rapport de situation", status:"red" },
+      { id:"cousp-alert",   i18n_key:"sub_cousp_alerts", label:"Foyers actifs",       status:"orange" },
+      { id:"cousp-surv",    i18n_key:"sub_cousp_surv",   label:"Riposte au choléra",  status:"red" },
+      { id:"cousp-deepdive", i18n_key:"sub_cousp_dd",    label:"Analyse approfondie", status:"red" },
     ]
   },
-  {
-    id:"explor", c:"min", icon:"EXP", label:"Explorateur & alertes",
-    dir:"UPS-SANTÉ",
-    sub:[
-      { id:"explor-comp",  label:"Comparateur de provinces", status:"green" },
-      { id:"explor-alert", label:"Alertes actives",          status:"green" },
-      { id:"explor-rech",  label:"Recherche & export",       status:"green" },
-    ]
-  },
+  // ===== PROGRAMMES PRIORITAIRES =====
   {
     id:"vacc", c:"vacc", icon:"PEV", label:"Vaccination · PEV",
-    dir:"DLMVSE",
+    dir:"DLMVSE", groupe:"Programmes prioritaires",
     sub:[
-      { id:"vacc-overview",  i18n_key:"sub_vacc_overview", label:"Vue d'ensemble",      status:"green" },
       { id:"vacc-couv",      i18n_key:"sub_vacc_couv",     label:"Couverture vaccinale",status:"green" },
       { id:"vacc-zd",        i18n_key:"sub_vacc_zd",       label:"Zéro-dose",           status:"orange" },
-      { id:"vacc-palu",      i18n_key:"sub_vacc_palu",     label:"Vaccin antipaludique",status:"yellow" },
       { id:"vacc-surv",      i18n_key:"sub_vacc_surv",     label:"Surveillance épidémio.", status:"green" },
       { id:"vacc-intrants",  i18n_key:"sub_vacc_intrants", label:"Vaccins & intrants",  status:"ok" },
+      { id:"vacc-palu",      i18n_key:"sub_vacc_palu",     label:"Vaccin antipaludique",status:"yellow" },
+      { id:"vacc-pda",       i18n_key:"sub_vacc_pda",      label:"PDA · Protocole d'Accord", status:"yellow", pda:true },
       { id:"vacc-cold",      i18n_key:"sub_vacc_cold",     label:"Chaîne du froid",     status:"na", attente:"eSMT" },
-      { id:"vacc-pda",       i18n_key:"sub_vacc_pda",      label:"PDA — Protocole d'Accord", status:"yellow", pda:true },
-      { id:"vacc-coord",     status:"na", attente:"Coordination", i18n_key:"sub_vacc_coord",    label:"Coordination",        status:"green" },
+      { id:"vacc-coord",     i18n_key:"sub_vacc_coord",    label:"Coordination",        status:"na", attente:"Coordination" },
+      { id:"vacc-overview",  i18n_key:"sub_vacc_overview", label:"Vue d'ensemble",      status:"green" },
     ]
   },
   {
     id:"dsr", c:"dsr", icon:"DSR", label:"Santé Reproductive",
-    dir:"DSR",
+    dir:"DSR", groupe:"Programmes prioritaires",
     sub:[
-      { id:"dsr-overview",  i18n_key:"sub_dsr_overview", label:"Vue d'ensemble",       status:"orange" },
       { id:"dsr-mat",       i18n_key:"sub_dsr_mat",      label:"Santé maternelle",     status:"red" },
       { id:"dsr-pf",        i18n_key:"sub_dsr_pf",       label:"Planification familiale",status:"orange" },
-      { id:"dsr-com",       i18n_key:"sub_dsr_com",      label:"Santé communautaire",  status:"na", attente:"Communautaire" },
       { id:"dsr-stock",     i18n_key:"sub_dsr_stocks",   label:"Stocks produits SR",   status:"orange" },
+      { id:"dsr-com",       i18n_key:"sub_dsr_com",      label:"Santé communautaire",  status:"na", attente:"Communautaire" },
+      { id:"dsr-overview",  i18n_key:"sub_dsr_overview", label:"Vue d'ensemble",       status:"orange" },
     ]
   },
   {
     id:"prog", c:"prog", icon:"PRG", label:"Programmes verticaux",
-    dir:"DLMVSE",
+    dir:"DLMVSE", groupe:"Programmes prioritaires",
     sub:[
-      { id:"prog-palu",     i18n_key:"sub_prg_palu", label:"PNLP — Paludisme",     status:"orange" },
-      { id:"prog-vih",      i18n_key:"sub_prg_vih",  label:"PSLS — VIH/Sida",      status:"yellow" },
+      { id:"prog-palu",     i18n_key:"sub_prg_palu", label:"PNLP · Paludisme",     status:"orange" },
       { id:"prog-nut",      label:"Nutrition",              status:"ok" },
+      { id:"prog-vih",      i18n_key:"sub_prg_vih",  label:"PSLS · VIH/Sida",      status:"yellow" },
       { id:"prog-soins",    label:"Soins curatifs",         status:"ok" },
       { id:"prog-recouv",   label:"Recouvrement des coûts", status:"ok" },
-      { id:"prog-tb",       i18n_key:"sub_prg_tb",   label:"PNLT — Tuberculose",   status:"na", attente:"PNT" },
+      { id:"prog-tb",       i18n_key:"sub_prg_tb",   label:"PNLT · Tuberculose",   status:"na", attente:"PNT" },
     ]
   },
+  // ===== FONCTIONS D'APPUI =====
   {
     id:"dpml", c:"dpml", icon:"LOG", label:"Logistique · Intrants",
-    dir:"DGPML",
+    dir:"DGPML", groupe:"Fonctions d'appui",
     sub:[
       { id:"dpml-dispo",    i18n_key:"sub_log_dispo", label:"Stocks de fin de mois",status:"green" },
       { id:"dpml-rupt",     i18n_key:"sub_log_rupt",  label:"Ruptures de stock",    status:"red" },
@@ -3695,39 +3699,46 @@ const PROGRAMS = [
     ]
   },
   {
-    id:"drh", c:"drh", masque:true, icon:"RH", label:"Ressources Humaines",
-    dir:"DRH",
-    sub:[
-      { id:"drh-effectifs", i18n_key:"sub_rh_eff",  label:"Effectifs personnel",  status:"orange" },
-      { id:"drh-vacance",   i18n_key:"sub_rh_vac",  label:"Postes vacants",       status:"red" },
-      { id:"drh-formation", i18n_key:"sub_rh_form", label:"Formations",           status:"yellow" },
-    ]
-  },
-  {
-    id:"cousp", c:"cousp", icon:"CHO", label:"Surveillance · Choléra",
-    dir:"COUSP",
-    sub:[
-      { id:"cousp-sitrep",  i18n_key:"sub_cousp_sitrep", label:"Rapport de situation", status:"red" },
-      { id:"cousp-surv",    i18n_key:"sub_cousp_surv",   label:"Riposte au choléra",  status:"red" },
-      { id:"cousp-alert",   i18n_key:"sub_cousp_alerts", label:"Foyers actifs",       status:"orange" },
-      { id:"cousp-deepdive", i18n_key:"sub_cousp_dd",    label:"Analyse approfondie", status:"red" },
-    ]
-  },
-  {
     id:"dpsis", c:"dpsis", icon:"SI", label:"Système d'Information",
-    dir:"DPSIS",
+    dir:"DPSIS", groupe:"Fonctions d'appui",
     sub:[
       { id:"dpsis-comp",    i18n_key:"sub_dpsis_comp", label:"Complétude & promptitude",  status:"yellow" },
       { id:"dpsis-qual",    i18n_key:"sub_dpsis_qual", label:"Qualité des données",  status:"green" },
       { id:"dpsis-carte",   label:"Carte sanitaire · Répertoire", status:"green" },
     ]
   },
+  {
+    id:"drh", c:"drh", masque:true, icon:"RH", label:"Ressources Humaines",
+    dir:"DRH", groupe:"Fonctions d'appui",
+    sub:[
+      { id:"drh-vacance",   i18n_key:"sub_rh_vac",  label:"Postes vacants",       status:"red" },
+      { id:"drh-effectifs", i18n_key:"sub_rh_eff",  label:"Effectifs personnel",  status:"orange" },
+      { id:"drh-formation", i18n_key:"sub_rh_form", label:"Formations",           status:"yellow" },
+    ]
+  },
+  // ===== OUTILS TRANSVERSAUX =====
+  {
+    id:"explor", c:"min", icon:"EXP", label:"Explorateur & alertes",
+    dir:"UPS-SANTÉ", groupe:"Outils transversaux",
+    sub:[
+      { id:"explor-comp",  label:"Comparateur de provinces", status:"green" },
+      { id:"explor-alert", label:"Alertes actives",          status:"green" },
+      { id:"explor-rech",  label:"Recherche & export",       status:"green" },
+    ]
+  },
+  {
+    id:"sao", c:"vacc", icon:"SAO", label:"Sao Health Challenge",
+    dir:"UPS-SANTÉ", groupe:"Outils transversaux",
+    sub:[
+      { id:"sao-league", i18n_key:"sub_sao_league", label:"Classement des provinces", status:"green" },
+    ]
+  },
 ];
 
 /* ==============================================================
-   DUMMY DATA GENERATOR — Seeded, coherent
+   DUMMY DATA GENERATOR · Seeded, coherent
 ============================================================== */
-// Seeded random per (province, indicator, month) — gives stable but realistic numbers
+// Seeded random per (province, indicator, month) · gives stable but realistic numbers
 
 // Generate value for a metric × province
 function genValue(metric, provId, monthOffset = 0) {
@@ -3996,7 +4007,7 @@ function sparklineData(metric, scope = "national") {
   return series;
 }
 
-// National (weighted) aggregate value — respects provinceFilter
+// National (weighted) aggregate value · respects provinceFilter
 function nationalAggregate(metric, scope = "national") {
   // Individual province filter takes priority
   if (state.provinceFilter) {
@@ -4230,7 +4241,7 @@ function setPevAntigene(code) { state.pevAntigene = code; renderMain(); }
 function clearMapZoomProv() { state.mapZoomProv = null; renderMain(); }
 
 /* ==============================================================
-   SAO HEALTH CHALLENGE — moteur de classement (ILT subnational)
+   SAO HEALTH CHALLENGE · moteur de classement (ILT subnational)
 ============================================================== */
 let SAO = { indicateurs: [], en_attente: [], paliers: { eleve: 80, modere: 60 } };
 function saoT(fr, en, ar) { return state.lang === "en" ? en : state.lang === "ar" ? ar : fr; }
@@ -4334,8 +4345,8 @@ const fmt = n => {
    STATE
 ============================================================== */
 const state = {
-  program: "vacc",
-  sub: "vacc-overview",
+  program: "min",
+  sub: "min-overview",
   scope: "national",
   pdaDomain: "overview",
   periodMode: "month",
@@ -4355,7 +4366,7 @@ const state = {
 };
 
 // ==============================================================
-// I18N — Système multilingue
+// I18N · Système multilingue
 // ==============================================================
 const I18N = {
   fr: {
@@ -4366,7 +4377,7 @@ const I18N = {
     search_indicator: "Rechercher un indicateur...",
     programs: "Programmes",
     cycle: "Cycle de données",
-    cycle_desc: "M+5 — Données transmises J+1 à J+5 · Extraction J+5 · Production rapports J+7",
+    cycle_desc: "M+5 · Données transmises J+1 à J+5 · Extraction J+5 · Production rapports J+7",
     next_review: "Prochaine revue : Mer. 20 mai · 12h00",
     period_label: "Période",
     view_label: "Vue",
@@ -4406,17 +4417,17 @@ const I18N = {
     sub_vacc_surv: "Surveillance épidémio.",
     sub_vacc_intrants: "Vaccins & intrants",
     sub_vacc_cold: "Chaîne du froid",
-    sub_vacc_pda: "PDA — Protocole d'Accord",
+    sub_vacc_pda: "PDA · Protocole d'Accord",
     sub_vacc_coord: "Coordination",
     sub_dsr_overview: "Vue d'ensemble",
     sub_dsr_mat: "Santé maternelle",
     sub_dsr_pf: "Planification familiale",
     sub_dsr_com: "Santé communautaire",
     sub_dsr_stocks: "Stocks produits SR",
-    sub_prg_palu: "PNLP — Paludisme",
-    sub_prg_vih: "PSLS — VIH",
-    sub_prg_tb: "PNLT — Tuberculose",
-    sub_log_dispo: "Disponibilité traceurs",
+    sub_prg_palu: "PNLP · Paludisme",
+    sub_prg_vih: "PSLS · VIH",
+    sub_prg_tb: "PNLT · Tuberculose",
+    sub_log_dispo: "Stocks de fin de mois",
     sub_log_rupt: "Ruptures de stock",
     sub_log_perim: "Péremption",
     sub_rh_eff: "Effectifs",
@@ -4430,7 +4441,7 @@ const I18N = {
     sub_dpsis_qual: "Qualité des données",
     santex_tag: "Santex",
     min_tag: "Cabinet du Ministre · Aperçu stratégique",
-    min_title: "Tableau de bord du Ministre — 10 indicateurs clés",
+    min_title: "Tableau de bord du Ministre · 10 indicateurs clés",
     min_subtitle: "Vue synthétique des indicateurs prioritaires du système national de santé",
     min_validation: "Validation J+5",
     exec_tag: "Vue Exécutive · Cabinet du Ministre",
@@ -4448,15 +4459,15 @@ const I18N = {
     production: "Production",
     salle_indicateurs: "Salle des Indicateurs · UPS-Santé",
     next_min_date: "Mercredi 20 mai 2026 · 12h00",
-    kpi_penta3: "Couverture vaccinale — Penta 3",
-    kpi_accouch: "Accouchements assistés — Personnel qualifié",
-    kpi_mcpr: "mCPR — Prévalence contraceptive moderne",
+    kpi_penta3: "Couverture vaccinale · Penta 3",
+    kpi_accouch: "Accouchements assistés · Personnel qualifié",
+    kpi_mcpr: "mCPR · Prévalence contraceptive moderne",
     kpi_dispo: "Disponibilité médicaments traceurs",
     kpi_alertes: "Alertes épidémiologiques actives",
     kpi_prom_tloh: "Promptitude notification TLOH hebdo",
     kpi_rep_alertes: "Délai de réponse aux alertes < 48h",
-    kpi_comp_rma: "Complétude RMA mensuel — DHIS2",
-    kpi_score_pda: "Score global PDA — 16 provinces pilotes",
+    kpi_comp_rma: "Complétude RMA mensuel · DHIS2",
+    kpi_score_pda: "Score global PDA · 16 provinces pilotes",
     kpi_exec_budget: "Taux d'exécution budgétaire MSPP",
     cat_vacc_dlmvse: "Vaccination · DLMVSE",
     cat_mat_dsr: "Santé maternelle · DSR",
@@ -4478,12 +4489,12 @@ const I18N = {
     act_comp_rma: "Plan de renforcement SIGL T2-T3 (PRSS-II) · Extension DHIS2 Tracker aux 16 provinces PDA",
     act_score_pda: "Débloquer tranche T2 du PDA (820 M FCFA) · Priorité D5 (Logistique) et D7 (Capacités)",
     act_exec_budget: "Accélération T2 : décaissements OEV + Gates · Suivi mensuel par le Cabinet",
-    santex_a_title: "Couverture & Impact — Lecture exécutive",
-    santex_b_title: "Surveillance & Urgences — Lecture exécutive",
-    santex_c_title: "Pilotage & Engagements — Lecture exécutive",
+    santex_a_title: "Couverture & Impact · Lecture exécutive",
+    santex_b_title: "Surveillance & Urgences · Lecture exécutive",
+    santex_c_title: "Pilotage & Engagements · Lecture exécutive",
     vacc_ph_tag: "Programme Élargi de Vaccination · DLMVSE",
     vacc_ph_title: "Immunisation · Vue d'ensemble nationale",
-    vacc_ph_sub: "Indicateurs traceurs du PEV au niveau national — couverture vaccinale, abandons, enfants zéro-dose et chaîne du froid.",
+    vacc_ph_sub: "Indicateurs traceurs du PEV au niveau national · couverture vaccinale, abandons, enfants zéro-dose et chaîne du froid.",
     vacc_k_penta3: "Couverture Penta 3",
     vacc_k_var2: "Couverture VAR 2",
     vacc_k_abandon: "Abandon Penta1→Penta3",
@@ -4493,7 +4504,7 @@ const I18N = {
     vacc_k_risk: "Districts à risque épidémie",
     vacc_k_strat: "Stratégies avancées T1",
     pda_ph_tag: "Sous-composante Immunisation · PDA",
-    pda_ph_title: "PDA — Protocole d'Accord (Immunisation)",
+    pda_ph_title: "PDA · Protocole d'Accord (Immunisation)",
     pda_ph_sub: "Cadre d'engagement Gates Foundation × MSPP · 16 provinces pilotes · 7 domaines thématiques · 42 indicateurs traceurs.",
     pda_perimeter: "Périmètre d'analyse PDA",
     pda_scope_default: "Le PDA s'applique exclusivement aux <strong>16 provinces pilotes</strong>",
@@ -4506,18 +4517,18 @@ const I18N = {
     intr_ph_title: "Vaccins, antigènes et intrants vaccinaux",
     intr_ph_sub: "Disponibilité, ruptures, péremption, MSD (mois de stock disponible) · 10 antigènes traceurs + consommables et matériel d'injection.",
     dsr_pf_ph_tag: "Planification Familiale · DSR",
-    dsr_pf_ph_title: "Planification Familiale — Demande et offre",
+    dsr_pf_ph_title: "Planification Familiale · Demande et offre",
     dsr_pf_ph_sub: "mCPR, TPC, couverture PF, abandons. Indicateurs prioritaires de la Situation Room PF (cadre CIFF).",
     dsr_com_ph_tag: "Santé communautaire · DSR / DSC",
-    dsr_com_ph_title: "Santé communautaire — Réseau ASC/DBC",
+    dsr_com_ph_title: "Santé communautaire · Réseau ASC/DBC",
     dsr_com_ph_sub: "Réseau national de 12 000 Agents de Santé Communautaire / Distribution à Base Communautaire.",
     cousp_ph_tag: "Centre d'opérations · COUSP",
-    cousp_ph_title: "Alertes en cours — Surveillance épidémiologique",
+    cousp_ph_title: "Alertes en cours · Surveillance épidémiologique",
     cousp_ph_sub: "Notifications de cas, investigations, réponse aux flambées.",
     si_ph_tag: "DPSIS · Direction du Pilotage et du Système d'Information",
     si_comp_ph_title: "Complétude & promptitude par système d'information",
     si_comp_ph_sub: "Performance des 5 systèmes alimentant la Situation Room · DHIS2, DHIS2 Tracker, SIGL, IHRIS, SMT · Saisie ≤ J+5 et validation district.",
-    si_qual_ph_title: "Qualité des données — DQS / LQAS / Triangulation SIGL",
+    si_qual_ph_title: "Qualité des données · DQS / LQAS / Triangulation SIGL",
     si_qual_ph_sub: "Concordance terrain ↔ agrégé · cohérence inter-systèmes (DHIS2 × SIGL × SMT × Tracker × IHRIS) · sauvegardes et continuité.",
     pda_fb_label: "Périmètre d'analyse PDA",
     pda_scope_default: "Le PDA s'applique exclusivement aux <strong>16 provinces pilotes</strong>",
@@ -4533,14 +4544,14 @@ const I18N = {
     pda_kpi_indicators: "Indicateurs PDA",
     pda_score_composite: "Score composite (7 domaines)",
     pda_card_perf: "Performance par domaine PDA",
-    pda_card_perf_sub: "Score moyen — 16 provinces pilotes PDA",
-    pda_card_perf_sub_focus: "Score moyen — Focus",
+    pda_card_perf_sub: "Score moyen · 16 provinces pilotes PDA",
+    pda_card_perf_sub_focus: "Score moyen · Focus",
     pda_card_map: "Cartographie d'intervention PDA",
     pda_card_map_sub: "16 provinces pilotes en surbrillance",
     pda_target_footer: "Cible : 80% par domaine · 16 provinces PDA",
-    pda_trend_title: "Tendance score global PDA — Année courante vs N-1",
+    pda_trend_title: "Tendance score global PDA · Année courante vs N-1",
     pda_trend_sub: "Comparaison 2026 vs 2025 · 16 provinces PDA · Janvier–Décembre",
-    pda_alerts_title: "Alertes PDA — T1 2026",
+    pda_alerts_title: "Alertes PDA · T1 2026",
     pda_alerts_sub: "Anomalies sur les 16 provinces PDA",
     pda_tabs_overview: "Vue d'ensemble",
     all_activated: "Tous activés",
@@ -4560,7 +4571,7 @@ const I18N = {
     search_indicator: "Search for an indicator...",
     programs: "Programmes",
     cycle: "Data cycle",
-    cycle_desc: "M+5 — Data transmitted D+1 to D+5 · Extraction D+5 · Reports D+7",
+    cycle_desc: "M+5 · Data transmitted D+1 to D+5 · Extraction D+5 · Reports D+7",
     next_review: "Next review: Wed. May 20 · 12:00",
     period_label: "Period",
     view_label: "View",
@@ -4600,17 +4611,17 @@ const I18N = {
     sub_vacc_surv: "Epi surveillance",
     sub_vacc_intrants: "Vaccines & supplies",
     sub_vacc_cold: "Cold chain",
-    sub_vacc_pda: "PDA — Agreement Protocol",
+    sub_vacc_pda: "PDA · Agreement Protocol",
     sub_vacc_coord: "Coordination",
     sub_dsr_overview: "Overview",
     sub_dsr_mat: "Maternal health",
     sub_dsr_pf: "Family planning",
     sub_dsr_com: "Community health",
     sub_dsr_stocks: "RH commodity stocks",
-    sub_prg_palu: "PNLP — Malaria",
-    sub_prg_vih: "PSLS — HIV",
-    sub_prg_tb: "PNLT — Tuberculosis",
-    sub_log_dispo: "Tracer availability",
+    sub_prg_palu: "PNLP · Malaria",
+    sub_prg_vih: "PSLS · HIV",
+    sub_prg_tb: "PNLT · Tuberculosis",
+    sub_log_dispo: "End-of-month stocks",
     sub_log_rupt: "Stock-outs",
     sub_log_perim: "Expiry",
     sub_rh_eff: "Workforce",
@@ -4624,7 +4635,7 @@ const I18N = {
     sub_dpsis_qual: "Data quality",
     santex_tag: "Santex",
     min_tag: "Office of the Minister · Strategic Overview",
-    min_title: "Minister's Dashboard — 10 key indicators",
+    min_title: "Minister's Dashboard · 10 key indicators",
     min_subtitle: "Concise overview of priority indicators of the national health system",
     min_validation: "Validation D+5",
     exec_tag: "Executive View · Minister's Cabinet",
@@ -4642,15 +4653,15 @@ const I18N = {
     production: "Production",
     salle_indicateurs: "Indicators Room · UPS-Health",
     next_min_date: "Wednesday May 20, 2026 · 12:00",
-    kpi_penta3: "Vaccination coverage — Penta 3",
-    kpi_accouch: "Assisted deliveries — Skilled personnel",
-    kpi_mcpr: "mCPR — Modern contraceptive prevalence",
+    kpi_penta3: "Vaccination coverage · Penta 3",
+    kpi_accouch: "Assisted deliveries · Skilled personnel",
+    kpi_mcpr: "mCPR · Modern contraceptive prevalence",
     kpi_dispo: "Tracer medicines availability",
     kpi_alertes: "Active epidemiological alerts",
     kpi_prom_tloh: "Weekly disease notification timeliness",
     kpi_rep_alertes: "Alert response time < 48h",
-    kpi_comp_rma: "Monthly RMA completeness — DHIS2",
-    kpi_score_pda: "Overall PDA score — 16 pilot provinces",
+    kpi_comp_rma: "Monthly RMA completeness · DHIS2",
+    kpi_score_pda: "Overall PDA score · 16 pilot provinces",
     kpi_exec_budget: "MSPP budget execution rate",
     cat_vacc_dlmvse: "Immunization · DLMVSE",
     cat_mat_dsr: "Maternal health · DSR",
@@ -4672,12 +4683,12 @@ const I18N = {
     act_comp_rma: "SIGL strengthening plan Q2-Q3 (PRSS-II) · DHIS2 Tracker extension to 16 PDA provinces",
     act_score_pda: "Unlock PDA Q2 tranche (820 M FCFA) · Priority D5 (Logistics) and D7 (Capacities)",
     act_exec_budget: "Q2 acceleration: OEV + Gates disbursements · Monthly Cabinet monitoring",
-    santex_a_title: "Coverage & Impact — Executive analysis",
-    santex_b_title: "Surveillance & Emergencies — Executive analysis",
-    santex_c_title: "Steering & Commitments — Executive analysis",
+    santex_a_title: "Coverage & Impact · Executive analysis",
+    santex_b_title: "Surveillance & Emergencies · Executive analysis",
+    santex_c_title: "Steering & Commitments · Executive analysis",
     vacc_ph_tag: "Expanded Programme on Immunization · DLMVSE",
     vacc_ph_title: "Immunization · National Overview",
-    vacc_ph_sub: "EPI tracer indicators at national level — vaccination coverage, dropouts, zero-dose children and cold chain.",
+    vacc_ph_sub: "EPI tracer indicators at national level · vaccination coverage, dropouts, zero-dose children and cold chain.",
     vacc_k_penta3: "Penta 3 coverage",
     vacc_k_var2: "MCV 2 coverage",
     vacc_k_abandon: "Penta1→Penta3 dropout",
@@ -4687,7 +4698,7 @@ const I18N = {
     vacc_k_risk: "Outbreak-risk districts",
     vacc_k_strat: "Q1 outreach strategies",
     pda_ph_tag: "Immunization sub-component · PDA",
-    pda_ph_title: "PDA — Agreement Protocol (Immunization)",
+    pda_ph_title: "PDA · Agreement Protocol (Immunization)",
     pda_ph_sub: "Gates Foundation × MSPP engagement framework · 16 pilot provinces · 7 thematic domains · 42 tracer indicators.",
     pda_perimeter: "PDA analytical scope",
     pda_scope_default: "PDA applies exclusively to <strong>16 pilot provinces</strong>",
@@ -4700,18 +4711,18 @@ const I18N = {
     intr_ph_title: "Vaccines, antigens and immunization supplies",
     intr_ph_sub: "Availability, stock-outs, expiry, MSD (months of stock on hand) · 10 tracer antigens + consumables and injection materials.",
     dsr_pf_ph_tag: "Family Planning · DSR",
-    dsr_pf_ph_title: "Family Planning — Demand and supply",
+    dsr_pf_ph_title: "Family Planning · Demand and supply",
     dsr_pf_ph_sub: "mCPR, TPC, FP coverage, dropouts. Priority indicators of the FP Situation Room (CIFF framework).",
     dsr_com_ph_tag: "Community Health · DSR / DSC",
-    dsr_com_ph_title: "Community Health — CHW/CBD Network",
+    dsr_com_ph_title: "Community Health · CHW/CBD Network",
     dsr_com_ph_sub: "National network of 12,000 Community Health Workers / Community-Based Distribution.",
     cousp_ph_tag: "Operations centre · COUSP",
-    cousp_ph_title: "Active alerts — Epidemiological surveillance",
+    cousp_ph_title: "Active alerts · Epidemiological surveillance",
     cousp_ph_sub: "Case notifications, investigations, outbreak response.",
     si_ph_tag: "DPSIS · Information System and Steering Directorate",
     si_comp_ph_title: "Completeness & timeliness by information system",
     si_comp_ph_sub: "Performance of the 5 systems feeding the Situation Room · DHIS2, DHIS2 Tracker, SIGL, IHRIS, SMT · Entry ≤ D+5 and district validation.",
-    si_qual_ph_title: "Data quality — DQS / LQAS / SIGL Triangulation",
+    si_qual_ph_title: "Data quality · DQS / LQAS / SIGL Triangulation",
     si_qual_ph_sub: "Field ↔ aggregate concordance · cross-system consistency (DHIS2 × SIGL × SMT × Tracker × IHRIS) · backups and continuity.",
     pda_fb_label: "PDA analytical scope",
     pda_scope_default: "PDA applies exclusively to <strong>16 pilot provinces</strong>",
@@ -4727,14 +4738,14 @@ const I18N = {
     pda_kpi_indicators: "PDA indicators",
     pda_score_composite: "Composite score (7 domains)",
     pda_card_perf: "Performance by PDA domain",
-    pda_card_perf_sub: "Average score — 16 PDA pilot provinces",
-    pda_card_perf_sub_focus: "Average score — Focus",
+    pda_card_perf_sub: "Average score · 16 PDA pilot provinces",
+    pda_card_perf_sub_focus: "Average score · Focus",
     pda_card_map: "PDA intervention map",
     pda_card_map_sub: "16 pilot provinces highlighted",
     pda_target_footer: "Target: 80% per domain · 16 PDA provinces",
-    pda_trend_title: "PDA overall score trend — Current year vs Y-1",
+    pda_trend_title: "PDA overall score trend · Current year vs Y-1",
     pda_trend_sub: "Comparison 2026 vs 2025 · 16 PDA provinces · Rolling 12 months",
-    pda_alerts_title: "PDA Alerts — Q1 2026",
+    pda_alerts_title: "PDA Alerts · Q1 2026",
     pda_alerts_sub: "Anomalies across the 16 PDA provinces",
     pda_tabs_overview: "Overview",
     all_activated: "All activated",
@@ -4754,7 +4765,7 @@ const I18N = {
     search_indicator: "البحث عن مؤشر...",
     programs: "البرامج",
     cycle: "دورة البيانات",
-    cycle_desc: "ش+5 — البيانات المرسلة من ي+1 إلى ي+5 · الاستخراج ي+5 · التقارير ي+7",
+    cycle_desc: "ش+5 · البيانات المرسلة من ي+1 إلى ي+5 · الاستخراج ي+5 · التقارير ي+7",
     next_review: "المراجعة القادمة: الأربعاء 20 مايو · 12:00",
     period_label: "الفترة",
     view_label: "العرض",
@@ -4794,7 +4805,7 @@ const I18N = {
     sub_vacc_surv: "المراقبة الوبائية",
     sub_vacc_intrants: "اللقاحات والمدخلات",
     sub_vacc_cold: "سلسلة التبريد",
-    sub_vacc_pda: "PDA — بروتوكول الاتفاق",
+    sub_vacc_pda: "PDA · بروتوكول الاتفاق",
     sub_vacc_coord: "التنسيق",
     sub_dsr_overview: "نظرة عامة",
     sub_dsr_mat: "صحة الأم",
@@ -4804,7 +4815,7 @@ const I18N = {
     sub_prg_palu: "البرنامج الوطني لمكافحة الملاريا",
     sub_prg_vih: "البرنامج الوطني للإيدز",
     sub_prg_tb: "البرنامج الوطني للسل",
-    sub_log_dispo: "توفر المنتجات التتبعية",
+    sub_log_dispo: "مخزون نهاية الشهر",
     sub_log_rupt: "نفاذ المخزون",
     sub_log_perim: "انتهاء الصلاحية",
     sub_rh_eff: "القوى العاملة",
@@ -4818,7 +4829,7 @@ const I18N = {
     sub_dpsis_qual: "جودة البيانات",
     santex_tag: "سانتكس",
     min_tag: "ديوان الوزير · النظرة الاستراتيجية",
-    min_title: "لوحة معلومات الوزير — 10 مؤشرات رئيسية",
+    min_title: "لوحة معلومات الوزير · 10 مؤشرات رئيسية",
     min_subtitle: "نظرة موجزة على المؤشرات ذات الأولوية للنظام الصحي الوطني",
     min_validation: "التحقق ي+5",
     exec_tag: "العرض التنفيذي · ديوان الوزير",
@@ -4836,15 +4847,15 @@ const I18N = {
     production: "الإنتاج",
     salle_indicateurs: "قاعة المؤشرات · وحدة التوجيه الاستراتيجي",
     next_min_date: "الأربعاء 20 مايو 2026 · 12:00",
-    kpi_penta3: "تغطية التطعيم — بنتا 3",
+    kpi_penta3: "تغطية التطعيم · بنتا 3",
     kpi_accouch: "الولادات بمساعدة موظفين مؤهلين",
     kpi_mcpr: "مؤشر انتشار وسائل منع الحمل الحديثة",
     kpi_dispo: "توفر الأدوية التتبعية",
     kpi_alertes: "التنبيهات الوبائية النشطة",
     kpi_prom_tloh: "سرعة الإبلاغ الأسبوعي للأمراض",
     kpi_rep_alertes: "زمن الاستجابة للتنبيهات < 48 ساعة",
-    kpi_comp_rma: "اكتمال التقارير الشهرية — DHIS2",
-    kpi_score_pda: "النتيجة الإجمالية لـ PDA — 16 إقليم تجريبي",
+    kpi_comp_rma: "اكتمال التقارير الشهرية · DHIS2",
+    kpi_score_pda: "النتيجة الإجمالية لـ PDA · 16 إقليم تجريبي",
     kpi_exec_budget: "معدل تنفيذ ميزانية وزارة الصحة",
     cat_vacc_dlmvse: "التحصين · DLMVSE",
     cat_mat_dsr: "صحة الأم · DSR",
@@ -4866,12 +4877,12 @@ const I18N = {
     act_comp_rma: "خطة تعزيز SIGL ربع 2-3 (PRSS-II) · توسيع DHIS2 Tracker إلى 16 إقليم PDA",
     act_score_pda: "الإفراج عن شريحة PDA الربع 2 (820 مليون فرنك) · الأولوية D5 (اللوجستيات) و D7 (القدرات)",
     act_exec_budget: "تسريع الربع 2: صرف OEV + Gates · المتابعة الشهرية من قبل الديوان",
-    santex_a_title: "التغطية والأثر — قراءة تنفيذية",
-    santex_b_title: "المراقبة والطوارئ — قراءة تنفيذية",
-    santex_c_title: "التوجيه والالتزامات — قراءة تنفيذية",
+    santex_a_title: "التغطية والأثر · قراءة تنفيذية",
+    santex_b_title: "المراقبة والطوارئ · قراءة تنفيذية",
+    santex_c_title: "التوجيه والالتزامات · قراءة تنفيذية",
     vacc_ph_tag: "البرنامج الموسع للتطعيم · DLMVSE",
     vacc_ph_title: "التحصين · النظرة الوطنية",
-    vacc_ph_sub: "مؤشرات تتبع برنامج التطعيم على المستوى الوطني — التغطية، التسرب، الأطفال صفر جرعة وسلسلة التبريد.",
+    vacc_ph_sub: "مؤشرات تتبع برنامج التطعيم على المستوى الوطني · التغطية، التسرب، الأطفال صفر جرعة وسلسلة التبريد.",
     vacc_k_penta3: "تغطية بنتا 3",
     vacc_k_var2: "تغطية لقاح الحصبة 2",
     vacc_k_abandon: "التسرب بنتا 1 → بنتا 3",
@@ -4881,7 +4892,7 @@ const I18N = {
     vacc_k_risk: "المقاطعات المعرضة لخطر التفشي",
     vacc_k_strat: "الاستراتيجيات المتقدمة ربع 1",
     pda_ph_tag: "المكون الفرعي للتحصين · PDA",
-    pda_ph_title: "PDA — بروتوكول الاتفاق (التحصين)",
+    pda_ph_title: "PDA · بروتوكول الاتفاق (التحصين)",
     pda_ph_sub: "إطار التزام مؤسسة غيتس × وزارة الصحة · 16 إقليم تجريبي · 7 مجالات موضوعية · 42 مؤشر تتبع.",
     pda_perimeter: "نطاق تحليل PDA",
     pda_scope_default: "ينطبق PDA حصريًا على <strong>16 إقليم تجريبي</strong>",
@@ -4894,18 +4905,18 @@ const I18N = {
     intr_ph_title: "اللقاحات والمضادات ومدخلات التطعيم",
     intr_ph_sub: "التوفر، نفاذ المخزون، انتهاء الصلاحية، MSD (أشهر المخزون المتاح) · 10 مضادات تتبع + مواد استهلاكية ومعدات الحقن.",
     dsr_pf_ph_tag: "تنظيم الأسرة · DSR",
-    dsr_pf_ph_title: "تنظيم الأسرة — الطلب والعرض",
+    dsr_pf_ph_title: "تنظيم الأسرة · الطلب والعرض",
     dsr_pf_ph_sub: "mCPR، TPC، تغطية تنظيم الأسرة، التسرب. مؤشرات الأولوية لقاعة الوضع PF (إطار CIFF).",
     dsr_com_ph_tag: "الصحة المجتمعية · DSR / DSC",
-    dsr_com_ph_title: "الصحة المجتمعية — شبكة العاملين المجتمعيين",
+    dsr_com_ph_title: "الصحة المجتمعية · شبكة العاملين المجتمعيين",
     dsr_com_ph_sub: "شبكة وطنية من 12000 عامل صحي مجتمعي / التوزيع المجتمعي.",
     cousp_ph_tag: "مركز العمليات · COUSP",
-    cousp_ph_title: "التنبيهات الجارية — المراقبة الوبائية",
+    cousp_ph_title: "التنبيهات الجارية · المراقبة الوبائية",
     cousp_ph_sub: "الإخطار بالحالات والتحقيقات والاستجابة للتفشي.",
     si_ph_tag: "DPSIS · مديرية التوجيه ونظام المعلومات",
     si_comp_ph_title: "الاكتمال والسرعة حسب نظام المعلومات",
     si_comp_ph_sub: "أداء الأنظمة الخمسة التي تغذي قاعة الوضع · DHIS2 وTracker وSIGL وIHRIS وSMT · الإدخال ≤ ي+5 والتحقق على مستوى المقاطعة.",
-    si_qual_ph_title: "جودة البيانات — DQS / LQAS / التثليث SIGL",
+    si_qual_ph_title: "جودة البيانات · DQS / LQAS / التثليث SIGL",
     si_qual_ph_sub: "التطابق بين الميدان والإجمالي · الاتساق بين الأنظمة · النسخ الاحتياطي والاستمرارية.",
     pda_fb_label: "نطاق تحليل PDA",
     pda_scope_default: "ينطبق PDA حصريًا على <strong>16 إقليم تجريبي</strong>",
@@ -4921,14 +4932,14 @@ const I18N = {
     pda_kpi_indicators: "مؤشرات PDA",
     pda_score_composite: "النتيجة المركبة (7 مجالات)",
     pda_card_perf: "الأداء حسب مجال PDA",
-    pda_card_perf_sub: "متوسط النتيجة — 16 إقليم تجريبي PDA",
-    pda_card_perf_sub_focus: "متوسط النتيجة — تركيز",
+    pda_card_perf_sub: "متوسط النتيجة · 16 إقليم تجريبي PDA",
+    pda_card_perf_sub_focus: "متوسط النتيجة · تركيز",
     pda_card_map: "خريطة تدخلات PDA",
     pda_card_map_sub: "16 إقليم تجريبي مميز",
     pda_target_footer: "الهدف: 80% لكل مجال · 16 إقليم PDA",
-    pda_trend_title: "اتجاه نتيجة PDA الإجمالية — السنة الحالية مقابل السنة الماضية",
+    pda_trend_title: "اتجاه نتيجة PDA الإجمالية · السنة الحالية مقابل السنة الماضية",
     pda_trend_sub: "مقارنة 2026 مقابل 2025 · 16 إقليم PDA · آخر 12 شهرًا",
-    pda_alerts_title: "تنبيهات PDA — ربع 1 2026",
+    pda_alerts_title: "تنبيهات PDA · ربع 1 2026",
     pda_alerts_sub: "الانحرافات في الأقاليم الثلاثة عشر PDA",
     pda_tabs_overview: "نظرة عامة",
     all_activated: "الكل مفعل",
@@ -4998,7 +5009,7 @@ function periodLabel() {
 }
 
 /* ==============================================================
-   RENDER — Sidebar
+   RENDER · Sidebar
 ============================================================== */
 function renderSidebar() {
   // i18n key per program id (sub labels handled via sub.i18n_key)
@@ -5007,9 +5018,12 @@ function renderSidebar() {
     prog: "prog_prg", dpml: "prog_log", drh: "prog_rh",
     cousp: "prog_cousp", dpsis: "prog_dpsis"
   };
+  let grpCourant = null;
   const html = PROGRAMS.filter(p => !p.masque).map(p => {
     const label = progI18nKey[p.id] ? t(progI18nKey[p.id]) : p.label;
-    return `
+    const enTete = (p.groupe && p.groupe !== grpCourant)
+      ? `<div class="sb-bloc">${(grpCourant = p.groupe)}</div>` : (p.groupe && (grpCourant = p.groupe), "");
+    return enTete + `
     <div class="prog ${p.priority ? 'priority' : ''}" data-prog="${p.id}" data-c="${p.c}">
       <div class="prog-head" onclick="toggleProgram('${p.id}')">
         <div class="prog-icon">${p.icon}</div>
@@ -5093,7 +5107,7 @@ function renderMain() {
 }
 
 /* ==============================================================
-   RENDER — Main content
+   RENDER · Main content
 ============================================================== */
 function renderMainNoyau() {
   const view = VIEWS[state.sub] || (() => placeholderView(state.sub));
@@ -5190,7 +5204,7 @@ function renderTopbar(v) {
     "Vaccins & intrants": "sub_vacc_intrants",
     "Chaîne du froid": "sub_vacc_cold",
     "Coordination": "sub_vacc_coord",
-    "PDA — Protocole d'Accord": "sub_vacc_pda",
+    "PDA · Protocole d'Accord": "sub_vacc_pda",
     "Planification familiale": "sub_dsr_pf",
     "Santé communautaire": "sub_dsr_com",
     "Santé maternelle": "sub_dsr_mat",
@@ -5244,7 +5258,7 @@ function renderTopbar(v) {
 
       <div class="tb-actions">
         <button class="tb-btn" onclick="ouvrirSeuils()" title="Définir les seuils vert / jaune / orange / rouge">⚙ Seuils</button>
-        <button class="tb-btn" onclick="ouvrirExportPDF()" title="Exporter en PDF — tout ou partie du tableau de bord">⬇ PDF</button>
+        <button class="tb-btn" onclick="ouvrirExportPDF()" title="Exporter en PDF · tout ou partie du tableau de bord">⬇ PDF</button>
       </div>
       <div class="scope-block">
         <span class="time-label">${t("view_label")}</span>
@@ -5582,7 +5596,7 @@ function setMapMode(mode) {
 }
 
 /* ==============================================================
-   MAP — Size / Zoom / Pan interactive controls
+   MAP · Size / Zoom / Pan interactive controls
 ============================================================== */
 function currentMapViewBox() {
   if (state.mapZoomProv) {
@@ -5699,7 +5713,7 @@ function setupScrollableTabs() {
         el.addEventListener('scroll', update, { passive: true });
         window.addEventListener('resize', update, { passive: true });
       }
-      // Auto-scroll active item into view (tabs only — tables don't have one)
+      // Auto-scroll active item into view (tabs only · tables don't have one)
       if (activeSel) {
         const active = el.querySelector(activeSel);
         if (active) {
@@ -5843,7 +5857,7 @@ function setMinSection(s) {
 const VIEWS = {};
 
 // =================================================================
-// APERÇU MINISTÉRIEL — Tableau de bord 10 KPI clés
+// APERÇU MINISTÉRIEL · Tableau de bord 10 KPI clés
 // =================================================================
 
 // Mini sparkline for executive KPI
@@ -6052,14 +6066,14 @@ VIEWS["vacc-intrants"] = () => {
   return {crumbs,html:et+`<div class="ph-sub">Relevé mensuel national · ${periodLabel()} · série non cumulée, ${mf(PEVM.meta.mois_min)} à ${mf(PEVM.meta.mois_max)}.</div></div>
     <div class="content">
       <div class="kpi-grid">${kv("Pentavalent","Penta")}${kv("VPO","VPO")}${kv("Rougeole (VAR)","VAR")}${kv("BCG","BCG")}</div>
-      ${(PEVM.provinces ? card("Détail provincial — enfants vaccinés Pentavalent · "+periodLabel(),"Vingt-deux provinces rapportantes · Wadi-Fira absent du relevé (ND)",
+      ${(PEVM.provinces ? card("Détail provincial · enfants vaccinés Pentavalent · "+periodLabel(),"Vingt-deux provinces rapportantes · Wadi-Fira absent du relevé (ND)",
         `<table class="dt"><thead><tr><th>Province</th><th style="text-align:right">Penta</th><th style="text-align:right">VAR</th><th style="text-align:right">Stock Penta fin de mois</th></tr></thead><tbody>`+
         Object.keys(PEVM.provinces).sort((a,b)=>(PEVM.provinces[b].vac_Penta?.[per]||0)-(PEVM.provinces[a].vac_Penta?.[per]||0)).map(c=>{
           const p=PEVM.provinces[c], nm=(PROVINCES.find(x=>x.id===c)||{}).name||c;
           const f=(o)=>{const v=o?.[per];return v==null?"ND":v.toLocaleString("fr-FR");};
           return `<tr><td class="l">${nm}</td><td class="num">${f(p.vac_Penta)}</td><td class="num">${f(p.vac_VAR)}</td><td class="num">${f(p.st_Penta)}</td></tr>`;}).join("")+`</tbody></table>`,
         "Source : "+PEVM.meta.source) : "")}
-      ${card("Stocks de fin de mois par vaccin — "+periodLabel(),"Comparaison au mois précédent",
+      ${card("Stocks de fin de mois par vaccin · "+periodLabel(),"Comparaison au mois précédent",
         `<table class="dt"><thead><tr><th>Vaccin</th><th style="text-align:right">${periodLabel()}</th><th style="text-align:right">Mois préc.</th><th style="text-align:right">Évolution</th></tr></thead><tbody>${rows}</tbody></table>`,
         "Source : "+PEVM.meta.source+" · Le stock TD passe de 107 097 en janvier à 29 381 en juin puis remonte à 59 829 en juillet, trajectoire à surveiller avec la DLMVSE.")}
     </div>`};
@@ -6091,7 +6105,7 @@ VIEWS["vacc-palu"] = () => {
     html: `
       <div class="ph">
         <div class="ph-tag">Vaccin antipaludique · R21 / RTS,S</div>
-        <div class="ph-title">Vaccin antipaludique — montée en charge</div>
+        <div class="ph-title">Vaccin antipaludique · montée en charge</div>
         <div class="ph-sub">Déployé dans ${palu.length} districts éligibles répartis sur ${provs.length} provinces à forte transmission. Schéma à quatre doses. ${PEV.meta.periode}.</div>
       </div>
       <div class="content">
@@ -6286,7 +6300,7 @@ function renderCarteCholera() {
   const F = CARTE_FOCUS;
   const formes = F.districts.map(d => {
     const info = parTrace[d.nom];
-    if (!info) return `<path class="cf-hors" d="${d.d}"><title>${d.nom} — aucun cas notifié</title></path>`;
+    if (!info) return `<path class="cf-hors" d="${d.d}"><title>${d.nom} · aucun cas notifié</title></path>`;
     const actif = info.actif && info.recents > 0;
     return `<path class="cf-dist niv-${info.niveau}${actif ? " cf-actif" : ""}" d="${d.d}"><title>${d.nom} : ${info.cas} cas notifiés, ${info.deces} décès, létalité ${info.cfr}%${actif ? ", " + info.recents + " cas sur 2 semaines" : ", foyer éteint"}</title></path>`;
   }).join("");
@@ -6805,7 +6819,7 @@ VIEWS["vacc-overview"] = (s) => {
   }
   if (!pevPeriodeCouverte()) {
     return pevVueNonDisponible(["Vaccination · PEV", "Vue d'ensemble"],
-      "Programme Élargi de Vaccination · DLMVSE", "Vaccination — Vue d'ensemble");
+      "Programme Élargi de Vaccination · DLMVSE", "Vaccination · Vue d'ensemble");
   }
   const CIBLE = PEV.meta.cible_couverture;
   const rag90 = (v) => v == null ? "na" : v >= CIBLE ? "green" : v >= 80 ? "yellow" : v >= 60 ? "orange" : "red";
@@ -6860,7 +6874,7 @@ VIEWS["vacc-overview"] = (s) => {
     html: `
       <div class="ph">
         <div class="ph-tag">Programme Élargi de Vaccination · DLMVSE</div>
-        <div class="ph-title">Vaccination — Vue d'ensemble</div>
+        <div class="ph-title">Vaccination · Vue d'ensemble</div>
         <div class="ph-sub">Couvertures des quinze antigènes de routine sur le relevé mensuel. ${PEV.meta.periode}.</div>
       </div>
       <div class="content">
@@ -6895,7 +6909,7 @@ VIEWS["vacc-overview"] = (s) => {
 
 VIEWS["vacc-couv"] = () => {
   const crumbs=["Vaccination · PEV","Couverture vaccinale"];
-  const et=`<div class="ph"><div class="ph-tag">Programme Élargi de Vaccination · DLMVSE</div><div class="ph-title">Couverture vaccinale — carte provinciale</div>`;
+  const et=`<div class="ph"><div class="ph-tag">Programme Élargi de Vaccination · DLMVSE</div><div class="ph-title">Couverture vaccinale · carte provinciale</div>`;
   if(!PEVP) return {crumbs,html:et+`<div class="ph-sub">Données mensuelles en cours de chargement.</div></div>`};
   if(!window.__antSel || !PEVP.meta.antigenes.includes(window.__antSel)) window.__antSel="Penta3";
   const ant=window.__antSel;
@@ -6919,7 +6933,7 @@ VIEWS["vacc-couv"] = () => {
     const doses=(PEVP.provinces[sel]||{}).doses?.[ant]||null;
     const dosesTxt=doses?Object.entries(doses).map(([m,v])=>`${MOIS_NOMS[Number(m.slice(5))-1].slice(0,3)} ${v.toLocaleString("fr-FR")}`).join(" · "):"non disponibles pour cet antigène (séries RIM : Penta3, VAR1, BCG)";
     const pop=(PEVP.population_0_11||{})[sel]?.[per] ?? (PEVP.population_0_11||{})[sel]?.[mmax];
-    panneau=card(nm+" — "+ant,"Série mensuelle 2026 · couverture publiée",
+    panneau=card(nm+" · "+ant,"Série mensuelle 2026 · couverture publiée",
       `<div style="display:flex;gap:4px;padding:6px 2px">${barres}</div>
        <div style="padding:8px 2px;line-height:1.7;color:var(--body);font-size:13px">
        Doses RIM : ${dosesTxt}.<br>Population 0-11 mois (dénominateur officiel${pop?", "+mf(per<=mmax&&per>=mmin?per:mmax):""}) : ${pop?pop.toLocaleString("fr-FR"):"ND"}.</div>`,
@@ -6929,7 +6943,7 @@ VIEWS["vacc-couv"] = () => {
   <div class="content">
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">${selA}</div>
     <div class="g-2-1">
-      ${card("Carte des provinces — "+ant+" · "+periodLabel(),"Vert ≥90 · jaune ≥80 · orange ≥60 · rouge <60 · gris ND",
+      ${card("Carte des provinces · "+ant+" · "+periodLabel(),"Vert ≥90 · jaune ≥80 · orange ≥60 · rouge <60 · gris ND",
         `<svg viewBox="${MAP_VIEWBOX}" style="width:100%;max-height:560px">${paths}</svg>`,"")}
       ${panneau||card("Détail province","Sélection","<div style='padding:10px 2px;color:var(--body)'>Cliquer une province sur la carte pour afficher sa série mensuelle, ses doses RIM et son dénominateur population.</div>","")}
     </div>
@@ -6955,7 +6969,7 @@ VIEWS["vacc-zd"] = () => {
     html: `
       <div class="ph">
         <div class="ph-tag">Équité vaccinale · enfants non atteints</div>
-        <div class="ph-title">Zéro-dose — là où la vaccination n'atteint pas l'enfant</div>
+        <div class="ph-title">Zéro-dose · là où la vaccination n'atteint pas l'enfant</div>
         <div class="ph-sub">Un enfant zéro-dose n'a reçu aucune dose de Penta. Le déficit se lit à travers la première dose de Penta, qui mesure l'entrée dans le système. ${PEV.meta.periode}.</div>
       </div>
       <div class="content">
@@ -6978,7 +6992,7 @@ VIEWS["vacc-zd"] = () => {
 };
 VIEWS["vacc-pda"] = (s) => {
   return {
-    crumbs:["Vaccination · PEV", "PDA — Protocole d'Accord", s.pdaDomain === "overview" ? "Vue d'ensemble" : PDA_DOMAINS.find(d => d.id === s.pdaDomain)?.label || s.pdaDomain],
+    crumbs:["Vaccination · PEV", "PDA · Protocole d'Accord", s.pdaDomain === "overview" ? "Vue d'ensemble" : PDA_DOMAINS.find(d => d.id === s.pdaDomain)?.label || s.pdaDomain],
     html: `
       <div class="ph">
         <div class="ph-tag">${t("pda_ph_tag")}</div>
@@ -7027,7 +7041,7 @@ function renderPdaOverview() {
   // Focused province within PDA (HDL/KAN/LAC)
   const focusedProv = state.provinceFilter && PDA_PROVINCES.includes(state.provinceFilter) ? state.provinceFilter : null;
 
-  // Compute domain scores — always restricted to PDA_PROVINCES (no extrapolation)
+  // Compute domain scores · always restricted to PDA_PROVINCES (no extrapolation)
   const domScores = PDA_DOMAINS.map(d => {
     let score;
     if (focusedProv) {
@@ -7102,11 +7116,11 @@ function renderPdaOverview() {
 
     ${aiBox(
       focusedProv
-        ? `Analyse ciblée — ${PROVINCES.find(p=>p.id===focusedProv).name}`
+        ? `Analyse ciblée · ${PROVINCES.find(p=>p.id===focusedProv).name}`
         : "Domaine D2 (Offres de Services) en tête, D5 (Logistique) à renforcer",
       focusedProv
         ? `La province de <strong>${PROVINCES.find(p=>p.id===focusedProv).name}</strong> affiche un score composite PDA de <strong>${avgPda}%</strong> (cible 80%). Domaines en retrait : <strong>${domScores.slice().sort((a,b)=>a.score-b.score).slice(0,2).map(d=>d.code+' ('+d.score+'%)').join(', ')}</strong>. Recommandation : <strong>renforcer ces deux axes</strong> via le plan d'action provincial PDA T2-T3 et débloquer les tranches financières correspondantes (cadre Gates Foundation).`
-        : `Sur les 16 provinces pilotes PDA, le domaine <strong>D2 — Offres de Services</strong> atteint <strong>${domScores.find(d=>d.id==='D2').score}%</strong> grâce aux stratégies avancées mobiles. Le domaine <strong>D5 — Logistique & Chaîne du froid</strong> reste critique à <strong>${domScores.find(d=>d.id==='D5').score}%</strong>. Recommandation : <strong>débloquer la tranche T2 du PDA (820 M FCFA)</strong> en priorité sur D5 et D7 (Capacités).`,
+        : `Sur les 16 provinces pilotes PDA, le domaine <strong>D2 · Offres de Services</strong> atteint <strong>${domScores.find(d=>d.id==='D2').score}%</strong> grâce aux stratégies avancées mobiles. Le domaine <strong>D5 · Logistique & Chaîne du froid</strong> reste critique à <strong>${domScores.find(d=>d.id==='D5').score}%</strong>. Recommandation : <strong>débloquer la tranche T2 du PDA (820 M FCFA)</strong> en priorité sur D5 et D7 (Capacités).`,
       "Source : DHIS2 + SIGL · Cross-check : SMT · 16 provinces PDA · Confiance : 91%"
     )}
 
@@ -7115,19 +7129,19 @@ function renderPdaOverview() {
         yoySeriesData("pda-D1", "pda")
       ), "")}
 
-      ${card(t("pda_alerts_title"), focusedProv ? `${t("pda_alerts_title")} — ${PROVINCES.find(p=>p.id===focusedProv).name}` : t("pda_alerts_sub"), (() => {
+      ${card(t("pda_alerts_title"), focusedProv ? `${t("pda_alerts_title")} · ${PROVINCES.find(p=>p.id===focusedProv).name}` : t("pda_alerts_sub"), (() => {
         const allAlerts = {
           LAC: [
-            { rag:"red",   icon:"!", t:"Lac — Ruptures vaccins (D5)",      d:"2 antigènes en rupture > 14 jours sur 3 CS.",     m:"Détecté · SMT · 2 jours" },
-            { rag:"green", icon:"✓", t:"Lac — Couverture Penta 3",          d:"+7 pts grâce à stratégies avancées.",              m:"Confirmé · DHIS2" },
+            { rag:"red",   icon:"!", t:"Lac · Ruptures vaccins (D5)",      d:"2 antigènes en rupture > 14 jours sur 3 CS.",     m:"Détecté · SMT · 2 jours" },
+            { rag:"green", icon:"✓", t:"Lac · Couverture Penta 3",          d:"+7 pts grâce à stratégies avancées.",              m:"Confirmé · DHIS2" },
           ],
           KAN: [
-            { rag:"orange",icon:"!", t:"Kanem — DQS retard (D6)",            d:"Data Quality Self-assessment non réalisé T1.",     m:"Détecté · DPSIS" },
-            { rag:"yellow",icon:"!", t:"Kanem — Promptitude TLOH",            d:"Saisie hebdo > J+5 sur 2 districts.",              m:"Détecté · COUSP" },
+            { rag:"orange",icon:"!", t:"Kanem · DQS retard (D6)",            d:"Data Quality Self-assessment non réalisé T1.",     m:"Détecté · DPSIS" },
+            { rag:"yellow",icon:"!", t:"Kanem · Promptitude TLOH",            d:"Saisie hebdo > J+5 sur 2 districts.",              m:"Détecté · COUSP" },
           ],
           HDL: [
-            { rag:"yellow",icon:"!", t:"Hadjer-Lamis — CTA-PEV (D1)",         d:"2/4 réunions tenues sur le trimestre.",            m:"Détecté · Rapport DSP" },
-            { rag:"orange",icon:"!", t:"Hadjer-Lamis — CdF fonctionnelle CS", d:"Pannes équipements à gaz · 4 CS concernés.",        m:"Détecté · SMT" },
+            { rag:"yellow",icon:"!", t:"Hadjer-Lamis · CTA-PEV (D1)",         d:"2/4 réunions tenues sur le trimestre.",            m:"Détecté · Rapport DSP" },
+            { rag:"orange",icon:"!", t:"Hadjer-Lamis · CdF fonctionnelle CS", d:"Pannes équipements à gaz · 4 CS concernés.",        m:"Détecté · SMT" },
           ],
         };
         const list = focusedProv ? allAlerts[focusedProv] : [...allAlerts.LAC, ...allAlerts.KAN, ...allAlerts.HDL].slice(0, 4);
@@ -7187,7 +7201,7 @@ function renderPdaDomain(domId) {
     <div class="card" style="margin-bottom:14px;">
       <div class="card-hdr">
         <div>
-          <div class="card-title">${dom.icon} Domaine ${dom.code} — ${dom.label}</div>
+          <div class="card-title">${dom.icon} Domaine ${dom.code} · ${dom.label}</div>
           <div class="card-sub">Performance par indicateur · ${scopeLabel}</div>
         </div>
       </div>
@@ -7205,7 +7219,7 @@ function renderPdaDomain(domId) {
     </div>
 
     <div class="g-2-1">
-      ${card(`Comparaison 16 provinces PDA — ${domId}`, focusedProv ? `${PROVINCES.find(p=>p.id===focusedProv).name} mise en évidence` : "Score domaine par province", `
+      ${card(`Comparaison 16 provinces PDA · ${domId}`, focusedProv ? `${PROVINCES.find(p=>p.id===focusedProv).name} mise en évidence` : "Score domaine par province", `
         <table class="dt">
           <thead><tr><th>Indicateur</th>${PDA_PROVINCES.map(p => {
             const isFocus = focusedProv === p;
@@ -7234,7 +7248,7 @@ function renderPdaDomain(domId) {
     </div>
 
     ${aiBox(
-      `Analyse du domaine ${domId} — ${dom.label}`,
+      `Analyse du domaine ${domId} · ${dom.label}`,
       domainNarrative(domId, domAvg, indAverages),
       "Source : DHIS2 + DSP · Triangulation J+5 · 16 provinces PDA · Période : " + periodLabel()
     )}
@@ -7262,7 +7276,7 @@ VIEWS["dsr-overview"] = () => {
   const enTete = `
     <div class="ph">
       <div class="ph-tag">Direction de la Santé de la Reproduction</div>
-      <div class="ph-title">Santé Reproductive — Vue d'ensemble</div>`;
+      <div class="ph-title">Santé Reproductive · Vue d'ensemble</div>`;
   if (!DSRN) {
     return { crumbs, html: enTete + `<div class="ph-sub">Données DSR en cours de chargement.</div></div>` };
   }
@@ -7313,10 +7327,10 @@ VIEWS["dsr-overview"] = () => {
   }).join("");
   const barres = serieDe("cpn1").map(x => ({ label: MOIS_NOMS[Number(x.p.slice(5)) - 1].slice(0, 4), val: x.v == null ? null : Math.round(x.v), target: 95, rag: x.v == null ? "na" : x.v >= 95 ? "green" : x.v >= 80 ? "yellow" : "orange" }));
   const anomaliesPer = (DSRN.anomalies || []).filter(a => a.periode === per);
-  const noteAnom = anomaliesPer.length ? card("Signalements qualité — " + periodLabel(),
+  const noteAnom = anomaliesPer.length ? card("Signalements qualité · " + periodLabel(),
       anomaliesPer.length + " valeur(s) hors plage attendue, affichée(s) sans correction",
       `<div style="padding:4px 2px;line-height:1.7;color:var(--body);">` + anomaliesPer.map(a =>
-        `<div>· <strong>${DSRN.indicateurs[a.indicateur].libelle}</strong> : ${a.valeur}${DSRN.indicateurs[a.indicateur].unite === "%" ? "%" : ""} — ${a.type === "superieur_100" ? "valeur supérieure à 100%, dénominateur à vérifier avec la DSR" : "incohérence de cascade CPN1→CPN4, définition d'indicateur à vérifier"}</div>`).join("") + `</div>`,
+        `<div>· <strong>${DSRN.indicateurs[a.indicateur].libelle}</strong> : ${a.valeur}${DSRN.indicateurs[a.indicateur].unite === "%" ? "%" : ""} · ${a.type === "superieur_100" ? "valeur supérieure à 100%, dénominateur à vérifier avec la DSR" : "incohérence de cascade CPN1→CPN4, définition d'indicateur à vérifier"}</div>`).join("") + `</div>`,
       "Mode strict : les anomalies sont signalées à la source, jamais masquées ni corrigées.") : "";
   return { crumbs, html: enTete + `
       <div class="ph-sub">Relevé mensuel national · ${periodLabel()} · série non cumulée, ${moisFr(mmin)} à ${moisFr(mmax)}.</div>
@@ -7335,8 +7349,8 @@ VIEWS["dsr-overview"] = () => {
         ${K("Faible poids de naissance", "faible_poids", 10, true)}
       </div>
       <div class="g-2-1">
-        ${card("CPN 1 — évolution mensuelle 2026", "Relevé mensuel national, non cumulé · cible 95%", renderBars(barres), "Source : " + DSRN.meta.source)}
-        ${card("Indicateurs traceurs — " + periodLabel(), "Comparaison au même mois de 2025", `
+        ${card("CPN 1 · évolution mensuelle 2026", "Relevé mensuel national, non cumulé · cible 95%", renderBars(barres), "Source : " + DSRN.meta.source)}
+        ${card("Indicateurs traceurs · " + periodLabel(), "Comparaison au même mois de 2025", `
           <table class="dt"><thead><tr><th>Indicateur</th><th style="text-align:right">${per.slice(0, 4)}</th><th style="text-align:right">${n1.slice(0, 4)}</th><th style="text-align:right">Évolution</th><th>Écart cible</th></tr></thead><tbody>
           ${lignes([["cpn1", "CPN 1", 95], ["acc_qualifie", "Accouchements assistés", 70], ["partogramme", "Partogramme", 80], ["gatpa", "GATPA", 90], ["cpon", "CPoN 2e contact", 60], ["prev_contra", "Prévalence contraceptive", 30]])}
           </tbody></table>`, n1 < "2025-01" || n1 > "2025-06" ? "Comparaison N-1 disponible de janvier à juin 2025 uniquement." : "")}
@@ -7370,7 +7384,7 @@ function carteDomaine(dom, crumbs, tag, titre) {
     const MA=["2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07"];
     const barres=MA.map(m=>{const v=serie[m];const h2=v==null?4:fcfa?Math.max(6,Math.min(120,Math.abs(v)/maxV*120)):Math.min(120,v*1.1);
       return `<div style="text-align:center;flex:1"><div style="height:130px;display:flex;align-items:flex-end;justify-content:center"><div style="width:70%;height:${h2}px;background:${v==null?"#CBC7BE":col(v)};border-radius:3px 3px 0 0"></div></div><div style="font-size:11px;margin-top:4px">${MOIS_NOMS[Number(m.slice(5))-1].slice(0,3)}</div><div style="font-size:11px;font-weight:700">${v==null?"ND":Math.round(v)}</div></div>`;}).join("");
-    pan=card(nm+" — "+ind,"Série mensuelle 2026 · "+(D.libelles[ind]||""),
+    pan=card(nm+" · "+ind,"Série mensuelle 2026 · "+(D.libelles[ind]||""),
       `<div style="display:flex;gap:4px;padding:6px 2px">${barres}</div>`,
       "Source : "+PROGM.meta.source+". ND affiché pour toute valeur absente, aucune interpolation.");
   }
@@ -7378,18 +7392,18 @@ function carteDomaine(dom, crumbs, tag, titre) {
   <div class="content">
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">${selI}</div>
     <div class="g-2-1">
-      ${card("Carte des provinces — "+periodLabel(),fcfa?"Bleu positif · rouge négatif · gris ND":"Vert ≥90 · jaune ≥80 · orange ≥60 · rouge <60 · gris ND",
+      ${card("Carte des provinces · "+periodLabel(),fcfa?"Bleu positif · rouge négatif · gris ND":"Vert ≥90 · jaune ≥80 · orange ≥60 · rouge <60 · gris ND",
         `<svg viewBox="${MAP_VIEWBOX}" style="width:100%;max-height:560px">${paths}</svg>`,"")}
       ${pan||card("Détail province","Sélection","<div style='padding:10px 2px;color:var(--body)'>Cliquer une province sur la carte.</div>","")}
     </div>
   </div>`};
 }
-VIEWS["prog-palu"] = () => carteDomaine("palu",["Programmes","Paludisme"],"Programme National de Lutte contre le Paludisme","Paludisme — carte provinciale");
-VIEWS["prog-vih"] = () => carteDomaine("vih",["Programmes","VIH · Sida"],"Programme Sectoriel de Lutte contre le Sida","VIH — carte provinciale");
-VIEWS["prog-ptme"] = () => carteDomaine("ptme",["Programmes","PTME"],"PSLS · PTME","PTME — carte provinciale");
-VIEWS["prog-nut"] = () => carteDomaine("nutrition",["Programmes","Nutrition"],"Direction de la Nutrition","Nutrition — carte provinciale");
-VIEWS["prog-soins"] = () => carteDomaine("soins",["Programmes","Soins curatifs"],"Soins curatifs — DHIS2","Soins curatifs — carte provinciale");
-VIEWS["prog-recouv"] = () => carteDomaine("recouvrement",["Programmes","Recouvrement des coûts"],"Recouvrement des coûts — DHIS2","Recouvrement — carte provinciale");
+VIEWS["prog-palu"] = () => carteDomaine("palu",["Programmes","Paludisme"],"Programme National de Lutte contre le Paludisme","Paludisme · carte provinciale");
+VIEWS["prog-vih"] = () => carteDomaine("vih",["Programmes","VIH · Sida"],"Programme Sectoriel de Lutte contre le Sida","VIH · carte provinciale");
+VIEWS["prog-ptme"] = () => carteDomaine("ptme",["Programmes","PTME"],"PSLS · PTME","PTME · carte provinciale");
+VIEWS["prog-nut"] = () => carteDomaine("nutrition",["Programmes","Nutrition"],"Direction de la Nutrition","Nutrition · carte provinciale");
+VIEWS["prog-soins"] = () => carteDomaine("soins",["Programmes","Soins curatifs"],"Soins curatifs · DHIS2","Soins curatifs · carte provinciale");
+VIEWS["prog-recouv"] = () => carteDomaine("recouvrement",["Programmes","Recouvrement des coûts"],"Recouvrement des coûts · DHIS2","Recouvrement · carte provinciale");
 // =================================================================
 // DGPML, DRH, COUSP, DPSIS
 // =================================================================
@@ -7683,7 +7697,7 @@ function renderMap(metric, opts = {}) {
     return v + "%";
   }
 
-  // Tiny provinces — labels shrink to avoid overflow
+  // Tiny provinces · labels shrink to avoid overflow
   const TINY_PROV = new Set(["NDJ", "LAC", "MKO", "MKE", "LOO", "LOE", "HDL"]);
   // Ultra-short labels for tiny provinces (override p.short to fit inside polygon)
   const TINY_LABEL = {
@@ -7716,7 +7730,7 @@ function renderMap(metric, opts = {}) {
       const vp = valeurPEVdist(metric, d.name);
       const val = (vp === undefined ? null : vp);
       const rag = getRag(val);
-      const titre = val == null ? (d.name + " · " + (prov ? prov.name : "") + " — donnée à venir") : (d.name + " · " + (prov ? prov.name : "") + " : " + val + "%");
+      const titre = val == null ? (d.name + " · " + (prov ? prov.name : "") + " · donnée à venir") : (d.name + " · " + (prov ? prov.name : "") + " : " + val + "%");
       return `<path class="map-prov rag-${rag} map-district" d="${d.d}"><title>${titre}</title></path>`;
     }).join("");
     const dLabels = ds.map(d =>
@@ -7764,7 +7778,7 @@ function renderMap(metric, opts = {}) {
     if (pdaFocus && isPda) cls += " pda-active";
     if (isSelected) cls += " selected";
 
-    const titleTxt = `${p.name} — ${dispVal(val)} · ${ZONES[PROV_ZONE[p.id]].name}${isPda ? ' · PDA' : ''}`;
+    const titleTxt = `${p.name} · ${dispVal(val)} · ${ZONES[PROV_ZONE[p.id]].name}${isPda ? ' · PDA' : ''}`;
 
     paths.push(`<path class="${cls}"${inlineStyle} d="${geo.d}"
       onclick="showProvInfo('${p.id}', '${metric}', ${isVolume}); setProvinceFilter('${p.id}')"><title>${titleTxt}</title></path>`);
@@ -7779,7 +7793,7 @@ function renderMap(metric, opts = {}) {
     const labelCls = "map-label" + (isTiny ? " tiny" : "");
     const txtCls = "map-label-name" + (darkText ? " dark" : "");
     const valCls = "map-label-val" + (darkText ? " dark" : "");
-    // PDA marker — small dot offset to the upper-right of the label
+    // PDA marker · small dot offset to the upper-right of the label
     const pdaR = isTiny ? 2.6 : 3.4;
     const pdaDx = isTiny ? 12 : 16;
     const pdaDy = isTiny ? 6 : 8;
@@ -7818,7 +7832,7 @@ function renderMap(metric, opts = {}) {
         const vp = valeurPEVdist(metric, d.name);
         const val = (vp === undefined ? null : vp);
         const rag = getRag(val);
-        const titre = val == null ? (d.name + (prov ? " · " + prov.name : "") + " — donnée à venir") : (d.name + (prov ? " · " + prov.name : "") + " : " + val + "%");
+        const titre = val == null ? (d.name + (prov ? " · " + prov.name : "") + " · donnée à venir") : (d.name + (prov ? " · " + prov.name : "") + " : " + val + "%");
         return `<path class="map-prov rag-${rag} map-district" d="${d.d}" onclick="setMapZoomProv('${d.prov}')"><title>${titre}</title></path>`;
       }).join("")
     : "";
@@ -7963,10 +7977,10 @@ function init() {
   document.documentElement.setAttribute("dir", state.lang === "ar" ? "rtl" : "ltr");
   renderSidebar();
   chargerDonneesReelles();   // bascule sur data/consolide.json des qu'il existe
-  // Open vaccination program by default and select PDA
+  // Ouvre le cockpit ministeriel par defaut (bloc Pilotage)
   setTimeout(() => {
-    document.querySelector('.prog[data-prog="vacc"]').classList.add("open", "active");
-    document.querySelector('.subprog[data-sub="vacc-overview"]').classList.add("active");
+    document.querySelector('.prog[data-prog="min"]').classList.add("open", "active");
+    document.querySelector('.subprog[data-sub="min-overview"]').classList.add("active");
     renderMain();
   }, 30);
 }
