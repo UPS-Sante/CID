@@ -3505,8 +3505,8 @@
     .ck2-surv-titre { font-size:20px; }
   }
 
-  @media (max-width:1080px){ .ck2-grid { grid-template-columns:repeat(3,1fr); } }
-  @media (max-width:680px){ .ck2-grid { grid-template-columns:repeat(2,1fr); } .ck2-hero { flex-direction:column; align-items:flex-start; } .ck2-counts { gap:18px; } .ck2-surv { flex-direction:column; } .ck2-surv-carte { align-self:stretch; } .ck2-surv-carte .chol-carte { height:auto; width:100%; max-width:none; } }
+  @media (max-width:1000px){ .ck2-grid { grid-template-columns:repeat(3,1fr); } }
+  @media (max-width:560px){ .ck2-grid { grid-template-columns:repeat(2,1fr); } .ck2-hero { flex-direction:column; align-items:flex-start; } .ck2-counts { gap:18px; } .ck2-surv { flex-direction:column; } .ck2-surv-carte { align-self:stretch; } .ck2-surv-carte .chol-carte { height:auto; width:100%; max-width:none; } }
   /* ====== Barre laterale repliable · cockpit epure sur grand ecran ====== */
   .sb { transition: width .28s ease, opacity .18s ease, border-color .28s ease; }
   body.sb-hidden .sb {
@@ -5263,10 +5263,15 @@ function renderMain() {
       Une erreur d'affichage est survenue sur cette vue.
       <button class="tb-btn" onclick="location.reload()" style="margin-left:10px;">Recharger la page</button></div>`;
   }
-  if (state.sub === "min-overview") {
-    requestAnimationFrame(ajusterCockpit);
-    setTimeout(ajusterCockpit, 360);   // après la transition d'ouverture/repli de la barre
-  }
+  if (state.sub === "min-overview") planifierAjustement();
+}
+
+/* Programme plusieurs recalculs pour couvrir le chargement des polices,
+   des données et les transitions de la barre latérale. */
+function planifierAjustement() {
+  requestAnimationFrame(ajusterCockpit);
+  setTimeout(ajusterCockpit, 360);
+  setTimeout(ajusterCockpit, 1200);
 }
 
 /* Ajuste le cockpit du Ministre pour qu'il tienne toujours dans la zone visible,
@@ -8177,6 +8182,8 @@ function init() {
   renderSidebar();
   chargerDonneesReelles();   // bascule sur data/consolide.json des qu'il existe
   window.addEventListener("resize", () => { if (state.sub === "min-overview") ajusterCockpit(); });
+  window.addEventListener("load", () => { if (state.sub === "min-overview") planifierAjustement(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (state.sub === "min-overview") ajusterCockpit(); });
   // Ouvre le cockpit ministeriel par defaut (bloc Pilotage)
   setTimeout(() => {
     document.querySelector('.prog[data-prog="min"]').classList.add("open", "active");
