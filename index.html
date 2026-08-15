@@ -3411,6 +3411,96 @@
     letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted-2);
     border-top: 1px solid var(--border); margin-top: 4px; }
   #prog-list > .sb-bloc:first-child { border-top: none; margin-top: 0; }
+  /* ============ COCKPIT MINISTERE V2 · une seule vue, premium ============ */
+  .ck2-wrap { display:flex; flex-direction:column; gap:16px; max-width:1760px; margin:0 auto; }
+  .ck2-hero { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; }
+  .ck2-hero-kicker { font-size:10.5px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; color:var(--gold); }
+  .ck2-hero-titre { font-family:var(--font-h); font-size:26px; font-weight:700; color:var(--royal); line-height:1.1; margin-top:3px; }
+  .ck2-srcs { font-size:11px; color:var(--muted); margin-top:6px; }
+  .ck2-srcs .cid-src { margin-right:10px; }
+  .ck2-counts { display:flex; gap:26px; align-items:flex-end; }
+  .ck2-count { text-align:right; }
+  .ck2-count-val { font-family:var(--font-h); font-size:26px; font-weight:700; color:var(--royal); line-height:1; }
+  .ck2-count-lib { font-size:10.5px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted-2); margin-top:3px; }
+
+  .ck2-barre { display:flex; align-items:center; gap:14px; }
+  .ck2-badge-rouge { display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:#fff;
+    background:var(--rag-red); border-radius:20px; padding:6px 14px; box-shadow:0 2px 8px rgba(160,34,51,.28); }
+  .ck2-badge-rouge .ck2-dot { background:#fff; }
+  .ck2-badge-orange { display:inline-flex; align-items:center; font-size:12px; font-weight:700; color:#8A4C12;
+    background:#F6E7D4; border:1px solid #E7CBA4; border-radius:20px; padding:5px 13px; }
+  .ck2-badge-vert { display:inline-flex; align-items:center; font-size:12px; font-weight:700; color:#2E7D32;
+    background:#E7F0E7; border:1px solid #BEDBBE; border-radius:20px; padding:5px 13px; }
+  .ck2-barre-note { font-size:11.5px; color:var(--muted-2); margin-left:auto; }
+
+  .ck2-grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:14px; }
+  .ck2-tile { position:relative; background:#fff; border-radius:14px; padding:15px 17px 12px;
+    border-top:4px solid var(--rc); box-shadow:0 1px 3px rgba(31,56,100,.07), 0 8px 22px rgba(31,56,100,.05);
+    display:flex; flex-direction:column; gap:5px; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease; }
+  .ck2-tile:hover { transform:translateY(-3px); box-shadow:0 3px 8px rgba(31,56,100,.10), 0 14px 30px rgba(31,56,100,.09); }
+  .ck2-top { display:flex; justify-content:space-between; align-items:center; }
+  .ck2-num { font-size:11px; font-weight:700; letter-spacing:1.5px; color:#CFC9BD; }
+  .ck2-stat { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; display:inline-flex; align-items:center; gap:6px; }
+  .ck2-label { font-family:var(--font-h); font-size:15px; font-weight:700; color:var(--royal); line-height:1.15; }
+  .ck2-cat { font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted-2); }
+  .ck2-mid { display:flex; justify-content:space-between; align-items:flex-end; margin-top:4px; }
+  .ck2-val { font-family:var(--font-h); font-size:36px; font-weight:700; color:#23303f; line-height:1; white-space:nowrap; }
+  .ck2-unit { font-size:14px; font-weight:600; color:var(--muted); margin-left:3px; }
+  .ck2-spark { width:88px; height:34px; opacity:.92; }
+  .ck2-spark svg { width:100%; height:100%; }
+  .ck2-foot { display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:8px; margin-top:3px; }
+  .ck2-target { font-size:10.5px; color:var(--muted); }
+  .ck2-delta { font-size:10.5px; font-weight:700; padding:2px 7px; border-radius:6px; background:#F1EFEA; color:var(--muted); white-space:nowrap; }
+  .ck2-delta.up { color:#2E7D32; background:#E7F0E7; }
+  .ck2-delta.down { color:var(--rag-red); background:#F7E6E4; }
+  .ck2-dot { width:8px; height:8px; border-radius:50%; background:var(--rag-red); flex:none; animation:pulse-red 1.6s ease-in-out infinite; }
+
+  /* alerte visuelle sur les indicateurs au rouge, meme langage que la surveillance */
+  .ck2-red { border-top-color:var(--rag-red); animation:ck2Halo 2.1s ease-in-out infinite; }
+  @keyframes ck2Halo {
+    0%,100% { box-shadow:0 1px 3px rgba(160,34,51,.14), 0 0 0 0 rgba(160,34,51,0); }
+    50%     { box-shadow:0 3px 12px rgba(160,34,51,.22), 0 0 0 4px rgba(160,34,51,.10); }
+  }
+  .ck2-red .ck2-val { color:var(--rag-red); }
+  @media (prefers-reduced-motion: reduce) { .ck2-red { animation:none; } .ck2-dot { animation:none; } }
+
+  .ck2-surv { display:flex; justify-content:space-between; align-items:center; gap:20px; cursor:pointer;
+    background:linear-gradient(100deg,#7A1E1E,#A02233); border-radius:14px; padding:14px 22px; box-shadow:0 6px 20px rgba(122,30,30,.22); }
+  .ck2-surv-tag { display:inline-flex; align-items:center; gap:8px; font-size:10.5px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#F3C9C9; }
+  .ck2-surv-tag .ck2-dot { background:#fff; }
+  .ck2-surv-titre { font-family:var(--font-h); font-size:17px; font-weight:700; color:#fff; margin-top:4px; }
+  .ck2-surv-stats { display:flex; align-items:center; gap:26px; flex-wrap:wrap; }
+  .ck2-surv-stat { text-align:center; }
+  .cs2-val { font-family:var(--font-h); font-size:24px; font-weight:700; color:#fff; line-height:1; }
+  .cs2-val.cs2-alerte { color:#FFD9A8; }
+  .cs2-lib { font-size:10px; color:#EBC9C9; margin-top:3px; text-transform:uppercase; letter-spacing:.4px; }
+  .ck2-surv-lien { font-size:12px; font-weight:600; color:#fff; background:rgba(255,255,255,.16); padding:8px 14px; border-radius:8px; white-space:nowrap; }
+
+  /* Grand ecran / mur : on agrandit pour remplir la vue et lire a distance */
+  @media (min-height:950px) {
+    .ck2-wrap { gap:22px; }
+    .ck2-hero-titre { font-size:32px; }
+    .ck2-count-val { font-size:32px; }
+    .ck2-grid { gap:18px; }
+    .ck2-tile { padding:22px 24px 18px; gap:8px; min-height:206px; }
+    .ck2-label { font-size:18px; }
+    .ck2-cat { font-size:11px; }
+    .ck2-val { font-size:48px; }
+    .ck2-unit { font-size:18px; }
+    .ck2-spark { width:112px; height:44px; }
+    .ck2-num { font-size:12px; }
+    .ck2-stat { font-size:11px; }
+    .ck2-target { font-size:12px; }
+    .ck2-delta { font-size:12px; }
+    .ck2-surv { padding:20px 30px; }
+    .cs2-val { font-size:30px; }
+    .cs2-lib { font-size:11px; }
+    .ck2-surv-titre { font-size:20px; }
+  }
+
+  @media (max-width:1400px){ .ck2-grid { grid-template-columns:repeat(4,1fr); } }
+  @media (max-width:1080px){ .ck2-grid { grid-template-columns:repeat(3,1fr); } }
+  @media (max-width:720px){ .ck2-grid { grid-template-columns:repeat(2,1fr); } .ck2-hero { flex-direction:column; align-items:flex-start; } .ck2-counts { gap:18px; } }
 </style>
 </head>
 <body>
@@ -8334,25 +8424,22 @@ VIEWS["min-overview"] = () => {
   const ticker = sources.map(s => `<span class="cid-src ${s.ok ? "ok" : "off"}">${s.l}<em>${s.ok ? (s.p ? cidMoisC(String(s.p).slice(0, 7)) : "à jour") : "en attente"}</em></span>`).join("");
 
   const bandeau = `
-    <div class="ck-hero">
-      <div class="ck-hero-l">
-        <div class="ck-hero-kicker">Delivery Unit · Ministère de la Santé Publique et de la Prévention</div>
-        <div class="ck-hero-titre">Bonjour Monsieur le Ministre</div>
-        <div class="ck-hero-date">◷ ${dateMinistre()}</div>
-        <div class="cid-srcs">${ticker}</div>
+    <div class="ck2-hero">
+      <div class="ck2-hero-l">
+        <div class="ck2-hero-kicker">Delivery Unit · Ministère de la Santé Publique et de la Prévention</div>
+        <div class="ck2-hero-titre">Tableau de bord du Ministre</div>
+        <div class="ck2-srcs">◷ ${dateMinistre()} &nbsp;·&nbsp; ${ticker}</div>
       </div>
-      <div class="ck-hero-r">
-        <div class="ck-hero-stat"><div class="ck-hs-val">23</div><div class="ck-hs-lib">provinces suivies</div></div>
-        <div class="ck-hero-sep"></div>
-        <div class="ck-hero-stat"><div class="ck-hs-val">${FOSAR ? cidFmtNb(FOSAR.meta.n_districts) : "ND"}</div><div class="ck-hs-lib">districts sanitaires</div></div>
-        <div class="ck-hero-sep"></div>
-        <div class="ck-hero-stat"><div class="ck-hs-val">${FOSAR ? cidFmtNb(FOSAR.meta.n_fosa) : "ND"}</div><div class="ck-hs-lib">formations sanitaires</div></div>
+      <div class="ck2-counts">
+        <div class="ck2-count"><div class="ck2-count-val">23</div><div class="ck2-count-lib">provinces</div></div>
+        <div class="ck2-count"><div class="ck2-count-val">${FOSAR ? cidFmtNb(FOSAR.meta.n_districts) : "ND"}</div><div class="ck2-count-lib">districts</div></div>
+        <div class="ck2-count"><div class="ck2-count-val">${FOSAR ? cidFmtNb(FOSAR.meta.n_fosa) : "ND"}</div><div class="ck2-count-lib">formations</div></div>
       </div>
     </div>`;
 
   /* les dix indicateurs du cockpit, chacun sur sa source */
-  const cartes = [];
-  const pousseKpi = (o) => cartes.push(kpiExec(o));
+  const kpis = [];
+  const pousseKpi = (o) => kpis.push(o);
 
   /* 1 et 2 : couvertures vaccinales cumulées RIM */
   if (typeof pevDispo === "function" && pevDispo()) {
@@ -8469,42 +8556,68 @@ VIEWS["min-overview"] = () => {
     });
   })();
 
-  const grille = `<div class="ck-section">
-      <div class="ck-section-tete">
-        <div><div class="ck-section-titre">Les dix indicateurs du cockpit</div><div class="ck-section-sous">Chaque carte porte sa source et sa période, et ouvre la vue de détail</div></div>
+  /* rendu compact premium : tuile par indicateur */
+  const ragCol = { green: "#2E7D32", yellow: "#C9A227", orange: "#D97B29", red: "#B3372F", na: "#A09A93" };
+  const ckTile = (o) => {
+    const col = ragCol[o.rag] || ragCol.na;
+    const red = o.rag === "red";
+    const ndv = (o.value == null || String(o.value).includes("NaN"));
+    const val = ndv ? "ND" : o.value;
+    const tgt = /[%a-zA-Zé\u2264\u2265\/]/.test(String(o.target)) ? o.target : o.target + (o.unit || "");
+    return `<div class="ck2-tile${red ? " ck2-red" : ""}" style="--rc:${col}">
+      <div class="ck2-top">
+        <span class="ck2-num">${o.n}</span>
+        <span class="ck2-stat" style="color:${col}">${red ? '<span class="ck2-dot"></span>' : ''}${ragLabel(o.rag)}</span>
       </div>
-      <div class="cid-kpi10">${cartes.join("")}</div>
+      <div class="ck2-label">${o.label}</div>
+      <div class="ck2-cat">${o.category}</div>
+      <div class="ck2-mid">
+        <div class="ck2-val">${val}${ndv ? '' : `<span class="ck2-unit">${o.unit}</span>`}</div>
+        <div class="ck2-spark">${miniSpark(o.sparkData || [], red ? "#B3372F" : (o.sparkColor || "#1F3864"))}</div>
+      </div>
+      <div class="ck2-foot">
+        <span class="ck2-target">Cible ${tgt}</span>
+        <span class="ck2-delta ${o.trendDir}">${o.trend}</span>
+      </div>
     </div>`;
+  };
 
-  /* liens de deep dive appliques aux cartes dans l'ordre */
-  const liens = [["vacc","vacc-couv"],["vacc","vacc-couv"],["dsr","dsr-overview"],["dsr","dsr-mat"],["dsr","dsr-mat"],["dpsis","dpsis-comp"],["dpsis","dpsis-comp"],["vacc","vacc-surv"],["dpml","dpml-dispo"],["cousp","cousp-sitrep"]];
+  const nRouge = kpis.filter(o => o.rag === "red").length;
+  const nOrange = kpis.filter(o => o.rag === "orange").length;
+  const alerte = nRouge ? `<span class="ck2-badge-rouge"><span class="ck2-dot"></span>${nRouge} indicateur${nRouge > 1 ? "s" : ""} au rouge</span>` : `<span class="ck2-badge-vert">Aucun indicateur au rouge</span>`;
+  const alerteOr = nOrange ? `<span class="ck2-badge-orange">${nOrange} sous surveillance</span>` : "";
+
+  const grille = `<div class="ck2-barre">${alerte}${alerteOr}<span class="ck2-barre-note">Chaque tuile porte sa source et sa période, et ouvre la vue de détail</span></div>
+    <div class="ck2-grid">${kpis.map(ckTile).join("")}</div>`;
+
+  /* liens de deep dive appliques aux tuiles dans l'ordre */
+  const liens = [["vacc", "vacc-couv"], ["vacc", "vacc-couv"], ["dsr", "dsr-mat"], ["dsr", "dsr-mat"], ["dsr", "dsr-mat"], ["dpsis", "dpsis-comp"], ["dpsis", "dpsis-comp"], ["vacc", "vacc-surv"], ["dpml", "dpml-dispo"], ["cousp", "cousp-sitrep"]];
   setTimeout(() => {
-    document.querySelectorAll(".cid-kpi10 .kpi-exec").forEach((el, i) => {
+    document.querySelectorAll(".ck2-grid .ck2-tile").forEach((el, i) => {
       if (!liens[i]) return;
       el.classList.add("cid-cliquable");
       el.onclick = () => selectSub(liens[i][0], liens[i][1]);
     });
   }, 0);
 
-  /* bande cholera */
+  /* bande cholera, allegee */
   const chol = CHOL_P && CHOL_P.global ? CHOL_P.global : null;
   const bande = chol ? `
-    <div class="ck-surv" onclick="selectSub('cousp','cousp-sitrep')" role="link" tabindex="0">
-      <div class="ck-surv-l">
-        <span class="ck-surv-tag">◆ Surveillance · Épisode en cours</span>
-        <div class="ck-surv-titre">Riposte au choléra</div>
-        <div class="ck-surv-zone">Hadjer Lamis et N'Djamena · liste linéaire au ${CHOL_P.meta.fin}</div>
+    <div class="ck2-surv" onclick="selectSub('cousp','cousp-sitrep')" role="link" tabindex="0">
+      <div class="ck2-surv-l">
+        <span class="ck2-surv-tag"><span class="ck2-dot"></span>Surveillance · Épisode en cours</span>
+        <div class="ck2-surv-titre">Riposte au choléra · Hadjer Lamis et N'Djamena</div>
       </div>
-      <div class="ck-surv-stats">
-        <div class="ck-surv-stat"><div class="cs-val">${chol.cas}</div><div class="cs-lib">cas cumulés</div></div>
-        <div class="ck-surv-stat"><div class="cs-val">${chol.deces}</div><div class="cs-lib">décès</div></div>
-        <div class="ck-surv-stat"><div class="cs-val cs-alerte">${chol.letalite}%</div><div class="cs-lib">létalité · seuil 1%</div></div>
-        <div class="ck-surv-stat"><div class="cs-val">${(chol.districts || []).length}</div><div class="cs-lib">districts touchés</div></div>
-        <span class="ck-surv-lien">Voir la riposte →</span>
+      <div class="ck2-surv-stats">
+        <div class="ck2-surv-stat"><div class="cs2-val">${chol.cas}</div><div class="cs2-lib">cas cumulés</div></div>
+        <div class="ck2-surv-stat"><div class="cs2-val">${chol.deces}</div><div class="cs2-lib">décès</div></div>
+        <div class="ck2-surv-stat"><div class="cs2-val cs2-alerte">${chol.letalite}%</div><div class="cs2-lib">létalité · seuil 1%</div></div>
+        <div class="ck2-surv-stat"><div class="cs2-val">${(chol.districts || []).length}</div><div class="cs2-lib">districts</div></div>
+        <span class="ck2-surv-lien">Voir la riposte →</span>
       </div>
     </div>` : "";
 
-  return { crumbs, html: bandeau + cidFilAlertes(4) + grille + bande };
+  return { crumbs, html: `<div class="ck2-wrap">${bandeau}${grille}${bande}</div>` };
 };
 
 /* ==============================================================
