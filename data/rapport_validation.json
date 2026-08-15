@@ -1,12 +1,60 @@
 {
- "genere": "2026-08-14T04:47:42Z",
+ "genere": "2026-08-15T03:38:00Z",
  "anomalies": [
+  {
+   "fichier": "brut/Dashboards pev supervision.csv",
+   "type": "periode_indetectable"
+  },
   {
    "fichier": "brut/ID_FOSA_DS_DPSP.csv",
    "type": "periode_indetectable"
   },
   {
+   "fichier": "brut/Nutrition.csv",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/PTME.csv",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/Palu.csv",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/Population.csv",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/Recouvrement des couts.csv",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/Soins curatifs.csv",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/VIH.csv",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/Vaccination.csv",
+   "type": "periode_indetectable"
+  },
+  {
    "fichier": "brut/ZR_standards 2024 - Standards.csv",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/DSR/SMI.csv",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/DSR/data (1).csv",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/DPSIS/DPSIS_Promptitude&Completude.xls",
    "type": "periode_indetectable"
   },
   {
@@ -15,10 +63,6 @@
   },
   {
    "fichier": "brut/COUSP/Surveillance.csv",
-   "type": "periode_indetectable"
-  },
-  {
-   "fichier": "brut/DGPML/Medicaments essentiels.csv",
    "type": "periode_indetectable"
   },
   {
@@ -41460,15 +41504,7 @@
    "type": "matrice_non_reconnue"
   },
   {
-   "fichier": "brut/DSR/SMI.csv",
-   "type": "periode_indetectable"
-  },
-  {
-   "fichier": "brut/DSR/data (1).csv",
-   "type": "periode_indetectable"
-  },
-  {
-   "fichier": "brut/DPSIS/DPSIS_Promptitude&Completude.xls",
+   "fichier": "brut/DGPML/Medicaments essentiels.csv",
    "type": "periode_indetectable"
   }
  ]
