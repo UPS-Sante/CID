@@ -3343,6 +3343,68 @@
   .ch-inline { font-weight:inherit; }
   @media print { .ch-edit:hover { background:transparent; } }
   @media (max-width:900px){ .sr-garde-milieu{ grid-template-columns:1fr; gap:16px; } }
+
+/* ---------------- extension CID ---------------- */
+.cid-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.cid-chip{padding:6px 12px;border-radius:16px;border:1px solid var(--border);cursor:pointer;background:#fff;color:var(--body);font:600 12px/1 inherit;transition:background .15s,color .15s}
+.cid-chip.on{background:var(--royal);color:#fff;border-color:var(--royal)}
+.cid-chip.mini{padding:4px 9px;font-size:11px;border-radius:13px}
+.cid-provs{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 14px}
+.cid-btn-csv,.cid-lien{padding:6px 13px;border-radius:8px;border:1px solid var(--royal-pale);background:var(--royal-tint);color:var(--royal-d);font:600 12px/1 inherit;cursor:pointer}
+.cid-btn-csv:hover,.cid-lien:hover{background:var(--royal);color:#fff}
+.cid-lien{border:none;background:none;padding:4px 0;color:var(--royal)}
+.cid-lien:hover{background:none;color:var(--gold-d);text-decoration:underline}
+.cid-input{flex:1;min-width:200px;padding:9px 12px;border:1px solid var(--border-2);border-radius:9px;font:500 13px/1.2 inherit;color:var(--ink);background:#fff}
+.cid-input:focus{outline:2px solid var(--royal-pale)}
+.cid-recherche{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.cid-recherche.large{max-width:640px;margin:0 0 16px}
+.cid-res-note{font-size:12.5px;color:var(--muted);padding:8px 2px}
+.cid-table-defile{max-height:420px;overflow:auto;border:1px solid var(--border);border-radius:10px}
+.cid-table-defile table{margin:0}
+.cid-sous-lib{font-size:10.5px;color:var(--muted);font-weight:400;margin-top:2px}
+.cid-anom-liste{padding:4px 2px;line-height:1.7;color:var(--body);font-size:12.5px}
+.cid-strip{display:flex;flex-wrap:wrap;gap:22px;align-items:center;padding:6px 2px}
+.cid-strip-item{text-align:center}
+.cid-strip-val{font-size:22px;font-weight:800;color:var(--royal)}
+.cid-strip-lib{font-size:11px;color:var(--muted);margin-top:2px}
+.cid-bandeau-avert{background:var(--gold-tint);border:1px solid var(--gold-l);border-radius:10px;padding:11px 15px;font-size:12.5px;color:var(--gold-d);margin-bottom:14px;font-weight:600}
+.cid-outils{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.cid-select{padding:9px 12px;border:1px solid var(--border-2);border-radius:9px;font:600 12.5px/1.2 inherit;color:var(--ink);background:#fff;max-width:460px}
+/* fil d'alertes */
+.cid-alertes{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin:16px 0;box-shadow:0 1px 3px rgba(27,26,22,.05)}
+.cid-alertes-tete{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.cid-alertes-titre{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-d)}
+.cid-alertes-tout{border:none;background:none;color:var(--royal);font:600 12px/1 inherit;cursor:pointer}
+.cid-alertes-tout:hover{text-decoration:underline}
+.cid-alertes-liste{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px}
+.cid-al{display:flex;align-items:center;gap:9px;padding:9px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);cursor:pointer;text-align:left;font:500 12.5px/1.4 inherit;color:var(--body)}
+.cid-al:hover{border-color:var(--royal-pale);background:var(--royal-tint)}
+.cid-al-txt{flex:1}
+.cid-al-fleche{color:var(--muted-2)}
+.cid-dot{width:9px;height:9px;border-radius:50%;flex:none;display:inline-block}
+.cid-dot.rouge{background:#B3372F;box-shadow:0 0 0 3px rgba(179,55,47,.15)}
+.cid-dot.orange{background:#D97B29;box-shadow:0 0 0 3px rgba(217,123,41,.14)}
+.cid-dot.jaune{background:#C9A227;box-shadow:0 0 0 3px rgba(201,162,39,.14)}
+/* registre des alertes */
+.cid-al-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:12px;margin-top:6px}
+.cid-al-carte{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--border-2);border-radius:12px;padding:14px 16px}
+.cid-al-carte.rouge{border-left-color:#B3372F}
+.cid-al-carte.orange{border-left-color:#D97B29}
+.cid-al-carte.jaune{border-left-color:#C9A227}
+.cid-al-carte-tete{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.cid-al-dom{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.cid-al-per{margin-left:auto;font-size:11px;color:var(--muted-2)}
+.cid-al-titre{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:5px}
+.cid-al-det{font-size:12.5px;color:var(--body);line-height:1.55;margin-bottom:8px}
+/* cockpit */
+.cid-kpi10{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+.cid-cliquable{cursor:pointer;transition:transform .12s,box-shadow .12s}
+.cid-cliquable:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(31,56,100,.12)}
+.cid-srcs{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.cid-src{font-size:10.5px;font-weight:700;color:rgba(255,255,255,.92);background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:4px 10px}
+.cid-src em{font-style:normal;font-weight:500;opacity:.75;margin-left:5px}
+.cid-src.off{opacity:.45}
+@media (max-width:760px){.cid-kpi10{grid-template-columns:1fr}.cid-al-grille{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -3577,6 +3639,15 @@ const PROGRAMS = [
     ]
   },
   {
+    id:"explor", c:"min", icon:"EXP", label:"Explorateur & alertes",
+    dir:"UPS-SANTÉ",
+    sub:[
+      { id:"explor-comp",  label:"Comparateur de provinces", status:"green" },
+      { id:"explor-alert", label:"Alertes actives",          status:"green" },
+      { id:"explor-rech",  label:"Recherche & export",       status:"green" },
+    ]
+  },
+  {
     id:"vacc", c:"vacc", icon:"PEV", label:"Vaccination · PEV",
     dir:"DLMVSE",
     sub:[
@@ -3584,7 +3655,7 @@ const PROGRAMS = [
       { id:"vacc-couv",      i18n_key:"sub_vacc_couv",     label:"Couverture vaccinale",status:"green" },
       { id:"vacc-zd",        i18n_key:"sub_vacc_zd",       label:"Zéro-dose",           status:"orange" },
       { id:"vacc-palu",      i18n_key:"sub_vacc_palu",     label:"Vaccin antipaludique",status:"yellow" },
-      { id:"vacc-surv",      i18n_key:"sub_vacc_surv",     label:"Surveillance épidémio.", status:"na", attente:"Surveillance" },
+      { id:"vacc-surv",      i18n_key:"sub_vacc_surv",     label:"Surveillance épidémio.", status:"green" },
       { id:"vacc-intrants",  i18n_key:"sub_vacc_intrants", label:"Vaccins & intrants",  status:"ok" },
       { id:"vacc-cold",      i18n_key:"sub_vacc_cold",     label:"Chaîne du froid",     status:"na", attente:"eSMT" },
       { id:"vacc-pda",       i18n_key:"sub_vacc_pda",      label:"PDA — Protocole d'Accord", status:"yellow", pda:true },
@@ -3598,12 +3669,12 @@ const PROGRAMS = [
       { id:"dsr-overview",  i18n_key:"sub_dsr_overview", label:"Vue d'ensemble",       status:"orange" },
       { id:"dsr-mat",       i18n_key:"sub_dsr_mat",      label:"Santé maternelle",     status:"red" },
       { id:"dsr-pf",        i18n_key:"sub_dsr_pf",       label:"Planification familiale",status:"orange" },
-      { id:"dsr-com",       i18n_key:"sub_dsr_com",      label:"Santé communautaire",  status:"yellow" },
+      { id:"dsr-com",       i18n_key:"sub_dsr_com",      label:"Santé communautaire",  status:"na", attente:"Communautaire" },
       { id:"dsr-stock",     i18n_key:"sub_dsr_stocks",   label:"Stocks produits SR",   status:"orange" },
     ]
   },
   {
-    id:"prog", c:"prog", masque:true, icon:"PRG", label:"Programmes verticaux",
+    id:"prog", c:"prog", icon:"PRG", label:"Programmes verticaux",
     dir:"DLMVSE",
     sub:[
       { id:"prog-palu",     i18n_key:"sub_prg_palu", label:"PNLP — Paludisme",     status:"orange" },
@@ -3611,16 +3682,16 @@ const PROGRAMS = [
       { id:"prog-nut",      label:"Nutrition",              status:"ok" },
       { id:"prog-soins",    label:"Soins curatifs",         status:"ok" },
       { id:"prog-recouv",   label:"Recouvrement des coûts", status:"ok" },
-      { id:"prog-tb",       i18n_key:"sub_prg_tb",   label:"PNLT — Tuberculose",   status:"orange" },
+      { id:"prog-tb",       i18n_key:"sub_prg_tb",   label:"PNLT — Tuberculose",   status:"na", attente:"PNT" },
     ]
   },
   {
     id:"dpml", c:"dpml", icon:"LOG", label:"Logistique · Intrants",
     dir:"DGPML",
     sub:[
-      { id:"dpml-dispo",    i18n_key:"sub_log_dispo", label:"Disponibilité traceurs",status:"orange" },
+      { id:"dpml-dispo",    i18n_key:"sub_log_dispo", label:"Stocks de fin de mois",status:"green" },
       { id:"dpml-rupt",     i18n_key:"sub_log_rupt",  label:"Ruptures de stock",    status:"red" },
-      { id:"dpml-perim",    i18n_key:"sub_log_perim", label:"Péremption",           status:"yellow" },
+      { id:"dpml-perim",    i18n_key:"sub_log_perim", label:"Péremption",           status:"na", attente:"SIGL" },
     ]
   },
   {
@@ -3643,11 +3714,12 @@ const PROGRAMS = [
     ]
   },
   {
-    id:"dpsis", c:"dpsis", masque:true, icon:"SI", label:"Système d'Information",
+    id:"dpsis", c:"dpsis", icon:"SI", label:"Système d'Information",
     dir:"DPSIS",
     sub:[
       { id:"dpsis-comp",    i18n_key:"sub_dpsis_comp", label:"Complétude & promptitude",  status:"yellow" },
-      { id:"dpsis-qual",    i18n_key:"sub_dpsis_qual", label:"Qualité des données",  status:"orange" },
+      { id:"dpsis-qual",    i18n_key:"sub_dpsis_qual", label:"Qualité des données",  status:"green" },
+      { id:"dpsis-carte",   label:"Carte sanitaire · Répertoire", status:"green" },
     ]
   },
 ];
@@ -3842,6 +3914,31 @@ async function chargerDonneesReelles(essai) {
       const cp = await fetch("chol_periodes.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (cp) CHOL_P = cp;
     } catch (e) {}
+    try {
+      const dq = await fetch("dpsis_qualite.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (dq) DPSISQ = dq;
+    } catch (e) {}
+    try {
+      const sv = await fetch("surveillance.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (sv) SURV = sv;
+    } catch (e) {}
+    try {
+      const sd = await fetch("standards.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (sd) STDS = sd;
+    } catch (e) {}
+    try {
+      const dp = await fetch("dsr_prov.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (dp) DSRP = dp;
+    } catch (e) {}
+    try {
+      const dm = await fetch("dpml_stocks.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (dm) DPML = dm;
+    } catch (e) {}
+    try {
+      const fr = await fetch("carte_fosa.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (fr) FOSAR = fr;
+    } catch (e) {}
+    window.__cidCat = null;
     renderMain();
     // rafraichissement des donnees toutes les six heures pour les onglets laisses ouverts
     if (!window._cidRafraichissement) {
@@ -3964,6 +4061,12 @@ let METEO = null;
 let CARTE_FOCUS = null;
 let PLUIE_A = null;
 let CHOL_P = null;
+let DPSISQ = null;   /* dpsis_qualite.json : completude, promptitude, volumes, carte sanitaire */
+let SURV = null;     /* surveillance.json : taux d'attaque et letalite par maladie */
+let STDS = null;     /* standards.json : referentiel des zones de responsabilite */
+let DSRP = null;     /* dsr_prov.json : releve DSR par province */
+let DPML = null;     /* dpml_stocks.json : stocks et ruptures DGPML */
+let FOSAR = null;    /* carte_fosa.json : repertoire des formations sanitaires */
 function cholDispo() { return CHOLERA && CHOLERA.global; }
 function pevDispo() { return PEV && PEV.provinces && PEV.provinces.length; }
 
@@ -5791,7 +5894,7 @@ function kpiExec(opts) {
             <span class="kpe-unit">${unit}</span>
           </div>
           <div class="kpe-meta">
-            <span class="kpe-target">${t("target")} : <strong>${target}${unit || ""}</strong></span>
+            <span class="kpe-target">${t("target")} : <strong>${/[%a-zA-Zé\u2264\u2265\/]/.test(String(target)) ? target : target + (unit || "")}</strong></span>
             <span class="kpe-trend ${trendDir}">${trend} <span class="kpe-trend-lbl">${t("trend_vs")}</span></span>
           </div>
         </div>
@@ -5912,120 +6015,6 @@ VIEWS["sao-league"] = () => {
 };
 
 
-VIEWS["min-overview"] = () => {
-  if (!pevDispo()) {
-    return { crumbs: ["Cabinet du Ministre"], html: `<div class="ph ph-exec"><div class="ph-title">Cockpit</div><div class="ph-sub">Données en cours de chargement.</div></div>` };
-  }
-  const CIBLE = PEV.meta.cible_couverture;
-  const nav = (prog, sub) => `onclick="selectSub('${prog}','${sub}')"`;
-
-  // ---- Données réelles ----
-  const p3 = pevNatCouv("Penta3");
-  const scP3 = pevSousCible("Penta3", CIBLE);
-  const comp = PEV.national.qualite.completude, prom = PEV.national.qualite.promptitude;
-  const rota = pevNatCouv("ROTA3");
-  const rotaDelta = rota && rota.v2025 != null ? Math.round((rota.v2026 - rota.v2025) * 10) / 10 : null;
-  const basP3 = pevProvCV("Penta3")[0];
-  const mm = derniereValeurNat("mortmat");
-  const rup = derniereValeurNat("log-rupture");
-  const cpn1 = derniereValeurNat("couv-cpn1");
-
-  // ---- Bandeau de bienvenue ----
-  const bandeau = `
-    <div class="ck-hero">
-      <div class="ck-hero-l">
-        <div class="ck-hero-kicker">Delivery Unit · Ministère de la Santé Publique et de la Prévention</div>
-        <div class="ck-hero-titre">Bonjour Monsieur le Ministre</div>
-        <div class="ck-hero-date">◷ ${dateMinistre()}</div>
-      </div>
-      <div class="ck-hero-r">
-        <div class="ck-hero-stat"><div class="ck-hs-val">${PEV.provinces.length}</div><div class="ck-hs-lib">provinces suivies</div></div>
-        <div class="ck-hero-sep"></div>
-        <div class="ck-hero-stat"><div class="ck-hs-val">${PEV.meta.antigenes.length}</div><div class="ck-hs-lib">antigènes pilotés</div></div>
-        <div class="ck-hero-sep"></div>
-        <div class="ck-hero-stat"><div class="ck-hs-val">${comp ? comp.v2026 + "%" : "ND"}</div><div class="ck-hs-lib">complétude du rapportage</div></div>
-      </div>
-    </div>`;
-
-  // ---- 4 cartes de priorité (avec deep-dive) ----
-  const carte = (icone, badge, badgeRag, val, lib, sous, prog, sub) => `
-    <div class="ck-kpi" ${nav(prog, sub)} role="link" tabindex="0">
-      <div class="ck-kpi-tete"><span class="ck-kpi-ic ck-ic-${badgeRag}">${icone}</span><span class="ck-kpi-badge rag-${badgeRag}">${badge}</span></div>
-      <div class="ck-kpi-val">${val}</div>
-      <div class="ck-kpi-lib">${lib}</div>
-      <div class="ck-kpi-sous">${sous} <span class="ck-kpi-lien">Approfondir →</span></div>
-    </div>`;
-  const cartes = `
-    <div class="ck-kpis">
-      ${carte("◉", "Priorité", pevRag(p3 ? p3.v2026 : null, CIBLE), scP3.prov + " / " + scP3.provTot, "Provinces sous la cible vaccinale", scP3.dist + " districts concernés sur la troisième dose de Penta.", "vacc", "vacc-couv")}
-      ${carte("♀", "Santé maternelle", pevRag(mm.val, 700, true), mm.val == null ? "ND" : Math.round(mm.val), "Mortalité maternelle hospitalière", (mm.k != null ? "Pour 100 000, relevé de " + moisReculLabel(mm.k) + "." : ""), "dsr", "dsr-mat")}
-      ${carte("▦", "Logistique", pevRag(rup.val, 5, true), rup.val == null ? "ND" : rup.val + "%", "Ruptures de stock des traceurs", (rup.k != null ? "Relevé de " + moisReculLabel(rup.k) + ", cible 5%." : ""), "dpml", "dpml-rupt")}
-      ${carte("◈", "Rapportage", pevRag(prom ? prom.v2026 : null, 80), prom ? prom.v2026 + "%" : "ND", "Promptitude du rapportage", "Complétude à " + (comp ? comp.v2026 + "%" : "ND") + ", à surveiller.", "vacc", "vacc-overview")}
-    </div>`;
-
-  // ---- Brief du jour ----
-  const brief = `
-    <div class="ck-brief">
-      <div class="ck-brief-kicker">◆ Brief Delivery Unit · Ce que le tableau signale</div>
-      <div class="ck-brief-titre">Trois écarts appellent votre attention.</div>
-      <div class="ck-brief-grille">
-        <div class="ck-brief-pt"><span class="ck-brief-puce"></span><span><strong>${scP3.prov} provinces</strong> restent sous la cible vaccinale${basP3 ? ", la plus basse à " + basP3.val + "% sur Penta3 (" + (basP3.nom.charAt(0) + basP3.nom.slice(1).toLowerCase()) + ")" : ""}.</span></div>
-        ${rotaDelta != null ? `<div class="ck-brief-pt"><span class="ck-brief-puce"></span><span>Le <strong>rotavirus</strong> progresse de ${rotaDelta >= 0 ? "+" : ""}${rotaDelta} points en un an, à ${rota.v2026}%.</span></div>` : ""}
-        ${rup.val != null ? `<div class="ck-brief-pt"><span class="ck-brief-puce"></span><span>Les <strong>ruptures de traceurs</strong> atteignent ${rup.val}%, loin de la cible de 5%.</span></div>` : ""}
-      </div>
-    </div>`;
-
-  // ---- Indicateurs sanitaires nationaux (barres vers cible + deep-dive) ----
-  const barre = (val, cible, inverse) => {
-    if (val == null) return 0;
-    if (inverse) return Math.max(4, Math.min(100, (cible / val) * 100));
-    return Math.max(4, Math.min(100, (val / cible) * 100));
-  };
-  const indic = (lib, val, unite, cible, cibleLib, inverse, delta, source, prog, sub) => {
-    const rag = pevRag(val, cible, inverse);
-    return `<div class="ck-ind" ${nav(prog, sub)} role="link" tabindex="0">
-      <div class="ck-ind-tete"><span class="ck-ind-lib">${lib}</span>${delta != null ? `<span class="ck-ind-delta dir-${delta.dir}">${delta.dir === "up" ? "↑" : delta.dir === "down" ? "↓" : "→"} ${delta.txt}</span>` : ""}</div>
-      <div class="ck-ind-chiffre"><span class="ck-ind-val">${val == null ? "ND" : val}</span><span class="ck-ind-unite">${val == null ? "" : unite}</span><span class="ck-ind-cible">${cibleLib}</span></div>
-      <div class="ck-ind-barre"><div class="ck-ind-fill rag-${rag}-bg" style="width:${barre(val, cible, inverse)}%"></div></div>
-      <div class="ck-ind-source">${source}</div>
-    </div>`;
-  };
-  const indicateurs = `
-    <div class="ck-section">
-      <div class="ck-section-tete">
-        <div><div class="ck-section-titre">Indicateurs sanitaires nationaux</div><div class="ck-section-sous">Suivi des cibles du Plan National de Développement Sanitaire</div></div>
-        <span class="ck-section-maj">◷ ${PEV.meta.periode}</span>
-      </div>
-      <div class="ck-inds">
-        ${indic("Couverture vaccinale (Penta3)", p3 ? p3.v2026 : null, "%", CIBLE, "Cible " + CIBLE + "%", false, (p3 && p3.v2025 != null ? { dir: p3.v2026 >= p3.v2025 ? "up" : "down", txt: (Math.round((p3.v2026 - p3.v2025) * 10) / 10) + "" } : null), "RIM PEV · cumul jan-juin 2026", "vacc", "vacc-overview")}
-        ${indic("Mortalité maternelle hospitalière", mm.val == null ? null : Math.round(mm.val), "/100k", 700, "Cible 700/100k", true, null, "DSR · " + (mm.k != null ? moisReculLabel(mm.k) : "ND"), "dsr", "dsr-mat")}
-        ${indic("Suivi de grossesse (CPN1)", cpn1.val, "%", 90, "Cible 90%", false, null, "DSR · " + (cpn1.k != null ? moisReculLabel(cpn1.k) : "ND"), "dsr", "dsr-overview")}
-        ${indic("Ruptures de stock (traceurs)", rup.val, "%", 5, "Cible 5%", true, null, "SIGL · " + (rup.k != null ? moisReculLabel(rup.k) : "ND"), "dpml", "dpml-rupt")}
-      </div>
-      <div class="ck-lecture">Plusieurs couvertures administratives dépassent 100%, signe de cibles démographiques à réviser ; les taux servent au repérage des écarts entre territoires. Chaque carte ouvre le détail par province et district.</div>
-    </div>`;
-
-  // Ligne surveillance : riposte cholera
-  const chol = cholDispo() ? CHOLERA.global : null;
-  const surveillance = chol ? `
-    <div class="ck-surv" onclick="selectSub('cousp','cousp-surv')" role="link" tabindex="0">
-      <div class="ck-surv-l">
-        <span class="ck-surv-tag">◆ Surveillance · Épidémie en cours</span>
-        <div class="ck-surv-titre">Riposte au choléra</div>
-        <div class="ck-surv-zone">${CHOLERA.meta.zone} · ${CHOLERA.meta.periode}</div>
-      </div>
-      <div class="ck-surv-stats">
-        <div class="ck-surv-stat"><div class="cs-val">${chol.cas}</div><div class="cs-lib">cas cumulés</div></div>
-        <div class="ck-surv-stat"><div class="cs-val">${chol.deces}</div><div class="cs-lib">décès</div></div>
-        <div class="ck-surv-stat"><div class="cs-val cs-alerte">${chol.létalité}%</div><div class="cs-lib">létalité · seuil 1%</div></div>
-        <div class="ck-surv-stat"><div class="cs-val">${CHOLERA.districts.length}</div><div class="cs-lib">districts touchés</div></div>
-        <span class="ck-surv-lien">Voir la riposte →</span>
-      </div>
-    </div>` : "";
-  return { crumbs: ["Cabinet du Ministre", "Cockpit"], html: bandeau + cartes + brief + surveillance + indicateurs };
-};
-
-
 // ---- Etat generique : vue en attente de source ----
 function vueEnAttente(titre, crumb, source, desc) {
   return {
@@ -6041,7 +6030,6 @@ function vueEnAttente(titre, crumb, source, desc) {
       </div></div>`
   };
 }
-VIEWS["vacc-surv"] = () => vueEnAttente("Surveillance épidémiologique", "Surveillance épidémio.", "<strong>la surveillance des maladies évitables par la vaccination</strong>, poliomyélite et rougeole notamment", "Cas notifiés, complétude et promptitude de la surveillance.");
 VIEWS["vacc-intrants"] = () => {
   const crumbs=["Vaccination · PEV","Vaccins & intrants"];
   const et=`<div class="ph"><div class="ph-tag">Programme Élargi de Vaccination · DLMVSE</div><div class="ph-title">Vaccins & intrants</div>`;
@@ -7357,130 +7345,6 @@ VIEWS["dsr-overview"] = () => {
     </div>` };
 };
 
-VIEWS["dsr-mat"] = () => ({
-  crumbs:["Santé Reproductive", "Santé maternelle"],
-  html: `
-    <div class="ph">
-      <div class="ph-tag">🤰 Santé maternelle · DSR</div>
-      <div class="ph-title">Santé maternelle — Continuum de soins</div>
-      <div class="ph-sub">CPN, accouchements, post-natal, mortalité maternelle.</div>
-    </div>
-    <div class="content">
-      <div class="kpi-grid">
-        ${kpi("CPN 1", nationalAggregate("couv-cpn1"), "%", "Cible : 95%", "", "flat", "yellow")}
-        ${kpi("CPN 4", nationalAggregate("couv-cpn4"), "%", "Cible : 65%", "", "flat", "orange")}
-        ${kpi("Acc. assistés", nationalAggregate("couv-acc"), "%", "Cible : 70%", "", "flat", "orange")}
-        ${kpi("Mortalité maternelle", nationalAggregate("mortmat"), "/100k", "Cible : 350", "", "flat", "red", true)}
-      </div>
-      <div class="g-2-1">
-        ${card("Mortalité maternelle par province", "Pour 100 000 naissances vivantes", renderMap("couv-cpn4", { inverse: true }), "Source : DHIS2 + Audits décès")}
-        ${card("Continuum CPN → Post-natal", "Taux de complétion en cascade", renderBars([
-          { label:"CPN 1",       val:nationalAggregate("couv-cpn1"), target:95 },
-          { label:"CPN 2",       val:null, target:80 },
-          { label:"CPN 3",       val:null, target:70 },
-          { label:"CPN 4",       val:nationalAggregate("couv-cpn4"), target:65 },
-          { label:"Acc. assisté",val:nationalAggregate("accouch"), target:70 },
-          { label:"CPoN",        val:null, target:60 },
-        ]), "")}
-      </div>
-    </div>
-  `
-});
-
-VIEWS["dsr-pf"] = () => ({
-  crumbs:["Santé Reproductive", "Planification familiale"],
-  html: `
-    <div class="ph">
-      <div class="ph-tag">${t("dsr_pf_ph_tag")}</div>
-      <div class="ph-title">${t("dsr_pf_ph_title")}</div>
-      <div class="ph-sub">${t("dsr_pf_ph_sub")}</div>
-    </div>
-    <div class="content">
-      <div class="kpi-grid">
-        ${kpi("mCPR", nationalAggregate("mcpr"), "%", "Cible 2027 : 30%", "", "flat", "red")}
-        ${kpi("TAC (Taux Acceptation)", nationalAggregate("dsr-tac"), "%", "Cible : 35%", "", "flat", "orange")}
-        ${kpi("Abandon par méthode", nationalAggregate("dsr-abandon"), "%", "Cible : ≤ 15%", "", "flat", "yellow", true)}
-        ${kpi("CAP (Couple-Année Protect.)", nationalAggregate("dsr-cap"), "%", "Cible : 15%", "", "flat", "orange")}
-      </div>
-      <div class="g-2-1">
-        ${card("Prévalence PF par province", "Taux PF (toutes méthodes)", renderMap("couv-pf"), "Source : DHIS2 SRMNIA")}
-        ${card("Disponibilité méthodes contraceptives", "% CS offrant la méthode", renderBars([
-          { label:"Implants",   val:null, target:95 },
-          { label:"DIU",        val:null, target:95 },
-          { label:"Injectables",val:null, target:95 },
-          { label:"Pilule",     val:null, target:95 },
-          { label:"Préservatifs",val:null, target:95 },
-          { label:"Sayana-Press",val:null, target:80 },
-        ]), "Source : RMA + SIGL")}
-      </div>
-      ${aiBox(
-        "Sayana-Press (DMPA SC) en sous-disponibilité",
-        `Le <strong>Sayana-Press</strong> (DMPA sous-cutané) est tracé séparément dans le SIGL depuis avril mais reste sous-disponible (<strong>54% des CS</strong>). Création de la variable DHIS2 dédiée en cours. Recommandation : <strong>finaliser la configuration DHIS2 et lancer la formation</strong> sur ce contraceptif auto-administrable, levier majeur de l'autonomisation des femmes.`,
-        "Source : RMA + SIGL · DSR / DLMVSE"
-      )}
-    </div>
-  `
-});
-
-VIEWS["dsr-com"] = () => ({
-  crumbs:["Santé Reproductive", "Santé communautaire"],
-  html: `
-    <div class="ph">
-      <div class="ph-tag">${t("dsr_com_ph_tag")}</div>
-      <div class="ph-title">${t("dsr_com_ph_title")}</div>
-      <div class="ph-sub">${t("dsr_com_ph_sub")}</div>
-    </div>
-    <div class="content">
-      <div class="kpi-grid">
-        ${kpi("ASC actifs", fmt(9360), "/12 000", "Cible : 100%", "", "flat", "yellow")}
-        ${kpi("Aires avec ≥1 ASC actif", nationalAggregate("com-asc"), "%", "Cible : 90%", "", "flat", "yellow")}
-        ${kpi("Nouv. acceptantes PF via ASC", fmt(8420), "", "T1 2026", "", "flat", "green")}
-        ${kpi("Références ASC → CS", nationalAggregate("com-ref"), "%", "Cible : 80%", "", "flat", "green")}
-      </div>
-
-      <div class="g-2-1">
-        ${card("ASC actifs par province", "Réseau de 12 000 ASC déployé sur 23 provinces", renderMap("asc-actifs"), "Source : Registres ASC + RMA communautaire")}
-        ${card("Activité ASC — Production", "Indicateurs traceurs T1 2026", renderBars([
-          { label:"Causeries éducatives", val:null, target:90 },
-          { label:"Visites à domicile",   val:null, target:80 },
-          { label:"Acceptantes PF",        val:null, target:80 },
-          { label:"Référencements CS",     val:null, target:80 },
-          { label:"Rapports mensuels",     val:null, target:90 },
-          { label:"Supervision reçue",     val:null, target:80 },
-        ]), "")}
-      </div>
-
-      ${aiBox(
-        "Réseau ASC : passer de 78% à 95% d'aires couvertes",
-        `Sur 12 000 ASC formés, <strong>9 360 sont actifs</strong> (78%). Le réseau couvre 78% des aires de santé. Recommandation : <strong>réactiver les 2 640 ASC dormants</strong> via un plan trimestriel de remotivation (kit ASC, indemnité forfaitaire, supervision rapprochée). Levier additionnel : harmoniser la fiche de rapport ASC avec le RMA mensuel CS pour automatiser la consolidation dans DHIS2.`,
-        "Source : Registres ASC consolidés · DSR / DSC · Avril 2026"
-      )}
-    </div>
-  `
-});
-
-VIEWS["dsr-stock"] = () => ({
-  crumbs:["Santé Reproductive", "Stocks produits SR"],
-  html: `
-    <div class="ph">
-      <div class="ph-tag">Logistique SR · DSR / DGPML</div>
-      <div class="ph-title">Stocks produits Santé Reproductive</div>
-      <div class="ph-sub">Suivi SIGL des 12+ produits SR tracés · CPA → PPA → HD → CS.</div>
-    </div>
-    <div class="content">
-      <div class="kpi-grid">
-        ${kpi("Disponibilité moyenne SR", nationalAggregate("sr-dispo"), "%", "Cible : 90%", "", "flat", "orange")}
-        ${kpi("CS sans rupture > 30j", nationalAggregate("sr-sansrupt"), "%", "Cible : 85%", "", "flat", "orange", true)}
-        ${kpi("Mois Stock Disponible (MSD)", nationalAggregate("sr-msd"), "mois", "Cible : ≥ 3 mois", "", "flat", "green")}
-        ${kpi("Complétude SIGL", nationalAggregate("sr-sigl"), "%", "Cible : 95%", "", "flat", "orange")}
-      </div>
-    </div>
-  `
-});
-
-// =================================================================
-// Programs verticaux (PNLP, PSLS, PNLT)
-// =================================================================
 function carteDomaine(dom, crumbs, tag, titre) {
   const et=`<div class="ph"><div class="ph-tag">${tag}</div><div class="ph-title">${titre}</div>`;
   if(!PROGM||!PROGM.domaines[dom]) return {crumbs,html:et+`<div class="ph-sub">Données en cours de chargement.</div></div>`};
@@ -7526,81 +7390,9 @@ VIEWS["prog-ptme"] = () => carteDomaine("ptme",["Programmes","PTME"],"PSLS · PT
 VIEWS["prog-nut"] = () => carteDomaine("nutrition",["Programmes","Nutrition"],"Direction de la Nutrition","Nutrition — carte provinciale");
 VIEWS["prog-soins"] = () => carteDomaine("soins",["Programmes","Soins curatifs"],"Soins curatifs — DHIS2","Soins curatifs — carte provinciale");
 VIEWS["prog-recouv"] = () => carteDomaine("recouvrement",["Programmes","Recouvrement des coûts"],"Recouvrement des coûts — DHIS2","Recouvrement — carte provinciale");
-VIEWS["prog-tb"] = () => ({
-  crumbs:["Programmes verticaux", "PNLT — Tuberculose"],
-  html: `
-    <div class="ph">
-      <div class="ph-tag">🫁 Tuberculose · PNLT</div>
-      <div class="ph-title">Tuberculose — Détection et traitement</div>
-      <div class="ph-sub">Notification, succès thérapeutique, TB-MR.</div>
-    </div>
-    <div class="content">
-      <div class="kpi-grid">
-        ${kpi("Taux notification TB", nationalAggregate("tb-notif"), "/100k", "Cible : 90", "", "flat", "orange")}
-        ${kpi("Succès thérapeutique", nationalAggregate("tb-succes"), "%", "Cible : 90%", "", "flat", "yellow")}
-        ${kpi("TB-MR dépistée", nationalAggregate("tb-mr"), "%", "Cible : 85%", "", "flat", "orange")}
-        ${kpi("Co-infection TB-VIH testée", nationalAggregate("tb-vih"), "%", "Cible : 100%", "", "flat", "green")}
-      </div>
-    </div>
-  `
-});
-
 // =================================================================
 // DGPML, DRH, COUSP, DPSIS
 // =================================================================
-VIEWS["dpml-dispo"] = () => ({
-  crumbs:["Logistique · Intrants","Disponibilité traceurs"],
-  html: `
-    <div class="ph">
-      <div class="ph-tag">Logistique · DGPML</div>
-      <div class="ph-title">Disponibilité des médicaments traceurs</div>
-      <div class="ph-sub">Suivi SIGL des produits essentiels au niveau central, PPA, HD, CS.</div>
-    </div>
-    <div class="content">
-      <div class="kpi-grid">
-        ${kpi("Disponibilité traceurs", nationalAggregate("dispo-essentiel"), "%", "Cible : 95%", "", "flat", "orange")}
-        ${kpi("CS sans rupture", nationalAggregate("log-sansrupture"), "%", "Cible : 85%", "", "flat", "orange", true)}
-        ${kpi("Délai livraison moyen", nationalAggregate("log-delai"), "jours", "Cible : 14 j", "", "flat", "orange", true)}
-        ${kpi("Complétude SIGL", nationalAggregate("log-sigl"), "%", "Cible : 95%", "", "flat", "yellow")}
-      </div>
-      <div class="g-2-1">
-        ${card("Disponibilité par province", "% CS avec stock suffisant", renderMap("couv-dispo"), "")}
-        ${card("Causes de rupture", "Analyse racine — 90 j", renderBars([
-          { label:"Supply centrale",val:null, target:null, max:50 },
-          { label:"Transport",      val:null, target:null, max:50 },
-          { label:"Quantification", val:null, target:null, max:50 },
-          { label:"Cold chain",     val:null, target:null, max:50 },
-          { label:"Autres",         val:null, target:null, max:50 },
-        ]), "Source : SIGL + audits")}
-      </div>
-    </div>
-  `
-});
-
-VIEWS["dpml-rupt"] = () => ({
-  crumbs:["Logistique · Intrants","Ruptures de stock"],
-  html: `
-    <div class="ph">
-      <div class="ph-tag">Ruptures de stock · DGPML</div>
-      <div class="ph-title">Ruptures de stock — Suivi temps réel</div>
-      <div class="ph-sub">Détection précoce des ruptures sur produits traceurs (SIGL).</div>
-    </div>
-    <div class="content">
-      <div class="kpi-grid">
-        ${kpi("Taux de rupture global", nationalAggregate("log-rupture"), "%", "Cible : < 5%", "", "flat", "orange", true)}
-        ${kpi("CS en rupture > 30j", nationalAggregate("log-rupture30"), "/2 340", "Cible : 0", "", "flat", "red", true)}
-        ${kpi("Produits en alerte", nationalAggregate("log-alerte"), "/45", "Suivi prioritaire", "", "flat", "yellow", true)}
-        ${kpi("Délai résolution moyen", nationalAggregate("log-resolution"), "jours", "Cible : ≤ 7 j", "", "flat", "orange", true)}
-      </div>
-      ${aiBox(
-        "Rupture critique antibiotiques pédiatriques",
-        `<strong>3 antibiotiques pédiatriques</strong> en rupture > 30 jours sur 7 provinces. Sources : retard livraison central + sur-consommation saisonnière. Recommandation : <strong>approvisionnement d'urgence via UNICEF Supply Division</strong>, négociation en cours (délai 14 jours).`,
-        "Source : SIGL + alertes terrain · DGPML"
-      )}
-    </div>
-  `
-});
-
 VIEWS["drh-effectifs"] = () => ({
   crumbs:["Ressources Humaines","Effectifs"],
   html: `
@@ -7638,256 +7430,6 @@ VIEWS["drh-vacance"] = () => ({
     </div>
   `
 });
-
-VIEWS["dpsis-comp"] = () => {
-  // Multi-system completeness data
-  const systems = [
-    { id:"dhis2",   l:"DHIS2",         desc:"Reporting agrégé mensuel — RMA",   pf:"DPSIS",  freq:"Mensuel",   complet:89, promp:76, valid:82 },
-    { id:"tracker", l:"DHIS2 Tracker", desc:"Supervision PEV + suivi nominatif", pf:"DLMVSE", freq:"Mensuel",   complet:76, promp:68, valid:71 },
-    { id:"sigl",    l:"SIGL",          desc:"Logistique médicaments",            pf:"DGPML",   freq:"Mensuel",   complet:71, promp:62, valid:75 },
-    { id:"ihris",   l:"IHRIS",         desc:"Ressources humaines",                pf:"DRH",    freq:"Trimestriel",complet:95, promp:88, valid:91 },
-    { id:"smt",     l:"SMT / eSMT",    desc:"Stocks vaccins & chaîne du froid",  pf:"DLMVSE", freq:"Mensuel",   complet:82, promp:74, valid:79 },
-  ];
-
-  // Average completeness
-  const avgComp = Math.round(systems.reduce((a, s) => a + s.complet, 0) / systems.length);
-  const avgPromp = Math.round(systems.reduce((a, s) => a + s.promp, 0) / systems.length);
-  const avgValid = Math.round(systems.reduce((a, s) => a + s.valid, 0) / systems.length);
-
-  return {
-    crumbs:["Système d'Information", "Complétude & promptitude"],
-    html: `
-      <div class="ph">
-        <div class="ph-tag">${t("si_ph_tag")}</div>
-        <div class="ph-title">${t("si_comp_ph_title")}</div>
-        <div class="ph-sub">${t("si_comp_ph_sub")}</div>
-      </div>
-      <div class="content">
-
-        <div class="kpi-grid">
-          ${kpi("Complétude moyenne", avgComp, "%", "5 systèmes · Cible : 95%", "", "flat", rag(avgComp, 95))}
-          ${kpi("Promptitude moyenne", avgPromp, "%", "Saisie ≤ J+5 · Cible : 90%", "", "flat", rag(avgPromp, 90))}
-          ${kpi("Validation district", avgValid, "%", "RMA validés · Cible : 95%", "", "flat", rag(avgValid, 95))}
-          ${kpi("SI actifs / opérationnels", nationalAggregate("si-actifs"), "/5", "DHIS2, Tracker, SIGL, IHRIS, SMT", "", "flat", "green")}
-        </div>
-
-        <div class="si-grid">
-          ${systems.map(s => {
-            const avg = Math.round((s.complet + s.promp + s.valid) / 3);
-            const rOverall = rag(avg, 90);
-            const rComp = rag(s.complet, 95);
-            const rProm = rag(s.promp, 90);
-            const rVal = rag(s.valid, 95);
-            return `
-              <div class="si-card rag-${rOverall}">
-                <div class="si-card-hdr">
-                  <div class="si-card-icon">${s.l.substring(0,2)}</div>
-                  <div class="si-card-title">
-                    <div class="si-card-name">${s.l}</div>
-                    <div class="si-card-desc">${s.desc}</div>
-                  </div>
-                  <div class="si-card-status pill ${rOverall}">${avg}%</div>
-                </div>
-                <div class="si-card-meta">
-                  <span class="si-meta-pf">${s.pf}</span>
-                  <span class="si-meta-dot">•</span>
-                  <span class="si-meta-freq">${s.freq}</span>
-                </div>
-                <div class="si-card-metrics">
-                  <div class="si-metric">
-                    <div class="si-metric-label">Complétude</div>
-                    <div class="si-metric-bar"><div class="si-metric-fill ${rComp}" style="width:${s.complet}%"></div></div>
-                    <div class="si-metric-val ${rComp}">${s.complet}<span>%</span></div>
-                    <div class="si-metric-target">Cible 95%</div>
-                  </div>
-                  <div class="si-metric">
-                    <div class="si-metric-label">Promptitude</div>
-                    <div class="si-metric-bar"><div class="si-metric-fill ${rProm}" style="width:${s.promp}%"></div></div>
-                    <div class="si-metric-val ${rProm}">${s.promp}<span>%</span></div>
-                    <div class="si-metric-target">Cible 90%</div>
-                  </div>
-                  <div class="si-metric">
-                    <div class="si-metric-label">Validation</div>
-                    <div class="si-metric-bar"><div class="si-metric-fill ${rVal}" style="width:${s.valid}%"></div></div>
-                    <div class="si-metric-val ${rVal}">${s.valid}<span>%</span></div>
-                    <div class="si-metric-target">Cible 95%</div>
-                  </div>
-                </div>
-              </div>
-            `;
-          }).join("")}
-        </div>
-
-        <div class="g-2-1">
-          ${card("Complétude par système — Évolution N vs N-1", "Tendance annuelle des 5 SI · Janvier–Décembre", renderLineChart([
-            { name:"DHIS2",          data: sparklineData("comp-dhis2"),   color:"#1F3864", style:"solid" },
-            { name:"SIGL",           data: sparklineData("comp-sigl"),    color:"#AF4E10", style:"solid" },
-            { name:"DHIS2 Tracker",  data: sparklineData("comp-tracker"), color:"#3E6E78", style:"solid" },
-            { name:"IHRIS",          data: sparklineData("comp-ihris"),   color:"#7C3AED", style:"solid" },
-            { name:"SMT / eSMT",     data: sparklineData("comp-smt"),     color:"#059669", style:"solid" },
-          ]), "")}
-
-          ${card("Performance comparée des SI", "Complétude (%) — Cible : 95%", renderBars(systems.map(s => ({
-            label: s.l,
-            val: s.complet, target: 95,
-            rag: rag(s.complet, 95),
-            showVal: s.complet + "%"
-          }))), "")}
-        </div>
-
-        ${aiBox(
-          "IHRIS et DHIS2 en bonne voie, SIGL et Tracker à renforcer",
-          `Les systèmes <strong>IHRIS (${systems[3].complet}%)</strong> et <strong>DHIS2 (${systems[0].complet}%)</strong> atteignent les seuils opérationnels. <strong>SIGL (${systems[2].complet}%)</strong> reste fragile, particulièrement en zone sahélienne. <strong>DHIS2 Tracker</strong> peine à se déployer au-delà des sites pilotes PEV. Recommandation : <strong>plan de renforcement SIGL en T2-T3</strong> (financement Banque Mondiale via PRSS-II), accélération de l'extension Tracker aux 16 provinces PDA.`,
-          "Source : Logs administrateurs SI · DPSIS · Mise à jour : J+1"
-        )}
-
-        <div class="g-1-1">
-          ${card("Complétude DHIS2 par province", "% RMA soumis dans les délais", renderMap("comp-dhis2"), "")}
-          ${card("Complétude SIGL par province", "% rapports logistiques soumis", renderMap("comp-sigl"), "")}
-        </div>
-      </div>
-    `
-  };
-};
-
-VIEWS["dpsis-qual"] = () => {
-  // Internal quality indicators (per system)
-  const qualSystems = [
-    { id:"coherence", l:"Cohérence DHIS2 ↔ Registre CS",      val:nationalAggregate("si-coherence"), target:90, freq:"DQS · Semestriel" },
-    { id:"dqs",       l:"DQS réalisés (Self-assessment)",       val:nationalAggregate("si-dqs"), target:80, freq:"Trimestriel" },
-    { id:"lqas",      l:"LQAS réalisés (Lot Quality)",           val:nationalAggregate("si-lqas"), target:80, freq:"Annuel" },
-    { id:"backup",    l:"Sauvegardes serveurs J+0",              val:null, target:95, freq:"Quotidien" },
-  ];
-
-  // SIGL cross-checks — triangulation between systems
-  const siglCross = [
-    {
-      pair: "DHIS2 ↔ SIGL",
-      label: "Consommation déclarée DHIS2 vs stocks sortis SIGL",
-      val: null, target: 85,
-      gap: "",
-      cause: "",
-    },
-    {
-      pair: "DHIS2 ↔ SIGL",
-      label: "Disponibilité produits PF DHIS2 vs stocks SIGL",
-      val: null, target: 85,
-      gap: "",
-      cause: "",
-    },
-    {
-      pair: "SMT ↔ DHIS2",
-      label: "Couverture vaccinale DHIS2 vs stocks vaccins SMT",
-      val: null, target: 90,
-      gap: "",
-      cause: "",
-    },
-    {
-      pair: "SIGL ↔ Tracker",
-      label: "Distribution antigènes SIGL vs supervision Tracker",
-      val: null, target: 85,
-      gap: "",
-      cause: "",
-    },
-    {
-      pair: "SIGL ↔ IHRIS",
-      label: "Personnel formé logistique IHRIS vs gestionnaires SIGL",
-      val: null, target: 90,
-      gap: "",
-      cause: "",
-    },
-    {
-      pair: "SIGL ↔ SIGL",
-      label: "Complétude SIGL pyramidale (CPA→PPA→HD→CS)",
-      val: null, target: 95,
-      gap: "",
-      cause: "",
-    },
-  ];
-
-  const siglVals = siglCross.map(c => c.val).filter(Number.isFinite);
-  const siglAvg = siglVals.length ? Math.round(siglVals.reduce((a, b) => a + b, 0) / siglVals.length) : null;
-
-  return {
-    crumbs:["Système d'Information","Qualité des données"],
-    html: `
-      <div class="ph">
-        <div class="ph-tag">🔍 Qualité · DPSIS</div>
-        <div class="ph-title">${t("si_qual_ph_title")}</div>
-        <div class="ph-sub">${t("si_qual_ph_sub")}</div>
-      </div>
-      <div class="content">
-
-        <div class="kpi-grid">
-          ${kpi("Cohérence DHIS2 ↔ Registre", nationalAggregate("si-coherence"), "%", "Cible : 90%", "", "flat", "yellow")}
-          ${kpi("Triangulation SIGL", siglAvg, "%", "Cible : 85%", "", "flat", rag(siglAvg, 85))}
-          ${kpi("DQS réalisés", nationalAggregate("si-dqs"), "/89 DS", "Cible : 80%", "", "flat", "orange")}
-          ${kpi("LQAS réalisés", nationalAggregate("si-lqas"), "%", "Cible : 80%", "", "flat", "red")}
-        </div>
-
-        <div class="card" style="margin-bottom:14px;">
-          <div class="card-hdr">
-            <div>
-              <div class="card-title">🔗 Triangulation inter-systèmes — Croisements SIGL</div>
-              <div class="card-sub">Cohérence DHIS2 × SIGL × SMT × Tracker × IHRIS · ${siglCross.length} croisements actifs</div>
-            </div>
-          </div>
-          <div class="card-body" style="padding:0;">
-            <table class="dt si-table">
-              <thead>
-                <tr>
-                  <th style="width:14%">Croisement</th>
-                  <th style="width:34%">Indicateur de cohérence</th>
-                  <th style="text-align:right">Score</th>
-                  <th style="text-align:right">Cible</th>
-                  <th style="text-align:right">Statut</th>
-                  <th>Écart constaté</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${siglCross.map(c => {
-                  const r = rag(c.val, c.target);
-                  return `<tr>
-                    <td><span class="pill" style="background:var(--royal-tint);color:var(--royal-d);font-family:var(--font-mono);">${c.pair}</span></td>
-                    <td class="l">
-                      ${c.label}
-                      <div style="font-size:10.5px;color:var(--muted);margin-top:2px;font-weight:400;">${c.cause}</div>
-                    </td>
-                    <td class="num" style="font-size:13px;">${c.val == null ? "ND" : c.val + "%"}</td>
-                    <td class="num" style="color:var(--muted);">${c.target}%</td>
-                    <td class="num"><span class="pill ${r}">${ragLabel(r)}</span></td>
-                    <td style="font-size:11px;color:var(--body);">${c.gap}</td>
-                  </tr>`;
-                }).join("")}
-              </tbody>
-            </table>
-          </div>
-          <div class="card-foot">Croisements automatisés via API DHIS2 + extracts SIGL/SMT/Tracker · Recalcul mensuel J+7</div>
-        </div>
-
-        <div class="g-2-1">
-          ${card("Indicateurs de qualité interne", "DQS, LQAS, sauvegardes, cohérence registre", renderBars(qualSystems.map(s => ({
-            label: s.l.substring(0, 30),
-            val: s.val,
-            target: s.target,
-            rag: rag(s.val, s.target),
-            showVal: s.val + "%"
-          }))), "Source : DQS, LQAS, audits triangulation")}
-
-          ${card("Cohérence inter-systèmes — N vs N-1", "Triangulation moyenne · Janvier–Décembre", renderLineChart(
-            yoySeriesData("couv-comp")
-          ), "")}
-        </div>
-
-        ${aiBox(
-          "SIGL × DHIS2 : trois actions structurantes",
-          `La triangulation SIGL atteint <strong>${siglAvg}%</strong> (cible 85%). Trois leviers prioritaires : <strong>(1)</strong> Finaliser la configuration <strong>Sayana-Press dans DHIS2</strong> pour combler le gap PF (+10 pts attendus). <strong>(2)</strong> Étendre <strong>DHIS2 Tracker aux 16 provinces PDA</strong> (T3-T4) pour renforcer le croisement SIGL ↔ Tracker (+15 pts attendus). <strong>(3)</strong> Lancer un <strong>plan SIGL CS-CdF</strong> en zone sahélienne (Tibesti, Borkou, Ennedi) pour la complétude pyramidale (+12 pts attendus). Cible 2027 : 90% de cohérence sur l'ensemble des croisements.`,
-          "Source : Triangulation automatisée DPSIS · Confiance : 88%"
-        )}
-      </div>
-    `
-  };
-};
 
 // =================================================================
 // Default
@@ -8430,6 +7972,1302 @@ function init() {
 }
 
 init();
+
+/* ==============================================================
+   EXTENSION CID : DPSIS, surveillance MEV, DSR provincial,
+   logistique DGPML, repertoire FOSA, explorateur et alertes.
+   Mode strict : ND pour toute valeur absente, aucune valeur
+   corrigee ni reconduite, anomalies signalees a la source.
+============================================================== */
+
+/* ---- correspondance identifiants carte, noms canoniques ---- */
+const PROV_CANON = {
+  TIB:"Tibesti", BRK:"Borkou", EOU:"Ennedi Ouest", EES:"Ennedi Est",
+  KAN:"Kanem", BAR:"Barh El Gazal", BAT:"Batha", WAD:"Wadi Fira",
+  LAC:"Lac", HDL:"Hadjer Lamis", GUE:"Guera", OUA:"Ouaddai",
+  NDJ:"N'Djamena", CBG:"Chari Baguirmi", SAL:"Salamat", SIL:"Sila",
+  MKO:"Mayo Kebbi Ouest", MKE:"Mayo Kebbi Est", TAN:"Tandjile",
+  MAN:"Mandoul", MCH:"Moyen Chari", LOO:"Logone Occidental", LOE:"Logone Oriental"
+};
+const CANON_PROV = {};
+Object.keys(PROV_CANON).forEach(k => { CANON_PROV[PROV_CANON[k]] = k; });
+
+function cidProvNom(id) { const p = PROVINCES.find(x => x.id === id); return p ? p.name : id; }
+
+/* ---- temps ---- */
+const CID_MOIS_C = ["Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août","Sep","Oct","Nov","Déc"];
+function cidMois(p) { if (!p) return "ND"; const [a, m] = p.split("-").map(Number); return MOIS_NOMS[m - 1] + " " + a; }
+function cidMoisC(p) { if (!p) return "ND"; const [a, m] = p.split("-").map(Number); return CID_MOIS_C[m - 1] + " " + String(a).slice(2); }
+function cidPerCourante() { return `${state.periodYear}-${String(state.periodMonth).padStart(2, "0")}`; }
+function cidPrec(p) { const [a, m] = p.split("-").map(Number); return m > 1 ? `${a}-${String(m - 1).padStart(2, "0")}` : `${a - 1}-12`; }
+function cidDerniere(serie, plafond) {
+  if (!serie) return { p: null, v: null };
+  const cles = Object.keys(serie).filter(p => serie[p] != null && (!plafond || p <= plafond)).sort();
+  if (!cles.length) return { p: null, v: null };
+  const p = cles[cles.length - 1];
+  return { p, v: serie[p] };
+}
+function cidSerieN(serie, fin, n) {
+  const out = [];
+  let p = fin;
+  for (let i = 0; i < (n || 12); i++) { out.unshift(serie && serie[p] != null ? serie[p] : null); p = cidPrec(p); }
+  return out;
+}
+function cidAnnee(serie, annee) {
+  const d = [];
+  for (let m = 1; m <= 12; m++) { const p = `${annee}-${String(m).padStart(2, "0")}`; d.push(serie && serie[p] != null ? serie[p] : null); }
+  return d;
+}
+function cidFmtNb(v) { return v == null ? "ND" : Number(v).toLocaleString("fr-FR"); }
+
+/* ---- choroplethe generique (valeurs indexees par identifiant province) ---- */
+function cidCarte(valeurs, opts) {
+  opts = opts || {};
+  const couleur = opts.couleur || (v => v == null ? "#CBC7BE" : v >= 90 ? "#2E7D32" : v >= 80 ? "#C9A227" : v >= 60 ? "#D97B29" : "#B3372F");
+  const format = opts.format || (v => v == null ? "ND" : v + "%");
+  const clic = opts.clic || "";
+  const paths = Object.keys(PROVINCE_PATHS).map(c => {
+    const v = valeurs[c] === undefined ? null : valeurs[c];
+    const action = clic ? ` style="cursor:pointer" onclick="${clic}('${c}')"` : "";
+    return `<path d="${PROVINCE_PATHS[c].d}" fill="${couleur(v)}" stroke="#F1EFEA" stroke-width="1.4"${action}><title>${cidProvNom(c)} · ${format(v)}</title></path>`;
+  }).join("");
+  return `<svg viewBox="${MAP_VIEWBOX}" style="width:100%;max-height:560px">${paths}</svg>`;
+}
+function cidEchelleVolume(valeurs) {
+  const vs = Object.values(valeurs).filter(v => v != null && v > 0);
+  const max = vs.length ? Math.max(...vs) : 1;
+  return v => v == null ? "#CBC7BE" : v < 0 ? "#B3372F" : v === 0 ? "#E6E2D8" :
+    ["#DBE3F0", "#AFC0DB", "#7E97BF", "#4E6FA0", "#1F3864"][Math.min(4, Math.floor((v / max) * 4.999))];
+}
+
+/* ---- chips de selection ---- */
+function cidChips(items, cle, actif) {
+  return `<div class="cid-chips">` + items.map(it =>
+    `<button class="cid-chip ${it.v === actif ? "on" : ""}" onclick="window['${cle}']=${JSON.stringify(String(it.v)).replace(/"/g, "&quot;")};renderMain()">${it.l}</button>`
+  ).join("") + `</div>`;
+}
+
+/* ---- export CSV ---- */
+function cidExportCSV(nom, entetes, lignes) {
+  const esc = c => { c = c == null ? "" : String(c); return /[;"\n]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c; };
+  const contenu = [entetes.map(esc).join(";")].concat(lignes.map(l => l.map(esc).join(";"))).join("\n");
+  const blob = new Blob(["\uFEFF" + contenu], { type: "text/csv;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = nom;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 400);
+}
+window.__cidCSV = {};
+function cidBoutonCSV(id, nom) {
+  return `<button class="cid-btn-csv" onclick="(function(){const d=window.__cidCSV['${id}'];if(d)cidExportCSV('${nom}',d.entetes,d.lignes);})()">Exporter CSV</button>`;
+}
+
+/* ==============================================================
+   CATALOGUE TRANSVERSAL DES INDICATEURS
+   Chaque entree expose une serie mensuelle par province (identifiant
+   carte) ou nationale (null). Construit sur les seuls jeux charges.
+============================================================== */
+function cidCatalogue() {
+  const cat = [];
+  if (DSRP) {
+    Object.keys(DSRP.indicateurs).forEach(code => {
+      const d = DSRP.indicateurs[code];
+      cat.push({
+        id: "dsr:" + code, dom: "Santé reproductive · DSR", libelle: d.libelle, unite: d.unite,
+        src: "DHIS2 provincial DSR", natDispo: false,
+        serie: id => {
+          if (id == null) return null;
+          const pv = DSRP.provinces[PROV_CANON[id]];
+          return pv ? (pv[code] || null) : null;
+        }
+      });
+    });
+  }
+  if (DSRN) {
+    Object.keys(DSRN.indicateurs).forEach(code => {
+      const d = DSRN.indicateurs[code];
+      cat.push({
+        id: "dsrn:" + code, dom: "Santé reproductive · national", libelle: d.libelle + " (national)", unite: d.unite,
+        src: "DHIS2 national DSR", natDispo: true,
+        serie: id => id == null ? d.serie : null
+      });
+    });
+  }
+  if (DPSISQ) {
+    [["rma_global", "comp", "Complétude RMA globale"], ["rma_global", "promp", "Promptitude RMA globale"],
+     ["rma_cs", "comp", "Complétude RMA centres de santé"], ["rma_hdhp", "comp", "Complétude RMA hôpitaux HD et HP"],
+     ["ids", "comp", "Complétude surveillance IDS"]].forEach(([sys, ch, lib]) => {
+      cat.push({
+        id: "dpsis:" + sys + ":" + ch, dom: "Système d'information · DPSIS", libelle: lib, unite: "%",
+        src: "Relevé DPSIS", natDispo: true,
+        serie: id => {
+          const cible = id == null ? "National" : PROV_CANON[id];
+          const out = {};
+          Object.keys(DPSISQ.valeurs).forEach(per => {
+            const u = DPSISQ.valeurs[per][cible];
+            if (u && u[sys] && u[sys][ch] != null) out[per] = u[sys][ch];
+          });
+          return out;
+        }
+      });
+    });
+  }
+  if (SURV) {
+    SURV.maladies.forEach(m => {
+      cat.push({
+        id: "surv:" + m.code, dom: "Surveillance des maladies · IDS",
+        libelle: m.libelle + (m.incidence === "incidence" ? " · taux d'incidence" : " · taux d'attaque"), unite: "/100 000",
+        src: "DHIS2 surveillance intégrée", natDispo: true,
+        serie: id => {
+          const cible = id == null ? "National" : PROV_CANON[id];
+          const out = {};
+          Object.keys(SURV.valeurs).forEach(per => {
+            const u = SURV.valeurs[per][cible];
+            const x = u && u[m.code];
+            if (x && (x.att != null || x.inc != null)) out[per] = x.att != null ? x.att : x.inc;
+          });
+          return out;
+        }
+      });
+    });
+  }
+  if (DPML) {
+    DPML.produits.forEach(pr => {
+      cat.push({
+        id: "dpml:" + pr.code, dom: "Logistique · DGPML", libelle: "Stock fin de mois · " + pr.libelle, unite: "unités",
+        src: "DHIS2 DGPML", natDispo: true,
+        serie: id => {
+          const cible = id == null ? "National" : PROV_CANON[id];
+          return (DPML.stocks[pr.code] || {})[cible] || null;
+        }
+      });
+    });
+  }
+  if (PEVP && PEVP.meta && PEVP.meta.antigenes) {
+    PEVP.meta.antigenes.forEach(ag => {
+      cat.push({
+        id: "pev:" + ag, dom: "Vaccination · PEV", libelle: "Couverture mensuelle " + ag, unite: "%",
+        src: PEVP.meta.source, natDispo: true,
+        serie: id => {
+          if (id == null) return (PEVP.national.couv || {})[ag] || null;
+          const pv = PEVP.provinces[id];
+          const s = pv && pv.couv ? pv.couv[ag] : null;
+          return s && Object.keys(s).length ? s : null;
+        }
+      });
+    });
+  }
+  return cat;
+}
+function cidCat() { if (!window.__cidCat) window.__cidCat = cidCatalogue(); return window.__cidCat; }
+
+/* ==============================================================
+   MOTEUR D'ALERTES
+   Regles calculees sur les seules valeurs presentes, chaque alerte
+   porte sa periode de reference et un lien vers la vue de detail.
+============================================================== */
+function cidAlertes() {
+  const A = [];
+  const pousse = (niv, dom, txt, det, prog, sub, periode) => A.push({ niv, dom, txt, det, prog, sub, periode });
+
+  /* vaccination : provinces sous la cible Penta3, cumul RIM */
+  if (typeof pevDispo === "function" && pevDispo()) {
+    const sc = pevSousCible("Penta3", PEV.meta.cible_couverture);
+    if (sc && sc.prov > 0) {
+      const bas = pevProvCV("Penta3")[0];
+      pousse(sc.prov >= 8 ? "rouge" : "orange", "Vaccination",
+        sc.prov + " provinces sous la cible Penta3",
+        "Cible " + PEV.meta.cible_couverture + "% en cumul" + (bas ? ", plancher à " + bas.val + "% (" + bas.nom.charAt(0) + bas.nom.slice(1).toLowerCase() + ")" : "") + ".",
+        "vacc", "vacc-couv", PEV.meta.mois_max);
+    }
+  }
+  /* cholera : letalite au dessus du seuil OMS */
+  if (CHOL_P && CHOL_P.global) {
+    const g = CHOL_P.global;
+    if (g.letalite != null && g.letalite > 1) {
+      pousse("rouge", "Choléra", "Létalité à " + g.letalite + "%, seuil de 1% dépassé",
+        g.cas + " cas et " + g.deces + " décès cumulés, foyers Hadjer Lamis et N'Djamena.",
+        "cousp", "cousp-sitrep", (CHOL_P.meta && CHOL_P.meta.fin) || null);
+    }
+  }
+  /* DSR national : niveau et decrochage mensuel */
+  if (DSRN) {
+    const cp = cidDerniere(DSRN.indicateurs.cpn1.serie, DSRN.meta.mois_max);
+    if (cp.v != null && cp.v < 80)
+      pousse("orange", "Santé maternelle", "Couverture CPN1 à " + Math.round(cp.v) + "%", "Relevé national de " + cidMois(cp.p) + ", cible 95%.", "dsr", "dsr-overview", cp.p);
+    let chutes = 0, exemple = null;
+    Object.keys(DSRN.indicateurs).forEach(k => {
+      const ind = DSRN.indicateurs[k];
+      if (ind.unite !== "%") return;
+      const d = cidDerniere(ind.serie, DSRN.meta.mois_max);
+      const prec = d.p ? ind.serie[cidPrec(d.p)] : null;
+      if (d.v != null && prec != null && prec - d.v >= 15) { chutes++; if (!exemple) exemple = ind.libelle; }
+    });
+    if (chutes >= 3)
+      pousse("orange", "Santé maternelle", chutes + " indicateurs DSR en repli de 15 points ou plus sur un mois",
+        "Dont " + exemple + ". Un décrochage simultané oriente vers un défaut de rapportage à vérifier avec la DSR.", "dsr", "dsr-overview", DSRN.meta.mois_max);
+  }
+  /* DSR provincial : mortalite maternelle hospitaliere elevee */
+  if (DSRP) {
+    const eleves = [];
+    Object.keys(PROV_CANON).forEach(id => {
+      const s = (DSRP.provinces[PROV_CANON[id]] || {}).mort_mat_hosp;
+      const d = cidDerniere(s, DSRP.meta.mois_max);
+      if (d.v != null && d.v >= 700) eleves.push({ id, v: Math.round(d.v), p: d.p });
+    });
+    if (eleves.length) {
+      eleves.sort((a, b) => b.v - a.v);
+      pousse(eleves[0].v >= 1500 ? "rouge" : "orange", "Santé maternelle",
+        eleves.length + " province" + (eleves.length > 1 ? "s" : "") + " au dessus de 700 décès maternels pour 100 000 en milieu hospitalier",
+        "Maximum " + cidFmtNb(eleves[0].v) + " (" + cidProvNom(eleves[0].id) + ", " + cidMois(eleves[0].p) + ").",
+        "dsr", "dsr-mat", eleves[0].p);
+    }
+  }
+  /* DPSIS : completude et promptitude nationales */
+  if (DPSISQ) {
+    const derP = DPSISQ.meta.derniere_periode_couverte;
+    const nat = (DPSISQ.valeurs[derP] || {})["National"] || {};
+    const comp = nat.rma_global ? nat.rma_global.comp : null;
+    const promp = nat.rma_global ? nat.rma_global.promp : null;
+    if (comp != null && comp < 90)
+      pousse("orange", "Rapportage", "Complétude RMA nationale à " + Math.round(comp) + "%", "Relevé de " + cidMois(derP) + ", cible 95%.", "dpsis", "dpsis-comp", derP);
+    if (promp != null && promp < 80)
+      pousse("orange", "Rapportage", "Promptitude RMA nationale à " + Math.round(promp) + "%", "Relevé de " + cidMois(derP) + ", cible 90%.", "dpsis", "dpsis-comp", derP);
+    const faibles = Object.keys(PROV_CANON).filter(id => {
+      const u = (DPSISQ.valeurs[derP] || {})[PROV_CANON[id]];
+      return u && u.rma_global && u.rma_global.comp != null && u.rma_global.comp < 80;
+    });
+    if (faibles.length)
+      pousse("jaune", "Rapportage", faibles.length + " province" + (faibles.length > 1 ? "s" : "") + " sous 80% de complétude RMA",
+        faibles.map(cidProvNom).slice(0, 4).join(", ") + (faibles.length > 4 ? "…" : "") + " · " + cidMois(derP) + ".", "dpsis", "dpsis-comp", derP);
+  }
+  /* surveillance MEV : letalite non nulle sur maladies a potentiel epidemique */
+  if (SURV) {
+    const derS = SURV.meta.derniere_periode_partielle ? cidPrec(SURV.meta.derniere_periode_couverte) : SURV.meta.derniere_periode_couverte;
+    ["tnn", "diphterie", "meningite", "rougeole"].forEach(code => {
+      const m = SURV.maladies.find(x => x.code === code);
+      if (!m) return;
+      const nat = ((SURV.valeurs[derS] || {})["National"] || {})[code];
+      if (nat && nat.let != null && nat.let > 0)
+        pousse("orange", "Surveillance", "Létalité " + m.libelle + " à " + nat.let + "%", "Relevé national de " + cidMois(derS) + ".", "vacc", "vacc-surv", derS);
+    });
+  }
+  /* logistique : indicateur de rupture eteint et stocks negatifs */
+  if (DPML) {
+    if (DPML.meta.ruptures_mois_max && DPML.meta.ruptures_mois_max < DPML.meta.stocks_mois_max)
+      pousse("jaune", "Logistique", "Indicateur de rupture par FOSA sans relevé en 2026",
+        "Dernier relevé " + cidMois(DPML.meta.ruptures_mois_max) + ". La saisie DHIS2 est à réactiver avec la DGPML.", "dpml", "dpml-rupt", DPML.meta.ruptures_mois_max);
+    if (DPML.anomalies && DPML.anomalies.length)
+      pousse("jaune", "Logistique", DPML.anomalies.length + " stocks de fin de mois négatifs en 2026",
+        "Valeurs affichées telles que transmises, correction attendue à la source.", "dpsis", "dpsis-qual", DPML.meta.stocks_mois_max);
+    const amox = (DPML.stocks.trac_amox_ad || {})["National"];
+    const d = cidDerniere(amox, DPML.meta.stocks_mois_max);
+    const prec = d.p ? amox[cidPrec(d.p)] : null;
+    if (d.v != null && prec != null && prec > 0 && (prec - d.v) / prec >= 0.2)
+      pousse("orange", "Logistique", "Stock national d'amoxicilline adulte en repli de " + Math.round((prec - d.v) / prec * 100) + "% sur un mois",
+        cidFmtNb(d.v) + " unités en " + cidMois(d.p) + " contre " + cidFmtNb(prec) + " le mois précédent.", "dpml", "dpml-dispo", d.p);
+  }
+  const poids = { rouge: 0, orange: 1, jaune: 2 };
+  A.sort((a, b) => poids[a.niv] - poids[b.niv]);
+  return A;
+}
+
+/* ---- pastille et fil d'alertes ---- */
+function cidPastille(niv) { return `<span class="cid-dot ${niv}"></span>`; }
+function cidFilAlertes(max) {
+  const A = cidAlertes();
+  if (!A.length) return "";
+  const items = A.slice(0, max || 4).map(a =>
+    `<button class="cid-al" onclick="selectSub('${a.prog}','${a.sub}')">${cidPastille(a.niv)}<span class="cid-al-txt"><strong>${a.dom}</strong> · ${a.txt}</span><span class="cid-al-fleche">→</span></button>`
+  ).join("");
+  return `<div class="cid-alertes">
+    <div class="cid-alertes-tete">
+      <span class="cid-alertes-titre">◆ Alertes actives</span>
+      <button class="cid-alertes-tout" onclick="selectSub('explor','explor-alert')">${A.length} au total · tout voir →</button>
+    </div>
+    <div class="cid-alertes-liste">${items}</div>
+  </div>`;
+}
+
+/* ==============================================================
+   APERCU MINISTERIEL : tableau de bord 10 KPI sur sources reelles
+============================================================== */
+VIEWS["min-overview"] = () => {
+  const crumbs = ["Cabinet du Ministre", "Tableau de bord"];
+  const nav = (prog, sub) => `onclick="selectSub('${prog}','${sub}')"`;
+
+  /* fraicheur des sources reellement chargees */
+  const sources = [
+    { l: "PEV · RIM", ok: !!(PEV && PEV.provinces), p: PEV && PEV.meta ? PEV.meta.mois_max : null },
+    { l: "DSR", ok: !!DSRN, p: DSRN ? DSRN.meta.mois_max : null },
+    { l: "DPSIS", ok: !!DPSISQ, p: DPSISQ ? DPSISQ.meta.derniere_periode_couverte : null },
+    { l: "Surveillance", ok: !!SURV, p: SURV ? (SURV.meta.derniere_periode_partielle ? cidPrec(SURV.meta.derniere_periode_couverte) : SURV.meta.derniere_periode_couverte) : null },
+    { l: "DGPML", ok: !!DPML, p: DPML ? DPML.meta.stocks_mois_max : null },
+    { l: "COUSP", ok: !!(CHOL_P && CHOL_P.meta), p: CHOL_P && CHOL_P.meta ? CHOL_P.meta.fin : null },
+  ];
+  const nSources = sources.filter(s => s.ok).length;
+  const ticker = sources.map(s => `<span class="cid-src ${s.ok ? "ok" : "off"}">${s.l}<em>${s.ok ? (s.p ? cidMoisC(String(s.p).slice(0, 7)) : "à jour") : "en attente"}</em></span>`).join("");
+
+  const bandeau = `
+    <div class="ck-hero">
+      <div class="ck-hero-l">
+        <div class="ck-hero-kicker">Delivery Unit · Ministère de la Santé Publique et de la Prévention</div>
+        <div class="ck-hero-titre">Bonjour Monsieur le Ministre</div>
+        <div class="ck-hero-date">◷ ${dateMinistre()}</div>
+        <div class="cid-srcs">${ticker}</div>
+      </div>
+      <div class="ck-hero-r">
+        <div class="ck-hero-stat"><div class="ck-hs-val">23</div><div class="ck-hs-lib">provinces suivies</div></div>
+        <div class="ck-hero-sep"></div>
+        <div class="ck-hero-stat"><div class="ck-hs-val">${FOSAR ? cidFmtNb(FOSAR.meta.n_districts) : "ND"}</div><div class="ck-hs-lib">districts sanitaires</div></div>
+        <div class="ck-hero-sep"></div>
+        <div class="ck-hero-stat"><div class="ck-hs-val">${FOSAR ? cidFmtNb(FOSAR.meta.n_fosa) : "ND"}</div><div class="ck-hs-lib">formations sanitaires</div></div>
+      </div>
+    </div>`;
+
+  /* les dix indicateurs du cockpit, chacun sur sa source */
+  const cartes = [];
+  const pousseKpi = (o) => cartes.push(kpiExec(o));
+
+  /* 1 et 2 : couvertures vaccinales cumulées RIM */
+  if (typeof pevDispo === "function" && pevDispo()) {
+    const cible = PEV.meta.cible_couverture;
+    [["Penta3", "Couverture Penta 3", 1], ["VAR1", "Couverture rougeole VAR 1", 2]].forEach(([ag, lib, n]) => {
+      const c = pevNatCouv(ag);
+      const spark = PEVP && PEVP.national && PEVP.national.couv && PEVP.national.couv[ag]
+        ? Object.keys(PEVP.national.couv[ag]).sort().map(p => PEVP.national.couv[ag][p]) : [];
+      const delta = c && c.v2025 != null ? Math.round((c.v2026 - c.v2025) * 10) / 10 : null;
+      pousseKpi({
+        n: String(n).padStart(2, "0"), label: lib, category: "Vaccination · DLMVSE",
+        value: c ? c.v2026 : null, unit: "%", target: cible + "%",
+        trend: delta == null ? "—" : (delta >= 0 ? "+" : "") + delta + " pts", trendDir: delta == null ? "flat" : delta >= 0 ? "up" : "down",
+        rag: pevRag(c ? c.v2026 : null, cible), source: "RIM PEV · cumul " + cidMois(PEV.meta.mois_max),
+        sparkData: spark, sparkColor: "#1F3864", action: null
+      });
+    });
+  } else { pousseKpi({ n: "01", label: "Couverture Penta 3", category: "Vaccination", value: null, unit: "%", target: "90%", trend: "—", trendDir: "flat", rag: "na", source: "RIM PEV", sparkData: [] }); }
+
+  /* 3 a 5 : sante maternelle, releve national DSR */
+  const kDSR = (n, code, lib, cible, inverse, unite) => {
+    const ind = DSRN ? DSRN.indicateurs[code] : null;
+    const d = ind ? cidDerniere(ind.serie, DSRN.meta.mois_max) : { p: null, v: null };
+    const prec = d.p && ind ? ind.serie[cidPrec(d.p)] : null;
+    const delta = d.v != null && prec != null ? Math.round((d.v - prec) * 10) / 10 : null;
+    const bon = delta == null ? null : (inverse ? delta <= 0 : delta >= 0);
+    pousseKpi({
+      n: String(n).padStart(2, "0"), label: lib, category: "Santé maternelle · DSR",
+      value: d.v == null ? null : Math.round(d.v * 10) / 10, unit: unite || "%",
+      target: (inverse ? "≤ " : "") + cible + (unite || "%"),
+      trend: delta == null ? "—" : (delta >= 0 ? "+" : "") + delta, trendDir: delta == null ? "flat" : bon ? "up" : "down",
+      rag: d.v == null ? "na" : inverse ? (d.v <= cible ? "green" : d.v <= cible * 1.5 ? "orange" : "red") : pevRag(d.v, cible),
+      source: "DSR · " + (d.p ? cidMois(d.p) : "ND"),
+      sparkData: ind ? Object.keys(ind.serie).sort().map(p => ind.serie[p]).filter(v => v != null) : [],
+      sparkColor: inverse ? "#8C4A5E" : "#3E6E78"
+    });
+  };
+  kDSR(3, "cpn1", "Couverture CPN 1", 95, false);
+  kDSR(4, "acc_qualifie", "Accouchements assistés", 70, false);
+  kDSR(5, "mort_mat_hosp", "Mortalité maternelle hospitalière", 700, true, "/100k");
+
+  /* 6 et 7 : completude et promptitude du rapportage RMA */
+  const kSI = (n, ch, lib, cible) => {
+    let serie = {}, d = { p: null, v: null };
+    if (DPSISQ) {
+      Object.keys(DPSISQ.valeurs).forEach(p => {
+        const u = DPSISQ.valeurs[p]["National"];
+        if (u && u.rma_global && u.rma_global[ch] != null) serie[p] = u.rma_global[ch];
+      });
+      d = cidDerniere(serie, DPSISQ.meta.derniere_periode_couverte);
+    }
+    const prec = d.p ? serie[cidPrec(d.p)] : null;
+    const delta = d.v != null && prec != null ? Math.round((d.v - prec) * 10) / 10 : null;
+    pousseKpi({
+      n: String(n).padStart(2, "0"), label: lib, category: "Rapportage · DPSIS",
+      value: d.v == null ? null : Math.round(d.v), unit: "%", target: cible + "%",
+      trend: delta == null ? "—" : (delta >= 0 ? "+" : "") + delta + " pts", trendDir: delta == null ? "flat" : delta >= 0 ? "up" : "down",
+      rag: pevRag(d.v, cible), source: "DPSIS · " + (d.p ? cidMois(d.p) : "ND"),
+      sparkData: cidSerieN(serie, d.p || "2026-07", 12), sparkColor: "#1F3864"
+    });
+  };
+  kSI(6, "comp", "Complétude du rapportage RMA", 95);
+  kSI(7, "promp", "Promptitude du rapportage RMA", 90);
+
+  /* 8 : rougeole, taux d'attaque national */
+  (() => {
+    let serie = {}, d = { p: null, v: null };
+    if (SURV) {
+      const plafond = SURV.meta.derniere_periode_partielle ? cidPrec(SURV.meta.derniere_periode_couverte) : SURV.meta.derniere_periode_couverte;
+      Object.keys(SURV.valeurs).forEach(p => {
+        const u = (SURV.valeurs[p]["National"] || {})["rougeole"];
+        if (u && u.att != null) serie[p] = u.att;
+      });
+      d = cidDerniere(serie, plafond);
+    }
+    pousseKpi({
+      n: "08", label: "Rougeole · taux d'attaque", category: "Surveillance · IDS",
+      value: d.v, unit: "/100k", target: "vigilance",
+      trend: "—", trendDir: "flat",
+      rag: d.v == null ? "na" : d.v === 0 ? "green" : d.v < 2 ? "yellow" : "orange",
+      source: "IDS · " + (d.p ? cidMois(d.p) : "ND"),
+      sparkData: cidSerieN(serie, d.p || "2026-07", 12), sparkColor: "#8C4038"
+    });
+  })();
+
+  /* 9 : stock national du traceur amoxicilline */
+  (() => {
+    const serie = DPML ? (DPML.stocks.trac_amox_ad || {})["National"] || {} : {};
+    const d = cidDerniere(serie, DPML ? DPML.meta.stocks_mois_max : null);
+    const prec = d.p ? serie[cidPrec(d.p)] : null;
+    const delta = d.v != null && prec != null && prec > 0 ? Math.round((d.v - prec) / prec * 100) : null;
+    pousseKpi({
+      n: "09", label: "Stock amoxicilline adulte", category: "Logistique · DGPML",
+      value: d.v == null ? null : Math.round(d.v / 1000), unit: "k unités", target: "suivi",
+      trend: delta == null ? "—" : (delta >= 0 ? "+" : "") + delta + "%", trendDir: delta == null ? "flat" : delta >= 0 ? "up" : "down",
+      rag: d.v == null ? "na" : delta != null && delta <= -20 ? "orange" : "green",
+      source: "DGPML · " + (d.p ? cidMois(d.p) : "ND"),
+      sparkData: cidSerieN(serie, d.p || "2026-07", 12).map(v => v == null ? null : v / 1000), sparkColor: "#856722"
+    });
+  })();
+
+  /* 10 : cholera, letalite de l'episode en cours */
+  (() => {
+    const g = CHOL_P && CHOL_P.global ? CHOL_P.global : null;
+    let spark = [];
+    if (CHOL_P && CHOL_P.semaine) spark = Object.keys(CHOL_P.semaine).sort().map(s => (CHOL_P.semaine[s].periode || {}).cas).filter(v => v != null);
+    pousseKpi({
+      n: "10", label: "Choléra · létalité de l'épisode", category: "Riposte · COUSP",
+      value: g ? g.letalite : null, unit: "%", target: "≤ 1%",
+      trend: g ? g.cas + " cas" : "—", trendDir: "flat",
+      rag: g == null ? "na" : g.letalite <= 1 ? "green" : "red",
+      source: "Liste linéaire COUSP" + (CHOL_P && CHOL_P.meta ? " · au " + CHOL_P.meta.fin : ""),
+      sparkData: spark, sparkColor: "#B3372F"
+    });
+  })();
+
+  const grille = `<div class="ck-section">
+      <div class="ck-section-tete">
+        <div><div class="ck-section-titre">Les dix indicateurs du cockpit</div><div class="ck-section-sous">Chaque carte porte sa source et sa période, et ouvre la vue de détail</div></div>
+      </div>
+      <div class="cid-kpi10">${cartes.join("")}</div>
+    </div>`;
+
+  /* liens de deep dive appliques aux cartes dans l'ordre */
+  const liens = [["vacc","vacc-couv"],["vacc","vacc-couv"],["dsr","dsr-overview"],["dsr","dsr-mat"],["dsr","dsr-mat"],["dpsis","dpsis-comp"],["dpsis","dpsis-comp"],["vacc","vacc-surv"],["dpml","dpml-dispo"],["cousp","cousp-sitrep"]];
+  setTimeout(() => {
+    document.querySelectorAll(".cid-kpi10 .kpi-exec").forEach((el, i) => {
+      if (!liens[i]) return;
+      el.classList.add("cid-cliquable");
+      el.onclick = () => selectSub(liens[i][0], liens[i][1]);
+    });
+  }, 0);
+
+  /* bande cholera */
+  const chol = CHOL_P && CHOL_P.global ? CHOL_P.global : null;
+  const bande = chol ? `
+    <div class="ck-surv" onclick="selectSub('cousp','cousp-sitrep')" role="link" tabindex="0">
+      <div class="ck-surv-l">
+        <span class="ck-surv-tag">◆ Surveillance · Épisode en cours</span>
+        <div class="ck-surv-titre">Riposte au choléra</div>
+        <div class="ck-surv-zone">Hadjer Lamis et N'Djamena · liste linéaire au ${CHOL_P.meta.fin}</div>
+      </div>
+      <div class="ck-surv-stats">
+        <div class="ck-surv-stat"><div class="cs-val">${chol.cas}</div><div class="cs-lib">cas cumulés</div></div>
+        <div class="ck-surv-stat"><div class="cs-val">${chol.deces}</div><div class="cs-lib">décès</div></div>
+        <div class="ck-surv-stat"><div class="cs-val cs-alerte">${chol.letalite}%</div><div class="cs-lib">létalité · seuil 1%</div></div>
+        <div class="ck-surv-stat"><div class="cs-val">${(chol.districts || []).length}</div><div class="cs-lib">districts touchés</div></div>
+        <span class="ck-surv-lien">Voir la riposte →</span>
+      </div>
+    </div>` : "";
+
+  return { crumbs, html: bandeau + cidFilAlertes(4) + grille + bande };
+};
+
+/* ==============================================================
+   DPSIS : completude et promptitude sur releve reel
+============================================================== */
+VIEWS["dpsis-comp"] = () => {
+  const crumbs = ["Système d'Information", "Complétude & promptitude"];
+  const et = `<div class="ph"><div class="ph-tag">Rapportage de routine · DPSIS</div><div class="ph-title">Complétude et promptitude du rapportage</div>`;
+  if (!DPSISQ) return { crumbs, html: et + `<div class="ph-sub">Données DPSIS en cours de chargement.</div></div>` };
+  const derP = DPSISQ.meta.derniere_periode_couverte;
+  let per = cidPerCourante();
+  const hors = state.periodMode !== "month" || per < "2026-01" || per > derP;
+  const perAff = hors ? derP : per;
+  const nat = (DPSISQ.valeurs[perAff] || {})["National"] || {};
+  const lireN = (sys, ch) => nat[sys] && nat[sys][ch] != null ? nat[sys][ch] : null;
+  const volNat = (DPSISQ.volumes[perAff] || {})["National"] || null;
+  const sommeVol = (cle) => {
+    if (volNat && volNat[cle] != null) return volNat[cle];
+    let s = 0, vu = false;
+    Object.keys(PROV_CANON).forEach(id => {
+      const u = (DPSISQ.volumes[perAff] || {})[PROV_CANON[id]];
+      if (u && u[cle] != null) { s += u[cle]; vu = true; }
+    });
+    return vu ? s : null;
+  };
+  const csA = sommeVol("cs_attendus"), csS = sommeVol("cs_saisis"), hA = sommeVol("hdhp_attendus"), hS = sommeVol("hdhp_saisis");
+
+  const serieNat = (ch, annee) => {
+    const s = {};
+    Object.keys(DPSISQ.valeurs).forEach(p => {
+      const u = DPSISQ.valeurs[p]["National"];
+      if (u && u.rma_global && u.rma_global[ch] != null) s[p] = u.rma_global[ch];
+    });
+    return cidAnnee(s, annee);
+  };
+
+  const valProv = {};
+  Object.keys(PROV_CANON).forEach(id => {
+    const u = (DPSISQ.valeurs[perAff] || {})[PROV_CANON[id]];
+    valProv[id] = u && u.rma_global && u.rma_global.comp != null ? Math.round(u.rma_global.comp) : null;
+  });
+  const pires = Object.keys(valProv).filter(id => valProv[id] != null).sort((a, b) => valProv[a] - valProv[b]).slice(0, 8);
+
+  const lgnSys = [["rma_cs", "Centres de santé"], ["rma_hdhp", "Hôpitaux HD et HP"], ["rma_hn", "Hôpitaux nationaux"], ["ids", "Surveillance IDS"], ["vih", "Sites VIH"]].map(([sys, lib]) => {
+    const c = lireN(sys, "comp"), p = lireN(sys, "promp");
+    const sysDef = DPSISQ.systemes.find(s => s.code === sys) || {};
+    const sous = Object.keys(PROV_CANON).filter(id => {
+      const u = (DPSISQ.valeurs[perAff] || {})[PROV_CANON[id]];
+      return u && u[sys] && u[sys].comp != null && u[sys].comp < 95;
+    }).length;
+    return `<tr><td class="l">${lib}<div class="cid-sous-lib">${sysDef.perimetre || ""}</div></td>
+      <td class="num">${c == null ? "ND" : Math.round(c) + "%"}</td>
+      <td class="num">${p == null ? "ND" : Math.round(p) + "%"}</td>
+      <td class="num">${sous} / 23</td>
+      <td>${c == null ? '<span class="pill na">ND</span>' : `<span class="pill ${pevRag(c, 95)}">${ragLabel(pevRag(c, 95))}</span>`}</td></tr>`;
+  }).join("");
+
+  const anomP = (DPSISQ.anomalies || []).filter(a => a.periode === perAff);
+  const cs = DPSISQ.carte_sanitaire || {};
+  const sommeCS = cle => Object.values(cs).reduce((s, x) => s + (x[cle] || 0), 0);
+
+  return { crumbs, html: et + `<div class="ph-sub">${hors ? `Aucun relevé pour ${periodLabel()} : affichage du dernier mois couvert, ${cidMois(derP)}.` : `Relevé de ${cidMois(perAff)} · série disponible de janvier 2020 à ${cidMois(derP)}.`}</div></div>
+    <div class="content">
+      <div class="kpi-grid">
+        ${kpi("Complétude RMA globale", lireN("rma_global", "comp") == null ? null : Math.round(lireN("rma_global", "comp")), "%", "Cible : 95% · " + cidMois(perAff), "", "flat", pevRag(lireN("rma_global", "comp"), 95))}
+        ${kpi("Promptitude RMA globale", lireN("rma_global", "promp") == null ? null : Math.round(lireN("rma_global", "promp")), "%", "Cible : 90% · " + cidMois(perAff), "", "flat", pevRag(lireN("rma_global", "promp"), 90))}
+        ${kpi("Rapports CS saisis", csS == null ? null : cidFmtNb(csS), "", csA == null ? "Attendus ND" : "sur " + cidFmtNb(csA) + " attendus", "", "flat", csS != null && csA ? pevRag(csS / csA * 100, 95) : "na")}
+        ${kpi("Rapports HD et HP saisis", hS == null ? null : cidFmtNb(hS), "", hA == null ? "Attendus ND" : "sur " + cidFmtNb(hA) + " attendus", "", "flat", hS != null && hA ? pevRag(hS / hA * 100, 95) : "na")}
+      </div>
+      <div class="g-2-1">
+        ${card("Complétude RMA · 2026 contre 2025", "Série nationale mensuelle, cible 95%", renderLineChart([
+          { name: "2026", data: serieNat("comp", 2026), color: "#1F3864", style: "solid" },
+          { name: "2025", data: serieNat("comp", 2025), color: "#A09A93", style: "dash" },
+        ]), "Source : " + DPSISQ.meta.source)}
+        ${card("Promptitude RMA · 2026 contre 2025", "Série nationale mensuelle, cible 90%", renderLineChart([
+          { name: "2026", data: serieNat("promp", 2026), color: "#856722", style: "solid" },
+          { name: "2025", data: serieNat("promp", 2025), color: "#A09A93", style: "dash" },
+        ]), "")}
+      </div>
+      <div class="g-2-1">
+        ${card("Complétude RMA par province · " + cidMois(perAff), "Vert ≥ 95 · jaune ≥ 90 · orange ≥ 80 · rouge en deçà · gris ND",
+          cidCarte(valProv, { couleur: v => v == null ? "#CBC7BE" : v >= 95 ? "#2E7D32" : v >= 90 ? "#C9A227" : v >= 80 ? "#D97B29" : "#B3372F" }), "")}
+        ${card("Provinces à renforcer", "Huit complétudes les plus basses · " + cidMois(perAff), renderBars(pires.map(id => ({
+          label: cidProvNom(id), val: valProv[id], target: 95, rag: pevRag(valProv[id], 95), showVal: valProv[id] + "%"
+        }))), "")}
+      </div>
+      ${card("Rapportage par périmètre · " + cidMois(perAff), "Complétude, promptitude et provinces sous la cible de 95%", `
+        <table class="dt"><thead><tr><th>Périmètre</th><th style="text-align:right">Complétude</th><th style="text-align:right">Promptitude</th><th style="text-align:right">Provinces &lt; 95%</th><th>État</th></tr></thead>
+        <tbody>${lgnSys}</tbody></table>`,
+        "Le taux national provient de la ligne TCHAD du relevé DPSIS. La promptitude des sites VIH n'est pas suivie dans la source.")}
+      ${anomP.length ? card("Signalements qualité · " + cidMois(perAff), anomP.length + " valeur(s) hors bornes, affichée(s) sans correction",
+        `<div class="cid-anom-liste">` + anomP.slice(0, 8).map(a => `<div>· <strong>${a.unite}</strong> · ${a.systeme} : ${a.valeur}, ${a.detail}</div>`).join("") + (anomP.length > 8 ? `<div>… et ${anomP.length - 8} autres, visibles dans la vue Qualité des données.</div>` : "") + `</div>`,
+        "Mode strict : les anomalies sont signalées à la source, jamais masquées ni corrigées.") : ""}
+      ${card("Carte sanitaire de référence", "Dénominateurs du relevé DPSIS", `
+        <div class="cid-strip">
+          <div class="cid-strip-item"><div class="cid-strip-val">${cidFmtNb(sommeCS("districts"))}</div><div class="cid-strip-lib">districts</div></div>
+          <div class="cid-strip-item"><div class="cid-strip-val">${cidFmtNb(sommeCS("hopitaux_district"))}</div><div class="cid-strip-lib">hôpitaux de district</div></div>
+          <div class="cid-strip-item"><div class="cid-strip-val">${cidFmtNb(sommeCS("hopitaux_provinciaux"))}</div><div class="cid-strip-lib">hôpitaux provinciaux</div></div>
+          <div class="cid-strip-item"><div class="cid-strip-val">${cidFmtNb(sommeCS("hopitaux_nationaux"))}</div><div class="cid-strip-lib">hôpitaux nationaux</div></div>
+          <div class="cid-strip-item"><div class="cid-strip-val">${cidFmtNb(sommeCS("centres_sante_pev"))}</div><div class="cid-strip-lib">centres de santé PEV</div></div>
+          <button class="cid-btn-csv" onclick="selectSub('dpsis','dpsis-carte')">Ouvrir le répertoire →</button>
+        </div>`, "")}
+    </div>` };
+};
+
+/* ==============================================================
+   DPSIS : qualite des donnees, centre des signalements
+============================================================== */
+VIEWS["dpsis-qual"] = () => {
+  const crumbs = ["Système d'Information", "Qualité des données"];
+  const jeux = [
+    { l: "DPSIS · complétude et promptitude", a: DPSISQ ? DPSISQ.anomalies : null, vue: ["dpsis", "dpsis-comp"] },
+    { l: "DSR · relevé national", a: DSRN ? DSRN.anomalies : null, vue: ["dsr", "dsr-overview"] },
+    { l: "DSR · relevé provincial", a: DSRP ? DSRP.anomalies : null, vue: ["dsr", "dsr-mat"] },
+    { l: "Surveillance intégrée IDS", a: SURV ? SURV.anomalies : null, vue: ["vacc", "vacc-surv"] },
+    { l: "DGPML · stocks", a: DPML ? DPML.anomalies : null, vue: ["dpml", "dpml-dispo"] },
+    { l: "PEV · couvertures mensuelles", a: PEVP ? PEVP.anomalies : null, vue: ["vacc", "vacc-couv"] },
+    { l: "Référentiel des zones de responsabilité", a: STDS ? STDS.anomalies : null, vue: ["dpsis", "dpsis-carte"] },
+  ];
+  const total = jeux.reduce((s, j) => s + (j.a ? j.a.length : 0), 0);
+  const charges = jeux.filter(j => j.a != null).length;
+  const sup100 = jeux.reduce((s, j) => s + (j.a || []).filter(a => String(a.type || "").includes("100") || String(a.type || "").includes("hors_bornes")).length, 0);
+  const negatifs = jeux.reduce((s, j) => s + (j.a || []).filter(a => String(a.type || "").includes("negati")).length, 0);
+
+  const lignesJeux = jeux.map(j => `<tr>
+    <td class="l">${j.l}</td>
+    <td class="num">${j.a == null ? "ND" : j.a.length}</td>
+    <td>${j.a == null ? '<span class="pill na">non chargé</span>' : j.a.length === 0 ? '<span class="pill green">aucun signalement</span>' : `<span class="pill ${j.a.length > 50 ? "orange" : "yellow"}">${j.a.length} signalement${j.a.length > 1 ? "s" : ""}</span>`}</td>
+    <td><button class="cid-lien" onclick="selectSub('${j.vue[0]}','${j.vue[1]}')">ouvrir la vue →</button></td></tr>`).join("");
+
+  const tout = [];
+  jeux.forEach(j => (j.a || []).forEach(a => tout.push({
+    jeu: j.l, type: a.type || "", periode: a.periode || "", unite: a.unite || a.province || "",
+    detail: a.detail || a.indicateur || a.produit || a.systeme || a.maladie || "", valeur: a.valeur != null ? a.valeur : ""
+  })));
+  tout.sort((a, b) => String(b.periode).localeCompare(String(a.periode)));
+  window.__cidCSV["qualite"] = {
+    entetes: ["jeu", "type", "periode", "unite", "detail", "valeur"],
+    lignes: tout.map(x => [x.jeu, x.type, x.periode, x.unite, x.detail, x.valeur])
+  };
+  const lignesDetail = tout.slice(0, 30).map(x => `<tr>
+    <td class="l" style="max-width:230px">${x.jeu}</td><td>${x.type}</td><td>${x.periode}</td>
+    <td>${x.unite}</td><td>${x.detail}</td><td class="num">${x.valeur}</td></tr>`).join("");
+
+  const corrections = STDS && STDS.meta ? STDS.meta.corrections : null;
+
+  return { crumbs, html: `
+    <div class="ph"><div class="ph-tag">Qualité des données · DPSIS</div><div class="ph-title">Centre des signalements qualité</div>
+    <div class="ph-sub">Toute valeur hors bornes est affichée telle que transmise et consignée ici, jamais corrigée ni masquée. Ce registre alimente le dialogue avec les directions productrices.</div></div>
+    <div class="content">
+      <div class="kpi-grid">
+        ${kpi("Signalements ouverts", total, "", charges + " jeux de données contrôlés", "", "flat", total ? "orange" : "green")}
+        ${kpi("Taux hors bornes", sup100, "", "complétudes ou taux au delà de 100%", "", "flat", sup100 ? "yellow" : "green")}
+        ${kpi("Valeurs négatives", negatifs, "", "stocks ou effectifs sous zéro", "", "flat", negatifs ? "yellow" : "green")}
+        ${kpi("Corrections référentiel ZR", corrections, "", "rapprochements 2024 vers 2025 documentés", "", "flat", corrections != null ? "green" : "na")}
+      </div>
+      ${card("Signalements par jeu de données", "État au dernier chargement du tableau de bord", `
+        <table class="dt"><thead><tr><th>Jeu de données</th><th style="text-align:right">Signalements</th><th>État</th><th></th></tr></thead>
+        <tbody>${lignesJeux}</tbody></table>`, "")}
+      ${card("Derniers signalements", "Trente entrées les plus récentes · export complet disponible", `
+        <div class="cid-table-defile"><table class="dt"><thead><tr><th>Jeu</th><th>Type</th><th>Période</th><th>Unité</th><th>Détail</th><th style="text-align:right">Valeur</th></tr></thead>
+        <tbody>${lignesDetail || '<tr><td colspan="6" class="l">Aucun signalement.</td></tr>'}</tbody></table></div>
+        <div style="margin-top:10px">${cidBoutonCSV("qualite", "signalements_qualite_cid.csv")}</div>`,
+        "Un signalement décrit une valeur suspecte dans la source, pas une correction : la valeur reste affichée à l'identique dans toutes les vues.")}
+    </div>` };
+};
+
+/* ==============================================================
+   DPSIS : carte sanitaire et repertoire des formations sanitaires
+============================================================== */
+VIEWS["dpsis-carte"] = () => {
+  const crumbs = ["Système d'Information", "Carte sanitaire · Répertoire"];
+  const et = `<div class="ph"><div class="ph-tag">Carte sanitaire · DPSIS</div><div class="ph-title">Répertoire national des formations sanitaires</div>`;
+  if (!FOSAR) return { crumbs, html: et + `<div class="ph-sub">Répertoire en cours de chargement.</div></div>` };
+  const q = (window.__fosaQ || "").trim();
+  const provSel = window.__fosaProv || null;
+
+  const nFosa = {};
+  Object.keys(PROV_CANON).forEach(id => {
+    const p = FOSAR.provinces[PROV_CANON[id]];
+    nFosa[id] = p ? p.n_fosa : null;
+  });
+
+  let resultats = [];
+  if (q.length >= 2 || provSel) {
+    const qn = q.toLowerCase();
+    Object.keys(FOSAR.provinces).forEach(prov => {
+      if (provSel && CANON_PROV[prov] !== provSel) return;
+      const ds = FOSAR.provinces[prov].districts;
+      Object.keys(ds).forEach(dist => {
+        ds[dist].forEach(f => {
+          if (!qn || f.toLowerCase().includes(qn) || dist.toLowerCase().includes(qn) || prov.toLowerCase().includes(qn))
+            resultats.push([prov, dist, f]);
+        });
+      });
+    });
+  }
+  window.__cidCSV["fosa"] = { entetes: ["province", "district", "formation_sanitaire"], lignes: resultats };
+  const nRes = resultats.length;
+  const lignes = resultats.slice(0, 200).map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="l">${r[2]}</td></tr>`).join("");
+
+  const std24 = STDS && STDS.annees && STDS.annees["2024"] ? STDS.annees["2024"].national : null;
+
+  return { crumbs, html: et + `<div class="ph-sub">${cidFmtNb(FOSAR.meta.n_fosa)} formations sanitaires rattachées à ${FOSAR.meta.n_districts} districts et 23 délégations provinciales. Recherche plein texte et export CSV.</div></div>
+    <div class="content">
+      <div class="kpi-grid">
+        ${kpi("Formations sanitaires", cidFmtNb(FOSAR.meta.n_fosa), "", "répertoire DPSIS", "", "flat", "green")}
+        ${kpi("Districts sanitaires", FOSAR.meta.n_districts, "", "présents dans le répertoire", "", "flat", "green")}
+        ${kpi("Zones de responsabilité", std24 ? cidFmtNb(std24.zr) : null, "", "référentiel ZR 2024", "", "flat", std24 ? "green" : "na")}
+        ${kpi("Population de référence", std24 ? cidFmtNb(std24.pop) : null, "", "référentiel ZR 2024 · cible 0-11 mois " + (std24 ? cidFmtNb(std24.cible) : "ND"), "", "flat", std24 ? "green" : "na")}
+      </div>
+      <div class="g-2-1">
+        ${card("Formations sanitaires par province", "Cliquer une province pour restreindre le répertoire · teinte selon le volume",
+          cidCarte(nFosa, { couleur: cidEchelleVolume(nFosa), format: v => v == null ? "ND" : cidFmtNb(v) + " FOSA", clic: "cidFosaClic" }), "Source : " + FOSAR.meta.source)}
+        ${card("Recherche dans le répertoire", provSel ? "Province : " + cidProvNom(provSel) + " · cliquer à nouveau la carte pour changer" : "Toutes provinces", `
+          <div class="cid-recherche">
+            <input id="cid-fosa-q" class="cid-input" type="text" placeholder="Nom de FOSA, district ou province…" value="${q.replace(/"/g, "&quot;")}"
+              onkeydown="if(event.key==='Enter'){window.__fosaQ=this.value;renderMain();}">
+            <button class="cid-btn-csv" onclick="window.__fosaQ=document.getElementById('cid-fosa-q').value;renderMain()">Rechercher</button>
+            ${provSel ? `<button class="cid-btn-csv" onclick="window.__fosaProv=null;renderMain()">Retirer le filtre</button>` : ""}
+          </div>
+          ${q.length >= 2 || provSel ? `
+            <div class="cid-res-note">${cidFmtNb(nRes)} résultat${nRes > 1 ? "s" : ""}${nRes > 200 ? ", 200 affichés, export complet disponible" : ""}</div>
+            <div class="cid-table-defile"><table class="dt"><thead><tr><th>Province</th><th>District</th><th>Formation sanitaire</th></tr></thead>
+            <tbody>${lignes || '<tr><td colspan="3" class="l">Aucun résultat.</td></tr>'}</tbody></table></div>
+            <div style="margin-top:10px">${cidBoutonCSV("fosa", "repertoire_fosa.csv")}</div>`
+          : `<div class="cid-res-note">Saisir au moins deux caractères, ou cliquer une province sur la carte.</div>`}`, "")}
+      </div>
+    </div>` };
+};
+function cidFosaClic(id) { window.__fosaProv = id; renderMain(); }
+
+/* ==============================================================
+   DGPML : stocks de fin de mois
+============================================================== */
+VIEWS["dpml-dispo"] = () => {
+  const crumbs = ["Logistique · Intrants", "Stocks de fin de mois"];
+  const et = `<div class="ph"><div class="ph-tag">Logistique · DGPML</div><div class="ph-title">Stocks de fin de mois des médicaments</div>`;
+  if (!DPML) return { crumbs, html: et + `<div class="ph-sub">Données DGPML en cours de chargement.</div></div>` };
+  const prods = DPML.produits;
+  if (!window.__dpmlProd || !prods.some(p => p.code === window.__dpmlProd)) window.__dpmlProd = "trac_amox_ad";
+  const prod = prods.find(p => p.code === window.__dpmlProd);
+  const derP = DPML.meta.stocks_mois_max;
+  let per = cidPerCourante();
+  const hors = state.periodMode !== "month" || per < "2026-01" || per > derP;
+  const perAff = hors ? derP : per;
+
+  const st = DPML.stocks[prod.code] || {};
+  const valProv = {};
+  Object.keys(PROV_CANON).forEach(id => {
+    const s = st[PROV_CANON[id]];
+    valProv[id] = s && s[perAff] != null ? s[perAff] : null;
+  });
+  const natS = st["National"] || {};
+  const natV = natS[perAff] != null ? natS[perAff] : null;
+  const prec = natS[cidPrec(perAff)] != null ? natS[cidPrec(perAff)] : null;
+  const delta = natV != null && prec ? Math.round((natV - prec) / prec * 100) : null;
+  const renseignees = Object.values(valProv).filter(v => v != null).length;
+  const aZero = Object.keys(valProv).filter(id => valProv[id] === 0);
+  const negatives = Object.keys(valProv).filter(id => valProv[id] != null && valProv[id] < 0);
+
+  const chips = cidChips(
+    prods.map(p => ({ v: p.code, l: (p.groupe === "traceur" ? "◆ " : "") + p.libelle })),
+    "__dpmlProd", prod.code);
+
+  return { crumbs, html: et + `<div class="ph-sub">${hors ? `Aucun relevé pour ${periodLabel()} : affichage de ${cidMois(derP)}.` : `Relevé de ${cidMois(perAff)}.`} Le losange signale les quatre traceurs. Wadi Fira est absente de l'export source et reste en ND.</div></div>
+    <div class="content">
+      ${chips}
+      <div class="kpi-grid">
+        ${kpi("Stock national", natV == null ? null : cidFmtNb(natV), "unités", prod.libelle + " · " + cidMois(perAff), delta == null ? "" : (delta >= 0 ? "+" : "") + delta + "% vs mois précédent", delta == null ? "flat" : delta >= 0 ? "up" : "down", natV == null ? "na" : delta != null && delta <= -20 ? "orange" : "green")}
+        ${kpi("Provinces renseignées", renseignees, "/ 22", "hors Wadi Fira, absente de la source", "", "flat", renseignees >= 20 ? "green" : renseignees >= 15 ? "yellow" : "orange")}
+        ${kpi("Provinces à stock nul", aZero.length, "", aZero.length ? aZero.map(cidProvNom).slice(0, 3).join(", ") + (aZero.length > 3 ? "…" : "") : "aucune", "", "flat", aZero.length ? "orange" : "green")}
+        ${kpi("Valeurs négatives", negatives.length, "", negatives.length ? "à corriger à la source" : "aucune ce mois", "", "flat", negatives.length ? "yellow" : "green")}
+      </div>
+      <div class="g-2-1">
+        ${card("Stock par province · " + cidMois(perAff), "Teinte bleue selon le volume · rouge négatif · gris ND",
+          cidCarte(valProv, { couleur: cidEchelleVolume(valProv), format: v => v == null ? "ND" : cidFmtNb(v) + " unités" }), "Source : " + DPML.meta.source)}
+        ${card("Série nationale · 2026 contre 2025", prod.libelle + " · stock de fin de mois", renderLineChart([
+          { name: "2026", data: cidAnnee(natS, 2026), color: "#1F3864", style: "solid" },
+          { name: "2025", data: cidAnnee(natS, 2025), color: "#A09A93", style: "dash" },
+        ]), "La ligne TCHAD de l'export est portée en national, sans recalcul.")}
+      </div>
+    </div>` };
+};
+
+/* ==============================================================
+   DGPML : ruptures declarees par les FOSA
+============================================================== */
+VIEWS["dpml-rupt"] = () => {
+  const crumbs = ["Logistique · Intrants", "Ruptures de stock"];
+  const et = `<div class="ph"><div class="ph-tag">Ruptures de stock · DGPML</div><div class="ph-title">FOSA en rupture de stock</div>`;
+  if (!DPML) return { crumbs, html: et + `<div class="ph-sub">Données DGPML en cours de chargement.</div></div>` };
+  const rp = DPML.ruptures_produits;
+  if (!window.__ruptProd || !rp.some(p => p.code === window.__ruptProd)) window.__ruptProd = rp[0].code;
+  const prod = rp.find(p => p.code === window.__ruptProd);
+  const derP = DPML.meta.ruptures_mois_max;
+  const r = DPML.ruptures[prod.code] || {};
+  const valProv = {};
+  Object.keys(PROV_CANON).forEach(id => {
+    const s = r[PROV_CANON[id]];
+    valProv[id] = s && s[derP] != null ? s[derP] : null;
+  });
+  const natS = r["National"] || {};
+  const natV = natS[derP] != null ? natS[derP] : null;
+  const tries = Object.keys(valProv).filter(id => valProv[id] != null).sort((a, b) => valProv[b] - valProv[a]).slice(0, 8);
+
+  return { crumbs, html: et + `<div class="ph-sub">Part des formations sanitaires ayant déclaré une rupture dans le mois. L'indicateur n'est plus renseigné dans DHIS2 depuis janvier 2026 : dernier relevé ${cidMois(derP)}.</div></div>
+    <div class="content">
+      <div class="cid-bandeau-avert">◷ Indicateur éteint depuis janvier 2026. Les valeurs ci-dessous datent de ${cidMois(derP)} et servent de référence en attendant la reprise de la saisie, à organiser avec la DGPML.</div>
+      ${cidChips(rp.map(p => ({ v: p.code, l: p.libelle })), "__ruptProd", prod.code)}
+      <div class="kpi-grid">
+        ${kpi("FOSA en rupture · national", natV, "%", prod.libelle + " · " + cidMois(derP), "", "flat", natV == null ? "na" : natV <= 5 ? "green" : natV <= 15 ? "yellow" : natV <= 25 ? "orange" : "red")}
+        ${kpi("Provinces au delà de 25%", Object.values(valProv).filter(v => v != null && v > 25).length, "", "au dernier relevé", "", "flat", Object.values(valProv).some(v => v != null && v > 25) ? "orange" : "green")}
+        ${kpi("Dernier relevé", cidMois(derP), "", "série disponible depuis janvier 2024", "", "flat", "yellow")}
+        ${kpi("Cible", "≤ 5", "%", "de FOSA en rupture dans le mois", "", "flat", "na")}
+      </div>
+      <div class="g-2-1">
+        ${card("FOSA en rupture par province · " + cidMois(derP), "Vert ≤ 5 · jaune ≤ 15 · orange ≤ 25 · rouge au delà · gris sans relevé pour le mois",
+          cidCarte(valProv, { couleur: v => v == null ? "#CBC7BE" : v <= 5 ? "#2E7D32" : v <= 15 ? "#C9A227" : v <= 25 ? "#D97B29" : "#B3372F" }), "Source : " + DPML.meta.source)}
+        ${card("Provinces les plus touchées", prod.libelle + " · " + cidMois(derP), renderBars(tries.map(id => ({
+          label: cidProvNom(id), val: valProv[id], target: 5, rag: valProv[id] <= 5 ? "green" : valProv[id] <= 25 ? "orange" : "red", showVal: valProv[id] + "%"
+        }))), "")}
+      </div>
+      ${card("Série nationale 2024 et 2025", prod.libelle + " · part de FOSA en rupture", renderLineChart([
+        { name: "2025", data: cidAnnee(natS, 2025), color: "#8C4038", style: "solid" },
+        { name: "2024", data: cidAnnee(natS, 2024), color: "#A09A93", style: "dash" },
+      ]), "")}
+    </div>` };
+};
+
+VIEWS["dpml-perim"] = () => ({
+  crumbs: ["Logistique · Intrants", "Péremption"],
+  html: `
+    <div class="ph"><div class="ph-tag">En attente de source</div><div class="ph-title">Péremption des produits</div>
+    <div class="ph-sub">Valeur et volume des produits périmés par niveau de la chaîne d'approvisionnement.</div></div>
+    <div class="content"><div class="attente-carte">
+      <div class="attente-ic">◷</div>
+      <div class="attente-corps">
+        <div class="attente-titre">Cette vue attend sa source de données</div>
+        <div class="attente-txt">L'export DGPML actuel ne porte que les stocks de fin de mois et les ruptures déclarées. Le suivi des péremptions sera branché dès qu'un extrait SIGL dédié sera déposé dans le Drive.</div>
+      </div>
+    </div></div>`
+});
+
+/* ==============================================================
+   PEV : surveillance des maladies evitables par la vaccination
+============================================================== */
+VIEWS["vacc-surv"] = () => {
+  const crumbs = ["Vaccination · PEV", "Surveillance épidémio."];
+  const et = `<div class="ph"><div class="ph-tag">Surveillance des MEV · IDS</div><div class="ph-title">Maladies évitables par la vaccination</div>`;
+  if (!SURV) return { crumbs, html: et + `<div class="ph-sub">Données de surveillance en cours de chargement.</div></div>` };
+  const MEV = [["rougeole", "Rougeole"], ["pfa", "PFA · polio"], ["tnn", "Tétanos néonatal"], ["diphterie", "Diphtérie"], ["fievre jaune", "Fièvre jaune"], ["meningite", "Méningite"]]
+    .filter(([c]) => SURV.maladies.some(m => m.code === c));
+  if (!window.__survMal || !MEV.some(([c]) => c === window.__survMal)) window.__survMal = "rougeole";
+  const mal = window.__survMal;
+  const malDef = SURV.maladies.find(m => m.code === mal);
+  const plafond = SURV.meta.derniere_periode_partielle ? cidPrec(SURV.meta.derniere_periode_couverte) : SURV.meta.derniere_periode_couverte;
+
+  const serieNat = (code, champ) => {
+    const s = {};
+    Object.keys(SURV.valeurs).forEach(p => {
+      const u = ((SURV.valeurs[p] || {})["National"] || {})[code];
+      if (u && u[champ] != null) s[p] = u[champ];
+    });
+    return s;
+  };
+  const att = serieNat(mal, "att"), inc = serieNat(mal, "inc");
+  const sAtt = Object.keys(att).length ? att : inc;
+  const dAtt = cidDerniere(sAtt, plafond);
+  const sLet = serieNat(mal, "let");
+  const dLet = cidDerniere(sLet, plafond);
+
+  const perAff = dAtt.p || plafond;
+  const valProv = {};
+  Object.keys(PROV_CANON).forEach(id => {
+    const u = ((SURV.valeurs[perAff] || {})[PROV_CANON[id]] || {})[mal];
+    valProv[id] = u ? (u.att != null ? u.att : (u.inc != null ? u.inc : null)) : null;
+  });
+  const touchees = Object.values(valProv).filter(v => v != null && v > 0).length;
+  const pic = Math.max(0, ...cidSerieN(sAtt, perAff, 12).filter(v => v != null));
+
+  const maxProv = Math.max(0.001, ...Object.values(valProv).filter(v => v != null));
+  const lgnMDO = MEV.map(([c, l]) => {
+    const a = cidDerniere(Object.keys(serieNat(c, "att")).length ? serieNat(c, "att") : serieNat(c, "inc"), plafond);
+    const le = cidDerniere(serieNat(c, "let"), plafond);
+    return `<tr><td class="l">${l}</td>
+      <td class="num">${a.v == null ? "ND" : a.v}</td>
+      <td class="num">${le.v == null ? "ND" : le.v + "%"}</td>
+      <td>${a.p ? cidMoisC(a.p) : "ND"}</td>
+      <td>${a.v == null ? '<span class="pill na">ND</span>' : a.v === 0 ? '<span class="pill green">nul</span>' : le.v != null && le.v > 0 ? '<span class="pill red">décès notifiés</span>' : '<span class="pill yellow">cas notifiés</span>'}</td></tr>`;
+  }).join("");
+
+  return { crumbs, html: et + `<div class="ph-sub">Taux d'attaque et létalité issus de la surveillance intégrée, dernier mois complet ${cidMois(plafond)}${SURV.meta.derniere_periode_partielle ? " · " + cidMois(SURV.meta.derniere_periode_couverte) + " en cours de consolidation, écarté de l'affichage" : ""}. Wadi Fira est absente de l'export et reste en ND.</div></div>
+    <div class="content">
+      ${cidChips(MEV.map(([v, l]) => ({ v, l })), "__survMal", mal)}
+      <div class="kpi-grid">
+        ${kpi(malDef.libelle + " · taux d'attaque", dAtt.v, "/100k", "national · " + (dAtt.p ? cidMois(dAtt.p) : "ND"), "", "flat", dAtt.v == null ? "na" : dAtt.v === 0 ? "green" : "orange")}
+        ${kpi("Létalité", dLet.v, "%", dLet.p ? "national · " + cidMois(dLet.p) : "non calculée dans la source", "", "flat", dLet.v == null ? "na" : dLet.v === 0 ? "green" : "red", true)}
+        ${kpi("Provinces avec cas", touchees, "/ 22", cidMois(perAff), "", "flat", touchees === 0 ? "green" : touchees <= 4 ? "yellow" : "orange")}
+        ${kpi("Pic sur douze mois", pic, "/100k", "taux d'attaque national", "", "flat", "na")}
+      </div>
+      <div class="g-2-1">
+        ${card("Taux d'attaque par province · " + cidMois(perAff), "Teinte selon l'intensité relative du mois · gris ND",
+          cidCarte(valProv, {
+            couleur: v => v == null ? "#CBC7BE" : v === 0 ? "#E6F0E7" : v < maxProv * 0.34 ? "#E8C9A0" : v < maxProv * 0.67 ? "#D97B29" : "#B3372F",
+            format: v => v == null ? "ND" : v + " /100 000"
+          }), "Source : " + SURV.meta.source)}
+        ${card("Série nationale · taux d'attaque et létalité", malDef.libelle + " · douze derniers mois", renderLineChart([
+          { name: "Taux d'attaque", data: cidSerieN(sAtt, perAff, 12), color: "#8C4038", style: "solid" },
+          { name: "Létalité %", data: cidSerieN(sLet, perAff, 12), color: "#1F3864", style: "dash" },
+        ], { labels: (() => { const l = []; let p = perAff; for (let i = 0; i < 12; i++) { l.unshift(cidMoisC(p).split(" ")[0]); p = cidPrec(p); } return l; })() }), "")}
+      </div>
+      ${card("Tableau des MEV · dernier relevé", "Taux d'attaque national, létalité et période du dernier relevé", `
+        <table class="dt"><thead><tr><th>Maladie</th><th style="text-align:right">Taux d'attaque /100k</th><th style="text-align:right">Létalité</th><th>Relevé</th><th>Lecture</th></tr></thead>
+        <tbody>${lgnMDO}</tbody></table>`,
+        "La létalité rapportée aux seuls cas notifiés du mois est volatile sur de petits effectifs et se lit avec prudence.")}
+    </div>` };
+};
+
+/* ==============================================================
+   DSR : sante maternelle sur releves national et provincial
+============================================================== */
+VIEWS["dsr-mat"] = () => {
+  const crumbs = ["Santé Reproductive", "Santé maternelle"];
+  const et = `<div class="ph"><div class="ph-tag">Santé maternelle · DSR</div><div class="ph-title">Santé maternelle · continuum de soins</div>`;
+  if (!DSRN) return { crumbs, html: et + `<div class="ph-sub">Données DSR en cours de chargement.</div></div>` };
+  const lireN = code => cidDerniere(DSRN.indicateurs[code] ? DSRN.indicateurs[code].serie : null, DSRN.meta.mois_max);
+  const cpn1 = lireN("cpn1"), cpn4 = lireN("cpn4"), acc = lireN("acc_qualifie"), mm = lireN("mort_mat_hosp"), cpon = lireN("cpon"), gatpa = lireN("gatpa");
+
+  const carteInd = window.__dsrMatCarte || "mort_mat_hosp";
+  const valProv = {};
+  let derPProv = null;
+  if (DSRP) {
+    Object.keys(PROV_CANON).forEach(id => {
+      const s = (DSRP.provinces[PROV_CANON[id]] || {})[carteInd];
+      const d = cidDerniere(s, DSRP.meta.mois_max);
+      valProv[id] = d.v == null ? null : Math.round(d.v * 10) / 10;
+      if (d.p && (!derPProv || d.p > derPProv)) derPProv = d.p;
+    });
+  }
+  const inverse = carteInd === "mort_mat_hosp";
+  const seuil = { mort_mat_hosp: [350, 700, 1500], cpn1: [95, 80, 60], acc_qualifie: [70, 55, 40], gatpa: [90, 75, 60] }[carteInd] || [80, 60, 40];
+  const coul = v => {
+    if (v == null) return "#CBC7BE";
+    if (inverse) return v <= seuil[0] ? "#2E7D32" : v <= seuil[1] ? "#C9A227" : v <= seuil[2] ? "#D97B29" : "#B3372F";
+    return v >= seuil[0] ? "#2E7D32" : v >= seuil[1] ? "#C9A227" : v >= seuil[2] ? "#D97B29" : "#B3372F";
+  };
+  const libCarte = DSRP && DSRP.indicateurs[carteInd] ? DSRP.indicateurs[carteInd].libelle : carteInd;
+  const uniteCarte = DSRP && DSRP.indicateurs[carteInd] ? DSRP.indicateurs[carteInd].unite : "%";
+  const pires = Object.keys(valProv).filter(id => valProv[id] != null)
+    .sort((a, b) => inverse ? valProv[b] - valProv[a] : valProv[a] - valProv[b]).slice(0, 8);
+
+  return { crumbs, html: et + `<div class="ph-sub">Relevé national de ${cidMois(DSRN.meta.mois_max)} et détail provincial de ${derPProv ? cidMois(derPProv) : "ND"}. Valeurs brutes, ND pour toute absence.</div></div>
+    <div class="content">
+      <div class="kpi-grid">
+        ${kpi("CPN 1", cpn1.v == null ? null : Math.round(cpn1.v), "%", "Cible : 95% · " + (cpn1.p ? cidMois(cpn1.p) : ""), "", "flat", pevRag(cpn1.v, 95))}
+        ${kpi("CPN 4", cpn4.v == null ? null : Math.round(cpn4.v), "%", "Cible : 65% · " + (cpn4.p ? cidMois(cpn4.p) : ""), "", "flat", pevRag(cpn4.v, 65))}
+        ${kpi("Accouchements assistés", acc.v == null ? null : Math.round(acc.v), "%", "Cible : 70% · " + (acc.p ? cidMois(acc.p) : ""), "", "flat", pevRag(acc.v, 70))}
+        ${kpi("Mortalité maternelle hospitalière", mm.v == null ? null : Math.round(mm.v), "/100k", "Repère : 700 · " + (mm.p ? cidMois(mm.p) : ""), "", "flat", mm.v == null ? "na" : mm.v <= 350 ? "green" : mm.v <= 700 ? "yellow" : mm.v <= 1500 ? "orange" : "red", true)}
+      </div>
+      <div class="g-2-1">
+        ${card("Continuum de la grossesse à l'accouchement", "Relevé national · " + cidMois(DSRN.meta.mois_max), renderBars([
+          { label: "CPN 1", val: cpn1.v == null ? null : Math.round(cpn1.v), target: 95, rag: pevRag(cpn1.v, 95), showVal: cpn1.v == null ? "ND" : Math.round(cpn1.v) + "%" },
+          { label: "CPN 4", val: cpn4.v == null ? null : Math.round(cpn4.v), target: 65, rag: pevRag(cpn4.v, 65), showVal: cpn4.v == null ? "ND" : Math.round(cpn4.v) + "%" },
+          { label: "Acc. assisté", val: acc.v == null ? null : Math.round(acc.v), target: 70, rag: pevRag(acc.v, 70), showVal: acc.v == null ? "ND" : Math.round(acc.v) + "%" },
+          { label: "GATPA", val: gatpa.v == null ? null : Math.round(gatpa.v), target: 90, rag: pevRag(gatpa.v, 90), showVal: gatpa.v == null ? "ND" : Math.round(gatpa.v) + "%" },
+          { label: "CPoN", val: cpon.v == null ? null : Math.min(100, Math.round(cpon.v)), target: 60, rag: pevRag(cpon.v, 60), showVal: cpon.v == null ? "ND" : Math.round(cpon.v) + "%" + (cpon.v > 100 ? " \u26a0" : "") },
+        ]), "Source : " + DSRN.meta.source)}
+        ${card("Mortalité maternelle hospitalière · série nationale", "Pour 100 000 naissances vivantes en formation sanitaire", renderLineChart([
+          { name: "2026", data: cidAnnee(DSRN.indicateurs.mort_mat_hosp.serie, 2026), color: "#8C4A5E", style: "solid" },
+          { name: "2025", data: cidAnnee(DSRN.indicateurs.mort_mat_hosp.serie, 2025), color: "#A09A93", style: "dash" },
+        ]), "")}
+      </div>
+      ${cidChips([["mort_mat_hosp", "Mortalité maternelle"], ["cpn1", "CPN 1"], ["acc_qualifie", "Accouchements assistés"], ["gatpa", "GATPA"]].map(([v, l]) => ({ v, l })), "__dsrMatCarte", carteInd)}
+      <div class="g-2-1">
+        ${card(libCarte + " par province · " + (derPProv ? cidMois(derPProv) : "ND"), inverse ? "Vert bas · rouge élevé · gris ND" : "Vert au dessus de la cible · rouge en deçà · gris ND",
+          DSRP ? cidCarte(valProv, { couleur: coul, format: v => v == null ? "ND" : v + (uniteCarte === "%" ? "%" : " " + uniteCarte) }) : '<div class="cid-res-note">Relevé provincial non chargé.</div>', DSRP ? "Source : " + DSRP.meta.source : "")}
+        ${card("Provinces à surveiller", libCarte, renderBars(pires.map(id => ({
+          label: cidProvNom(id), val: valProv[id], target: inverse ? null : seuil[0],
+          rag: (c => { const v = valProv[id]; return v == null ? "na" : inverse ? (v <= seuil[0] ? "green" : v <= seuil[1] ? "yellow" : v <= seuil[2] ? "orange" : "red") : (v >= seuil[0] ? "green" : v >= seuil[1] ? "yellow" : v >= seuil[2] ? "orange" : "red"); })(),
+          showVal: valProv[id] + (uniteCarte === "%" ? "%" : "")
+        }))), "Un ratio hospitalier élevé peut aussi refléter un faible volume d'accouchements institutionnels : lecture conjointe avec la couverture recommandée.")}
+      </div>
+    </div>` };
+};
+
+/* ==============================================================
+   DSR : planification familiale sur donnees reelles
+============================================================== */
+VIEWS["dsr-pf"] = () => {
+  const crumbs = ["Santé Reproductive", "Planification familiale"];
+  const et = `<div class="ph"><div class="ph-tag">Planification familiale · DSR</div><div class="ph-title">Planification familiale</div>`;
+  if (!DSRN) return { crumbs, html: et + `<div class="ph-sub">Données DSR en cours de chargement.</div></div>` };
+  const prev = cidDerniere(DSRN.indicateurs.prev_contra.serie, DSRN.meta.mois_max);
+  const acc = cidDerniere(DSRN.indicateurs.accept_contra.serie, DSRN.meta.mois_max);
+
+  const sommeNat = code => {
+    const s = {};
+    if (!DSRP) return s;
+    Object.keys(DSRP.provinces).forEach(pv => {
+      const serie = DSRP.provinces[pv][code] || {};
+      Object.keys(serie).forEach(p => { if (serie[p] != null) s[p] = (s[p] || 0) + serie[p]; });
+    });
+    return s;
+  };
+  const longues = sommeNat("acc_implants"), courtes = sommeNat("acc_courtes");
+  const jeunes = sommeNat("acc_moins19"), adultes = sommeNat("acc_plus20");
+  const dL = cidDerniere(longues, DSRP ? DSRP.meta.mois_max : null);
+  const dC = courtes[dL.p] != null ? courtes[dL.p] : null;
+  const partJeunes = {};
+  Object.keys(jeunes).forEach(p => {
+    const tot = (jeunes[p] || 0) + (adultes[p] || 0);
+    if (tot > 0) partJeunes[p] = Math.round(jeunes[p] / tot * 1000) / 10;
+  });
+  const dJ = cidDerniere(partJeunes, DSRP ? DSRP.meta.mois_max : null);
+
+  const valProv = {};
+  let derPProv = null;
+  if (DSRP) {
+    Object.keys(PROV_CANON).forEach(id => {
+      const d = cidDerniere((DSRP.provinces[PROV_CANON[id]] || {}).prev_contra, DSRP.meta.mois_max);
+      valProv[id] = d.v == null ? null : Math.round(d.v * 10) / 10;
+      if (d.p && (!derPProv || d.p > derPProv)) derPProv = d.p;
+    });
+  }
+
+  return { crumbs, html: et + `<div class="ph-sub">Prévalence et acceptation issues du relevé national, volumes de nouvelles acceptantes agrégés depuis le relevé provincial. Aucun indicateur composite au delà de la source.</div></div>
+    <div class="content">
+      <div class="kpi-grid">
+        ${kpi("Prévalence contraceptive", prev.v == null ? null : Math.round(prev.v * 10) / 10, "%", "Cible 2027 : 30% · " + (prev.p ? cidMois(prev.p) : ""), "", "flat", pevRag(prev.v, 30))}
+        ${kpi("Acceptation des contraceptifs", acc.v == null ? null : Math.round(acc.v * 10) / 10, "%", "nouvelles utilisatrices · " + (acc.p ? cidMois(acc.p) : ""), "", "flat", acc.v == null ? "na" : "green")}
+        ${kpi("Nouvelles acceptantes · méthodes longues", dL.v == null ? null : cidFmtNb(dL.v), "", "implants et DIU · " + (dL.p ? cidMois(dL.p) : "ND") + (dC != null ? " · méthodes courtes " + cidFmtNb(dC) : ""), "", "flat", dL.v == null ? "na" : "green")}
+        ${kpi("Part des moins de 19 ans", dJ.v, "%", "parmi les nouvelles acceptantes · " + (dJ.p ? cidMois(dJ.p) : "ND"), "", "flat", dJ.v == null ? "na" : "green")}
+      </div>
+      <div class="g-2-1">
+        ${card("Nouvelles acceptantes par mois · national", "Somme des 23 provinces · méthodes longues et courtes", renderLineChart([
+          { name: "Implants et DIU", data: cidAnnee(longues, 2026), color: "#1F3864", style: "solid" },
+          { name: "Pilules et injectables", data: cidAnnee(courtes, 2026), color: "#B4913C", style: "solid" },
+        ]), DSRP ? "Source : " + DSRP.meta.source : "")}
+        ${card("Prévalence contraceptive par province · " + (derPProv ? cidMois(derPProv) : "ND"), "Vert ≥ 30 · jaune ≥ 20 · orange ≥ 10 · rouge en deçà · gris ND",
+          DSRP ? cidCarte(valProv, { couleur: v => v == null ? "#CBC7BE" : v >= 30 ? "#2E7D32" : v >= 20 ? "#C9A227" : v >= 10 ? "#D97B29" : "#B3372F" }) : '<div class="cid-res-note">Relevé provincial non chargé.</div>', "")}
+      </div>
+    </div>` };
+};
+
+/* ==============================================================
+   DSR : sante communautaire, en attente de source dediee
+============================================================== */
+VIEWS["dsr-com"] = () => ({
+  crumbs: ["Santé Reproductive", "Santé communautaire"],
+  html: `
+    <div class="ph"><div class="ph-tag">En attente de source</div><div class="ph-title">Santé communautaire</div>
+    <div class="ph-sub">Activités des agents de santé communautaire, causeries et références vers les formations sanitaires.</div></div>
+    <div class="content"><div class="attente-carte">
+      <div class="attente-ic">◷</div>
+      <div class="attente-corps">
+        <div class="attente-titre">Cette vue attend sa source de données</div>
+        <div class="attente-txt">Les relevés DSR déposés dans le Drive couvrent la santé maternelle, la planification familiale et les stocks SR, sans volet communautaire. La vue s'alimentera dès qu'un extrait du rapportage communautaire sera déposé.</div>
+      </div>
+    </div></div>`
+});
+
+/* ==============================================================
+   DSR : stocks des produits de sante reproductive
+============================================================== */
+VIEWS["dsr-stock"] = () => {
+  const crumbs = ["Santé Reproductive", "Stocks produits SR"];
+  const et = `<div class="ph"><div class="ph-tag">Stocks SR · DSR</div><div class="ph-title">Stocks des produits de santé reproductive</div>`;
+  if (!DSRP) return { crumbs, html: et + `<div class="ph-sub">Données DSR provinciales en cours de chargement.</div></div>` };
+  const PRODS = [["stock_implant", "Implants (Implanon)"], ["stock_noristerat", "Injectables (Noristerat)"], ["stock_oxytocine", "Oxytocine injectable"]];
+  if (!window.__dsrProd || !PRODS.some(([c]) => c === window.__dsrProd)) window.__dsrProd = "stock_oxytocine";
+  const prod = window.__dsrProd;
+  const lib = PRODS.find(([c]) => c === prod)[1];
+
+  const valProv = {};
+  let derPProv = null;
+  const natSerie = {};
+  Object.keys(PROV_CANON).forEach(id => {
+    const s = (DSRP.provinces[PROV_CANON[id]] || {})[prod] || {};
+    Object.keys(s).forEach(p => { if (s[p] != null) natSerie[p] = (natSerie[p] || 0) + s[p]; });
+    const d = cidDerniere(s, DSRP.meta.mois_max);
+    valProv[id] = d.v;
+    if (d.p && (!derPProv || d.p > derPProv)) derPProv = d.p;
+  });
+  const dNat = cidDerniere(natSerie, DSRP.meta.mois_max);
+  const prec = dNat.p ? natSerie[cidPrec(dNat.p)] : null;
+  const delta = dNat.v != null && prec ? Math.round((dNat.v - prec) / prec * 100) : null;
+  const aZero = Object.keys(valProv).filter(id => valProv[id] === 0);
+
+  return { crumbs, html: et + `<div class="ph-sub">Stocks de fin de mois relevés par province dans DHIS2, sans consommation moyenne mensuelle disponible : le niveau se lit en tendance, pas en mois de stock.</div></div>
+    <div class="content">
+      ${cidChips(PRODS.map(([v, l]) => ({ v, l })), "__dsrProd", prod)}
+      <div class="kpi-grid">
+        ${kpi("Stock cumulé des provinces", dNat.v == null ? null : cidFmtNb(dNat.v), "unités", lib + " · " + (dNat.p ? cidMois(dNat.p) : "ND"), delta == null ? "" : (delta >= 0 ? "+" : "") + delta + "% vs mois précédent", delta == null ? "flat" : delta >= 0 ? "up" : "down", dNat.v == null ? "na" : "green")}
+        ${kpi("Provinces renseignées", Object.values(valProv).filter(v => v != null).length, "/ 23", dNat.p ? cidMois(dNat.p) : "", "", "flat", "green")}
+        ${kpi("Provinces à stock nul", aZero.length, "", aZero.length ? aZero.map(cidProvNom).slice(0, 3).join(", ") + (aZero.length > 3 ? "…" : "") : "aucune", "", "flat", aZero.length ? "orange" : "green")}
+        ${kpi("Série disponible", cidMois(DSRP.meta.mois_min) + " · " + cidMois(DSRP.meta.mois_max), "", "avec référence 2025", "", "flat", "na")}
+      </div>
+      <div class="g-2-1">
+        ${card("Stock par province · " + (derPProv ? cidMois(derPProv) : "ND"), "Teinte bleue selon le volume · gris ND",
+          cidCarte(valProv, { couleur: cidEchelleVolume(valProv), format: v => v == null ? "ND" : cidFmtNb(v) + " unités" }), "Source : " + DSRP.meta.source)}
+        ${card("Somme des provinces · 2026 contre 2025", lib, renderLineChart([
+          { name: "2026", data: cidAnnee(natSerie, 2026), color: "#1F3864", style: "solid" },
+          { name: "2025", data: cidAnnee(natSerie, 2025), color: "#A09A93", style: "dash" },
+        ]), "Somme des stocks provinciaux déclarés, sensible aux provinces manquantes du mois.")}
+      </div>
+    </div>` };
+};
+
+/* ==============================================================
+   PNT : en attente de source
+============================================================== */
+VIEWS["prog-tb"] = () => ({
+  crumbs: ["Programmes verticaux", "PNLT · Tuberculose"],
+  html: `
+    <div class="ph"><div class="ph-tag">En attente de source</div><div class="ph-title">Tuberculose · détection et traitement</div>
+    <div class="ph-sub">Notification, succès thérapeutique et co-infection TB et VIH.</div></div>
+    <div class="content"><div class="attente-carte">
+      <div class="attente-ic">◷</div>
+      <div class="attente-corps">
+        <div class="attente-titre">Cette vue attend sa source de données</div>
+        <div class="attente-txt">Aucun export du PNT ne figure encore dans le dépôt Drive. La vue s'alimentera dès le dépôt du premier relevé trimestriel du programme.</div>
+      </div>
+    </div></div>`
+});
+
+/* ==============================================================
+   EXPLORATEUR : comparateur de provinces avec zoom mensuel
+============================================================== */
+VIEWS["explor-comp"] = () => {
+  const crumbs = ["Explorateur & alertes", "Comparateur de provinces"];
+  const cat = cidCat();
+  const et = `<div class="ph"><div class="ph-tag">Explorateur · CID</div><div class="ph-title">Comparateur de provinces</div>`;
+  if (!cat.length) return { crumbs, html: et + `<div class="ph-sub">Catalogue en cours de chargement.</div></div>` };
+  if (!window.__cmpInd || !cat.some(c => c.id === window.__cmpInd)) window.__cmpInd = cat.some(c => c.id === "dsr:cpn1") ? "dsr:cpn1" : cat[0].id;
+  const ind = cat.find(c => c.id === window.__cmpInd);
+  if (!window.__cmpProvs) window.__cmpProvs = ["NDJ", "LOO", "OUA"];
+  const provs = window.__cmpProvs;
+  const annee = window.__cmpAn || "2026";
+  const zoom = window.__cmpMois || null;
+
+  const groupes = {};
+  cat.forEach(c => { (groupes[c.dom] = groupes[c.dom] || []).push(c); });
+  const options = Object.keys(groupes).map(g =>
+    `<optgroup label="${g}">` + groupes[g].map(c => `<option value="${c.id}" ${c.id === ind.id ? "selected" : ""}>${c.libelle}</option>`).join("") + `</optgroup>`
+  ).join("");
+
+  const provChips = PROVINCES.map(p =>
+    `<button class="cid-chip mini ${provs.includes(p.id) ? "on" : ""}" onclick="(function(){const a=window.__cmpProvs;const i=a.indexOf('${p.id}');if(i>=0)a.splice(i,1);else{if(a.length>=4)a.shift();a.push('${p.id}');}renderMain();})()">${p.short}</button>`
+  ).join("");
+
+  const PALETTE = ["#1F3864", "#B4913C", "#8C4A5E", "#2E6B3F"];
+  const series = provs.map((id, i) => ({
+    name: cidProvNom(id), color: PALETTE[i % 4], style: "solid",
+    data: cidAnnee(ind.serie(id) || {}, Number(annee))
+  }));
+  if (ind.natDispo) {
+    const nat = ind.serie(null);
+    if (nat) series.push({ name: "National", color: "#75706B", style: "dash", data: cidAnnee(nat, Number(annee)) });
+  }
+  const aDonnees = series.some(s => s.data.some(v => v != null));
+
+  const lignesTable = provs.map(id => {
+    const s = ind.serie(id) || {};
+    return `<tr><td class="l">${cidProvNom(id)}</td>` + Array.from({ length: 12 }, (_, m) => {
+      const p = `${annee}-${String(m + 1).padStart(2, "0")}`;
+      return `<td class="num">${s[p] == null ? "ND" : cidFmtNb(Math.round(s[p] * 10) / 10)}</td>`;
+    }).join("") + `</tr>`;
+  }).join("");
+
+  window.__cidCSV["comparateur"] = {
+    entetes: ["indicateur", "province", "periode", "valeur"],
+    lignes: provs.flatMap(id => {
+      const s = ind.serie(id) || {};
+      return Object.keys(s).sort().map(p => [ind.libelle, cidProvNom(id), p, s[p]]);
+    })
+  };
+
+  let zoomHTML = "";
+  if (zoom) {
+    const p = `${annee}-${zoom}`;
+    const toutes = PROVINCES.map(pr => ({ id: pr.id, v: (ind.serie(pr.id) || {})[p] != null ? (ind.serie(pr.id) || {})[p] : null }))
+      .filter(x => x.v != null).sort((a, b) => b.v - a.v);
+    zoomHTML = card("Zoom · " + cidMois(p), toutes.length + " provinces renseignées, classement décroissant · " + ind.libelle, toutes.length ? `
+      <div class="cid-table-defile"><table class="dt"><thead><tr><th>Rang</th><th>Province</th><th style="text-align:right">${ind.unite}</th></tr></thead>
+      <tbody>${toutes.map((x, i) => `<tr><td>${i + 1}</td><td class="l">${cidProvNom(x.id)}</td><td class="num">${cidFmtNb(Math.round(x.v * 10) / 10)}</td></tr>`).join("")}</tbody></table></div>`
+      : '<div class="cid-res-note">Aucune province renseignée pour ce mois.</div>', "");
+  }
+
+  return { crumbs, html: et + `<div class="ph-sub">Jusqu'à quatre provinces superposées sur une série mensuelle, avec la référence nationale quand la source la porte. Le zoom mensuel classe les 23 provinces sur le mois choisi.</div></div>
+    <div class="content">
+      <div class="cid-outils">
+        <select class="cid-select" onchange="window.__cmpInd=this.value;window.__cmpMois=null;renderMain()">${options}</select>
+        ${cidChips([{ v: "2026", l: "2026" }, { v: "2025", l: "2025" }], "__cmpAn", annee)}
+      </div>
+      <div class="cid-provs">${provChips}</div>
+      ${card(ind.libelle + " · " + annee, "Source : " + ind.src + " · unité : " + ind.unite,
+        aDonnees ? renderLineChart(series) : '<div class="cid-res-note">Aucune valeur pour cette année sur les provinces choisies. La couverture varie selon la source.</div>', "")}
+      ${cidChips([{ v: "", l: "sans zoom" }].concat(Array.from({ length: 12 }, (_, m) => ({ v: String(m + 1).padStart(2, "0"), l: CID_MOIS_C[m] }))), "__cmpMois", zoom || "")}
+      ${zoomHTML}
+      ${card("Valeurs mensuelles · " + annee, "ND pour toute valeur absente de la source", `
+        <div class="cid-table-defile"><table class="dt"><thead><tr><th>Province</th>${CID_MOIS_C.map(m => `<th style="text-align:right">${m}</th>`).join("")}</tr></thead>
+        <tbody>${lignesTable}</tbody></table></div>
+        <div style="margin-top:10px">${cidBoutonCSV("comparateur", "comparateur_cid.csv")}</div>`, "")}
+    </div>` };
+};
+
+/* ==============================================================
+   EXPLORATEUR : registre des alertes
+============================================================== */
+VIEWS["explor-alert"] = () => {
+  const crumbs = ["Explorateur & alertes", "Alertes actives"];
+  const A = cidAlertes();
+  const filtre = window.__alFiltre || "toutes";
+  const doms = ["toutes"].concat(Array.from(new Set(A.map(a => a.dom))));
+  const visibles = filtre === "toutes" ? A : A.filter(a => a.dom === filtre);
+  const compte = { rouge: A.filter(a => a.niv === "rouge").length, orange: A.filter(a => a.niv === "orange").length, jaune: A.filter(a => a.niv === "jaune").length };
+  window.__cidCSV["alertes"] = { entetes: ["niveau", "domaine", "alerte", "detail", "periode"], lignes: A.map(a => [a.niv, a.dom, a.txt, a.det, a.periode || ""]) };
+
+  const items = visibles.map(a => `
+    <div class="cid-al-carte ${a.niv}">
+      <div class="cid-al-carte-tete">${cidPastille(a.niv)}<span class="cid-al-dom">${a.dom}</span><span class="cid-al-per">${a.periode ? cidMoisC(String(a.periode).slice(0, 7)) : ""}</span></div>
+      <div class="cid-al-titre">${a.txt}</div>
+      <div class="cid-al-det">${a.det}</div>
+      <button class="cid-lien" onclick="selectSub('${a.prog}','${a.sub}')">ouvrir la vue de détail →</button>
+    </div>`).join("");
+
+  return { crumbs, html: `
+    <div class="ph"><div class="ph-tag">Alertes · CID</div><div class="ph-title">Registre des alertes actives</div>
+    <div class="ph-sub">Chaque alerte est recalculée à l'ouverture du tableau de bord depuis les valeurs présentes dans les sources, avec sa règle, sa période de référence et sa vue de détail. Aucune alerte n'est saisie à la main.</div></div>
+    <div class="content">
+      <div class="kpi-grid">
+        ${kpi("Alertes rouges", compte.rouge, "", "seuil critique franchi", "", "flat", compte.rouge ? "red" : "green")}
+        ${kpi("Alertes orange", compte.orange, "", "écart marqué à la cible", "", "flat", compte.orange ? "orange" : "green")}
+        ${kpi("Signaux jaunes", compte.jaune, "", "qualité ou continuité des données", "", "flat", compte.jaune ? "yellow" : "green")}
+        ${kpi("Règles évaluées", 12, "", "sur les sources chargées", "", "flat", "na")}
+      </div>
+      ${cidChips(doms.map(d => ({ v: d, l: d })), "__alFiltre", filtre)}
+      <div class="cid-al-grille">${items || '<div class="cid-res-note">Aucune alerte sur ce filtre.</div>'}</div>
+      <div style="margin-top:12px">${cidBoutonCSV("alertes", "alertes_cid.csv")}</div>
+    </div>` };
+};
+
+/* ==============================================================
+   EXPLORATEUR : recherche transversale et export
+============================================================== */
+VIEWS["explor-rech"] = () => {
+  const crumbs = ["Explorateur & alertes", "Recherche & export"];
+  const q = (window.__rechQ || "").trim();
+  const cat = cidCat();
+  let indicateurs = [], fosa = [];
+  if (q.length >= 2) {
+    const qn = q.toLowerCase();
+    indicateurs = cat.filter(c => (c.libelle + " " + c.dom + " " + c.src).toLowerCase().includes(qn)).slice(0, 40);
+    if (FOSAR) {
+      Object.keys(FOSAR.provinces).forEach(prov => {
+        const ds = FOSAR.provinces[prov].districts;
+        Object.keys(ds).forEach(dist => ds[dist].forEach(f => {
+          if (f.toLowerCase().includes(qn) || dist.toLowerCase().includes(qn)) fosa.push([prov, dist, f]);
+        }));
+      });
+    }
+  }
+  window.__cidCSV["recherche"] = { entetes: ["type", "domaine_ou_province", "libelle", "complement"], lignes:
+    indicateurs.map(c => ["indicateur", c.dom, c.libelle, c.src]).concat(fosa.map(f => ["fosa", f[0], f[2], f[1]])) };
+
+  const lignesInd = indicateurs.map(c => `<tr><td class="l">${c.libelle}</td><td>${c.dom}</td><td>${c.unite}</td>
+    <td><button class="cid-lien" onclick="window.__cmpInd='${c.id}';selectSub('explor','explor-comp')">comparer →</button></td></tr>`).join("");
+  const lignesFosa = fosa.slice(0, 60).map(f => `<tr><td>${f[0]}</td><td>${f[1]}</td><td class="l">${f[2]}</td></tr>`).join("");
+
+  return { crumbs, html: `
+    <div class="ph"><div class="ph-tag">Recherche · CID</div><div class="ph-title">Recherche transversale</div>
+    <div class="ph-sub">Une seule recherche couvre le catalogue des indicateurs branchés et le répertoire des ${FOSAR ? cidFmtNb(FOSAR.meta.n_fosa) : ""} formations sanitaires, avec export CSV des résultats.</div></div>
+    <div class="content">
+      <div class="cid-recherche large">
+        <input id="cid-rech-q" class="cid-input" type="text" placeholder="Indicateur, maladie, produit, FOSA, district…" value="${q.replace(/"/g, "&quot;")}"
+          onkeydown="if(event.key==='Enter'){window.__rechQ=this.value;renderMain();}">
+        <button class="cid-btn-csv" onclick="window.__rechQ=document.getElementById('cid-rech-q').value;renderMain()">Rechercher</button>
+      </div>
+      ${q.length < 2 ? '<div class="cid-res-note">Saisir au moins deux caractères. Exemples : rougeole, oxytocine, complétude, Karal.</div>' : `
+        ${card("Indicateurs · " + indicateurs.length + " résultat" + (indicateurs.length > 1 ? "s" : ""), "Chaque résultat s'ouvre dans le comparateur de provinces", indicateurs.length ? `
+          <table class="dt"><thead><tr><th>Indicateur</th><th>Domaine</th><th>Unité</th><th></th></tr></thead><tbody>${lignesInd}</tbody></table>` : '<div class="cid-res-note">Aucun indicateur ne répond à cette recherche.</div>', "")}
+        ${card("Formations sanitaires · " + cidFmtNb(fosa.length) + " résultat" + (fosa.length > 1 ? "s" : ""), fosa.length > 60 ? "60 affichés, export complet disponible" : "", fosa.length ? `
+          <div class="cid-table-defile"><table class="dt"><thead><tr><th>Province</th><th>District</th><th>Formation sanitaire</th></tr></thead><tbody>${lignesFosa}</tbody></table></div>` : '<div class="cid-res-note">Aucune formation sanitaire ne répond à cette recherche.</div>', "")}
+        <div>${cidBoutonCSV("recherche", "recherche_cid.csv")}</div>`}
+    </div>` };
+};
+
 </script>
 </body>
 </html>
