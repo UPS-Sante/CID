@@ -3433,7 +3433,7 @@
     background:#E7F0E7; border:1px solid #BEDBBE; border-radius:20px; padding:5px 13px; }
   .ck2-barre-note { font-size:11.5px; color:var(--muted-2); margin-left:auto; }
 
-  .ck2-grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:14px; }
+  .ck2-grid { display:grid; grid-template-columns:repeat(6, 1fr); gap:14px; }
   .ck2-tile { position:relative; background:#fff; border-radius:14px; padding:15px 17px 12px;
     border-top:4px solid var(--rc); box-shadow:0 1px 3px rgba(31,56,100,.07), 0 8px 22px rgba(31,56,100,.05);
     display:flex; flex-direction:column; gap:5px; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease; }
@@ -3498,9 +3498,9 @@
     .ck2-surv-titre { font-size:20px; }
   }
 
-  @media (max-width:1400px){ .ck2-grid { grid-template-columns:repeat(4,1fr); } }
+  @media (max-width:1400px){ .ck2-grid { grid-template-columns:repeat(3,1fr); } }
   @media (max-width:1080px){ .ck2-grid { grid-template-columns:repeat(3,1fr); } }
-  @media (max-width:720px){ .ck2-grid { grid-template-columns:repeat(2,1fr); } .ck2-hero { flex-direction:column; align-items:flex-start; } .ck2-counts { gap:18px; } }
+  @media (max-width:720px){ .ck2-grid { grid-template-columns:repeat(2,1fr); } .ck2-hero { flex-direction:column; align-items:flex-start; } .ck2-counts { gap:18px; } .ck2-bas { grid-template-columns:1fr; } }
   /* ====== Barre laterale repliable · cockpit epure sur grand ecran ====== */
   .sb { transition: width .28s ease, opacity .18s ease, border-color .28s ease; }
   body.sb-hidden .sb {
@@ -3510,6 +3510,49 @@
   /* sur mobile le repli desktop ne s'applique pas : le tiroir garde son comportement */
   @media (max-width: 900px) {
     body.sb-hidden .sb { width: var(--sb-w); opacity: 1; pointer-events: auto; }
+  }
+  /* ---- Bannière d'insights ---- */
+  .ck2-ins { background:linear-gradient(100deg,#20335c,#2d477f); border-radius:14px; padding:16px 22px; box-shadow:0 6px 22px rgba(31,56,100,.16); }
+  .ck2-ins-tete { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:12px; }
+  .ck2-ins-titre { font-size:11px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:#CBB78A; }
+  .ck2-ins-badges { display:flex; gap:8px; flex-wrap:wrap; }
+  .ck2-ins-liste { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .ck2-ins-item { border-left:3px solid rgba(255,255,255,.25); padding-left:12px; }
+  .ck2-ins-item.n-red { border-left-color:#E88; }
+  .ck2-ins-item.n-orange { border-left-color:#F0B67A; }
+  .ck2-ins-item.n-green { border-left-color:#9BD29B; }
+  .ck2-ins-item-t { font-family:var(--font-h); font-size:14px; font-weight:700; color:#fff; }
+  .ck2-ins-item-d { font-size:12px; color:#D7DEEC; margin-top:3px; line-height:1.35; }
+
+  /* ---- Rangée basse : riposte choléra + suivi des décisions ---- */
+  .ck2-bas { display:grid; grid-template-columns:1.35fr 1fr; gap:14px; align-items:stretch; }
+  .ck2-surv { height:100%; box-sizing:border-box; flex-direction:column; align-items:flex-start; gap:14px; }
+  .ck2-surv-l { display:flex; flex-direction:column; }
+  .ck2-surv-sous { font-size:11px; color:#EBC9C9; margin-top:3px; }
+  .ck2-surv .ck2-surv-stats { width:100%; justify-content:space-between; }
+
+  /* ---- Panneau suivi des décisions ---- */
+  .ck2-dec { background:#fff; border-radius:14px; padding:16px 18px; box-shadow:0 1px 3px rgba(31,56,100,.07), 0 8px 22px rgba(31,56,100,.05); display:flex; flex-direction:column; }
+  .ck2-dec-tete { display:flex; justify-content:space-between; align-items:baseline; border-bottom:1px solid var(--border); padding-bottom:9px; margin-bottom:4px; }
+  .ck2-dec-titre { font-family:var(--font-h); font-size:15px; font-weight:700; color:var(--royal); }
+  .ck2-dec-note { font-size:11px; color:var(--muted-2); }
+  .ck2-dec-liste { display:flex; flex-direction:column; }
+  .ck2-dec-item { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid var(--border); }
+  .ck2-dec-item:last-child { border-bottom:none; }
+  .ck2-dec-t { font-size:12.5px; font-weight:600; color:var(--royal); line-height:1.25; }
+  .ck2-dec-meta { font-size:10.5px; color:var(--muted); margin-top:2px; }
+  .ck2-dec-chip { font-size:10.5px; font-weight:700; padding:3px 10px; border-radius:20px; white-space:nowrap; }
+  .ck2-dec-chip.encours { color:#1F5F9E; background:#E5EEF8; }
+  .ck2-dec-chip.alancer { color:#8A6D1F; background:#F6EED6; }
+  .ck2-dec-chip.enretard { color:#A02233; background:#F7E1E1; }
+  .ck2-dec-chip.fait { color:#2E7D32; background:#E7F0E7; }
+
+  @media (min-height:950px) {
+    .ck2-ins-item-t { font-size:16px; }
+    .ck2-ins-item-d { font-size:13px; }
+    .ck2-dec-titre { font-size:17px; }
+    .ck2-dec-t { font-size:14px; }
+    .ck2-surv-sous { font-size:12px; }
   }
 </style>
 </head>
@@ -8465,7 +8508,7 @@ VIEWS["min-overview"] = () => {
   /* 1 et 2 : couvertures vaccinales cumulées RIM */
   if (typeof pevDispo === "function" && pevDispo()) {
     const cible = PEV.meta.cible_couverture;
-    [["Penta3", "Couverture Penta 3", 1], ["VAR1", "Couverture rougeole VAR 1", 2]].forEach(([ag, lib, n]) => {
+    [["Penta3", "Couverture Penta 3", 1]].forEach(([ag, lib, n]) => {
       const c = pevNatCouv(ag);
       const spark = PEVP && PEVP.national && PEVP.national.couv && PEVP.national.couv[ag]
         ? Object.keys(PEVP.national.couv[ag]).sort().map(p => PEVP.national.couv[ag][p]) : [];
@@ -8498,9 +8541,8 @@ VIEWS["min-overview"] = () => {
       sparkColor: inverse ? "#8C4A5E" : "#3E6E78"
     });
   };
-  kDSR(3, "cpn1", "Couverture CPN 1", 95, false);
-  kDSR(4, "acc_qualifie", "Accouchements assistés", 70, false);
-  kDSR(5, "mort_mat_hosp", "Mortalité maternelle hospitalière", 700, true, "/100k");
+  kDSR(2, "cpn1", "Couverture CPN 1", 95, false);
+  kDSR(3, "mort_mat_hosp", "Mortalité maternelle hospitalière", 700, true, "/100k");
 
   /* 6 et 7 : completude et promptitude du rapportage RMA */
   const kSI = (n, ch, lib, cible) => {
@@ -8522,8 +8564,7 @@ VIEWS["min-overview"] = () => {
       sparkData: cidSerieN(serie, d.p || "2026-07", 12), sparkColor: "#1F3864"
     });
   };
-  kSI(6, "comp", "Complétude du rapportage RMA", 95);
-  kSI(7, "promp", "Promptitude du rapportage RMA", 90);
+  kSI(4, "comp", "Complétude du rapportage RMA", 95);
 
   /* 8 : rougeole, taux d'attaque national */
   (() => {
@@ -8537,7 +8578,7 @@ VIEWS["min-overview"] = () => {
       d = cidDerniere(serie, plafond);
     }
     pousseKpi({
-      n: "08", label: "Rougeole · taux d'attaque", category: "Surveillance · IDS",
+      n: "05", label: "Rougeole · taux d'attaque", category: "Surveillance · IDS",
       value: d.v, unit: "/100k", target: "vigilance",
       trend: "—", trendDir: "flat",
       rag: d.v == null ? "na" : d.v === 0 ? "green" : d.v < 2 ? "yellow" : "orange",
@@ -8553,27 +8594,12 @@ VIEWS["min-overview"] = () => {
     const prec = d.p ? serie[cidPrec(d.p)] : null;
     const delta = d.v != null && prec != null && prec > 0 ? Math.round((d.v - prec) / prec * 100) : null;
     pousseKpi({
-      n: "09", label: "Stock amoxicilline adulte", category: "Logistique · DGPML",
+      n: "06", label: "Stock amoxicilline adulte", category: "Logistique · DGPML",
       value: d.v == null ? null : Math.round(d.v / 1000), unit: "k unités", target: "suivi",
       trend: delta == null ? "—" : (delta >= 0 ? "+" : "") + delta + "%", trendDir: delta == null ? "flat" : delta >= 0 ? "up" : "down",
       rag: d.v == null ? "na" : delta != null && delta <= -20 ? "orange" : "green",
       source: "DGPML · " + (d.p ? cidMois(d.p) : "ND"),
       sparkData: cidSerieN(serie, d.p || "2026-07", 12).map(v => v == null ? null : v / 1000), sparkColor: "#856722"
-    });
-  })();
-
-  /* 10 : cholera, letalite de l'episode en cours */
-  (() => {
-    const g = CHOL_P && CHOL_P.global ? CHOL_P.global : null;
-    let spark = [];
-    if (CHOL_P && CHOL_P.semaine) spark = Object.keys(CHOL_P.semaine).sort().map(s => (CHOL_P.semaine[s].periode || {}).cas).filter(v => v != null);
-    pousseKpi({
-      n: "10", label: "Choléra · létalité de l'épisode", category: "Riposte · COUSP",
-      value: g ? g.letalite : null, unit: "%", target: "≤ 1%",
-      trend: g ? g.cas + " cas" : "—", trendDir: "flat",
-      rag: g == null ? "na" : g.letalite <= 1 ? "green" : "red",
-      source: "Liste linéaire COUSP" + (CHOL_P && CHOL_P.meta ? " · au " + CHOL_P.meta.fin : ""),
-      sparkData: spark, sparkColor: "#B3372F"
     });
   })();
 
@@ -8605,14 +8631,43 @@ VIEWS["min-overview"] = () => {
 
   const nRouge = kpis.filter(o => o.rag === "red").length;
   const nOrange = kpis.filter(o => o.rag === "orange").length;
-  const alerte = nRouge ? `<span class="ck2-badge-rouge"><span class="ck2-dot"></span>${nRouge} indicateur${nRouge > 1 ? "s" : ""} au rouge</span>` : `<span class="ck2-badge-vert">Aucun indicateur au rouge</span>`;
-  const alerteOr = nOrange ? `<span class="ck2-badge-orange">${nOrange} sous surveillance</span>` : "";
+  const nVert = kpis.filter(o => o.rag === "green").length;
+  const chol = CHOL_P && CHOL_P.global ? CHOL_P.global : null;
 
-  const grille = `<div class="ck2-barre">${alerte}${alerteOr}<span class="ck2-barre-note">Chaque tuile porte sa source et sa période, et ouvre la vue de détail</span></div>
-    <div class="ck2-grid">${kpis.map(ckTile).join("")}</div>`;
+  /* ---- Bannière d'insights : lecture synthétique tirée des valeurs réelles ---- */
+  const kget = f => kpis.find(k => k.label.indexOf(f) >= 0) || {};
+  const cpn = kget("CPN 1"), mm = kget("Mortalité"), comp = kget("Complétude"), penta = kget("Penta"), amox = kget("amoxicilline");
+  const ins = [];
+  if (chol && chol.letalite > 1)
+    ins.push({ n: "red", t: "Choléra actif", d: `Létalité ${chol.letalite}% au-dessus du seuil de 1%, ${chol.cas} cas et ${chol.deces} décès cumulés.` });
+  if ((cpn.value != null && cpn.value < 80) || (mm.value != null && mm.value > 700))
+    ins.push({ n: "orange", t: "Santé maternelle sous tension", d: `CPN 1 à ${cpn.value}%${mm.value != null ? `, mortalité hospitalière à ${mm.value}/100k` : ""}, en deçà des repères.` });
+  if (comp.value != null && comp.value < 90)
+    ins.push({ n: "orange", t: "Fiabilité des données", d: `Complétude du rapportage RMA à ${comp.value}%, sous la cible de 95% : lecture à consolider.` });
+  if (amox.value != null && amox.trendDir === "down")
+    ins.push({ n: "orange", t: "Tension logistique", d: `Stock national d'amoxicilline en repli, réapprovisionnement à surveiller avec la DGPML.` });
+  if (penta.value != null && penta.rag === "green")
+    ins.push({ n: "green", t: "Immunisation au niveau", d: `Couverture Penta 3 à ${penta.value}%, au-dessus de la cible nationale.` });
+  const insBanniere = `
+    <div class="ck2-ins">
+      <div class="ck2-ins-tete">
+        <div class="ck2-ins-titre">◆ Lecture de la situation</div>
+        <div class="ck2-ins-badges">
+          ${nRouge ? `<span class="ck2-badge-rouge"><span class="ck2-dot"></span>${nRouge} au rouge</span>` : `<span class="ck2-badge-vert">Aucun au rouge</span>`}
+          ${nOrange ? `<span class="ck2-badge-orange">${nOrange} sous surveillance</span>` : ""}
+          ${nVert ? `<span class="ck2-badge-vert">${nVert} au vert</span>` : ""}
+        </div>
+      </div>
+      <div class="ck2-ins-liste">
+        ${ins.slice(0, 3).map(i => `<div class="ck2-ins-item n-${i.n}"><div class="ck2-ins-item-t">${i.t}</div><div class="ck2-ins-item-d">${i.d}</div></div>`).join("")}
+      </div>
+    </div>`;
+
+  /* ---- Grille des six indicateurs ---- */
+  const grille = `<div class="ck2-grid">${kpis.map(ckTile).join("")}</div>`;
 
   /* liens de deep dive appliques aux tuiles dans l'ordre */
-  const liens = [["vacc", "vacc-couv"], ["vacc", "vacc-couv"], ["dsr", "dsr-mat"], ["dsr", "dsr-mat"], ["dsr", "dsr-mat"], ["dpsis", "dpsis-comp"], ["dpsis", "dpsis-comp"], ["vacc", "vacc-surv"], ["dpml", "dpml-dispo"], ["cousp", "cousp-sitrep"]];
+  const liens = [["vacc", "vacc-couv"], ["dsr", "dsr-mat"], ["dsr", "dsr-mat"], ["dpsis", "dpsis-comp"], ["vacc", "vacc-surv"], ["dpml", "dpml-dispo"]];
   setTimeout(() => {
     document.querySelectorAll(".ck2-grid .ck2-tile").forEach((el, i) => {
       if (!liens[i]) return;
@@ -8621,13 +8676,13 @@ VIEWS["min-overview"] = () => {
     });
   }, 0);
 
-  /* bande cholera, allegee */
-  const chol = CHOL_P && CHOL_P.global ? CHOL_P.global : null;
-  const bande = chol ? `
+  /* ---- Bannière dédiée à la riposte choléra ---- */
+  const bandeChol = chol ? `
     <div class="ck2-surv" onclick="selectSub('cousp','cousp-sitrep')" role="link" tabindex="0">
       <div class="ck2-surv-l">
-        <span class="ck2-surv-tag"><span class="ck2-dot"></span>Surveillance · Épisode en cours</span>
-        <div class="ck2-surv-titre">Riposte au choléra · Hadjer Lamis et N'Djamena</div>
+        <span class="ck2-surv-tag"><span class="ck2-dot"></span>Riposte · Épisode en cours</span>
+        <div class="ck2-surv-titre">Choléra · Hadjer Lamis et N'Djamena</div>
+        <div class="ck2-surv-sous">Liste linéaire COUSP au ${CHOL_P.meta ? CHOL_P.meta.fin : "—"}</div>
       </div>
       <div class="ck2-surv-stats">
         <div class="ck2-surv-stat"><div class="cs2-val">${chol.cas}</div><div class="cs2-lib">cas cumulés</div></div>
@@ -8638,7 +8693,35 @@ VIEWS["min-overview"] = () => {
       </div>
     </div>` : "";
 
-  return { crumbs, html: `<div class="ck2-wrap">${bandeau}${grille}${bande}</div>` };
+  /* ---- Suivi des décisions (cadre de gouvernance, à alimenter par l'UPS-Santé) ---- */
+  const decisions = [
+    { t: "Renforcement de la CPN dans les provinces sous la cible", dir: "DSR", ech: "Juil. 2026", st: "En cours" },
+    { t: "Plan de relance de la complétude du rapportage RMA", dir: "DPSIS", ech: "Août 2026", st: "À lancer" },
+    { t: "Réapprovisionnement en amoxicilline adulte", dir: "DGPML", ech: "Juil. 2026", st: "En cours" },
+    { t: "Riposte choléra · eau, assainissement et prise en charge", dir: "COUSP", ech: "En cours", st: "En retard" },
+  ];
+  const stClass = { "En cours": "encours", "À lancer": "alancer", "En retard": "enretard", "Fait": "fait" };
+  const decPanneau = `
+    <div class="ck2-dec">
+      <div class="ck2-dec-tete">
+        <div class="ck2-dec-titre">Suivi des décisions</div>
+        <div class="ck2-dec-note">${decisions.length} décisions suivies</div>
+      </div>
+      <div class="ck2-dec-liste">
+        ${decisions.map(d => `
+          <div class="ck2-dec-item">
+            <div class="ck2-dec-main">
+              <div class="ck2-dec-t">${d.t}</div>
+              <div class="ck2-dec-meta">${d.dir} · échéance ${d.ech}</div>
+            </div>
+            <span class="ck2-dec-chip ${stClass[d.st] || ""}">${d.st}</span>
+          </div>`).join("")}
+      </div>
+    </div>`;
+
+  const basRangee = `<div class="ck2-bas">${bandeChol}${decPanneau}</div>`;
+
+  return { crumbs, html: `<div class="ck2-wrap">${bandeau}${insBanniere}${grille}${basRangee}</div>` };
 };
 
 /* ==============================================================
