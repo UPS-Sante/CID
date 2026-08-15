@@ -8693,13 +8693,8 @@ VIEWS["min-overview"] = () => {
       </div>
     </div>` : "";
 
-  /* ---- Suivi des décisions (cadre de gouvernance, à alimenter par l'UPS-Santé) ---- */
-  const decisions = [
-    { t: "Renforcement de la CPN dans les provinces sous la cible", dir: "DSR", ech: "Juil. 2026", st: "En cours" },
-    { t: "Plan de relance de la complétude du rapportage RMA", dir: "DPSIS", ech: "Août 2026", st: "À lancer" },
-    { t: "Réapprovisionnement en amoxicilline adulte", dir: "DGPML", ech: "Juil. 2026", st: "En cours" },
-    { t: "Riposte choléra · eau, assainissement et prise en charge", dir: "COUSP", ech: "En cours", st: "En retard" },
-  ];
+  /* ---- Suivi des décisions : à alimenter par des données réelles de l'UPS-Santé ---- */
+  const decisions = [];
   const stClass = { "En cours": "encours", "À lancer": "alancer", "En retard": "enretard", "Fait": "fait" };
   const decPanneau = `
     <div class="ck2-dec">
@@ -8721,7 +8716,7 @@ VIEWS["min-overview"] = () => {
 
   const basRangee = `<div class="ck2-bas">${bandeChol}${decPanneau}</div>`;
 
-  return { crumbs, html: `<div class="ck2-wrap">${bandeau}${insBanniere}${grille}${basRangee}</div>` };
+  return { crumbs, html: `<div class="ck2-wrap">${bandeau}${insBanniere}${grille}${bandeChol}</div>` };
 };
 
 /* ==============================================================
