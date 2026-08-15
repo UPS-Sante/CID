@@ -3464,12 +3464,19 @@
   .ck2-red .ck2-val { color:var(--rag-red); }
   @media (prefers-reduced-motion: reduce) { .ck2-red { animation:none; } .ck2-dot { animation:none; } }
 
-  .ck2-surv { display:flex; justify-content:space-between; align-items:center; gap:20px; cursor:pointer;
-    background:linear-gradient(100deg,#7A1E1E,#A02233); border-radius:14px; padding:14px 22px; box-shadow:0 6px 20px rgba(122,30,30,.22); }
+  .ck2-surv { display:flex; justify-content:space-between; align-items:stretch; gap:22px; cursor:pointer;
+    background:linear-gradient(100deg,#7A1E1E,#A02233); border-radius:14px; padding:16px 22px; box-shadow:0 6px 20px rgba(122,30,30,.22); }
+  .ck2-surv-txt { flex:1 1 auto; display:flex; flex-direction:column; justify-content:center; gap:22px; min-width:0; }
+  .ck2-surv-bas { display:flex; align-items:center; justify-content:space-between; gap:28px; flex-wrap:wrap; }
+  .ck2-surv-carte { flex:0 0 auto; display:flex; flex-direction:column; gap:6px; background:#fff; border-radius:12px; padding:10px 12px; box-shadow:0 2px 10px rgba(0,0,0,.16); cursor:pointer; }
+  .ck2-surv-carte-t { font-size:10.5px; font-weight:700; letter-spacing:.7px; text-transform:uppercase; color:#7A1E1E; }
+  .ck2-surv-carte .chol-carte-wrap { gap:7px; }
+  .ck2-surv-carte .chol-carte { height:200px; width:auto; max-width:380px; }
+  .ck2-surv-carte .chol-legende { color:var(--body); font-size:9.5px; gap:8px 12px; }
   .ck2-surv-tag { display:inline-flex; align-items:center; gap:8px; font-size:10.5px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#F3C9C9; }
   .ck2-surv-tag .ck2-dot { background:#fff; }
   .ck2-surv-titre { font-family:var(--font-h); font-size:17px; font-weight:700; color:#fff; margin-top:4px; }
-  .ck2-surv-stats { display:flex; align-items:center; gap:26px; flex-wrap:wrap; }
+  .ck2-surv-stats { display:flex; align-items:center; gap:26px; flex-wrap:wrap; flex:1 1 auto; justify-content:space-between; max-width:560px; }
   .ck2-surv-stat { text-align:center; }
   .cs2-val { font-family:var(--font-h); font-size:24px; font-weight:700; color:#fff; line-height:1; }
   .cs2-val.cs2-alerte { color:#FFD9A8; }
@@ -3500,7 +3507,7 @@
 
   @media (max-width:1400px){ .ck2-grid { grid-template-columns:repeat(3,1fr); } }
   @media (max-width:1080px){ .ck2-grid { grid-template-columns:repeat(3,1fr); } }
-  @media (max-width:720px){ .ck2-grid { grid-template-columns:repeat(2,1fr); } .ck2-hero { flex-direction:column; align-items:flex-start; } .ck2-counts { gap:18px; } .ck2-bas { grid-template-columns:1fr; } }
+  @media (max-width:720px){ .ck2-grid { grid-template-columns:repeat(2,1fr); } .ck2-hero { flex-direction:column; align-items:flex-start; } .ck2-counts { gap:18px; } .ck2-surv { flex-direction:column; } .ck2-surv-carte { align-self:stretch; } .ck2-surv-carte .chol-carte { height:auto; width:100%; max-width:none; } }
   /* ====== Barre laterale repliable · cockpit epure sur grand ecran ====== */
   .sb { transition: width .28s ease, opacity .18s ease, border-color .28s ease; }
   body.sb-hidden .sb {
@@ -3524,12 +3531,8 @@
   .ck2-ins-item-t { font-family:var(--font-h); font-size:14px; font-weight:700; color:#fff; }
   .ck2-ins-item-d { font-size:12px; color:#D7DEEC; margin-top:3px; line-height:1.35; }
 
-  /* ---- Rangée basse : riposte choléra + suivi des décisions ---- */
-  .ck2-bas { display:grid; grid-template-columns:1.35fr 1fr; gap:14px; align-items:stretch; }
-  .ck2-surv { height:100%; box-sizing:border-box; flex-direction:column; align-items:flex-start; gap:14px; }
-  .ck2-surv-l { display:flex; flex-direction:column; }
+  /* ---- Bannière riposte (disposition deux colonnes définie plus haut) ---- */
   .ck2-surv-sous { font-size:11px; color:#EBC9C9; margin-top:3px; }
-  .ck2-surv .ck2-surv-stats { width:100%; justify-content:space-between; }
 
   /* ---- Panneau suivi des décisions ---- */
   .ck2-dec { background:#fff; border-radius:14px; padding:16px 18px; box-shadow:0 1px 3px rgba(31,56,100,.07), 0 8px 22px rgba(31,56,100,.05); display:flex; flex-direction:column; }
@@ -8676,21 +8679,30 @@ VIEWS["min-overview"] = () => {
     });
   }, 0);
 
-  /* ---- Bannière dédiée à la riposte choléra ---- */
+  /* ---- Bannière riposte choléra : texte et stats à gauche, carte des foyers à droite ---- */
+  const carteFoyers = (typeof renderCarteCholera === "function") ? renderCarteCholera() : "";
   const bandeChol = chol ? `
     <div class="ck2-surv" onclick="selectSub('cousp','cousp-sitrep')" role="link" tabindex="0">
-      <div class="ck2-surv-l">
-        <span class="ck2-surv-tag"><span class="ck2-dot"></span>Riposte · Épisode en cours</span>
-        <div class="ck2-surv-titre">Choléra · Hadjer Lamis et N'Djamena</div>
-        <div class="ck2-surv-sous">Liste linéaire COUSP au ${CHOL_P.meta ? CHOL_P.meta.fin : "—"}</div>
+      <div class="ck2-surv-txt">
+        <div class="ck2-surv-haut">
+          <span class="ck2-surv-tag"><span class="ck2-dot"></span>Riposte · Épisode en cours</span>
+          <div class="ck2-surv-titre">Choléra · Hadjer Lamis et N'Djamena</div>
+          <div class="ck2-surv-sous">Liste linéaire COUSP au ${CHOL_P.meta ? CHOL_P.meta.fin : "—"}</div>
+        </div>
+        <div class="ck2-surv-bas">
+          <div class="ck2-surv-stats">
+            <div class="ck2-surv-stat"><div class="cs2-val">${chol.cas}</div><div class="cs2-lib">cas cumulés</div></div>
+            <div class="ck2-surv-stat"><div class="cs2-val">${chol.deces}</div><div class="cs2-lib">décès</div></div>
+            <div class="ck2-surv-stat"><div class="cs2-val cs2-alerte">${chol.letalite}%</div><div class="cs2-lib">létalité · seuil 1%</div></div>
+            <div class="ck2-surv-stat"><div class="cs2-val">${(chol.districts || []).length}</div><div class="cs2-lib">districts</div></div>
+          </div>
+          <span class="ck2-surv-lien">Voir la riposte →</span>
+        </div>
       </div>
-      <div class="ck2-surv-stats">
-        <div class="ck2-surv-stat"><div class="cs2-val">${chol.cas}</div><div class="cs2-lib">cas cumulés</div></div>
-        <div class="ck2-surv-stat"><div class="cs2-val">${chol.deces}</div><div class="cs2-lib">décès</div></div>
-        <div class="ck2-surv-stat"><div class="cs2-val cs2-alerte">${chol.letalite}%</div><div class="cs2-lib">létalité · seuil 1%</div></div>
-        <div class="ck2-surv-stat"><div class="cs2-val">${(chol.districts || []).length}</div><div class="cs2-lib">districts</div></div>
-        <span class="ck2-surv-lien">Voir la riposte →</span>
-      </div>
+      ${carteFoyers ? `<div class="ck2-surv-carte" onclick="event.stopPropagation();selectSub('cousp','cousp-alert')">
+        <div class="ck2-surv-carte-t">Foyers actifs · zone épidémique</div>
+        ${carteFoyers}
+      </div>` : ""}
     </div>` : "";
 
   /* ---- Suivi des décisions : à alimenter par des données réelles de l'UPS-Santé ---- */
