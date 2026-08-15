@@ -4351,9 +4351,9 @@ const state = {
   pdaDomain: "overview",
   periodMode: "month",
   periodYear: 2026,
-  periodMonth: 4,
+  periodMonth: 7,
   periodQuarter: 2,
-  periodValue: "2026-04",
+  periodValue: "2026-07",
   provinceFilter: null,
   mapMode: "performance",
   minSection: "A",
@@ -4991,6 +4991,16 @@ function applyStaticTranslations() {
 
 const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 const ANNEES = (() => { const a = []; for (let x = 2026; x >= 2020; x--) a.push(x); return a; })();
+/* Dernier mois complet presentable : aout 2026 est un mois partiel, on ne le montre pas.
+   Toute periode derivee ou selectionnee est bornee a cette limite. */
+const DERNIER_MOIS = { annee: 2026, mois: 7, trim: 2 };
+function bornerPeriode() {
+  if (state.periodYear > DERNIER_MOIS.annee) { state.periodYear = DERNIER_MOIS.annee; }
+  if (state.periodYear === DERNIER_MOIS.annee) {
+    if (state.periodMonth > DERNIER_MOIS.mois) state.periodMonth = DERNIER_MOIS.mois;
+    if (state.periodQuarter > DERNIER_MOIS.trim) state.periodQuarter = DERNIER_MOIS.trim;
+  }
+}
 const MOIS_NOMS = ["Janvier","Février","Mars","Avril","Mai","Juin",
                    "Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 const TRIMESTRES = [
@@ -4998,6 +5008,7 @@ const TRIMESTRES = [
   {v:3, l:"T3 (Jul–Sep)"}, {v:4, l:"T4 (Oct–Déc)"},
 ];
 function majPeriodValue() {
+  bornerPeriode();
   state.periodValue = state.periodMode === "quarter"
     ? `${state.periodYear}-Q${state.periodQuarter}`
     : `${state.periodYear}-${String(state.periodMonth).padStart(2, "0")}`;
@@ -5251,8 +5262,8 @@ function renderTopbar(v) {
         </select>
         <select class="period-sel" onchange="setPeriodPart(this.value)">
           ${state.periodMode === "quarter"
-            ? TRIMESTRES.map(o => `<option value="${o.v}" ${state.periodQuarter === o.v ? 'selected' : ''}>${o.l}</option>`).join("")
-            : MOIS_NOMS.map((l, i) => `<option value="${i + 1}" ${state.periodMonth === i + 1 ? 'selected' : ''}>${l}</option>`).join("")}
+            ? TRIMESTRES.filter(o => state.periodYear !== DERNIER_MOIS.annee || o.v <= DERNIER_MOIS.trim).map(o => `<option value="${o.v}" ${state.periodQuarter === o.v ? 'selected' : ''}>${o.l}</option>`).join("")
+            : MOIS_NOMS.map((l, i) => ({ l, i })).filter(x => state.periodYear !== DERNIER_MOIS.annee || (x.i + 1) <= DERNIER_MOIS.mois).map(x => `<option value="${x.i + 1}" ${state.periodMonth === x.i + 1 ? 'selected' : ''}>${x.l}</option>`).join("")}
         </select>
       </div>
 
