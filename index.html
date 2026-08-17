@@ -3586,31 +3586,47 @@
 
   @media (max-width:1200px){ .ck2-bas { grid-template-columns:1fr; } }
   /* ====== Animations d'entrée · cockpit vivant et premium ====== */
-  @keyframes ck2Reveal { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+  @keyframes ck2Reveal { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:none; } }
   @keyframes ck2Draw { to { stroke-dashoffset:0; } }
   @keyframes ck2Grow { from { transform:scaleY(0); } to { transform:scaleY(1); } }
 
-  .ck2-anim > * { opacity:0; animation:ck2Reveal .6s cubic-bezier(.2,.7,.2,1) both; }
-  .ck2-anim > *:nth-child(1){ animation-delay:.04s; }
-  .ck2-anim > *:nth-child(2){ animation-delay:.12s; }
-  .ck2-anim > *:nth-child(4){ animation-delay:.48s; }
-  .ck2-anim > .ck2-grid { opacity:1; animation:none; }        /* la grille apparaît, ses tuiles s'animent */
-  .ck2-anim .ck2-grid > .ck2-tile { opacity:0; animation:ck2Reveal .55s cubic-bezier(.2,.7,.2,1) both; }
-  .ck2-anim .ck2-grid > .ck2-tile:nth-child(1){ animation-delay:.20s; }
-  .ck2-anim .ck2-grid > .ck2-tile:nth-child(2){ animation-delay:.26s; }
-  .ck2-anim .ck2-grid > .ck2-tile:nth-child(3){ animation-delay:.32s; }
-  .ck2-anim .ck2-grid > .ck2-tile:nth-child(4){ animation-delay:.38s; }
-  .ck2-anim .ck2-grid > .ck2-tile:nth-child(5){ animation-delay:.44s; }
-  .ck2-anim .ck2-grid > .ck2-tile:nth-child(6){ animation-delay:.50s; }
+  .ck2-anim > * { opacity:0; animation:ck2Reveal .9s cubic-bezier(.2,.7,.2,1) both; }
+  .ck2-anim > *:nth-child(1){ animation-delay:.08s; }
+  .ck2-anim > *:nth-child(2){ animation-delay:.26s; }
+  .ck2-anim > *:nth-child(4){ animation-delay:.95s; }
+  .ck2-anim > .ck2-grid { opacity:1; animation:none; }
+  .ck2-anim .ck2-grid > .ck2-tile { opacity:0; animation:ck2Reveal .8s cubic-bezier(.2,.7,.2,1) both; }
+  .ck2-anim .ck2-grid > .ck2-tile:nth-child(1){ animation-delay:.40s; }
+  .ck2-anim .ck2-grid > .ck2-tile:nth-child(2){ animation-delay:.50s; }
+  .ck2-anim .ck2-grid > .ck2-tile:nth-child(3){ animation-delay:.60s; }
+  .ck2-anim .ck2-grid > .ck2-tile:nth-child(4){ animation-delay:.70s; }
+  .ck2-anim .ck2-grid > .ck2-tile:nth-child(5){ animation-delay:.80s; }
+  .ck2-anim .ck2-grid > .ck2-tile:nth-child(6){ animation-delay:.90s; }
 
-  .ck2-anim .ck2-spark .mini-spark polyline { stroke-dasharray:600; stroke-dashoffset:600; animation:ck2Draw 1.1s ease .5s forwards; }
-  .ck2-anim .chol-mini .chol-bar { transform-box:fill-box; transform-origin:50% 100%; animation:ck2Grow .55s cubic-bezier(.2,.7,.2,1) .55s both; }
+  .ck2-anim .ck2-spark .mini-spark .spark-line { stroke-dasharray:600; stroke-dashoffset:600; animation:ck2Draw 1.7s ease .6s forwards; }
+  .ck2-anim .chol-mini .chol-bar { transform-box:fill-box; transform-origin:50% 100%; animation:ck2Grow .8s cubic-bezier(.2,.7,.2,1) .9s both; }
+
+  /* ====== Effet « live » continu sur les sparklines, façon bourse ====== */
+  @keyframes sparkRun { from { stroke-dashoffset:320; } to { stroke-dashoffset:0; } }
+  @keyframes sparkPulse { 0%,100% { transform:scale(1); opacity:1; } 50% { transform:scale(1.55); opacity:.7; } }
+  .mini-spark .spark-runner { opacity:0; }
+  .ck2-tile .mini-spark .spark-runner { opacity:.9; stroke-dasharray:14 320; animation:sparkRun 3.2s linear infinite; }
+  .ck2-tile .mini-spark .spark-dot { transform-box:fill-box; transform-origin:center; animation:sparkPulse 2s ease-in-out infinite; }
 
   @media (prefers-reduced-motion: reduce) {
     .ck2-anim > *, .ck2-anim .ck2-grid > .ck2-tile { opacity:1 !important; animation:none !important; }
-    .ck2-anim .ck2-spark .mini-spark polyline { stroke-dasharray:none; stroke-dashoffset:0; animation:none; }
+    .ck2-anim .ck2-spark .mini-spark .spark-line { stroke-dasharray:none; stroke-dashoffset:0; animation:none; }
     .ck2-anim .chol-mini .chol-bar { animation:none; transform:none; }
+    .ck2-tile .mini-spark .spark-runner { opacity:0; animation:none; }
+    .ck2-tile .mini-spark .spark-dot { animation:none; }
   }
+
+  /* ====== Écran de chargement ====== */
+  .cid-load { min-height:60vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; }
+  .cid-load-spin { width:40px; height:40px; border:3px solid var(--border); border-top-color:var(--royal); border-radius:50%; animation:cidSpin .85s linear infinite; }
+  @keyframes cidSpin { to { transform:rotate(360deg); } }
+  .cid-load-txt { font-size:13px; color:var(--muted); letter-spacing:.3px; }
+  @media (prefers-reduced-motion: reduce) { .cid-load-spin { animation-duration:1.6s; } }
 </style>
 </head>
 <body>
@@ -4154,6 +4170,7 @@ async function chargerDonneesReelles(essai) {
       if (fr) FOSAR = fr;
     } catch (e) {}
     window.__cidCat = null;
+    window.__donneesPretes = true;
     if (state.sub === "min-overview") ckAnim = true;
     renderMain();
     // rafraichissement des donnees toutes les six heures pour les onglets laisses ouverts
@@ -6174,8 +6191,9 @@ function miniSpark(data, color = "#1F3864") {
   return `
     <svg class="mini-spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
       <polygon points="${areaPts}" fill="${color}" opacity="0.08"/>
-      <polyline points="${linePts}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="${lastX.toFixed(1)}" cy="${lastY.toFixed(1)}" r="2.8" fill="${color}" stroke="white" stroke-width="1.2"/>
+      <polyline class="spark-line" points="${linePts}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <polyline class="spark-runner" points="${linePts}" fill="none" stroke="${color}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle class="spark-dot" cx="${lastX.toFixed(1)}" cy="${lastY.toFixed(1)}" r="2.8" fill="${color}" stroke="white" stroke-width="1.2"/>
     </svg>
   `;
 }
@@ -8264,22 +8282,29 @@ function showProvInfo(provId, metric, isVolume) {
 /* ==============================================================
    INIT
 ============================================================== */
+function ecranChargement() {
+  const m = document.getElementById("main");
+  if (m) m.innerHTML = `<div class="cid-load"><div class="cid-load-spin"></div><div class="cid-load-txt">Chargement des données…</div></div>`;
+}
+
 function init() {
   applyStaticTranslations();
   document.documentElement.setAttribute("lang", state.lang);
   document.documentElement.setAttribute("dir", state.lang === "ar" ? "rtl" : "ltr");
   renderSidebar();
-  chargerDonneesReelles();   // bascule sur data/consolide.json des qu'il existe
+  // Ouvre le cockpit et affiche un ecran de chargement avant l'arrivee des donnees
+  const pmin = document.querySelector('.prog[data-prog="min"]');
+  if (pmin) pmin.classList.add("open", "active");
+  const smin = document.querySelector('.subprog[data-sub="min-overview"]');
+  if (smin) smin.classList.add("active");
+  ecranChargement();
+  majBarreCockpit();
+  chargerDonneesReelles();   // rendra le cockpit reel une fois les donnees pretes
   window.addEventListener("resize", () => { if (state.sub === "min-overview") ajusterCockpit(); });
   window.addEventListener("load", () => { if (state.sub === "min-overview") planifierAjustement(); });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (state.sub === "min-overview") ajusterCockpit(); });
-  // Ouvre le cockpit ministeriel par defaut (bloc Pilotage)
-  setTimeout(() => {
-    document.querySelector('.prog[data-prog="min"]').classList.add("open", "active");
-    document.querySelector('.subprog[data-sub="min-overview"]').classList.add("active");
-    renderMain();
-    majBarreCockpit();
-  }, 30);
+  // Filet de securite : si le chargement echoue, afficher quand meme le tableau
+  setTimeout(() => { if (!window.__donneesPretes) { renderMain(); majBarreCockpit(); } }, 8000);
 }
 
 init();
