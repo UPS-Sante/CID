@@ -3556,6 +3556,31 @@
     .ck2-dec-t { font-size:14px; }
     .ck2-surv-sous { font-size:12px; }
   }
+  /* ====== Rangée basse : riposte choléra + comité de pilotage ====== */
+  .ck2-bas { display:grid; grid-template-columns:1.4fr 1fr; gap:16px; align-items:stretch; }
+  .ck2-bas > .ck2-surv { height:100%; box-sizing:border-box; }
+
+  .copil { background:#fff; border:1px solid var(--border); border-radius:14px; padding:15px 18px; display:flex; flex-direction:column; gap:11px;
+    box-shadow:0 1px 3px rgba(31,56,100,.06), 0 8px 22px rgba(31,56,100,.05); }
+  .copil-tete { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; border-bottom:1px solid var(--border); padding-bottom:10px; }
+  .copil-kicker { font-size:10px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:var(--gold); }
+  .copil-titre { font-family:var(--font-h); font-size:16px; font-weight:700; color:var(--royal); margin-top:2px; }
+  .copil-resume { font-size:11px; color:var(--muted); white-space:nowrap; }
+  .copil-retard { color:var(--rag-red); font-weight:700; }
+  .copil-liste { display:flex; flex-direction:column; gap:9px; }
+  .copil-item { display:flex; align-items:center; gap:12px; }
+  .copil-barre { width:4px; align-self:stretch; min-height:32px; border-radius:3px; background:var(--muted-2); flex:none; }
+  .copil-main { flex:1; min-width:0; }
+  .copil-reco { font-size:13px; font-weight:600; color:var(--body); line-height:1.25; }
+  .copil-meta { font-size:10px; color:var(--muted-2); margin-top:2px; text-transform:uppercase; letter-spacing:.3px; }
+  .copil-chip { font-size:10.5px; font-weight:700; padding:3px 11px; border-radius:20px; white-space:nowrap; flex:none; }
+  .copil-vide { font-size:12px; color:var(--muted); padding:6px 0; }
+  .s-fait.copil-barre { background:#2E7D32; } .s-fait.copil-chip { color:#2E7D32; background:#E7F0E7; }
+  .s-encours.copil-barre { background:var(--royal); } .s-encours.copil-chip { color:var(--royal); background:#E7ECF5; }
+  .s-alancer.copil-barre { background:var(--gold); } .s-alancer.copil-chip { color:#8A6D1E; background:#F6EFDD; }
+  .s-retard.copil-barre { background:var(--rag-red); } .s-retard.copil-chip { color:var(--rag-red); background:#F7E6E4; }
+
+  @media (max-width:1200px){ .ck2-bas { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
@@ -4071,6 +4096,10 @@ async function chargerDonneesReelles(essai) {
       if (cp) CHOL_P = cp;
     } catch (e) {}
     try {
+      const cpil = await fetch("copil_decisions.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      if (cpil) COPIL = cpil;
+    } catch (e) {}
+    try {
       const dq = await fetch("dpsis_qualite.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
       if (dq) DPSISQ = dq;
     } catch (e) {}
@@ -4216,6 +4245,7 @@ let CHOL_S = null;
 let METEO = null;
 let CARTE_FOCUS = null;
 let PLUIE_A = null;
+let COPIL = null;   // registre des décisions du comité de pilotage
 let CHOL_P = null;
 let DPSISQ = null;   /* dpsis_qualite.json : completude, promptitude, volumes, carte sanitaire */
 let SURV = null;     /* surveillance.json : taux d'attaque et letalite par maladie */
@@ -8771,30 +8801,37 @@ VIEWS["min-overview"] = () => {
       </div>` : ""}
     </div>` : "";
 
-  /* ---- Suivi des décisions : à alimenter par des données réelles de l'UPS-Santé ---- */
-  const decisions = [];
-  const stClass = { "En cours": "encours", "À lancer": "alancer", "En retard": "enretard", "Fait": "fait" };
-  const decPanneau = `
-    <div class="ck2-dec">
-      <div class="ck2-dec-tete">
-        <div class="ck2-dec-titre">Suivi des décisions</div>
-        <div class="ck2-dec-note">${decisions.length} décisions suivies</div>
+  /* ---- Bannière du comité de pilotage : relevé de décisions et mise en œuvre ---- */
+  const stLib = { fait: "Réalisé", en_cours: "En cours", a_lancer: "À lancer", en_retard: "En retard" };
+  const stCls = { fait: "s-fait", en_cours: "s-encours", a_lancer: "s-alancer", en_retard: "s-retard" };
+  const decs = (COPIL && Array.isArray(COPIL.decisions)) ? COPIL.decisions : [];
+  const nRetard = decs.filter(d => d.statut === "en_retard").length;
+  const moisCourt = (p) => { if (!p) return ""; const [a, m] = String(p).split("-"); const M = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."]; return m ? M[parseInt(m, 10) - 1] + " " + a.slice(2) : a; };
+  const copilBanniere = `
+    <div class="copil">
+      <div class="copil-tete">
+        <div>
+          <div class="copil-kicker">◆ Comité de pilotage</div>
+          <div class="copil-titre">Relevé de décisions et mise en œuvre</div>
+        </div>
+        <div class="copil-resume">${decs.length} recommandation${decs.length > 1 ? "s" : ""} suivie${decs.length > 1 ? "s" : ""}${nRetard ? ` · <span class="copil-retard">${nRetard} en retard</span>` : ""}</div>
       </div>
-      <div class="ck2-dec-liste">
-        ${decisions.map(d => `
-          <div class="ck2-dec-item">
-            <div class="ck2-dec-main">
-              <div class="ck2-dec-t">${d.t}</div>
-              <div class="ck2-dec-meta">${d.dir} · échéance ${d.ech}</div>
+      ${decs.length ? `<div class="copil-liste">
+        ${decs.map(d => `
+          <div class="copil-item">
+            <span class="copil-barre ${stCls[d.statut] || ""}"></span>
+            <div class="copil-main">
+              <div class="copil-reco">${d.recommandation}</div>
+              <div class="copil-meta">${d.direction || ""}${d.echeance ? " · échéance " + moisCourt(d.echeance) : ""}</div>
             </div>
-            <span class="ck2-dec-chip ${stClass[d.st] || ""}">${d.st}</span>
+            <span class="copil-chip ${stCls[d.statut] || ""}">${stLib[d.statut] || d.statut || ""}</span>
           </div>`).join("")}
-      </div>
+      </div>` : `<div class="copil-vide">Registre à alimenter à partir des relevés du comité de pilotage.</div>`}
     </div>`;
 
-  const basRangee = `<div class="ck2-bas">${bandeChol}${decPanneau}</div>`;
+  const basRangee = `<div class="ck2-bas">${bandeChol}${copilBanniere}</div>`;
 
-  return { crumbs, html: `<div class="ck2-wrap">${bandeau}${insBanniere}${grille}${bandeChol}</div>` };
+  return { crumbs, html: `<div class="ck2-wrap">${bandeau}${insBanniere}${grille}${basRangee}</div>` };
 };
 
 /* ==============================================================

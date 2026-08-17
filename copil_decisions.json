@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "comite": "Comité de pilotage · UPS-Santé",
+    "note": "Registre à maintenir à partir des relevés de conclusions du comité de pilotage. Les statuts sont mis à jour à chaque séance.",
+    "statuts": ["fait", "en_cours", "a_lancer", "en_retard"]
+  },
+  "decisions": [
+    {
+      "recommandation": "Riposte au choléra : eau, assainissement et prise en charge dans les foyers actifs",
+      "direction": "COUSP",
+      "echeance": "2026-08",
+      "statut": "en_cours"
+    },
+    {
+      "recommandation": "Renforcement de la CPN dans les provinces sous la cible",
+      "direction": "DSR",
+      "echeance": "2026-09",
+      "statut": "en_cours"
+    },
+    {
+      "recommandation": "Plan de relance de la complétude du rapportage RMA",
+      "direction": "DPSIS",
+      "echeance": "2026-08",
+      "statut": "a_lancer"
+    },
+    {
+      "recommandation": "Réapprovisionnement en amoxicilline adulte",
+      "direction": "DGPML",
+      "echeance": "2026-08",
+      "statut": "en_retard"
+    }
+  ]
+}
