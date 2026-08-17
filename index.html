@@ -3471,7 +3471,7 @@
   .ck2-surv-carte { flex:0 0 auto; display:flex; flex-direction:column; gap:6px; background:#fff; border-radius:12px; padding:10px 12px; box-shadow:0 2px 10px rgba(0,0,0,.16); cursor:pointer; }
   .ck2-surv-carte-t { font-size:10.5px; font-weight:700; letter-spacing:.7px; text-transform:uppercase; color:#7A1E1E; }
   .ck2-surv-carte .chol-carte-wrap { gap:7px; }
-  .ck2-surv-carte .chol-carte { height:200px; width:auto; max-width:380px; }
+  .ck2-surv-carte .chol-carte { width:340px; height:210px; max-width:none; }
   .ck2-surv-carte .chol-legende { color:var(--body); font-size:9.5px; gap:8px 12px; }
   .ck2-surv-tag { display:inline-flex; align-items:center; gap:8px; font-size:10.5px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#F3C9C9; }
   .ck2-surv-tag .ck2-dot { background:#fff; }
@@ -5269,9 +5269,35 @@ function renderMain() {
 /* Programme plusieurs recalculs pour couvrir le chargement des polices,
    des données et les transitions de la barre latérale. */
 function planifierAjustement() {
-  requestAnimationFrame(ajusterCockpit);
-  setTimeout(ajusterCockpit, 360);
-  setTimeout(ajusterCockpit, 1200);
+  requestAnimationFrame(() => { ajusterCarteFoyers(); ajusterCockpit(); });
+  setTimeout(() => { ajusterCarteFoyers(); ajusterCockpit(); }, 360);
+  setTimeout(() => { ajusterCarteFoyers(); ajusterCockpit(); }, 1200);
+}
+
+/* Recadre la carte des foyers de la banniere sur les districts touches,
+   pour remplir le panneau et eviter les grandes marges vides. */
+function ajusterCarteFoyers() {
+  document.querySelectorAll(".ck2-surv-carte svg.chol-carte").forEach(svg => {
+    try {
+      const cibles = svg.querySelectorAll(".cf-dist, .cf-coeur");
+      if (!cibles.length) return;
+      let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+      cibles.forEach(el => {
+        const b = el.getBBox();
+        if (b.width || b.height) { x0 = Math.min(x0, b.x); y0 = Math.min(y0, b.y); x1 = Math.max(x1, b.x + b.width); y1 = Math.max(y1, b.y + b.height); }
+      });
+      if (!isFinite(x0)) return;
+      let w = x1 - x0, h = y1 - y0;
+      const m = Math.max(w, h) * 0.10;   // marge de contexte
+      x0 -= m; y0 -= m; w += 2 * m; h += 2 * m;
+      // ajuster l'aspect du viewBox a celui du cadre pour remplir sans letterbox
+      const r = svg.getBoundingClientRect();
+      const ar = (r.width && r.height) ? r.width / r.height : 1.6;
+      if (w / h < ar) { const nw = h * ar; x0 -= (nw - w) / 2; w = nw; }
+      else { const nh = w / ar; y0 -= (nh - h) / 2; h = nh; }
+      svg.setAttribute("viewBox", `${x0.toFixed(1)} ${y0.toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`);
+    } catch (e) {}
+  });
 }
 
 /* Ajuste le cockpit du Ministre pour qu'il tienne toujours dans la zone visible,
