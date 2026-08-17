@@ -3466,7 +3466,11 @@
 
   .ck2-surv { display:flex; justify-content:space-between; align-items:stretch; gap:22px; cursor:pointer;
     background:linear-gradient(100deg,#7A1E1E,#A02233); border-radius:14px; padding:16px 22px; box-shadow:0 6px 20px rgba(122,30,30,.22); }
-  .ck2-surv-txt { flex:1 1 auto; display:flex; flex-direction:column; justify-content:center; gap:22px; min-width:0; }
+  .ck2-surv-txt { flex:1 1 auto; display:flex; flex-direction:column; justify-content:space-between; gap:14px; min-width:0; }
+  .ck2-surv-courbe { display:flex; flex-direction:column; gap:4px; }
+  .ck2-surv-courbe-t { font-size:10.5px; font-weight:600; color:#F1CFCF; letter-spacing:.3px; }
+  .chol-mini { width:100%; height:52px; display:block; }
+  .ck2-surv-courbe-x { display:flex; justify-content:space-between; font-size:9px; color:#E3B7B7; letter-spacing:.5px; }
   .ck2-surv-bas { display:flex; align-items:center; justify-content:space-between; gap:28px; flex-wrap:wrap; }
   .ck2-surv-carte { flex:0 0 auto; display:flex; flex-direction:column; gap:6px; background:#fff; border-radius:12px; padding:10px 12px; box-shadow:0 2px 10px rgba(0,0,0,.16); cursor:pointer; }
   .ck2-surv-carte-t { font-size:10.5px; font-weight:700; letter-spacing:.7px; text-transform:uppercase; color:#7A1E1E; }
@@ -3476,9 +3480,9 @@
   .ck2-surv-tag { display:inline-flex; align-items:center; gap:8px; font-size:10.5px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#F3C9C9; }
   .ck2-surv-tag .ck2-dot { background:#fff; }
   .ck2-surv-titre { font-family:var(--font-h); font-size:17px; font-weight:700; color:#fff; margin-top:4px; }
-  .ck2-surv-stats { display:flex; align-items:center; gap:26px; flex-wrap:wrap; flex:1 1 auto; justify-content:space-between; max-width:560px; }
+  .ck2-surv-stats { display:flex; align-items:center; gap:16px; flex-wrap:wrap; flex:1 1 auto; justify-content:space-between; max-width:none; }
   .ck2-surv-stat { text-align:center; }
-  .cs2-val { font-family:var(--font-h); font-size:24px; font-weight:700; color:#fff; line-height:1; }
+  .cs2-val { font-family:var(--font-h); font-size:21px; font-weight:700; color:#fff; line-height:1; }
   .cs2-val.cs2-alerte { color:#FFD9A8; }
   .cs2-lib { font-size:10px; color:#EBC9C9; margin-top:3px; text-transform:uppercase; letter-spacing:.4px; }
   .ck2-surv-lien { font-size:12px; font-weight:600; color:#fff; background:rgba(255,255,255,.16); padding:8px 14px; border-radius:8px; white-space:nowrap; }
@@ -8777,6 +8781,21 @@ VIEWS["min-overview"] = () => {
 
   /* ---- Bannière riposte choléra : texte et stats à gauche, carte des foyers à droite ---- */
   const carteFoyers = (typeof renderCarteCholera === "function") ? renderCarteCholera() : "";
+  const cbG = (CHOL_A && Array.isArray(CHOL_A.courbe_globale)) ? CHOL_A.courbe_globale : [];
+  const semL = (CHOL_A && CHOL_A.meta && Array.isArray(CHOL_A.meta.sems)) ? CHOL_A.meta.sems : [];
+  const cMax = cbG.length ? Math.max(...cbG) : 0;
+  const picI = cbG.indexOf(cMax);
+  const cholCourbe = cbG.length ? (() => {
+    const W = 300, H = 56, g = 4, n = cbG.length, bw = (W - g * (n - 1)) / n;
+    const bars = cbG.map((v, i) => {
+      const bh = cMax ? (v / cMax) * (H - 3) : 0; const x = i * (bw + g); const est = i === picI;
+      return `<rect x="${x.toFixed(1)}" y="${(H - bh).toFixed(1)}" width="${bw.toFixed(1)}" height="${bh.toFixed(1)}" rx="1.5" fill="${est ? "#FFD9A8" : "rgba(255,255,255,.5)"}"><title>S${semL[i] || ""} : ${v} cas</title></rect>`;
+    }).join("");
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" class="chol-mini">${bars}</svg>`;
+  })() : "";
+  const gueris = (CHOL_P && CHOL_P.global) ? CHOL_P.global.gueris : null;
+  const malades = (CHOL_P && CHOL_P.global) ? CHOL_P.global.malades : null;
+
   const bandeChol = chol ? `
     <div class="ck2-surv" onclick="selectSub('cousp','cousp-sitrep')" role="link" tabindex="0">
       <div class="ck2-surv-txt">
@@ -8785,12 +8804,18 @@ VIEWS["min-overview"] = () => {
           <div class="ck2-surv-titre">Choléra · Hadjer Lamis et N'Djamena</div>
           <div class="ck2-surv-sous">Liste linéaire COUSP au ${CHOL_P.meta ? CHOL_P.meta.fin : "—"}</div>
         </div>
+        ${cholCourbe ? `<div class="ck2-surv-courbe">
+          <div class="ck2-surv-courbe-t">Cas hebdomadaires${cMax ? ` · pic ${cMax} à S${semL[picI]}` : ""}</div>
+          ${cholCourbe}
+          <div class="ck2-surv-courbe-x"><span>S${semL[0]}</span><span>S${semL[semL.length - 1]}</span></div>
+        </div>` : ""}
         <div class="ck2-surv-bas">
           <div class="ck2-surv-stats">
             <div class="ck2-surv-stat"><div class="cs2-val">${chol.cas}</div><div class="cs2-lib">cas cumulés</div></div>
             <div class="ck2-surv-stat"><div class="cs2-val">${chol.deces}</div><div class="cs2-lib">décès</div></div>
-            <div class="ck2-surv-stat"><div class="cs2-val cs2-alerte">${chol.letalite}%</div><div class="cs2-lib">létalité · seuil 1%</div></div>
-            <div class="ck2-surv-stat"><div class="cs2-val">${(chol.districts || []).length}</div><div class="cs2-lib">districts</div></div>
+            <div class="ck2-surv-stat"><div class="cs2-val cs2-alerte">${chol.letalite}%</div><div class="cs2-lib">létalité</div></div>
+            ${gueris != null ? `<div class="ck2-surv-stat"><div class="cs2-val">${gueris}</div><div class="cs2-lib">guéris</div></div>` : ""}
+            ${malades != null ? `<div class="ck2-surv-stat"><div class="cs2-val">${malades}</div><div class="cs2-lib">en traitement</div></div>` : ""}
           </div>
           <span class="ck2-surv-lien">Voir la riposte →</span>
         </div>
