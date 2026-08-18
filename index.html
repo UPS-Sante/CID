@@ -3627,6 +3627,21 @@
   @keyframes cidSpin { to { transform:rotate(360deg); } }
   .cid-load-txt { font-size:13px; color:var(--muted); letter-spacing:.3px; }
   @media (prefers-reduced-motion: reduce) { .cid-load-spin { animation-duration:1.6s; } }
+  /* ====== Carte choléra à bascule ====== */
+  .chol-choix { display:flex; flex-direction:column; gap:10px; }
+  .chc-tabs { display:flex; gap:8px; flex-wrap:wrap; }
+  .chc-tab { font-size:12px; font-weight:600; padding:6px 13px; border-radius:20px; border:1px solid var(--border); background:#fff; color:var(--muted); cursor:pointer; transition:all .15s; }
+  .chc-tab.on { background:var(--royal); color:#fff; border-color:var(--royal); }
+  .chc-tab:hover:not(.on) { border-color:var(--royal); color:var(--royal); }
+  .cf-choix { stroke:#fff; stroke-width:1.2; transition:fill .3s ease; }
+  .chol-choix .chol-carte-wrap { display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .chol-choix .chol-carte { width:auto; height:300px; max-width:100%; margin:0 auto; display:block; }
+  .chc-grad { align-items:center; gap:8px; }
+  .chc-min, .chc-max { font-size:10px; color:var(--muted); }
+  .chc-bar { height:10px; width:120px; border-radius:5px; background:linear-gradient(90deg, rgba(160,34,51,.18), rgba(160,34,51,.9)); display:inline-block; }
+  @keyframes cholAlerte { 0%,100% { filter:none; } 50% { filter:drop-shadow(0 0 7px rgba(179,55,47,.95)); } }
+  .cf-pulse { animation:cholAlerte 1.5s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .cf-pulse { animation:none; } }
 </style>
 </head>
 <body>
@@ -4580,6 +4595,7 @@ const state = {
   periodValue: "2026-07",
   provinceFilter: null,
   mapMode: "performance",
+  cholCarte: "cas",
   minSection: "A",
   lang: "fr",                  // 'fr' | 'en' | 'ar'
   // Map view controls (zoom/pan/size)
@@ -5344,6 +5360,7 @@ function renderMain() {
       <button class="tb-btn" onclick="location.reload()" style="margin-left:10px;">Recharger la page</button></div>`;
   }
   if (state.sub === "min-overview") { planifierAjustement(); ckAnim = false; }
+  requestAnimationFrame(ajusterCarteFoyers);
 }
 
 /* Programme plusieurs recalculs pour couvrir le chargement des polices,
@@ -5357,9 +5374,9 @@ function planifierAjustement() {
 /* Recadre la carte des foyers de la banniere sur les districts touches,
    pour remplir le panneau et eviter les grandes marges vides. */
 function ajusterCarteFoyers() {
-  document.querySelectorAll(".ck2-surv-carte svg.chol-carte").forEach(svg => {
+  document.querySelectorAll(".ck2-surv-carte svg.chol-carte, .chol-choix svg.chol-carte").forEach(svg => {
     try {
-      const cibles = svg.querySelectorAll(".cf-dist, .cf-coeur");
+      const cibles = svg.querySelectorAll(".cf-dist, .cf-choix, .cf-coeur");
       if (!cibles.length) return;
       let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
       cibles.forEach(el => {
@@ -5370,11 +5387,14 @@ function ajusterCarteFoyers() {
       let w = x1 - x0, h = y1 - y0;
       const m = Math.max(w, h) * 0.10;   // marge de contexte
       x0 -= m; y0 -= m; w += 2 * m; h += 2 * m;
-      // ajuster l'aspect du viewBox a celui du cadre pour remplir sans letterbox
-      const r = svg.getBoundingClientRect();
-      const ar = (r.width && r.height) ? r.width / r.height : 1.6;
-      if (w / h < ar) { const nw = h * ar; x0 -= (nw - w) / 2; w = nw; }
-      else { const nh = w / ar; y0 -= (nh - h) / 2; h = nh; }
+      // la carte à bascule garde son aspect naturel (recadrage serré) ;
+      // seule la carte du panneau fixe (bannière) est ajustée au cadre
+      if (!svg.closest(".chol-choix")) {
+        const r = svg.getBoundingClientRect();
+        const ar = (r.width && r.height) ? r.width / r.height : 1.6;
+        if (w / h < ar) { const nw = h * ar; x0 -= (nw - w) / 2; w = nw; }
+        else { const nh = w / ar; y0 -= (nh - h) / 2; h = nh; }
+      }
       svg.setAttribute("viewBox", `${x0.toFixed(1)} ${y0.toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`);
     } catch (e) {}
   });
@@ -6720,6 +6740,69 @@ function setCholTypePeriode(typ) {
   renderMain();
 }
 function setCholPeriode(cle) { state.cholPeriode = cle; renderMain(); }
+function setCholCarte(mode) { state.cholCarte = mode; renderMain(); }
+
+/* Carte de la zone épidémique choléra, un seul indicateur à la fois,
+   recadrée sur le foyer, avec codage couleur et alerte rouge pulsée. */
+function carteCholeraChoix() {
+  if (!CHOL_A || !CARTE_FOCUS) return "";
+  const mode = state.cholCarte || "cas";
+  const CARTE_DIST = { "KARAL": "Karal", "N'Djamena Nord": "Ndjamena-Nord", "N'Djamena Centre": "Ndjamena-Centre", "N'Djamena Est": "Ndjamena-Est" };
+  const POP = (CHOL_P && CHOL_P.sitrep && CHOL_P.sitrep.populations) || {};
+  const parTrace = {}; CHOL_A.districts.forEach(d => { if (CARTE_DIST[d.nom]) parTrace[CARTE_DIST[d.nom]] = d; });
+  const valeur = (d) => {
+    if (!d) return null;
+    if (mode === "cas") return d.cas;
+    if (mode === "attaque") return POP[d.nom] ? (d.cas / POP[d.nom] * 100000) : null;
+    if (mode === "letalite") return d.cfr;
+    return null;
+  };
+  const vals = CHOL_A.districts.map(valeur).filter(v => v != null);
+  const vmax = vals.length ? Math.max(...vals) : 1;
+  const teinte = (v) => v == null ? null : `rgba(160,34,51,${(0.18 + Math.max(0, Math.min(1, v / vmax)) * 0.72).toFixed(2)})`;
+  const formes = CARTE_FOCUS.districts.map(d => {
+    const info = parTrace[d.nom];
+    if (!info) return `<path class="cf-hors" d="${d.d}"><title>${d.nom} · aucun cas</title></path>`;
+    let fill, cls = "cf-choix", tip;
+    if (mode === "statut") {
+      fill = info.actif ? "#B3372F" : "#2E7D32";
+      if (info.actif) cls += " cf-pulse";
+      tip = `${info.nom} · ${info.actif ? "transmission active, confirmation culture" : "foyer éteint depuis 10 jours sans notification"}`;
+    } else {
+      const v = valeur(info);
+      fill = teinte(v) || "#E7E2D8";
+      const lib = mode === "cas" ? info.cas + " cas" : mode === "attaque" ? (v == null ? "population ND" : Math.round(v) + " pour 100 000") : String(info.cfr).replace(".", ",") + "% de létalité";
+      tip = `${info.nom} · ${lib}`;
+      if (mode !== "attaque" && info.niveau === "critique") cls += " cf-pulse";
+    }
+    return `<path class="${cls}" style="fill:${fill}" d="${d.d}"><title>${tip}</title></path>`;
+  }).join("");
+  const onglet = (m, l) => `<button class="chc-tab ${mode === m ? "on" : ""}" onclick="setCholCarte('${m}')">${l}</button>`;
+  const barre = `<div class="chc-tabs">${onglet("cas", "Nombre de cas")}${onglet("attaque", "Taux d'attaque")}${onglet("letalite", "Taux de létalité")}${onglet("statut", "Statut épidémiologique")}</div>`;
+  const legende = mode === "statut"
+    ? `<div class="chol-legende">
+        <span class="cl-item"><span class="cl-pastille" style="background:#B3372F"></span> Confirmé culture</span>
+        <span class="cl-item"><span class="cl-pastille" style="background:#D97B29"></span> TDR positif</span>
+        <span class="cl-item"><span class="cl-pastille" style="background:#C9A227"></span> Suspect</span>
+        <span class="cl-item"><span class="cl-pastille" style="background:#2E7D32"></span> Foyer éteint</span>
+        <span class="cl-item"><span class="cl-pastille cl-hors"></span> Aucun cas</span>
+      </div>`
+    : `<div class="chol-legende chc-grad">
+        <span class="chc-min">${mode === "letalite" ? "0 %" : "faible"}</span>
+        <span class="chc-bar"></span>
+        <span class="chc-max">${mode === "cas" ? vmax + " cas" : mode === "attaque" ? Math.round(vmax) + " /100k" : Math.round(vmax) + " %"}</span>
+        <span class="cl-item"><span class="cl-pastille cl-hors"></span> ${mode === "attaque" ? "population ND" : "aucun cas"}</span>
+      </div>`;
+  return `<div class="chol-choix">
+    ${barre}
+    <div class="chol-carte-wrap">
+      <svg class="chol-carte" viewBox="0 0 ${CARTE_FOCUS.w} ${CARTE_FOCUS.h}" preserveAspectRatio="xMidYMid meet" aria-label="Carte de la zone épidémique">
+        <g>${formes}</g>
+      </svg>
+      ${legende}
+    </div>
+  </div>`;
+}
 function decalerCholPeriode(pas) {
   const p = cholPeriodeCourante(); if (!p) return;
   const i = p.cles.indexOf(p.cle) + pas;
@@ -6814,10 +6897,10 @@ VIEWS["cousp-sitrep"] = () => {
     </div>`;
   const cles = `<div class="sr-cles">
     ${chiffre(C.cas, "Cas cumulés", (P.cas ? "+" + P.cas + " sur la période" : "aucun nouveau cas"), "na")}
-    ${chiffre(C.deces, "Décès cumulés", (P.deces ? "+" + P.deces + " sur la période" : "aucun nouveau décès"), "red")}
+    ${chiffre(C.deces, "Cumul des décès", (P.deces ? "+" + P.deces + " sur la période" : "aucun nouveau décès"), "red")}
     ${chiffre(nb(C.letalite) + " %", "Létalité globale", "seuil acceptable < 1 %", cfrRag)}
+    ${chiffre("ND", "Décès communautaires", "part des décès · donnée à intégrer", "na")}
     ${chiffre(C.districts.length, "Districts touchés", C.provinces.length + " province" + (C.provinces.length > 1 ? "s" : ""), "orange")}
-    ${chiffre(C.villages, "Villages ou quartiers", "ayant notifié au moins un cas", "na")}
     ${chiffre(Math.round(CHOL_P.sitrep.labo.culture_pos / CHOL_P.sitrep.labo.culture_total * 100) + " %", "Positivité en culture", CHOL_P.sitrep.labo.culture_pos + " sur " + CHOL_P.sitrep.labo.culture_total + " échantillons", "na")}
   </div>`;
 
@@ -6941,8 +7024,8 @@ VIEWS["cousp-sitrep"] = () => {
         </div>
         <div class="grid-2">
           ${card("Évolution hebdomadaire des cas et décès", "Semaines épidémiologiques " + hebdo[0].sem + " à " + hebdo[hebdo.length - 1].sem, courbe, "")}
-          ${card("Districts sanitaires en épidémie", "Foyers actifs et zones de transmission", renderCarteCholera(),
-            "Les foyers en transmission active sur les deux dernières semaines sont signalés par une alerte visuelle.")}
+          ${card("Cartographie de la zone épidémique", "Un indicateur à la fois, recadré sur le foyer", carteCholeraChoix(),
+            "Choisir l'indicateur à cartographier dans la barre. En statut, les foyers en transmission active confirmée sont signalés par une alerte rouge pulsée ; un foyer sans notification depuis dix jours est déclaré éteint.")}
         </div>
         <div class="grid-2 sr-page-3">
           ${card("État de déshydratation à l'admission", dTot + " cas documentés", desh,
