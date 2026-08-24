@@ -1,0 +1,82 @@
+name: Publication du tableau de bord
+
+# Declenchement manuel depuis l'onglet Actions du depot. Aucun jeton
+# personnel n'est requis : la lecture du Drive passe par le compte de
+# service deja en place, l'ecriture dans le depot par le jeton que
+# GitHub fournit a l'action.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dossier:
+        description: "Sous-dossier Drive contenant la version a publier"
+        required: false
+        default: "Deploiement"
+      verification_seule:
+        description: "Controler sans rien publier"
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publication-tableau-de-bord
+  cancel-in-progress: false
+
+jobs:
+  publier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Dependances
+        run: pip install --quiet -r requirements.txt
+
+      - name: Recuperation et controle de la version deposee
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          DRIVE_FOLDER_ID: ${{ secrets.DRIVE_FOLDER_ID }}
+          DOSSIER_DEPLOIEMENT: ${{ inputs.dossier }}
+          VERIFICATION_SEULE: ${{ inputs.verification_seule && '1' || '0' }}
+        run: python scripts/deployer_tableau.py
+
+      - name: Publication si changement
+        if: ${{ !inputs.verification_seule }}
+        run: |
+          git config user.name "cid-sync"
+          git config user.email "cid-sync@users.noreply.github.com"
+          git add index.html seuils_rag.json referentiel.json \
+                  correspondance_indicateurs.json sao_league.json config_sources.json
+          if git diff --cached --quiet; then
+            echo "Aucun changement a publier."
+          else
+            git commit -m "Publication du tableau de bord depuis le Drive ($(date -u +%Y-%m-%d))"
+            git push
+          fi
+
+      - name: Controle de la page publiee
+        if: ${{ !inputs.verification_seule }}
+        run: |
+          # GitHub Pages reconstruit en quelques minutes : on laisse le temps
+          # a la publication avant de verifier que la page repond.
+          sleep 120
+          url="https://ups-sante.github.io/CID/"
+          code=$(curl -s -o /tmp/page.html -w "%{http_code}" "$url")
+          taille=$(wc -c </tmp/page.html)
+          echo "$url -> HTTP $code, $taille octets"
+          if [ "$code" != "200" ] || [ "$taille" -lt 200000 ]; then
+            echo "La page publiee ne repond pas comme attendu. Verifier l'onglet Pages."
+            exit 1
+          fi
+          grep -q "</html>" /tmp/page.html || { echo "Page incomplete."; exit 1; }
+          echo "Page publiee et complete."
