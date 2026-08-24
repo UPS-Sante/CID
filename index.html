@@ -3626,6 +3626,132 @@
   @keyframes cholAlerte { 0%,100% { filter:none; } 50% { filter:drop-shadow(0 0 7px rgba(179,55,47,.95)); } }
   .cf-pulse { animation:cholAlerte 1.5s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) { .cf-pulse { animation:none; } }
+  /* ============================================================
+     BANDEAU DE PILOTAGE
+     Les logos reposent sur une pastille blanche pour rester lisibles
+     sur le bleu. Les parametres de periode, de vue et de langue sont
+     portes par le bandeau : la barre de navigation ne garde que le
+     fil d'Ariane et les deux actions d'export.
+  ============================================================ */
+  .h-armoiries, .h-ups {
+    background: #FFFFFF;
+    border-radius: 6px;
+    padding: 3px 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.20);
+  }
+  .h-armoiries { height: 38px; }
+  .h-ups { height: 34px; }
+
+  .h-right { gap: 10px; }
+  .h-ctrl { display: inline-flex; align-items: center; gap: 8px; }
+
+  /* segments : mode de periode, langue */
+  .h-seg {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.20);
+    border-radius: 6px;
+    padding: 2px;
+    gap: 2px;
+  }
+  .h-seg button {
+    padding: 4px 10px;
+    font-family: var(--font);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: rgba(255,255,255,0.78);
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+  }
+  .h-seg button:hover { color: #FFFFFF; background: rgba(255,255,255,0.10); }
+  .h-seg button.on { background: #FFFFFF; color: var(--royal-d); font-weight: 700; }
+  .h-seg.h-lang button { min-width: 32px; letter-spacing: 0.4px; justify-content: center; }
+
+  /* selecteurs poses sur le bandeau */
+  .h-sel {
+    height: 28px;
+    padding: 0 26px 0 10px;
+    font-family: var(--font);
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--royal-d);
+    background: rgba(255,255,255,0.95) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%231E293B' d='M5 6L0 0h10z'/%3E%3C/svg%3E") no-repeat right 9px center;
+    border: 1px solid rgba(255,255,255,0.30);
+    border-radius: 6px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    max-width: 210px;
+    text-overflow: ellipsis;
+  }
+  .h-sel:hover { background-color: #FFFFFF; }
+  .h-sel:focus { outline: none; box-shadow: 0 0 0 2px rgba(255,255,255,0.55); }
+  .h-sel option { color: var(--ink); background: #FFFFFF; }
+  .h-sel.h-sel-an   { min-width: 74px;  max-width: 84px; }
+  .h-sel.h-sel-part { min-width: 104px; max-width: 130px; }
+  .h-sel.h-sel-vue  { min-width: 150px; max-width: 210px; }
+
+  .h-sep { width: 1px; height: 22px; background: rgba(255,255,255,0.18); }
+
+  /* l'etat textuel reste dans le document pour l'impression */
+  .h-etat { display: none; }
+
+  /* barre de navigation allegee */
+  .topbar { min-height: 46px; padding: 8px 22px; }
+  .topbar .tb-actions { margin-left: auto; }
+
+  [dir="rtl"] .h-sel { padding: 0 10px 0 26px; background-position: left 9px center; }
+
+  @media (max-width: 1280px) {
+    .h-sel.h-sel-vue { min-width: 120px; max-width: 150px; }
+    .header-left { min-width: 0; }
+  }
+  @media (max-width: 1024px) {
+    .h-ctrl { gap: 6px; }
+    .h-sep { display: none; }
+    .h-sel.h-sel-vue { min-width: 108px; max-width: 128px; }
+    .h-armoiries { height: 32px; }
+    .h-ups { display: none; }
+  }
+  @media (max-width: 900px) {
+    .header { padding: 0 12px; }
+    /* la barre allegee tient sur une ligne : fil d'Ariane a gauche, actions a droite */
+    .topbar { flex-wrap: nowrap; gap: 10px; }
+    .breadcrumb {
+      width: auto; order: 0; flex: 1; min-width: 0;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .tb-actions { order: 1; margin-left: auto; flex-shrink: 0; }
+    .h-armoiries { height: 28px; padding: 2px 4px; }
+    .h-seg button { padding: 4px 8px; font-size: 10.5px; }
+    .h-sel { height: 26px; font-size: 11px; }
+    .h-sel.h-sel-vue { min-width: 96px; max-width: 112px; }
+  }
+  @media (max-width: 640px) {
+    .h-title { font-size: 11px; }
+    .h-sub { display: none; }
+    .h-seg.h-mode { display: none; }
+    .h-sel.h-sel-vue { display: none; }
+  }
+  @media (max-width: 480px) {
+    /* le bandeau garde les parametres : ils n'existent plus ailleurs */
+    .h-right { display: flex; }
+    .header-left > div { display: none; }
+    .h-seg.h-lang { display: none; }
+    .h-sel.h-sel-an   { min-width: 62px; max-width: 68px; }
+    .h-sel.h-sel-part { min-width: 88px;  max-width: 100px; }
+  }
+  @media print {
+    .h-ctrl { display: none !important; }
+    .h-etat { display: inline-flex !important; }
+  }
+
 </style>
 </head>
 <body>
@@ -3643,8 +3769,9 @@
     </div>
   </div>
   <div class="h-right">
-    <div class="h-pill"><span id="h-period">Juillet 2026</span></div>
-    <div class="h-pill"><span id="h-scope">National</span></div>
+    <div class="h-pill h-etat"><span id="h-period">Juin 2026</span></div>
+    <div class="h-pill h-etat"><span id="h-scope">National</span></div>
+    <div class="h-ctrl" id="h-controls"></div>
     <img class="h-ups" src="data:image/png;base64,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" alt="UPS-Santé">
   </div>
 </header>
@@ -3855,7 +3982,7 @@ const PROGRAMS = [
   },
   // ===== VEILLE ET RIPOSTE =====
   {
-    id:"cousp", c:"cousp", icon:"CHO", label:"Surveillance · Choléra",
+    id:"cousp", c:"cousp", icon:"CHO", label:"Surveillance · COUSP",
     dir:"COUSP", groupe:"Veille et riposte",
     sub:[
       { id:"cousp-sitrep",  i18n_key:"sub_cousp_sitrep", label:"Rapport de situation", status:"red" },
@@ -3971,6 +4098,89 @@ function genValue(metric, provId, monthOffset = 0) {
    La table correspondance_indicateurs.json relie les metriques du
    tableau de bord aux libelles reels, sans modification de code.   */
 
+/* --------------------------------------------------------------
+   Plafond de periode. Les series de rapportage de routine ne sont pas
+   exploitees au-dela de ce mois. Juillet 2026 est ecarte tant que la
+   saisie n'est pas consolidee : series, selecteurs, cartes et libelles
+   de derniere periode s'arretent a juin 2026. Une seule constante a
+   changer pour ouvrir un mois supplementaire.
+
+   Exception : la veille epidemiologique du COUSP et les series
+   climatiques ne sont pas plafonnees. Tronquer une flambee en cours
+   reviendrait a masquer la situation sanitaire du moment, ce que le
+   plafond ne vise pas. Le registre des decisions du comite de pilotage
+   echappe aussi au plafond, ses echeances etant par nature a venir.
+-------------------------------------------------------------- */
+const CID_PLAFOND = "2026-06";
+const CID_SANS_PLAFOND = ["chol_", "cholera_", "meteo.json", "pluie_", "carte_focus.json", "copil_decisions.json"];
+
+/* cles portant une borne haute de serie : leur valeur est ramenee au plafond */
+const CID_CLES_BORNE = /(mois_max|periode_max|derniere_periode_couverte|dernier_mois)/i;
+
+function cidHorsPlafond(v) {
+  if (typeof v !== "string") return false;
+  const m = v.match(/^(\d{4})-(\d{2})/);
+  return !!m && (m[1] + "-" + m[2]) > CID_PLAFOND;
+}
+
+/* Retire de toute structure chargee les cles AAAA-MM, les elements de
+   liste et les enregistrements dates au-dela du plafond, puis ramene au
+   plafond les metadonnees qui annoncent la derniere periode couverte. */
+function cidElaguer(o, cleParente) {
+  if (o === null || typeof o !== "object") return o;
+  if (Array.isArray(o)) {
+    const garde = [];
+    for (const el of o) {
+      if (typeof el === "string" && cidHorsPlafond(el)) continue;
+      if (el && typeof el === "object" && !Array.isArray(el)) {
+        const d = el.periode || el.mois || el.month || el.date;
+        if (cidHorsPlafond(d)) continue;
+      }
+      cidElaguer(el, cleParente);
+      garde.push(el);
+    }
+    if (garde.length !== o.length) { o.length = 0; Array.prototype.push.apply(o, garde); }
+    return o;
+  }
+  let borneRamenee = false;
+  for (const k of Object.keys(o)) {
+    if (/^\d{4}-\d{2}$/.test(k) && k > CID_PLAFOND) { delete o[k]; continue; }
+    const v = o[k];
+    if (typeof v === "string") {
+      const borne = CID_CLES_BORNE.test(k) || CID_CLES_BORNE.test(String(cleParente || ""));
+      if (borne && /^\d{4}-\d{2}$/.test(v) && v > CID_PLAFOND) {
+        o[k] = CID_PLAFOND;
+        if (k === "derniere_periode_couverte") borneRamenee = true;
+      }
+      continue;
+    }
+    cidElaguer(v, k);
+  }
+  /* juin est un mois complet : le drapeau de periode partielle tombe */
+  if (borneRamenee && "derniere_periode_partielle" in o) o.derniere_periode_partielle = false;
+  return o;
+}
+
+/* Mois d'une annee civile, bornes au plafond. Sert aux histogrammes
+   de detail provincial, qui affichaient une colonne de trop. */
+function cidMoisDeLAnnee(annee) {
+  const [pa, pm] = CID_PLAFOND.split("-").map(Number);
+  const fin = (annee > pa) ? 0 : (annee === pa ? pm : 12);
+  const l = [];
+  for (let m = 1; m <= fin; m++) l.push(annee + "-" + String(m).padStart(2, "0"));
+  return l;
+}
+
+/* Chargement unique de tous les jeux de donnees : lecture, elagage au
+   plafond sauf pour les sources exemptees, tolerance aux absences. */
+function cidJSON(u) {
+  const exempt = CID_SANS_PLAFOND.some(f => String(u).indexOf(f) !== -1);
+  return fetch(u, { cache: "no-cache" })
+    .then(r => r.ok ? r.json() : null)
+    .then(j => exempt ? j : cidElaguer(j))
+    .catch(() => null);
+}
+
 const DR = { actif:false, index:new Map(), metriques:{}, provinces:{}, periodes:[], genere:null };
 
 function drSimplifier(t) {
@@ -4054,6 +4264,7 @@ function drConstruire(consolide, catalogue, correspondance, referentiel) {
 
 /* selecteur de mois aligne sur les periodes reellement disponibles */
 function drActualiserPeriodes() {
+  DR.periodes = DR.periodes.filter(p => !cidHorsPlafond(p));
   if (!DR.periodes.length) return;
   const [a, m] = DR.periodes[DR.periodes.length - 1].split("-").map(Number);
   while (a > ANNEES[0]) ANNEES.unshift(ANNEES[0] + 1);
@@ -4072,100 +4283,101 @@ async function chargerDonneesReelles(essai) {
     const [consolide, catalogue, correspondance, referentiel] = await Promise.all(
       ["data/consolide.json", "data/catalogue.json",
        "correspondance_indicateurs.json", "referentiel.json"]
-      .map(u => fetch(u, { cache: "no-cache" }).then(r => r.ok ? r.json() : null).catch(() => null)));
+      .map(u => cidJSON(u)));
     if (consolide && catalogue && correspondance && referentiel) {
       try {
         if (drConstruire(consolide, catalogue, correspondance, referentiel)) drActualiserPeriodes();
       } catch (e) {}
     }
     try {
-      const sj = await fetch("seuils_rag.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const sj = await cidJSON("seuils_rag.json");
       if (sj) { SEUILS.normal = sj.normal || SEUILS.normal; SEUILS.inverse = sj.inverse || SEUILS.inverse; SEUILS.par_metrique = sj.par_metrique || {}; }
     } catch (e) {}
+    completerSeuilsCousp();
     SEUILS_DEPOT = JSON.parse(JSON.stringify(SEUILS));
     chargerSeuilsLocaux();
     try {
-      const sl = await fetch("sao_league.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const sl = await cidJSON("sao_league.json");
       if (sl) { SAO.indicateurs = sl.indicateurs || []; SAO.en_attente = sl.indicateurs_en_attente || []; SAO.paliers = sl.paliers || SAO.paliers; }
     } catch (e) {}
     try {
-      const dj = await fetch("districts.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const dj = await cidJSON("districts.json");
       if (dj) DISTRICTS = dj.districts || [];
     } catch (e) {}
     try {
-      const pj = await fetch("pev_data.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const pj = await cidJSON("pev_data.json");
       if (pj) PEV = pj;
     } catch (e) {}
     try {
-      const dsj = await fetch("dsr_national.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const dsj = await cidJSON("dsr_national.json");
       if (dsj) DSRN = dsj;
     } catch (e) {}
     try {
-      const pm = await fetch("pev_mensuel.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const pm = await cidJSON("pev_mensuel.json");
       if (pm) PEVM = pm;
     } catch (e) {}
     try {
-      const pp = await fetch("pev_mensuel_prov.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const pp = await cidJSON("pev_mensuel_prov.json");
       if (pp) PEVP = pp;
     } catch (e) {}
     try {
-      const pg2 = await fetch("prog_mensuel.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const pg2 = await cidJSON("prog_mensuel.json");
       if (pg2) PROGM = pg2;
     } catch (e) {}
     try {
-      const cj = await fetch("cholera_data.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const cj = await cidJSON("cholera_data.json");
       if (cj) CHOLERA = cj;
     } catch (e) {}
     try {
-      const ca = await fetch("chol_analyse.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const ca = await cidJSON("chol_analyse.json");
       if (ca) CHOL_A = ca;
     } catch (e) {}
     try {
-      const cs = await fetch("chol_series.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const cs = await cidJSON("chol_series.json");
       if (cs) CHOL_S = cs;
     } catch (e) {}
     try {
-      const mt = await fetch("meteo.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const mt = await cidJSON("meteo.json");
       if (mt) METEO = mt;
     } catch (e) {}
     try {
-      const cf = await fetch("carte_focus.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const cf = await cidJSON("carte_focus.json");
       if (cf) CARTE_FOCUS = cf;
     } catch (e) {}
     try {
-      const pa = await fetch("pluie_analyse.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const pa = await cidJSON("pluie_analyse.json");
       if (pa) PLUIE_A = pa;
     } catch (e) {}
     try {
-      const cp = await fetch("chol_periodes.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const cp = await cidJSON("chol_periodes.json");
       if (cp) CHOL_P = cp;
     } catch (e) {}
     try {
-      const cpil = await fetch("copil_decisions.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const cpil = await cidJSON("copil_decisions.json");
       if (cpil) COPIL = cpil;
     } catch (e) {}
     try {
-      const dq = await fetch("dpsis_qualite.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const dq = await cidJSON("dpsis_qualite.json");
       if (dq) DPSISQ = dq;
     } catch (e) {}
     try {
-      const sv = await fetch("surveillance.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const sv = await cidJSON("surveillance.json");
       if (sv) SURV = sv;
     } catch (e) {}
     try {
-      const sd = await fetch("standards.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const sd = await cidJSON("standards.json");
       if (sd) STDS = sd;
     } catch (e) {}
     try {
-      const dp = await fetch("dsr_prov.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const dp = await cidJSON("dsr_prov.json");
       if (dp) DSRP = dp;
     } catch (e) {}
     try {
-      const dm = await fetch("dpml_stocks.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const dm = await cidJSON("dpml_stocks.json");
       if (dm) DPML = dm;
     } catch (e) {}
     try {
-      const fr = await fetch("carte_fosa.json", { cache: "no-cache" }).then(r => r.ok ? r.json() : null);
+      const fr = await cidJSON("carte_fosa.json");
       if (fr) FOSAR = fr;
     } catch (e) {}
     window.__cidCat = null;
@@ -4555,6 +4767,30 @@ function ragPour(metric, val, target, inverse = false) {
   if (dec) return val <= s.vert ? "green" : val <= s.jaune ? "yellow" : val <= s.orange ? "orange" : "red";
   return val >= s.vert ? "green" : val >= s.jaune ? "yellow" : val >= s.orange ? "orange" : "red";
 }
+/* Veille cholera : les seuils rejoignent le referentiel commun, au meme
+   titre que ceux des autres directions. Ils deviennent modifiables depuis
+   le bouton Seuils et suivent l'echelle a quatre niveaux du tableau de
+   bord, la ou la section n'en lisait que trois. Les valeurs par defaut
+   ci-dessous ne s'appliquent qu'a defaut d'entree dans seuils_rag.json. */
+const SEUILS_COUSP = {
+  "chol-letalite": { vert: 1, jaune: 2, orange: 3, sens: "decroissant" },
+  "chol-attaque":  { vert: 10, jaune: 50, orange: 100, sens: "decroissant" }
+};
+function completerSeuilsCousp() {
+  SEUILS.par_metrique = SEUILS.par_metrique || {};
+  Object.keys(SEUILS_COUSP).forEach(k => {
+    if (!SEUILS.par_metrique[k]) SEUILS.par_metrique[k] = Object.assign({}, SEUILS_COUSP[k]);
+  });
+}
+function ragChol(v) {
+  if (v == null || Number.isNaN(Number(v))) return "na";
+  return ragPour("chol-letalite", Number(v), 1, true);
+}
+function ragCholAttaque(v) {
+  if (v == null || Number.isNaN(Number(v))) return "na";
+  return ragPour("chol-attaque", Number(v), 50, true);
+}
+
 function ragLabel(r) {
   return { green:t("rag_green"), yellow:t("rag_yellow"), orange:t("rag_orange"), red:t("rag_red"), na:"—" }[r] || "—";
 }
@@ -4574,9 +4810,9 @@ const state = {
   pdaDomain: "overview",
   periodMode: "month",
   periodYear: 2026,
-  periodMonth: 7,
+  periodMonth: 6,
   periodQuarter: 2,
-  periodValue: "2026-07",
+  periodValue: "2026-06",
   provinceFilter: null,
   mapMode: "performance",
   cholCarte: "cas",
@@ -4630,7 +4866,7 @@ const I18N = {
     prog_prg: "Programmes verticaux",
     prog_log: "Logistique · Intrants",
     prog_rh: "Ressources Humaines",
-    prog_cousp: "Urgences · Surveillance",
+    prog_cousp: "Surveillance · COUSP",
     prog_dpsis: "Système d'Information",
     sub_min_overview: "Aperçu ministériel",
     sub_sao_league: "Classement des provinces",
@@ -4824,7 +5060,7 @@ const I18N = {
     prog_prg: "Vertical Programmes",
     prog_log: "Logistics · Supplies",
     prog_rh: "Human Resources",
-    prog_cousp: "Emergencies · Surveillance",
+    prog_cousp: "Surveillance · COUSP",
     prog_dpsis: "Information System",
     sub_min_overview: "Ministerial overview",
     sub_sao_league: "Provincial ranking",
@@ -4854,7 +5090,7 @@ const I18N = {
     sub_cousp_sitrep: "Situation report",
     sub_cousp_dd: "In-depth analysis",
     sub_cousp_alerts: "Active clusters",
-    sub_cousp_surv: "Epi surveillance",
+    sub_cousp_surv: "Cholera response",
     sub_dpsis_comp: "Completeness & timeliness",
     sub_dpsis_qual: "Data quality",
     santex_tag: "Santex",
@@ -5018,7 +5254,7 @@ const I18N = {
     prog_prg: "البرامج العمودية",
     prog_log: "اللوجستيات · المدخلات",
     prog_rh: "الموارد البشرية",
-    prog_cousp: "الطوارئ · المراقبة",
+    prog_cousp: "المراقبة · COUSP",
     prog_dpsis: "نظام المعلومات",
     sub_min_overview: "نظرة عامة وزارية",
     sub_sao_league: "ترتيب المقاطعات",
@@ -5048,7 +5284,7 @@ const I18N = {
     sub_cousp_sitrep: "تقرير الوضع",
     sub_cousp_dd: "تحليل معمق",
     sub_cousp_alerts: "البؤر النشطة",
-    sub_cousp_surv: "المراقبة الوبائية",
+    sub_cousp_surv: "الاستجابة للكوليرا",
     sub_dpsis_comp: "الاكتمال والسرعة",
     sub_dpsis_qual: "جودة البيانات",
     santex_tag: "سانتكس",
@@ -5215,9 +5451,12 @@ function applyStaticTranslations() {
 
 const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 const ANNEES = (() => { const a = []; for (let x = 2026; x >= 2020; x--) a.push(x); return a; })();
-/* Dernier mois complet presentable : aout 2026 est un mois partiel, on ne le montre pas.
-   Toute periode derivee ou selectionnee est bornee a cette limite. */
-const DERNIER_MOIS = { annee: 2026, mois: 7, trim: 2 };
+/* Dernier mois complet presentable. Il decoule du plafond CID_PLAFOND :
+   toute periode derivee ou selectionnee est bornee a cette limite. */
+const DERNIER_MOIS = (() => {
+  const [a, m] = CID_PLAFOND.split("-").map(Number);
+  return { annee: a, mois: m, trim: Math.max(1, Math.floor(m / 3)) };
+})();
 function bornerPeriode() {
   if (state.periodYear > DERNIER_MOIS.annee) { state.periodYear = DERNIER_MOIS.annee; }
   if (state.periodYear === DERNIER_MOIS.annee) {
@@ -5332,9 +5571,64 @@ function setPdaDomain(d) {
   renderMain();
 }
 
+/* Parametres de pilotage rendus dans le bandeau bleu : mode de periode,
+   annee, mois ou trimestre, perimetre geographique, langue. Ils sont
+   redessines a chaque rendu, donc toujours accordes a l'etat courant. */
+function renderHeaderControls() {
+  const zone = document.getElementById("h-controls");
+  if (!zone) return;
+
+  const modes = [
+    { v: "month",   l: t("mode_month") },
+    { v: "quarter", l: t("mode_quarter") },
+  ];
+
+  const anneesUtiles = ANNEES.filter(a => a <= DERNIER_MOIS.annee);
+
+  const parts = state.periodMode === "quarter"
+    ? TRIMESTRES
+        .filter(o => state.periodYear !== DERNIER_MOIS.annee || o.v <= DERNIER_MOIS.trim)
+        .map(o => ({ v: o.v, l: o.l, on: state.periodQuarter === o.v }))
+    : MOIS_NOMS
+        .map((l, i) => ({ v: i + 1, l }))
+        .filter(o => state.periodYear !== DERNIER_MOIS.annee || o.v <= DERNIER_MOIS.mois)
+        .map(o => ({ v: o.v, l: o.l, on: state.periodMonth === o.v }));
+
+  const enPda = (state.sub === "vacc-pda");
+  const opt = p => `<option value="${p.id}" ${state.provinceFilter === p.id ? "selected" : ""}>${PDA_PROVINCES.includes(p.id) ? "* " : ""}${p.name}</option>`;
+  const vueOptions = enPda
+    ? `<option value="" ${!state.provinceFilter ? "selected" : ""}>${t("pda_aggregate")}</option>` +
+      PDA_PROVINCES.map(id => PROVINCES.find(x => x.id === id)).filter(Boolean).map(opt).join("")
+    : `<option value="" ${!state.provinceFilter ? "selected" : ""}>${t("national_view")}</option>` +
+      PROVINCES.slice().sort((a, b) => a.name.localeCompare(b.name, "fr")).map(opt).join("");
+
+  const langs = [{ v: "fr", l: "FR" }, { v: "en", l: "EN" }, { v: "ar", l: "AR" }];
+
+  zone.innerHTML = `
+    <div class="h-seg h-mode">
+      ${modes.map(m => `<button class="${state.periodMode === m.v ? "on" : ""}" onclick="setPeriodMode('${m.v}')">${m.l}</button>`).join("")}
+    </div>
+    <select class="h-sel h-sel-an" aria-label="Annee" onchange="setPeriodYear(this.value)">
+      ${anneesUtiles.map(a => `<option value="${a}" ${state.periodYear === a ? "selected" : ""}>${a}</option>`).join("")}
+    </select>
+    <select class="h-sel h-sel-part" aria-label="Periode" onchange="setPeriodPart(this.value)">
+      ${parts.map(o => `<option value="${o.v}" ${o.on ? "selected" : ""}>${o.l}</option>`).join("")}
+    </select>
+    <span class="h-sep"></span>
+    <select class="h-sel h-sel-vue" aria-label="${t("view_label")}" onchange="setProvinceFilter(this.value === '' ? null : this.value)">
+      ${vueOptions}
+    </select>
+    <span class="h-sep"></span>
+    <div class="h-seg h-lang">
+      ${langs.map(l => `<button class="${state.lang === l.v ? "on" : ""}" onclick="setLang('${l.v}')">${l.l}</button>`).join("")}
+    </div>
+  `;
+}
+
 function renderMain() {
   const _m = document.getElementById("main");
   if (_m) _m.style.overflowY = "";
+  try { renderHeaderControls(); } catch (e) { console.error("Bandeau :", e); }
   try { renderMainNoyau(); }
   catch (e) {
     console.error("Erreur de rendu :", e);
@@ -5498,7 +5792,7 @@ function renderTopbar(v) {
     "Programmes verticaux": "prog_prg",
     "Logistique · Intrants": "prog_log",
     "Ressources Humaines": "prog_rh",
-    "Urgences · Surveillance": "prog_cousp",
+    "Surveillance · COUSP": "prog_cousp",
     "Système d'Information": "prog_dpsis",
     "Vue d'ensemble": "sub_vacc_overview",
     "Couverture vaccinale": "sub_vacc_couv",
@@ -5513,8 +5807,10 @@ function renderTopbar(v) {
     "Santé communautaire": "sub_dsr_com",
     "Santé maternelle": "sub_dsr_mat",
     "Stocks produits SR": "sub_dsr_stocks",
-    "Alertes en cours": "sub_cousp_alerts",
-    "Surveillance épidémio": "sub_cousp_surv",
+    "Foyers actifs": "sub_cousp_alerts",
+    "Riposte au choléra": "sub_cousp_surv",
+    "Rapport de situation": "sub_cousp_sitrep",
+    "Analyse approfondie": "sub_cousp_dd",
     "Complétude & promptitude": "sub_dpsis_comp",
     "Qualité des données": "sub_dpsis_qual",
     "Couverture & Impact": "sec_a",
@@ -5543,40 +5839,9 @@ function renderTopbar(v) {
         }).join("")}
       </div>
 
-      <div class="time-block">
-        <span class="time-label">${t("period_label")}</span>
-        <div class="period-pills">
-          ${modes.map(m => `
-            <button class="pp ${state.periodMode === m.v ? 'on' : ''}" onclick="setPeriodMode('${m.v}')">${m.l}</button>
-          `).join("")}
-        </div>
-        <select class="period-sel" onchange="setPeriodYear(this.value)">
-          ${ANNEES.map(a => `<option value="${a}" ${state.periodYear === a ? 'selected' : ''}>${a}</option>`).join("")}
-        </select>
-        <select class="period-sel" onchange="setPeriodPart(this.value)">
-          ${state.periodMode === "quarter"
-            ? TRIMESTRES.filter(o => state.periodYear !== DERNIER_MOIS.annee || o.v <= DERNIER_MOIS.trim).map(o => `<option value="${o.v}" ${state.periodQuarter === o.v ? 'selected' : ''}>${o.l}</option>`).join("")
-            : MOIS_NOMS.map((l, i) => ({ l, i })).filter(x => state.periodYear !== DERNIER_MOIS.annee || (x.i + 1) <= DERNIER_MOIS.mois).map(x => `<option value="${x.i + 1}" ${state.periodMonth === x.i + 1 ? 'selected' : ''}>${x.l}</option>`).join("")}
-        </select>
-      </div>
-
       <div class="tb-actions">
         <button class="tb-btn" onclick="ouvrirSeuils()" title="Définir les seuils vert / jaune / orange / rouge">⚙ Seuils</button>
         <button class="tb-btn" onclick="ouvrirExportPDF()" title="Exporter en PDF · tout ou partie du tableau de bord">⬇ PDF</button>
-      </div>
-      <div class="scope-block">
-        <span class="time-label">${t("view_label")}</span>
-        <select class="period-sel scope-sel" onchange="setProvinceFilter(this.value === '' ? null : this.value)">
-          ${provinceOptions}
-        </select>
-      </div>
-
-      <div class="lang-block" title="${t("language_label")}">
-        <div class="lang-pills">
-          ${langs.map(l => `
-            <button class="lang-btn ${state.lang === l.v ? 'on' : ''}" onclick="setLang('${l.v}')" title="${l.full}">${l.l}</button>
-          `).join("")}
-        </div>
       </div>
     </div>
   `;
@@ -6390,7 +6655,7 @@ VIEWS["vacc-intrants"] = () => {
         "Source : "+PEVM.meta.source) : "")}
       ${card("Stocks de fin de mois par vaccin · "+periodLabel(),"Comparaison au mois précédent",
         `<table class="dt"><thead><tr><th>Vaccin</th><th style="text-align:right">${periodLabel()}</th><th style="text-align:right">Mois préc.</th><th style="text-align:right">Évolution</th></tr></thead><tbody>${rows}</tbody></table>`,
-        "Source : "+PEVM.meta.source+" · Le stock TD passe de 107 097 en janvier à 29 381 en juin puis remonte à 59 829 en juillet, trajectoire à surveiller avec la DLMVSE.")}
+        "Source : "+PEVM.meta.source+" · Le stock TD passe de 107 097 en janvier à 29 381 en juin, trajectoire à surveiller avec la DLMVSE.")}
     </div>`};
 };
 
@@ -6453,10 +6718,10 @@ VIEWS["vacc-palu"] = () => {
 
 
 VIEWS["cousp-surv"] = () => {
-  if (!cholDispo()) return { crumbs: ["Surveillance · Choléra", "Riposte"], html: `<div class="ph"><div class="ph-title">Choléra</div><div class="ph-sub">Données en cours de chargement.</div></div>` };
+  if (!cholDispo()) return { crumbs: ["Surveillance · COUSP", "Riposte au choléra"], html: `<div class="ph"><div class="ph-title">Choléra</div><div class="ph-sub">Données en cours de chargement.</div></div>` };
   const g = CHOLERA.global, M = CHOLERA.meta;
   const V = (CHOL_S && CHOL_S.variation) ? CHOL_S.variation : null;
-  const cfrRag = g.létalité >= 3 ? "red" : g.létalité >= 1 ? "orange" : "green";
+  const cfrRag = ragChol(g.létalité);
   const nomPr = (s) => s.split(" ").map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(" ");
 
   // Courbe épidémique hebdomadaire
@@ -6468,7 +6733,7 @@ VIEWS["cousp-surv"] = () => {
 
   // Provinces
   const provRows = CHOLERA.provinces.map(p => {
-    const r = p.létalité >= 3 ? "red" : p.létalité >= 1 ? "orange" : "green";
+    const r = ragChol(p.létalité);
     return `<tr><td><strong>${p.nom}</strong></td><td class="num">${p.cas}</td><td class="num">${p.deces}</td><td class="num"><span class="pill ${r}">${p.létalité}%</span></td></tr>`;
   }).join("");
 
@@ -6478,12 +6743,12 @@ VIEWS["cousp-surv"] = () => {
   const totSexe = CHOLERA.sexe.M + CHOLERA.sexe.F;
 
   return {
-    crumbs: ["Surveillance · Choléra", "Riposte"],
+    crumbs: ["Surveillance · COUSP", "Riposte au choléra"],
     html: `
       <div class="ph">
-        <div class="ph-tag">◆ Épidémie en cours · COUSP</div>
+        <div class="ph-tag">Riposte au choléra · COUSP</div>
         <div class="ph-title">Riposte au choléra</div>
-        <div class="ph-sub">${M.zone}. ${M.periode}. Données individuelles issues de la liste linéaire de surveillance.</div>
+        <div class="ph-sub">Relevé de la liste linéaire de surveillance · ${M.zone} · ${periodeChol()}.</div>
       </div>
       <div class="content">
         <div class="kpi-grid">
@@ -6536,9 +6801,9 @@ VIEWS["cousp-surv"] = () => {
               <tr><td>Confirmés par test rapide</td><td class="num">${g.confirmes_tdr}</td><td class="num">${Math.round(g.confirmes_tdr / g.cas * 100)}%</td></tr>
               <tr><td>Sortis guéris</td><td class="num">${g.gueris}</td><td class="num">${Math.round(g.gueris / g.cas * 100)}%</td></tr>
               <tr><td>Décès</td><td class="num">${g.deces}</td><td class="num">${String(g.létalité).replace(".", ",")}%</td></tr>
-              <tr><td>Issue non renseignée</td><td class="num">${g.sans_issue || 0}</td><td class="num">—</td></tr>
+              <tr><td>Issue non renseignée</td><td class="num">${g.sans_issue || 0}</td><td class="num">ND</td></tr>
             </table>`,
-            "Le taux de létalité est rapporté aux ${g.cas_issue_connue} cas dont l'issue est renseignée, et non au total notifié. La confirmation biologique porte sur un échantillon, conformément aux recommandations en phase épidémique déclarée.")}
+            "Source : liste linéaire de surveillance du COUSP. Le taux de létalité est rapporté aux " + (g.cas_issue_connue == null ? "ND" : g.cas_issue_connue) + " cas dont l'issue est renseignée, et non au total notifié. La confirmation biologique porte sur un échantillon, conformément aux recommandations en phase épidémique déclarée.")}
         </div>
       </div>
     `
@@ -6546,20 +6811,20 @@ VIEWS["cousp-surv"] = () => {
 };
 
 VIEWS["cousp-alert"] = () => {
-  if (!cholDispo()) return { crumbs: ["Surveillance · Choléra", "Foyers"], html: `<div class="ph"><div class="ph-title">Foyers</div></div>` };
+  if (!cholDispo()) return { crumbs: ["Surveillance · COUSP", "Foyers actifs"], html: `<div class="ph"><div class="ph-title">Foyers</div></div>` };
   const nomPr = (s) => s.split(" ").map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(" ");
   const rows = CHOLERA.districts.map((d, i) => {
-    const r = d.létalité >= 3 ? "red" : d.létalité >= 1 ? "orange" : "green";
+    const r = ragChol(d.létalité);
     return `<tr><td class="sao-rang">${i + 1}</td><td><strong>${nomPr(d.nom)}</strong></td><td class="num">${d.cas}</td><td class="num">${d.deces}</td><td class="num"><span class="pill ${r}">${d.létalité}%</span></td></tr>`;
   }).join("");
-  const critiques = CHOLERA.districts.filter(d => d.létalité >= 3);
+  const critiques = CHOLERA.districts.filter(d => ragChol(d.létalité) === "red");
   return {
-    crumbs: ["Surveillance · Choléra", "Foyers actifs"],
+    crumbs: ["Surveillance · COUSP", "Foyers actifs"],
     html: `
       <div class="ph">
-        <div class="ph-tag">◆ Foyers à surveiller</div>
+        <div class="ph-tag">Foyers actifs · COUSP</div>
         <div class="ph-title">Foyers actifs de choléra</div>
-        <div class="ph-sub">Districts classés par charge de cas notifiés et taux de létalité. ${CHOLERA.meta.periode}.</div>
+        <div class="ph-sub">Districts classés par charge de cas notifiés et par létalité · ${periodeChol()}.</div>
       </div>
       <div class="content">
         ${critiques.length ? `<div class="chol-alerte"><span class="chol-alerte-ic">▲</span> <span>${critiques.map(d => nomPr(d.nom) + " (" + d.létalité + "% de létalité)").join(", ")} ${critiques.length > 1 ? "dépassent" : "dépasse"} nettement le seuil d'alerte. La prise en charge précoce et la réhydratation sont à renforcer en priorité.</span></div>` : ""}
@@ -6792,6 +7057,20 @@ function decalerCholPeriode(pas) {
   const i = p.cles.indexOf(p.cle) + pas;
   if (i >= 0 && i < p.cles.length) { state.cholPeriode = p.cles[i]; renderMain(); }
 }
+/* Dates de la veille cholera en clair, au format des autres sections. */
+function dateChol(iso) {
+  if (!iso) return "ND";
+  const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin",
+                "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+  const p = String(iso).split("-");
+  if (p.length < 3) return p.length === 2 ? `${MOIS[parseInt(p[1], 10) - 1]} ${p[0]}` : String(iso);
+  return `${parseInt(p[2], 10)} ${MOIS[parseInt(p[1], 10) - 1]} ${p[0]}`;
+}
+function periodeChol() {
+  if (!CHOL_P || !CHOL_P.meta) return "période ND";
+  return `du ${dateChol(CHOL_P.meta.debut)} au ${dateChol(CHOL_P.meta.fin)}`;
+}
+
 function libellePeriode(typ, cle) {
   if (typ === "jour") { const [a, m, j] = cle.split("-"); return `${j}/${m}/${a}`; }
   if (typ === "semaine") { const [a, s] = cle.split("-S"); return `Semaine épidémiologique ${parseInt(s, 10)}, ${a}`; }
@@ -6866,36 +7145,41 @@ function analyseApprofondie(p) {
 }
 
 VIEWS["cousp-sitrep"] = () => {
-  if (!CHOL_P) return { crumbs: ["Surveillance · Choléra", "Rapport de situation"], html: `<div class="ph"><div class="ph-title">Rapport de situation</div><div class="ph-sub">Chargement.</div></div>` };
+  if (!CHOL_P) return { crumbs: ["Surveillance · COUSP", "Rapport de situation"], html: `<div class="ph"><div class="ph-title">Rapport de situation</div><div class="ph-sub">Chargement.</div></div>` };
   const p = cholPeriodeCourante();
   const P = p.bloc.periode, C = p.bloc.cumul;
   const nb = (x) => x == null ? "ND" : String(x).replace(".", ",");
-  const cfrRag = C.letalite == null ? "na" : C.letalite >= 3 ? "red" : C.letalite >= 1 ? "orange" : "green";
+  const cfrRag = ragChol(C.letalite);
   const REF = CHOL_P.sitrep;
 
-  // Chiffres clés, dans l'ordre du rapport de situation
-  const chiffre = (val, lib, sous, rag) => `<div class="sr-chiffre">
-      <div class="sr-val rag-${rag || "na"}-txt">${val}</div>
-      <div class="sr-lib">${lib}</div>
-      <div class="sr-sous">${sous}</div>
-    </div>`;
-  const cles = `<div class="sr-cles">
-    ${chiffre(C.cas, "Cas cumulés", (P.cas ? "+" + P.cas + " sur la période" : "aucun nouveau cas"), "na")}
-    ${chiffre(C.deces, "Cumul des décès", (P.deces ? "+" + P.deces + " sur la période" : "aucun nouveau décès"), "red")}
-    ${chiffre(nb(C.letalite) + " %", "Létalité globale", "seuil acceptable < 1 %", cfrRag)}
-    ${chiffre("ND", "Décès communautaires", "part des décès · donnée à intégrer", "na")}
-    ${chiffre(C.districts.length, "Districts touchés", C.provinces.length + " province" + (C.provinces.length > 1 ? "s" : ""), "orange")}
-    ${chiffre(Math.round(CHOL_P.sitrep.labo.culture_pos / CHOL_P.sitrep.labo.culture_total * 100) + " %", "Positivité en culture", CHOL_P.sitrep.labo.culture_pos + " sur " + CHOL_P.sitrep.labo.culture_total + " échantillons", "na")}
+  /* Chiffres cles portes par le composant KPI commun a toutes les sections.
+     La couleur ne code que la position par rapport a un seuil du referentiel :
+     un effectif sans seuil reste neutre, une valeur absente passe en ND. */
+  const txAttaque = REF.population_totale ? (C.cas / REF.population_totale * 100000) : null;
+  const cles = `<div class="kpi-grid">
+    ${kpi("Cas cumulés", C.cas, "", "Depuis le début de l'épisode",
+          P.cas ? "+" + P.cas + " sur la période" : "aucun nouveau cas", P.cas ? "up" : "flat", "", true)}
+    ${kpi("Décès cumulés", C.deces, "", "Depuis le début de l'épisode",
+          P.deces ? "+" + P.deces + " sur la période" : "aucun nouveau décès", P.deces ? "up" : "flat", "", true)}
+    ${kpi("Létalité globale", C.letalite == null ? null : nb(C.letalite), "%", "Cible : < 1 %",
+          ragLabel(cfrRag), "flat", cfrRag, true)}
+    ${kpi("Taux d'attaque", txAttaque == null ? null : txAttaque.toFixed(1).replace(".", ","), "/100k",
+          "Cible : < 10 pour 100 000", ragLabel(ragCholAttaque(txAttaque)), "flat", ragCholAttaque(txAttaque), true)}
+    ${kpi("Districts touchés", C.districts.length, "",
+          C.provinces.length + " province" + (C.provinces.length > 1 ? "s" : ""), "—", "flat", "")}
+    ${kpi("Positivité en culture", REF.labo.culture_total ? Math.round(REF.labo.culture_pos / REF.labo.culture_total * 100) : null, "%",
+          REF.labo.culture_pos + " sur " + REF.labo.culture_total + " échantillons", "—", "flat", "")}
+    ${kpi("Décès communautaires", null, "", "Part des décès survenus hors structure", "—", "flat", "na")}
   </div>`;
 
   // Tableau de répartition, calqué sur le tableau I du rapport
   const lignes = C.districts.map(d => {
     const cfr = d.cas ? (d.deces / d.cas * 100) : 0;
     const nouv = (P.districts.find(x => x.nom === d.nom) || {}).cas || 0;
-    const rag = cfr >= 3 ? "red" : cfr >= 1 ? "orange" : "green";
-    return `<tr><td><strong>${d.nom}</strong></td><td class="num">${nouv || "—"}</td><td class="num">${d.cas}</td><td class="num">${d.deces}</td><td class="num"><span class="pill ${rag}">${cfr.toFixed(1).replace(".", ",")}%</span></td></tr>`;
+    const ragD = ragChol(cfr);
+    return `<tr><td><strong>${d.nom}</strong></td><td class="num">${nouv || "ND"}</td><td class="num">${d.cas}</td><td class="num">${d.deces}</td><td class="num"><span class="pill ${ragD}">${cfr.toFixed(1).replace(".", ",")}%</span></td></tr>`;
   }).join("");
-  const tot = `<tr class="sr-total"><td><strong>Total</strong></td><td class="num">${P.cas || "—"}</td><td class="num">${C.cas}</td><td class="num">${C.deces}</td><td class="num">${nb(C.letalite)}%</td></tr>`;
+  const tot = `<tr class="sr-total"><td><strong>Ensemble</strong></td><td class="num">${P.cas || "ND"}</td><td class="num">${C.cas}</td><td class="num">${C.deces}</td><td class="num">${nb(C.letalite)}%</td></tr>`;
 
   // Déshydratation et évolution
   const dTot = C.desh.legere + C.desh.moderee + C.desh.severe;
@@ -6934,18 +7218,18 @@ VIEWS["cousp-sitrep"] = () => {
     ${C.districts.map(d => {
       const pop = POP_DISTRICTS[d.nom];
       const tx = pop ? (d.cas / pop * 100000) : null;
-      return `<tr><td>${d.nom}</td><td class="num">${pop ? pop.toLocaleString("fr-FR") : "à confirmer"}</td><td class="num">${d.cas}</td><td class="num">${tx == null ? "—" : "<strong>" + tx.toFixed(1).replace(".", ",") + "</strong>"}</td></tr>`;
+      return `<tr><td>${d.nom}</td><td class="num">${pop ? pop.toLocaleString("fr-FR") : "à confirmer"}</td><td class="num">${d.cas}</td><td class="num">${tx == null ? "ND" : "<strong>" + tx.toFixed(1).replace(".", ",") + "</strong>"}</td></tr>`;
     }).join("")}
     <tr class="sr-total"><td><strong>Ensemble</strong></td><td class="num">${popRef.toLocaleString("fr-FR")}</td><td class="num">${C.cas}</td><td class="num"><strong>${txGlobal == null ? "ND" : txGlobal.toFixed(1).replace(".", ",")}</strong></td></tr>
   </table>`;
 
   return {
-    crumbs: ["Surveillance · Choléra", "Rapport de situation"],
+    crumbs: ["Surveillance · COUSP", "Rapport de situation"],
     html: `
       <div class="ph">
-        <div class="ph-tag">Rapport de situation · Épidémie de choléra</div>
-        <div class="ph-title">Situation au ${libellePeriode(p.typ, p.cle)}</div>
-        <div class="ph-sub">Chiffres établis sur la liste linéaire de surveillance, selon la structure du rapport de situation du COUSP.</div>
+        <div class="ph-tag">Rapport de situation · COUSP</div>
+        <div class="ph-title">Épidémie de choléra · rapport de situation</div>
+        <div class="ph-sub">Situation arrêtée · ${libellePeriode(p.typ, p.cle)} · liste linéaire de surveillance, ${dateChol(CHOL_P.meta.debut)} à ${dateChol(CHOL_P.meta.fin)}.</div>
       </div>
       ${barreControleChol()}
       <div class="content">
@@ -6959,7 +7243,7 @@ VIEWS["cousp-sitrep"] = () => {
             <div class="sr-garde-sur">Rapport de situation n° ${champEditable("num", REF.numero, "ch-inline")}</div>
             <h1 class="sr-garde-titre">Épidémie de choléra</h1>
             <div class="sr-garde-zone">${C.provinces.map(x => x.nom).join(" et ")}</div>
-            <div class="sr-garde-periode">Situation arrêtée au ${libellePeriode(p.typ, p.cle)}</div>
+            <div class="sr-garde-periode">Situation arrêtée · ${libellePeriode(p.typ, p.cle)}</div>
             <div class="sr-garde-resume">
               <div class="sr-gr"><span class="sr-gr-v">${C.cas}</span><span class="sr-gr-l">cas notifiés</span></div>
               <div class="sr-gr"><span class="sr-gr-v">${C.deces}</span><span class="sr-gr-l">décès</span></div>
@@ -6996,7 +7280,7 @@ VIEWS["cousp-sitrep"] = () => {
         <div class="grid-2 sr-large">
           ${card("Répartition par district sanitaire", "Cas notifiés et décès, cumul et période",
             `<table class="tbl-s tbl-dist"><tr><th>District</th><th class="num">Nouv.</th><th class="num">Cumul</th><th class="num">Décès</th><th class="num">Létal.</th></tr>${lignes}${tot}</table>`,
-            "Les nouveaux cas correspondent à la période sélectionnée dans la barre de contrôle.")}
+            "Source : liste linéaire de surveillance du COUSP. Les nouveaux cas correspondent à la période sélectionnée dans la barre de contrôle.")}
           ${card("Profil des cas et confirmation biologique", "Caractéristiques démographiques et résultats de laboratoire",
             `<table class="tbl-s">
               <tr><td>Âge médian</td><td class="num"><strong>${nb(C.age_median)} ans</strong></td><td class="num">de ${nb(C.age_min)} à ${nb(C.age_max)} ans</td></tr>
@@ -7013,12 +7297,12 @@ VIEWS["cousp-sitrep"] = () => {
         </div>
         <div class="grid-2 sr-page-3">
           ${card("État de déshydratation à l'admission", dTot + " cas documentés", desh,
-            "La part des formes modérées et sévères mesure la précocité du recours aux soins.")}
+            "Source : liste linéaire de surveillance du COUSP. La part des formes modérées et sévères mesure la précocité du recours aux soins.")}
           ${card("Évolution des cas", eTot + " cas suivis", evol, "")}
         </div>
         <div class="grid-2">
           ${card("Répartition par tranche d'âge et par sexe", C.cas + " cas notifiés", pyr,
-            "Les hommes prédominent chez les 5 à 14 ans, les femmes dans la tranche 15 à 44 ans.")}
+            "Source : liste linéaire de surveillance du COUSP. Les hommes prédominent chez les 5 à 14 ans, les femmes dans la tranche 15 à 44 ans.")}
           ${card("Taux d'attaque pour 100 000 habitants", "Rapporté aux populations de district", attaque,
             "Populations de projection 2026 issues du rapport de situation. Celles de N'Djamena Centre et Est y étant reprises à l'identique, les taux de ces deux districts restent en attente de confirmation par le COUSP ; le taux d'ensemble est calculé sur la population totale de référence.")}
         </div>
@@ -7033,7 +7317,7 @@ VIEWS["cousp-sitrep"] = () => {
 
 
 VIEWS["cousp-deepdive"] = () => {
-  if (!CHOL_A) return { crumbs: ["Surveillance · Choléra", "Analyse"], html: `<div class="ph"><div class="ph-title">Analyse</div><div class="ph-sub">Chargement.</div></div>` };
+  if (!CHOL_A) return { crumbs: ["Surveillance · COUSP", "Analyse approfondie"], html: `<div class="ph"><div class="ph-title">Analyse</div><div class="ph-sub">Chargement.</div></div>` };
   const A = CHOL_A, M = A.meta;
   const pFmt = (p) => p < 0.001 ? "p < 0,001" : "p = " + p.toFixed(3).replace(".", ",");
   const sig = (p) => p < 0.001 ? "***" : p < 0.01 ? "**" : p < 0.05 ? "*" : "ns";
@@ -7076,7 +7360,7 @@ VIEWS["cousp-deepdive"] = () => {
   // --- Tests statistiques ---
   const grad = A.tests[0];
   const gradRows = grad.groupes.map(g => {
-    const r = g.cfr >= 10 ? "red" : g.cfr >= 3 ? "orange" : "green";
+    const r = ragChol(g.cfr);
     return `<tr><td>${g.niveau}</td><td class="num">${g.n}</td><td class="num">${g.deces}</td><td class="num"><span class="pill ${r}">${String(g.cfr).replace(".", ",")}%</span></td></tr>`;
   }).join("");
   const autresTests = A.tests.filter(t => t.type === "binaire").map(t => {
@@ -7120,12 +7404,12 @@ VIEWS["cousp-deepdive"] = () => {
   const symptHtml = A.symptomes.map(s => `<div class="demo-row"><span class="demo-lab">${s.nom}</span><div class="demo-barre"><div class="demo-fill sympt-fill" style="width:${s.pct}%"></div></div><span class="demo-val">${String(s.pct).replace(".", ",")}%</span></div>`).join("");
 
   return {
-    crumbs: ["Surveillance · Choléra", "Analyse approfondie"],
+    crumbs: ["Surveillance · COUSP", "Analyse approfondie"],
     html: `
       <div class="ph ph-exec">
-        <div class="ph-tag">◆ Analyse épidémiologique · aide à la décision</div>
-        <div class="ph-title">Ce que les données disent de la riposte</div>
-        <div class="ph-sub">${M.n} cas analysés, ${M.deces} décès, ${M.localites} localités. ${M.zone}, semaines ${M.sems[0]} à ${M.sem_max}. Analyse sur liste linéaire individuelle.</div>
+        <div class="ph-tag">Analyse approfondie · COUSP</div>
+        <div class="ph-title">Analyse approfondie de l'épisode</div>
+        <div class="ph-sub">Analyse sur liste linéaire individuelle · ${M.zone} · semaines ${M.sems[0]} à ${M.sem_max} · ${M.n} cas, ${M.deces} décès, ${M.localites} localités.</div>
       </div>
       ${constats}
 
@@ -7305,7 +7589,7 @@ VIEWS["vacc-couv"] = () => {
   if(sel){
     const nm=(PROVINCES.find(p=>p.id===sel)||{}).name||sel;
     const serie=(PEVP.provinces[sel]||{}).couv?.[ant]||{};
-    const moisAff=["2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07"];
+    const moisAff=cidMoisDeLAnnee(2026);
     const barres=moisAff.map(m=>{const v=serie[m];const h2=v==null?4:Math.min(120,v*1.1);
       return `<div style="text-align:center;flex:1"><div style="height:130px;display:flex;align-items:flex-end;justify-content:center"><div style="width:70%;height:${h2}px;background:${v==null?"#CBC7BE":col(v)};border-radius:3px 3px 0 0"></div></div><div style="font-size:11px;margin-top:4px">${MOIS_NOMS[Number(m.slice(5))-1].slice(0,3)}</div><div style="font-size:11px;font-weight:700">${v==null?"ND":Math.round(v)}</div></div>`;}).join("");
     const doses=(PEVP.provinces[sel]||{}).doses?.[ant]||null;
@@ -7759,7 +8043,7 @@ function carteDomaine(dom, crumbs, tag, titre) {
   if(sel){
     const nm=(PROVINCES.find(p=>p.id===sel)||{}).name||sel;
     const serie=(D.provinces[sel]||{})[ind]||{};
-    const MA=["2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07"];
+    const MA=cidMoisDeLAnnee(2026);
     const barres=MA.map(m=>{const v=serie[m];const h2=v==null?4:fcfa?Math.max(6,Math.min(120,Math.abs(v)/maxV*120)):Math.min(120,v*1.1);
       return `<div style="text-align:center;flex:1"><div style="height:130px;display:flex;align-items:flex-end;justify-content:center"><div style="width:70%;height:${h2}px;background:${v==null?"#CBC7BE":col(v)};border-radius:3px 3px 0 0"></div></div><div style="font-size:11px;margin-top:4px">${MOIS_NOMS[Number(m.slice(5))-1].slice(0,3)}</div><div style="font-size:11px;font-weight:700">${v==null?"ND":Math.round(v)}</div></div>`;}).join("");
     pan=card(nm+" · "+ind,"Série mensuelle 2026 · "+(D.libelles[ind]||""),
@@ -8785,7 +9069,7 @@ VIEWS["min-overview"] = () => {
       value: d.v == null ? null : Math.round(d.v), unit: "%", target: cible + "%",
       trend: delta == null ? "—" : (delta >= 0 ? "+" : "") + delta + " pts", trendDir: delta == null ? "flat" : delta >= 0 ? "up" : "down",
       rag: pevRag(d.v, cible), source: "DPSIS · " + (d.p ? cidMois(d.p) : "ND"),
-      sparkData: cidSerieN(serie, d.p || "2026-07", 12), sparkColor: "#1F3864"
+      sparkData: cidSerieN(serie, d.p || CID_PLAFOND, 12), sparkColor: "#1F3864"
     });
   };
   kSI(4, "comp", "Complétude du rapportage RMA", 95);
@@ -8807,7 +9091,7 @@ VIEWS["min-overview"] = () => {
       trend: "—", trendDir: "flat",
       rag: d.v == null ? "na" : d.v === 0 ? "green" : d.v < 2 ? "yellow" : "orange",
       source: "IDS · " + (d.p ? cidMois(d.p) : "ND"),
-      sparkData: cidSerieN(serie, d.p || "2026-07", 12), sparkColor: "#8C4038"
+      sparkData: cidSerieN(serie, d.p || CID_PLAFOND, 12), sparkColor: "#8C4038"
     });
   })();
 
@@ -8823,7 +9107,7 @@ VIEWS["min-overview"] = () => {
       trend: delta == null ? "—" : (delta >= 0 ? "+" : "") + delta + "%", trendDir: delta == null ? "flat" : delta >= 0 ? "up" : "down",
       rag: d.v == null ? "na" : delta != null && delta <= -20 ? "orange" : "green",
       source: "DGPML · " + (d.p ? cidMois(d.p) : "ND"),
-      sparkData: cidSerieN(serie, d.p || "2026-07", 12).map(v => v == null ? null : v / 1000), sparkColor: "#856722"
+      sparkData: cidSerieN(serie, d.p || CID_PLAFOND, 12).map(v => v == null ? null : v / 1000), sparkColor: "#856722"
     });
   })();
 
