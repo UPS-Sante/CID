@@ -1,5 +1,5 @@
 {
- "genere": "2026-08-27T13:49:39Z",
+ "genere": "2026-08-28T14:55:25Z",
  "anomalies": [
   {
    "fichier": "brut/Dashboards pev supervision.csv",
@@ -55,6 +55,10 @@
   },
   {
    "fichier": "brut/DPSIS/DPSIS_Promptitude&Completude.xls",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/Infrastructures/2026 LISTE CS BONS ET MAUVAIS ETAT 2026(Récupération automatique).xlsx",
    "type": "periode_indetectable"
   },
   {
