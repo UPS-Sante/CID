@@ -1,5 +1,5 @@
 {
- "genere": "2026-08-29T09:45:01Z",
+ "genere": "2026-08-30T08:56:29Z",
  "anomalies": [
   {
    "fichier": "brut/Dashboards pev supervision.csv",
@@ -26,6 +26,10 @@
    "type": "periode_indetectable"
   },
   {
+   "fichier": "brut/RAPPORT DE VALIDATION DES FICHES_PND_VF_28082026.xlsx",
+   "type": "periode_indetectable"
+  },
+  {
    "fichier": "brut/Recouvrement des couts.csv",
    "type": "periode_indetectable"
   },
@@ -43,6 +47,10 @@
   },
   {
    "fichier": "brut/ZR_standards 2024 - Standards.csv",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/DRH/DONNEES RH.xlsx",
    "type": "periode_indetectable"
   },
   {
