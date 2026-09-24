@@ -1,5 +1,5 @@
 {
- "genere": "2026-09-23T08:19:07Z",
+ "genere": "2026-09-24T08:10:15Z",
  "anomalies": [
   {
    "fichier": "brut/Dashboards pev supervision.csv",
@@ -47,6 +47,18 @@
   },
   {
    "fichier": "brut/ZR_standards 2024 - Standards.csv",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/COUSP/BASE_DE_DONNEES_CHOLERA_Hadjer Lamis__Ndjamena_2026.xlsx",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/COUSP/Surveillance.csv",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/Infrastructures/2026 LISTE CS BONS ET MAUVAIS ETAT 2026(Récupération automatique).xlsx",
    "type": "periode_indetectable"
   },
   {
@@ -41492,10 +41504,6 @@
    "type": "periode_indetectable"
   },
   {
-   "fichier": "brut/DGPML/Medicaments essentiels.csv",
-   "type": "periode_indetectable"
-  },
-  {
    "fichier": "brut/DSR/SMI.csv",
    "type": "periode_indetectable"
   },
@@ -41504,19 +41512,11 @@
    "type": "periode_indetectable"
   },
   {
-   "fichier": "brut/Infrastructures/2026 LISTE CS BONS ET MAUVAIS ETAT 2026(Récupération automatique).xlsx",
-   "type": "periode_indetectable"
-  },
-  {
    "fichier": "brut/DRH/DONNEES RH.xlsx",
    "type": "periode_indetectable"
   },
   {
-   "fichier": "brut/COUSP/BASE_DE_DONNEES_CHOLERA_Hadjer Lamis__Ndjamena_2026.xlsx",
-   "type": "periode_indetectable"
-  },
-  {
-   "fichier": "brut/COUSP/Surveillance.csv",
+   "fichier": "brut/DGPML/Medicaments essentiels.csv",
    "type": "periode_indetectable"
   }
  ]
