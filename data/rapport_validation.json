@@ -1,5 +1,5 @@
 {
- "genere": "2026-11-19T11:09:46Z",
+ "genere": "2026-11-20T10:56:43Z",
  "anomalies": [
   {
    "fichier": "brut/Dashboards pev supervision.csv",
@@ -58,11 +58,7 @@
    "type": "periode_indetectable"
   },
   {
-   "fichier": "brut/DRH/DONNEES RH.xlsx",
-   "type": "periode_indetectable"
-  },
-  {
-   "fichier": "brut/DGPML/Medicaments essentiels.csv",
+   "fichier": "brut/DPSIS/DPSIS_Promptitude&Completude.xls",
    "type": "periode_indetectable"
   },
   {
@@ -71,6 +67,10 @@
   },
   {
    "fichier": "brut/DSR/data (1).csv",
+   "type": "periode_indetectable"
+  },
+  {
+   "fichier": "brut/Infrastructures/2026 LISTE CS BONS ET MAUVAIS ETAT 2026(Récupération automatique).xlsx",
    "type": "periode_indetectable"
   },
   {
@@ -41512,11 +41512,11 @@
    "type": "matrice_non_reconnue"
   },
   {
-   "fichier": "brut/Infrastructures/2026 LISTE CS BONS ET MAUVAIS ETAT 2026(Récupération automatique).xlsx",
+   "fichier": "brut/DRH/DONNEES RH.xlsx",
    "type": "periode_indetectable"
   },
   {
-   "fichier": "brut/DPSIS/DPSIS_Promptitude&Completude.xls",
+   "fichier": "brut/DGPML/Medicaments essentiels.csv",
    "type": "periode_indetectable"
   }
  ]
